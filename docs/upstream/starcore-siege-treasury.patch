@@ -1,0 +1,188 @@
+diff --git a/src/main/java/dev/starcore/starcore/module/army/siege/SiegeModule.java b/src/main/java/dev/starcore/starcore/module/army/siege/SiegeModule.java
+index d15c7cf..cf35ca5 100644
+--- a/src/main/java/dev/starcore/starcore/module/army/siege/SiegeModule.java
++++ b/src/main/java/dev/starcore/starcore/module/army/siege/SiegeModule.java
+@@ -9,6 +9,7 @@ import dev.starcore.starcore.foundation.message.MessageService;
+ import dev.starcore.starcore.module.army.siege.command.SiegeCommand;
+ import dev.starcore.starcore.module.army.siege.listener.SiegeListener;
+ import dev.starcore.starcore.module.nation.NationService;
++import dev.starcore.starcore.module.treasury.TreasuryService;
+ import dev.starcore.starcore.module.war.WarService;
+ import java.util.*;
+ import org.bukkit.configuration.ConfigurationSection;
+@@ -22,7 +23,7 @@ public final class SiegeModule implements StarCoreModule, SiegeService {
+           "siege",
+           "攻城器械系统",
+           ModuleLayer.MODULE,
+-          List.of("nation", "economy"),
++          List.of("nation", "economy", "treasury"),
+           List.of(SiegeService.class),
+           "Provides siege weapons creation, deployment, and wall assault capabilities.");
+ 
+@@ -30,7 +31,7 @@ public final class SiegeModule implements StarCoreModule, SiegeService {
+   private NationService nationService;
+   private MessageService messages;
+   private PersistenceService persistenceService;
+-  private dev.starcore.starcore.module.treasury.TreasuryService treasuryService;
++  private TreasuryService treasuryService;
+ 
+   private SiegeServiceImpl siegeServiceImpl;
+   private SiegeCommand siegeCommand;
+@@ -47,11 +48,7 @@ public final class SiegeModule implements StarCoreModule, SiegeService {
+     this.nationService = context.serviceRegistry().require(NationService.class);
+     this.messages = context.serviceRegistry().require(MessageService.class);
+     this.persistenceService = context.serviceRegistry().find(PersistenceService.class).orElse(null);
+-    this.treasuryService =
+-        context
+-            .serviceRegistry()
+-            .find(dev.starcore.starcore.module.treasury.TreasuryService.class)
+-            .orElse(null);
++    this.treasuryService = context.serviceRegistry().require(TreasuryService.class);
+ 
+     // 从配置读取攻城器械配置
+     ConfigurationSection config = context.plugin().getConfig().getConfigurationSection("siege");
+diff --git a/src/test/java/dev/starcore/starcore/module/army/siege/SiegeModuleTreasuryLifecycleTest.java b/src/test/java/dev/starcore/starcore/module/army/siege/SiegeModuleTreasuryLifecycleTest.java
+new file mode 100644
+index 0000000..3f82b53
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/army/siege/SiegeModuleTreasuryLifecycleTest.java
+@@ -0,0 +1,139 @@
++package dev.starcore.starcore.module.army.siege;
++
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.junit.jupiter.api.Assertions.assertThrows;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.anyLong;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.mockStatic;
++import static org.mockito.Mockito.never;
++import static org.mockito.Mockito.verify;
++import static org.mockito.Mockito.when;
++
++import dev.starcore.starcore.core.StarCoreContext;
++import dev.starcore.starcore.core.module.ModuleLayer;
++import dev.starcore.starcore.core.module.ModuleManager;
++import dev.starcore.starcore.core.module.ModuleMetadata;
++import dev.starcore.starcore.core.module.ModuleStatus;
++import dev.starcore.starcore.core.module.StarCoreModule;
++import dev.starcore.starcore.core.service.ServiceRegistry;
++import dev.starcore.starcore.foundation.message.MessageService;
++import dev.starcore.starcore.module.army.siege.model.SiegeType;
++import dev.starcore.starcore.module.nation.NationService;
++import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.treasury.TreasuryService;
++import java.math.BigDecimal;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.UUID;
++import java.util.logging.Logger;
++import org.bukkit.Location;
++import org.bukkit.Server;
++import org.bukkit.configuration.file.YamlConfiguration;
++import org.bukkit.event.HandlerList;
++import org.bukkit.plugin.PluginManager;
++import org.bukkit.plugin.java.JavaPlugin;
++import org.bukkit.scheduler.BukkitScheduler;
++import org.bukkit.scheduler.BukkitTask;
++import org.junit.jupiter.api.Test;
++
++class SiegeModuleTreasuryLifecycleTest {
++  @Test
++  void managerStartsTreasuryBeforeConstructingSiegeAndCreationUsesItsAuthority() {
++    Fixture fixture = fixture();
++    ServiceRegistry registry = fixture.registry();
++    TreasuryService treasury = mock(TreasuryService.class);
++    List<String> enabled = new ArrayList<>();
++    when(fixture.scheduler().runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong()))
++        .thenAnswer(
++            ignored -> {
++              enabled.add("siege");
++              assertThat(registry.require(TreasuryService.class)).isSameAs(treasury);
++              return fixture.updateTask();
++            });
++    when(fixture.scheduler().runTaskTimerAsynchronously(any(), any(Runnable.class), anyLong(), anyLong()))
++        .thenReturn(fixture.saveTask());
++    SiegeModule siege = new SiegeModule();
++    ModuleManager manager = new ModuleManager(Logger.getAnonymousLogger(), registry);
++    // Register the consumer first: only declared dependencies may determine startup ordering.
++    manager.register(siege);
++    manager.register(module("treasury", List.of("nation", "economy"), List.of(TreasuryService.class),
++        () -> { enabled.add("treasury"); registry.register(TreasuryService.class, treasury); }));
++    manager.register(module("nation", List.of(), List.of(), () -> {}));
++    manager.register(module("economy", List.of(), List.of(), () -> {}));
++
++    try (var ignored = mockStatic(HandlerList.class)) {
++      manager.enableAll(fixture.context());
++
++      assertThat(enabled).containsExactly("treasury", "siege");
++      assertThat(registry.require(SiegeService.class)).isSameAs(siege);
++      UUID nation = UUID.randomUUID();
++      BigDecimal cost = BigDecimal.valueOf(SiegeType.BATTERING_RAM.constructionCost() + 5 * 50);
++      when(treasury.balance(NationId.of(nation))).thenReturn(cost);
++      when(treasury.withdraw(NationId.of(nation), cost)).thenReturn(true);
++      assertThat(siege.createSiege(nation, SiegeType.BATTERING_RAM, 5, new Location(null, 0, 64, 0)))
++          .isNotNull();
++      verify(treasury).withdraw(NationId.of(nation), cost);
++
++      manager.disableAll(fixture.context());
++      verify(fixture.updateTask()).cancel();
++      verify(fixture.saveTask()).cancel();
++      assertThat(registry.find(SiegeService.class)).isEmpty();
++    }
++  }
++
++  @Test
++  void managerDoesNotConstructSiegeWhenTreasuryModuleIsMissing() {
++    Fixture fixture = fixture();
++    ModuleManager manager = new ModuleManager(Logger.getAnonymousLogger(), fixture.registry());
++    manager.register(new SiegeModule());
++    manager.register(module("nation", List.of(), List.of(), () -> {}));
++    manager.register(module("economy", List.of(), List.of(), () -> {}));
++
++    manager.enableAll(fixture.context());
++
++    assertThat(manager.descriptors()).filteredOn(descriptor -> descriptor.metadata().id().equals("siege"))
++        .singleElement().extracting(descriptor -> descriptor.status()).isEqualTo(ModuleStatus.FAILED);
++    assertThat(fixture.registry().find(SiegeService.class)).isEmpty();
++    verify(fixture.scheduler(), never()).runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong());
++  }
++
++  @Test
++  void directEnableRequiresTreasuryBeforeCreatingPeriodicService() {
++    Fixture fixture = fixture();
++    assertThrows(IllegalStateException.class, () -> new SiegeModule().enable(fixture.context()));
++    verify(fixture.scheduler(), never()).runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong());
++    verify(fixture.scheduler(), never()).runTaskTimerAsynchronously(any(), any(Runnable.class), anyLong(), anyLong());
++  }
++
++  private static StarCoreModule module(String id, List<String> dependencies, List<Class<?>> services,
++                                       Runnable enable) {
++    return new StarCoreModule() {
++      @Override public ModuleMetadata metadata() {
++        return new ModuleMetadata(id, id, ModuleLayer.MODULE, dependencies, services, "test prerequisite");
++      }
++      @Override public void enable(StarCoreContext context) { enable.run(); }
++    };
++  }
++
++  private static Fixture fixture() {
++    JavaPlugin plugin = mock(JavaPlugin.class);
++    Server server = mock(Server.class);
++    BukkitScheduler scheduler = mock(BukkitScheduler.class);
++    when(plugin.getServer()).thenReturn(server);
++    when(plugin.getConfig()).thenReturn(new YamlConfiguration());
++    when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    when(server.getScheduler()).thenReturn(scheduler);
++    when(server.getPluginManager()).thenReturn(mock(PluginManager.class));
++    ServiceRegistry registry = new ServiceRegistry();
++    registry.register(NationService.class, mock(NationService.class));
++    registry.register(MessageService.class, mock(MessageService.class));
++    StarCoreContext context = mock(StarCoreContext.class);
++    when(context.plugin()).thenReturn(plugin);
++    when(context.serviceRegistry()).thenReturn(registry);
++    return new Fixture(context, registry, scheduler, mock(BukkitTask.class), mock(BukkitTask.class));
++  }
++
++  private record Fixture(StarCoreContext context, ServiceRegistry registry, BukkitScheduler scheduler,
++                         BukkitTask updateTask, BukkitTask saveTask) {}
++}

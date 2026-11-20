@@ -1,0 +1,67 @@
+{
+  "recorded_on": "2026-11-20",
+  "purpose": "Historical isolated Paper acceptance evidence; later source changes require a new build and verification.",
+  "environment": {
+    "paper": "1.21.11-132",
+    "java": "21.0.13.1+2",
+    "starcore_commit": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "cookery": "1.3.0",
+    "craftengine": "26.9.1",
+    "public_services_only": true,
+    "server_stopped_after_validation": true,
+    "original_configuration_restored": true,
+    "test_probe_removed_from_plugins": true
+  },
+  "artifacts": [
+    {
+      "sha256": "FE9F44FEDB50B6358B7D760DF45F0545F84F02963ED7FBBBF5FAAA0BCA458532",
+      "schema": 6,
+      "supply_interval_seconds": 300,
+      "migration": "v5 to v6",
+      "passed": ["six physical resource purchase and transport loops", "12 new PAID settlements", "army coverage 100% and combat 1.130", "regional market price and locked order total", "one escort and repeated delivery", "order GUI"]
+    },
+    {
+      "sha256": "B380D7688DDB8E3ED472A4485D5B63FAAAB5A9CC163A7EF078586D3C41478D9F",
+      "schema": 8,
+      "full_verify": {"tests": 61, "failures": 0, "errors": 0},
+      "migration": "v6 to v8; auxiliary Tavern and insurance databases created",
+      "supply_interval_seconds": 30,
+      "passed": ["nonzero cross-border tariff", "Tavern hub, scouting, report publication and GUI", "winter demand and summer recovery"],
+      "known_defect": "ordinary uninsured accept was blocked by an unguarded insurance lookup; fixed in the next artifact"
+    },
+    {
+      "sha256": "465003F6E8E6F9B1F3F6984DF3292CF34D417876C740D009473275DE9B30A05E",
+      "schema": 8,
+      "build": "mvn -DskipTests package",
+      "fresh_test_run": false,
+      "passed": ["six physical resource loops after ordinary accept fix", "12 new PAID settlements", "100% coverage and combat 1.130", "real insurance premium, reserve and risk claim", "restart persistence and duplicate-operation rejection"]
+    }
+  ],
+  "market": {"before_price": "2.50", "demand_items": 8, "demand_price": "3.33", "locked_total": "20.00", "after_stock_items": 8, "after_price": "1.67"},
+  "tariff": {
+    "purchase_id": "22ddd90d-8f30-4b3c-ae61-968430195e70",
+    "settlement_id": "79d178c9-d719-477b-822d-c83e5bb1ea1f",
+    "exporter": "Beta", "importer": "Alpha", "physical_goods": "8 vanilla bread",
+    "gross": "20.00", "rate_percent": 10, "tax": "2.00", "seller_net": "18.00",
+    "seller_balance_before": "4837.86", "seller_balance_after": "4855.86",
+    "importer_treasury_before": "4015.00", "importer_treasury_after": "3997.00",
+    "payment_state": "PAID", "tax_state": "FUNDED", "inventory_state": "STORED",
+    "public_tax_history_before_restart": "one 2.00 TARIFF record",
+    "public_tax_history_after_restart": "empty; StarCore history is not durable evidence"
+  },
+  "winter": {"soldiers": 10, "food_demand": 2, "medical_demand": 2, "other_demands": 1, "summer_demands": "all six return to 1 next interval"},
+  "tavern": {"hub": "alpha-inn", "report_id": "c6808f8a-1073-41e4-bf97-b0db4b9ddf37", "reported_efficiency": 1.5, "reported_risk": 0, "ttl_seconds": 900, "persisted_hub": true, "expired_report_hidden": true, "authentic_beverage_tested": false},
+  "insurance": {
+    "shipment_id": "453fbe99-c8f2-4b7c-ba0b-1c43d6c3acf5",
+    "policy_id": "8a70b63b-c94f-441d-b1ca-b71af219517d",
+    "freight": "15.00", "premium": "4.20", "claim": "12.00", "risk": 0.25,
+    "persistent_roll": 0.11522079981485067,
+    "shipment_state": "FAILED", "failure_reason": "RISK", "failed_at": 1795147714353,
+    "policy_state": "CLAIMED", "policy_updated": 1795147714359,
+    "applied_legs": ["RESERVE", "PREMIUM_DEBIT", "PREMIUM_CREDIT", "CLAIM"],
+    "restart_preserved_money_ids_and_timestamp": true,
+    "duplicate_claim_prevented": true
+  },
+  "pending": ["live siege due to upstream SiegeServiceImpl treasuryService null", "authentic Tavern beverage verification", "fault injection and manual recovery at tariff and insurance external calls", "trade quota exhaustion, agreement expiry/cancellation and embargo rejection branches"],
+  "goal_complete": false
+}

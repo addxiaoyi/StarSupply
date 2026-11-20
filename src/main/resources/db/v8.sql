@@ -1,0 +1,3 @@
+ALTER TABLE shipment ADD COLUMN failure_reason TEXT NOT NULL DEFAULT '';
+ALTER TABLE shipment ADD COLUMN failed_at INTEGER NOT NULL DEFAULT 0;
+PRAGMA user_version=8;

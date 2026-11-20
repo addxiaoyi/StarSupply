@@ -1,0 +1,13 @@
+/target/
+/cache/
+/libraries/
+/versions/
+/.idea/
+*.iml
+/.vscode/
+build-script-verify.log
+target-build.log
+target-expansion-verify.log
+*.db
+*.db-wal
+*.db-shm

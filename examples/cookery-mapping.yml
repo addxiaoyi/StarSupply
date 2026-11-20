@@ -1,0 +1,14 @@
+# Merge these list entries into resource-mappings in plugins/StarSupply/config.yml.
+# Fixed supply units per item. A higher quality can qualify for a stricter mapping.
+# National provisioning also recognizes the configured ENGINEERING and STRATEGIC groups.
+resource-mappings:
+  - item: kaleidoscopecookery:mantou
+    resource: FOOD
+    units: 2
+    cookery-quality-required: true
+    minimum-quality: 0.3
+  - item: kaleidoscopecookery:baozi
+    resource: FOOD
+    units: 3
+    cookery-quality-required: true
+    minimum-quality: 0.3

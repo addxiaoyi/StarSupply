@@ -1,0 +1,83 @@
+# Paper 1.21.11 and StarCore 1.0.0. Restart after changing configuration.
+warehouse-interaction-radius: 8
+army-frontline-radius: 256
+transport-blocks-per-second: 10.0
+transport-timeout-seconds: 3600
+supply-interval-seconds: 300
+max-purchase-items: 256
+max-order-payment: '100000.00'
+
+# An exporter at war cannot export these physical resources, even to a neutral agreement partner.
+# Imports and internal national procurement remain available. Use [] to disable this restriction.
+wartime-export-controls: [EQUIPMENT, STRATEGIC]
+
+# StarCore season/siege state is sampled on the server thread every 5 seconds.
+# Changes affect the next consumption interval; effects end when winter/siege/war ends.
+campaign:
+  winter-food-extra: 0.25
+  winter-medical-extra: 0.10
+  siege-maximum-extra: 0.50
+  siege-ramp-seconds: 1800
+  siege-continuity-gap-seconds: 60
+  siege-radius: 128
+
+# Route observations are shared only at a nearby hub belonging to the viewer's nation.
+tavern:
+  observation-radius: 32
+  interaction-radius: 8
+  report-ttl-seconds: 900
+  require-authentic-beverage: false
+  minimum-brew-level: 1
+
+# Nation-underwritten freight income cover, capped at 80% of the promised freight.
+# Premium = max(minimum, claim * (current protected route risk + loading)).
+insurance:
+  loading-rate: 0.10
+  minimum-premium: '1.00'
+
+# Bounded strategy links use StarCore's active policy and unlocked technology keys.
+# Policy bonus lowers effective troop-equivalent consumption (max 50%).
+# Technology bonus increases road efficiency/travel speed (max 150%).
+policy-logistics-bonuses:
+  war_economy: 0.10
+policy-combat-bonuses:
+  military_drill: 0.08
+  war_economy: 0.05
+technology-logistics-bonuses:
+  railways: 0.50
+
+# Depot-local advisory price per physical item. Each order locks its quoted total price.
+market-base-prices:
+  FOOD: '2.50'
+  MEDICAL: '4.00'
+  EQUIPMENT: '5.00'
+  MATERIALS: '0.50'
+  ENGINEERING: '3.00'
+  STRATEGIC: '8.00'
+market-buffer-items: 16
+
+# Plain vanilla mappings and optional CraftEngine IDs. Cookery mappings verify real quality metadata.
+resource-mappings:
+  - item: 'minecraft:bread'
+    resource: FOOD
+    units: 1
+  - item: 'minecraft:honey_bottle'
+    resource: MEDICAL
+    units: 1
+  - item: 'minecraft:iron_ingot'
+    resource: EQUIPMENT
+    units: 1
+  - item: 'minecraft:cobblestone'
+    resource: MATERIALS
+    units: 1
+  - item: 'minecraft:scaffolding'
+    resource: ENGINEERING
+    units: 1
+  - item: 'minecraft:firework_rocket'
+    resource: STRATEGIC
+    units: 1
+  - item: 'kaleidoscopecookery:mantou'
+    resource: FOOD
+    units: 2
+    cookery-quality-required: true
+    minimum-quality: 0.3
