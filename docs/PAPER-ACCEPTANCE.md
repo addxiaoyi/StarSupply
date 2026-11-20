@@ -151,4 +151,12 @@ B380 历史包发现普通未投保运输误调用保险出发超时检查，导
 
 对待核验的结算，具备 `starsupply.admin` 的管理员可以在核对 StarCore 结算记录后执行 `/supply reconcile <结算UUID> <paid|unpaid>`。库存交接则用 `/supply reconcile-inventory <库存收据UUID> <applied|untouched>`，选择依据为已核对的玩家存档与交接日志。缺少证据时保持待核验状态。
 
+## 首次采样与插件生命周期回归
+
+2026-11-20 15:22 使用完整验证后的新包 SHA-256 `D2BFC503F45F110ECD2321E244C0F2211E13D7CBFD72674E44363F2416151C08`，在隔离的 Paper 1.21.11-132、Java 21 与原始 StarCore 上完成公共 API 生命周期回归。独立探针依赖两个插件并仅调用公开服务：依赖插件的 `onEnable` 中，`SupplyApi` 已注册而军队状态为空；首次全局采样与后台维护后约 2 秒出现新状态。公开停用会注销服务并清空缓存 API 的状态，重新启用时立即无旧军队状态，随后恢复具有新采样时间的状态。
+
+同一全局回调内连续三次停用/启用也通过；分别等待 140 tick、越过旧采样任务的 100 tick 周期后，仍能读取新鲜军队状态，最终公开 `stock` SQL 查询成功。一个补给消费结算 UUID 只发布一次事件，日志没有采样、维护或启用失败。Paper 对这种同实例测试发出四次 classloader 警告，因此此流程只作为隔离回归夹具，不建议用于正式服热重载。该轮暂时移出可选 CraftEngine/Cookery JAR；此前物品生产闭环的证据不能由本轮替代。
+
+测试进程正常退出，148 项备份内容的哈希全部恢复一致，原插件与配置归位，探针 JAR 移出 `plugins`，游戏和 RCON 端口均无监听。脱敏环境、复现步骤与时间戳见 [生命周期回归记录](verification/paper-lifecycle-reenable-20261120.json)。本轮没有覆盖世界卸载或并发的 Folia 区域回调，不能据此宣称完整 Folia 组合已通过。
+
 StarSupply 使用 Folia 的实体调度器执行玩家与仓库界面交互。整个组合的 Folia 验收还依赖 StarCore 及启用的选装插件在该服务器版本上可用。当前参考版 StarCore 的插件声明与军队调度实现限制了 Folia 整服验收，以上流程使用 Paper。

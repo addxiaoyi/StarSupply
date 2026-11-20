@@ -52,6 +52,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -69,6 +70,8 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     private final Set<UUID> inventoryBusy = ConcurrentHashMap.newKeySet();
     private final AtomicBoolean maintenanceQueued = new AtomicBoolean();
     private final AtomicBoolean accepting = new AtomicBoolean();
+    private final AtomicBoolean campaignReady = new AtomicBoolean();
+    private final AtomicLong lifecycle = new AtomicLong();
     private volatile Map<UUID, SupplyStatus> armyStatus = Map.of();
     private volatile long armyStatusAt;
     private volatile List<Warehouse> campaignFronts = List.of();
@@ -91,6 +94,9 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     @Override
     public void onEnable() {
         try {
+            require(worker == null || worker.isTerminated(), "上一轮数据库操作尚未停止，请等待后重新启用插件");
+            long generation = lifecycle.incrementAndGet();
+            campaignReady.set(false);
             saveDefaultConfig();
             Files.createDirectories(getDataFolder().toPath());
             String cap = getConfig().getString("max-order-payment", "100000.00");
@@ -131,7 +137,6 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
                 }
             });
             campaignFronts = store.fronts();
-            core.captureCampaigns(campaignFronts, now());
             tavernStore = new TavernStore(getDataFolder().toPath().resolve("tavern.db"));
             taverns = new TavernService(tavernStore, store, logistics, core);
             taverns.configure(number("tavern.observation-radius", 32, 1, 32),
@@ -172,9 +177,12 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
             getServer().getServicesManager().register(TavernApi.class, this, this, ServicePriority.Normal);
             getServer().getServicesManager().register(InsuranceApi.class, this, this, ServicePriority.Normal);
             accepting.set(true);
+            StarCoreGateway campaignSource = core;
             campaignSampling = getServer().getGlobalRegionScheduler().runAtFixedRate(this, task -> {
+                if (!accepting.get() || lifecycle.get() != generation) return;
                 try {
-                    core.captureCampaigns(campaignFronts, now());
+                    campaignSource.captureCampaigns(campaignFronts, now());
+                    if (accepting.get() && lifecycle.get() == generation) campaignReady.set(true);
                 } catch (RuntimeException failure) {
                     getLogger().log(Level.WARNING, "StarCore 季节/围城采样失败，过期后恢复正常消耗", failure);
                 }
@@ -192,6 +200,8 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     @Override
     public void onDisable() {
         accepting.set(false);
+        lifecycle.incrementAndGet();
+        campaignReady.set(false);
         if (periodic != null) periodic.cancel();
         if (campaignSampling != null) campaignSampling.cancel();
         getServer().getServicesManager().unregisterAll(this);
@@ -240,7 +250,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     }
 
     private void maintenance() {
-        if (!accepting.get() || !maintenanceQueued.compareAndSet(false, true)) return;
+        if (!accepting.get() || !campaignReady.get() || !maintenanceQueued.compareAndSet(false, true)) return;
         sql(() -> {
             long time = now();
             store.expire(time);
@@ -309,6 +319,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     private void refreshArmies(boolean consume) throws Exception {
         long time = now();
         campaignFronts = store.fronts();
+        if (!campaignReady.get()) return;
         armyStatus = logistics.computeArmySupply(time, consume);
         armyStatusAt = time;
     }

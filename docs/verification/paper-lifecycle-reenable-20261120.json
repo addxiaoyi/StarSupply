@@ -1,0 +1,80 @@
+{
+  "recorded_on": "2026-11-20",
+  "purpose": "Isolated public-API regression of initial campaign sampling, disable and re-enable",
+  "passed": true,
+  "environment": {
+    "paper": "1.21.11-132-c5eb079",
+    "java": "21.0.13.1+2",
+    "starcore_sha256": "953F926F12384E0CFAFAE6F55D266A10C7156468E7E28BE75518C3F7B413884B",
+    "starsupply_sha256": "D2BFC503F45F110ECD2321E244C0F2211E13D7CBFD72674E44363F2416151C08",
+    "active_plugins": ["StarCore", "StarSupply", "isolated public-API lifecycle probe"],
+    "optional_cookery_and_craftengine_jars_temporarily_removed": true,
+    "supply_interval_seconds": 300,
+    "server_args": ["-Xms256M", "-Xmx900M", "-XX:ActiveProcessorCount=2", "-XX:+UseSerialGC", "-XX:TieredStopAtLevel=1"],
+    "public_services_only": true,
+    "private_field_access": false,
+    "economic_mutations_by_probe": false
+  },
+  "fixture": {
+    "army_id": "b917a6c7-5c11-4199-b2ef-ca2bf6c22da3",
+    "front_id": "alpha-risk-front",
+    "depot_id": "alpha-depot",
+    "preconditions": [
+      "Use an isolated copy of the existing Paper world and both plugin data directories",
+      "Keep the existing StarCore army and its StarSupply front binding",
+      "Load an independent probe after StarCore and StarSupply using plugin dependencies",
+      "Observe SupplyApi and StarCoreApi; run lifecycle operations on the global scheduler"
+    ],
+    "reproduction": [
+      "In dependent probe onEnable, verify SupplyApi registration and armySupply(armyId).isEmpty()",
+      "Poll the public armySupply every 20 ticks, at most eleven attempts, until the first campaign-backed state is available",
+      "Use public PluginManager.disablePlugin: verify the plugin is disabled, SupplyApi is unregistered and the cached public API reports no army state",
+      "Use public PluginManager.enablePlugin on the same instance: verify immediate registration but no previous army state; poll for fresh state",
+      "Wait 140 ticks, exceeding the former 100-tick sampling deadline; require a present state with campaign.observedAt at or after this enable",
+      "Perform three disable/enable cycles in one global callback, checking clear state and service registration on every cycle",
+      "Poll for the final state, wait another 140 ticks, then require a successful public stock(alpha-depot) SQL read",
+      "Count SupplyConsumptionEvent by settlementId, stop normally and restore the pre-test snapshots"
+    ]
+  },
+  "observations": [
+    {"phase": "dependent-onEnable", "at": "2026-11-20T07:22:17.287642900Z", "service_registered": true, "army_present": false},
+    {"phase": "startup-ready", "at": "2026-11-20T07:22:19.101156600Z", "army_present": true, "campaign_observed_at": 1795159338181},
+    {"phase": "first-reenable-disabled", "at": "2026-11-20T07:22:19.117734600Z", "service_registered": false, "cached_api_army_present": false},
+    {"phase": "first-reenable-immediate", "at": "2026-11-20T07:22:19.140140600Z", "service_registered": true, "army_present": false},
+    {"phase": "first-reenable-ready", "at": "2026-11-20T07:22:21.101026700Z", "army_present": true, "campaign_observed_at": 1795159339150},
+    {"phase": "first-reenable-after-old-deadline", "at": "2026-11-20T07:22:28.100731900Z", "army_present": true, "campaign_observed_at": 1795159344150},
+    {"phase": "rapid-reenable", "cycles": 3, "all_disable_and_immediate_enable_checks_passed": true},
+    {"phase": "rapid-reenable-ready", "at": "2026-11-20T07:22:30.100843600Z", "army_present": true, "campaign_observed_at": 1795159348174},
+    {"phase": "rapid-reenable-after-old-deadline", "at": "2026-11-20T07:22:37.100943100Z", "army_present": true, "campaign_observed_at": 1795159353150},
+    {"phase": "rapid-reenable-public-stock", "at": "2026-11-20T07:22:37.150928700Z", "successful": true}
+  ],
+  "consumption_events": {
+    "distinct_settlement_ids": 1,
+    "maximum_events_per_settlement": 1,
+    "duplicate_events": false
+  },
+  "logs": {
+    "campaign_sampling_errors": 0,
+    "maintenance_errors": 0,
+    "enable_errors": 0,
+    "same_instance_enable_warnings": 4,
+    "warning": "Paper emits Enabled plugin with unregistered ConfiguredPluginClassLoader during this synthetic same-instance lifecycle test"
+  },
+  "cleanup": {
+    "server_exit_code": 0,
+    "owned_server_process_remaining": false,
+    "game_or_rcon_port_listening": false,
+    "backup_entries_verified": 148,
+    "backup_hash_mismatches": 0,
+    "original_starcore_and_starsupply_data_restored": true,
+    "original_configuration_and_jars_restored": true,
+    "optional_plugins_restored": true,
+    "probe_jar_removed_from_plugins": true
+  },
+  "limits": [
+    "This is a Paper lifecycle regression, not full Folia-stack certification",
+    "Paper cannot produce a concurrently running regional callback; no such race is claimed to have been exercised",
+    "The same-instance PluginManager sequence is a test fixture, not a recommendation to hot-reload a production server",
+    "World unload and other gameplay paths were not exercised in this run"
+  ]
+}
