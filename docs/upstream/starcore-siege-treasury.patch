@@ -41,6 +41,197 @@ index d15c7cf..cf35ca5 100644
  
      // 从配置读取攻城器械配置
      ConfigurationSection config = context.plugin().getConfig().getConfigurationSection("siege");
+diff --git a/src/main/java/dev/starcore/starcore/module/army/siege/SiegeServiceImpl.java b/src/main/java/dev/starcore/starcore/module/army/siege/SiegeServiceImpl.java
+index 985b5e1..beed90c 100644
+--- a/src/main/java/dev/starcore/starcore/module/army/siege/SiegeServiceImpl.java
++++ b/src/main/java/dev/starcore/starcore/module/army/siege/SiegeServiceImpl.java
+@@ -501,6 +501,13 @@ public final class SiegeServiceImpl implements SiegeService {
+   }
+ 
+   private void updateSiege(SiegeUnit siege) {
++    // Public deployment enters DEPLOYING; the next existing update makes a living,
++    // still-deployed unit ready. Persisted pending deployments follow this same path.
++    if (siege.state() == SiegeState.DEPLOYING && siege.isAlive()
++        && siege.deployedLocation() != null) {
++      siege.completeDeployment();
++    }
++
+     // 攻城状态下自动攻击
+     if (siege.isBesieging()) {
+       performSiegeAttack(siege.id());
+diff --git a/src/test/java/dev/starcore/starcore/module/army/siege/SiegeDeploymentLifecycleTest.java b/src/test/java/dev/starcore/starcore/module/army/siege/SiegeDeploymentLifecycleTest.java
+new file mode 100644
+index 0000000..2cbbce3
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/army/siege/SiegeDeploymentLifecycleTest.java
+@@ -0,0 +1,167 @@
++package dev.starcore.starcore.module.army.siege;
++
++import static org.junit.jupiter.api.Assertions.assertEquals;
++import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertTrue;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.anyLong;
++import static org.mockito.ArgumentMatchers.anyString;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.mockStatic;
++import static org.mockito.Mockito.when;
++
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.foundation.message.MessageService;
++import dev.starcore.starcore.module.army.siege.model.SiegeState;
++import dev.starcore.starcore.module.army.siege.model.SiegeType;
++import dev.starcore.starcore.module.army.siege.model.SiegeUnit;
++import dev.starcore.starcore.module.army.siege.model.WallType;
++import dev.starcore.starcore.module.nation.NationService;
++import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.treasury.TreasuryService;
++import java.math.BigDecimal;
++import java.time.Instant;
++import java.util.HashMap;
++import java.util.Map;
++import java.util.Properties;
++import java.util.UUID;
++import java.util.concurrent.atomic.AtomicReference;
++import java.util.logging.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
++import org.bukkit.Server;
++import org.bukkit.World;
++import org.bukkit.plugin.Plugin;
++import org.bukkit.plugin.PluginManager;
++import org.bukkit.scheduler.BukkitScheduler;
++import org.bukkit.scheduler.BukkitTask;
++import org.junit.jupiter.api.Test;
++
++class SiegeDeploymentLifecycleTest {
++  @Test
++  void publicDeploymentBecomesReadyOnExistingTickThenCanStartSiege() {
++    Fixture fixture = fixture();
++    SiegeServiceImpl service = fixture.service();
++    SiegeUnit unit = create(fixture);
++    var wall = service.createWall(new Location(fixture.world(), 5, 64, 0), UUID.randomUUID(), WallType.STONE_WALL);
++    service.deploySiege(unit.id(), new Location(fixture.world(), 0, 64, 0));
++
++    assertEquals(SiegeState.DEPLOYING, unit.state());
++    assertFalse(service.startSiege(unit.id(), wall.id()).isSuccess(), "deployment must not start instantly");
++    fixture.tick().get().run();
++
++    assertEquals(SiegeState.READY, unit.state());
++    assertTrue(fixture.data().get("sieges.dat").getProperty(unit.id().toString()).contains("|READY|"));
++    assertTrue(service.startSiege(unit.id(), wall.id()).isSuccess());
++    assertEquals(SiegeState.BESIEGING, unit.state());
++    assertEquals(unit.id(), wall.besiegingSiegeId());
++    assertFalse(service.canDeploy(unit.nationId()), "readiness must not reset the redeployment cooldown");
++    service.shutdown();
++  }
++
++  @Test
++  void pendingDeploymentLoadedThroughExistingCodecResumesOnFirstTick() {
++    Fixture original = fixture();
++    SiegeUnit unit = create(original);
++    original.service().deploySiege(unit.id(), new Location(original.world(), 0, 64, 0));
++    original.service().shutdown();
++
++    try (var bukkit = mockStatic(Bukkit.class)) {
++      bukkit.when(() -> Bukkit.getWorld("world")).thenReturn(original.world());
++      Fixture restarted = fixture(original.world(), original.data());
++      SiegeUnit restored = restarted.service().getSiege(unit.id()).orElseThrow();
++      assertEquals(SiegeState.DEPLOYING, restored.state());
++      restarted.tick().get().run();
++      assertEquals(SiegeState.READY, restored.state());
++      assertTrue(restarted.data().get("sieges.dat").getProperty(unit.id().toString()).contains("|READY|"));
++      restarted.service().shutdown();
++    }
++  }
++
++  @Test
++  void retreatDisbandAndMissingOrDeadDeploymentNeverBecomeReady() {
++    Fixture fixture = fixture();
++    SiegeUnit retreated = create(fixture);
++    fixture.service().deploySiege(retreated.id(), new Location(fixture.world(), 0, 64, 0));
++    fixture.service().retreatSiege(retreated.id());
++    SiegeUnit disbanded = create(fixture);
++    fixture.service().deploySiege(disbanded.id(), new Location(fixture.world(), 0, 64, 0));
++    fixture.service().disbandSiege(disbanded.id());
++    fixture.tick().get().run();
++    assertEquals(SiegeState.RETREATING, retreated.state());
++    assertTrue(fixture.service().getSiege(disbanded.id()).isEmpty());
++    fixture.service().shutdown();
++
++    Properties pending = new Properties();
++    SiegeStateCodec codec = new SiegeStateCodec();
++    SiegeUnit noLocation = pending(fixture.world(), 100, 5, false);
++    SiegeUnit noHealth = pending(fixture.world(), 0, 5, true);
++    SiegeUnit noCrew = pending(fixture.world(), 100, 0, true);
++    for (SiegeUnit invalid : new SiegeUnit[]{noLocation, noHealth, noCrew}) {
++      pending.setProperty(invalid.id().toString(), codec.encode(invalid));
++    }
++    Map<String, Properties> data = new HashMap<>();
++    data.put("sieges.dat", pending);
++    try (var bukkit = mockStatic(Bukkit.class)) {
++      bukkit.when(() -> Bukkit.getWorld("world")).thenReturn(fixture.world());
++      Fixture restored = fixture(fixture.world(), data);
++      restored.tick().get().run();
++      for (SiegeUnit invalid : new SiegeUnit[]{noLocation, noHealth, noCrew}) {
++        assertEquals(SiegeState.DEPLOYING, restored.service().getSiege(invalid.id()).orElseThrow().state());
++      }
++      restored.service().shutdown();
++    }
++  }
++
++  private static SiegeUnit pending(World world, double health, int crew, boolean hasDeployment) {
++    Location where = new Location(world, 0, 64, 0);
++    return new SiegeUnit(UUID.randomUUID(), UUID.randomUUID(), SiegeType.BATTERING_RAM, crew, health,
++        100, where, hasDeployment ? where.clone() : null, SiegeState.DEPLOYING, 50, 0, Instant.now());
++  }
++
++  private static SiegeUnit create(Fixture fixture) {
++    return fixture.service().createSiege(UUID.randomUUID(), SiegeType.BATTERING_RAM, 5,
++        new Location(fixture.world(), 0, 64, 0));
++  }
++
++  private static Fixture fixture() {
++    World world = mock(World.class);
++    when(world.getName()).thenReturn("world");
++    return fixture(world, new HashMap<>());
++  }
++
++  private static Fixture fixture(World world, Map<String, Properties> data) {
++    Plugin plugin = mock(Plugin.class);
++    Server server = mock(Server.class);
++    BukkitScheduler scheduler = mock(BukkitScheduler.class);
++    AtomicReference<Runnable> tick = new AtomicReference<>();
++    when(plugin.getServer()).thenReturn(server);
++    when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    when(server.getScheduler()).thenReturn(scheduler);
++    when(server.getPluginManager()).thenReturn(mock(PluginManager.class));
++    when(scheduler.runTaskTimer(any(), any(Runnable.class), anyLong(), anyLong())).thenAnswer(call -> {
++      tick.set(call.getArgument(1)); return mock(BukkitTask.class);
++    });
++    when(scheduler.runTaskTimerAsynchronously(any(), any(Runnable.class), anyLong(), anyLong()))
++        .thenReturn(mock(BukkitTask.class));
++    PersistenceService persistence = mock(PersistenceService.class);
++    when(persistence.loadProperties(anyString(), anyString())).thenAnswer(call -> {
++      Properties copy = new Properties();
++      copy.putAll(data.getOrDefault(call.getArgument(1), new Properties()));
++      return copy;
++    });
++    org.mockito.Mockito.doAnswer(call -> {
++      Properties copy = new Properties(); copy.putAll((Properties) call.getArgument(2));
++      data.put(call.getArgument(1), copy); return null;
++    }).when(persistence).saveProperties(anyString(), anyString(), any(Properties.class));
++    TreasuryService treasury = mock(TreasuryService.class);
++    when(treasury.balance(any(NationId.class))).thenReturn(new BigDecimal("1000000"));
++    when(treasury.withdraw(any(NationId.class), any(BigDecimal.class))).thenReturn(true);
++    SiegeServiceImpl service = new SiegeServiceImpl(plugin, mock(NationService.class), treasury,
++        SiegeService.SiegeConfig.defaults(), Map.of(), mock(MessageService.class), persistence);
++    return new Fixture(service, world, tick, data);
++  }
++
++  private record Fixture(SiegeServiceImpl service, World world, AtomicReference<Runnable> tick,
++                         Map<String, Properties> data) {}
++}
 diff --git a/src/test/java/dev/starcore/starcore/module/army/siege/SiegeModuleTreasuryLifecycleTest.java b/src/test/java/dev/starcore/starcore/module/army/siege/SiegeModuleTreasuryLifecycleTest.java
 new file mode 100644
 index 0000000..3f82b53
