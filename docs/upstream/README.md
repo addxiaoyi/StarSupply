@@ -25,6 +25,10 @@ $env:MAVEN_OPTS = '-Xmx512m -XX:ActiveProcessorCount=2 -XX:TieredStopAtLevel=1'
 .\mvnw.cmd '-Dspotless.skip=true' '-Dtest=SiegeModuleTreasuryLifecycleTest,ModuleManagerTest,ArmyExtensionLifecycleTest' test
 ```
 
-当前交付状态：源码补丁生成完成，`git diff --check` 与对原始固定版本的 `git apply --check` 检查通过。上述 Java 测试尚待执行；补丁没有替代 Paper 运行验收。确认测试后，可在该独立目录执行 `.\mvnw.cmd '-DskipTests' '-Dspotless.skip=true' package` 构建供隔离服务器验收的 StarCore 包。不要从未测试的修复目录覆盖原固定版本 Maven 依赖或正式服插件。
+2026-11-20 已在该独立检出用 Java 21 执行上述定向测试：`SiegeModuleTreasuryLifecycleTest` 3 项、`ModuleManagerTest` 8 项、`ArmyExtensionLifecycleTest` 6 项，共 17 项全部通过，0 失败、0 错误、0 跳过。Maven 从源码重新编译了 2233 个生产文件和 1008 个测试文件；日志位于独立检出的 `target-siege-tests.log`。`git diff --check` 与对原始固定版本的 `git apply --check` 也均通过。该结果只覆盖选定生命周期测试，不代表上游全量测试或 Paper 运行验收已完成。
+
+在该独立目录执行 `.\mvnw.cmd '-DskipTests' '-Dspotless.skip=true' package` 构建供隔离服务器验收的 StarCore 包；不执行 `install`，保留固定版本的本地 Maven 编译依赖。正式服部署应等待相应运行验收。
+
+2026-11-20 的独立 `package` 已成功，产物为该检出中的 `target/starcore-1.0.0.jar`，大小 19,507,084 字节，SHA-256 为 `3440310F482196EB322CC6EE792A94477C98EE91ABE63106F2AB1BF69109F8EA`；构建日志为 `target-siege-package.log`。产物仅供后续隔离 Paper 验收使用，没有安装到本地 Maven 仓库或覆盖原固定依赖。
 
 复现工作目录为 `C:\Users\Administrator\Documents\starsupply-deps\starcore-siege-fix`，其 HEAD 保持上述固定提交，改动只包含此补丁的生产文件和新增测试。原检出 `starsupply-deps\starcore` 未被修改。

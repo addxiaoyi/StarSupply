@@ -1,0 +1,10 @@
+name: StarSupplyFaultBootstrap
+version: '1.0-test-only'
+main: local.test.SupplyFaultBootstrap
+api-version: '1.21.11'
+depend: [StarCore]
+loadbefore: [StarSupply]
+commands:
+  supplyfault:
+    description: Isolated acceptance fault injection, console and RCON only.
+    usage: /supplyfault status
