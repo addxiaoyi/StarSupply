@@ -2,6 +2,8 @@
 
 StarSupply 第一阶段是面向 Paper 1.21.11 的国战后勤插件。军需官发布采购和运输合同，玩家用背包里的真实物品供货，并把国家库存从仓库运到前线。已绑定的 StarCore 军队在战时按周期消耗物资，补给变化直接进入 StarCore 的军队战力计算。
 
+原始需求、实现位置和验收边界见 [需求对应表](docs/REQUIREMENTS.md)。
+
 ## 安装
 
 使用 Java 21 和 Paper 1.21.11。将 StarCore 1.0.0 和 `target/starsupply-0.1.0.jar` 放入 `plugins/`。在 StarCore 中选择内部经济 `economy.provider: internal`，并启用国家、官员、军队、战争与战场服务。兼容的 CraftEngine 和森罗物语 Cookery 可以提供品质军粮。默认配置也支持纯原版物品。
