@@ -19,7 +19,7 @@ if ([string]::IsNullOrWhiteSpace($StarCoreRoot)) {
 }
 $starCore = (Resolve-Path $StarCoreRoot).Path
 if ([string]::IsNullOrWhiteSpace($Maven)) {
-    $Maven = (Get-Command mvn.cmd -ErrorAction Stop).Source
+    $Maven = Join-Path $root 'mvnw.cmd'
 }
 if ([string]::IsNullOrWhiteSpace($JavaHome)) {
     if ($env:JAVA_HOME -and (Test-Path (Join-Path $env:JAVA_HOME 'bin\java.exe'))) {

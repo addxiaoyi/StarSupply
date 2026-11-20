@@ -1,2 +1,4 @@
 # Unified diff context lines intentionally contain one space for blank source lines.
 *.patch text eol=lf whitespace=-blank-at-eol
+mvnw text eol=lf
+mvnw.cmd text eol=crlf

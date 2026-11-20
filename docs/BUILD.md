@@ -1,6 +1,6 @@
 # Build and artifact
 
-The first-stage build targets Java 21, Paper API 1.21.11, and the public StarCore API at commit `f769e62799e769a18fe51305b545869a17f80cd1`. StarCore must first be installed into the same Maven repository. StarSupply references its public services with compile-time types; it does not bundle the Paper API or StarCore classes.
+The first-stage build targets Java 21, Paper API 1.21.11, and the public StarCore API at commit `f769e62799e769a18fe51305b545869a17f80cd1`. StarCore must first be installed into the same Maven repository. StarSupply references its public services with compile-time types; it does not bundle the Paper API or StarCore classes. The included Apache Maven Wrapper pins Maven 3.9.16 and verifies the distribution SHA-256; its scripts retain their Apache License 2.0 headers. After the StarCore dependency is installed, use `./mvnw verify` on POSIX or `.\mvnw.cmd verify` on Windows. `tools/build.ps1` uses this wrapper by default, so an installed Maven command is optional.
 
 Run the cross-platform Maven build directly with a Java 21 installation, Maven 3.9.6 or newer, and a clean StarCore checkout at that commit:
 
