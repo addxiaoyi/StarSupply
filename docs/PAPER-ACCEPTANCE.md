@@ -119,7 +119,17 @@ B380 历史包发现普通未投保运输误调用保险出发超时检查，导
 
 测试探针订阅 `SupplyConsumptionEvent`，该次运行观察到 38 个不同的结算 UUID，每个只发布一次，事件包含军队、周期、需求和实际消耗；后台每秒轮询未重复发布。该现场结果覆盖本次进程内的周期去重，重启后同一周期不再扣物的持久幂等另由生命周期测试覆盖。脱敏回归记录见 [939C 运行证据](verification/2026-11-20-paper-939c-regression.json)。
 
-上述历史结果和脱敏记录见 [运行证据](verification/2026-11-20-paper-runtime.json)。尚待现场覆盖的分支包括围城、真实 Tavern 酒品认证、税款或保险外部调用边界的故障注入与人工核验恢复，以及第 9 项的贸易拒绝分支；这些记录没有证明第 12–15 项全部通过，也不代表完整开发目标完成。
+## 经济调用故障与真实酒品复验
+
+后续隔离服安装独立故障探针，只代理公开的 StarCore 服务调用；原始返回值与前后国库余额写入强制刷盘的独立 JSONL 证据，不写入业务数据库。`tax-after` 在真实 `fundTax` 返回 2.00 后丢弃返回值，采购、交接、支付与税款冻结为 `REVIEW`；核对独立证据后执行 `reconcile-tax funded`，最终分别为 `BOUGHT`、`STORED`、`PAID`、`FUNDED`，重复核对被拒绝。`tax-before` 在委派前中断，证据为 `delegate_called=false`；执行 `unfunded` 后按原报价补缴成功，卖家净额只发一次。
+
+保险 `premium-after` 在国库真实收到 4.20、`tryDeposit` 返回 true 后丢弃返回值，`PREMIUM_CREDIT` 进入 `REVIEW`，运输领取与取消均拒绝。核验独立证据后执行 `reconcile-insurance ... premium_credit applied`，保单成为 `ACTIVE`，记录实际生效时间；重复核对拒绝，正常退保后只释放原准备金。`premium-before` 则在调用前中断；根据未调用证据执行 `untouched` 后，保单关闭、已扣玩家保费退还一次、准备金释放一次。
+
+精确固定提交 `7a676978f9c4a825275a9f905c3f860ac05a6827` 的 Tavern JAR 实测时，临时要求真实酒品且熟成等级至少 1。空手和普通 CraftEngine brandy（等级 0）登记被拒绝；通过 Tavern 公共 `catalog`、`BrewBatch`、`bottle` 生成的等级 2 真实酒品登记成功，持久 `verified=1`。同次注册前后手持品序列化 SHA-256、等级 2 与数量 1 均相同，物品未被消耗或改写。依赖哈希、四笔故障恢复和酒品证据见 [故障与酒品记录](verification/2026-11-20-paper-faults-tavern.json)。
+
+本轮测试 StarCore 修正依赖后可创建攻城单位，但 `startSiege` 仍因未部署返回 `OUT_OF_RANGE`；公共 `deploySiege` 进入 `DEPLOYING` 后，固定源码缺少完成转为 `READY` 的调用。因此围城消耗爬升尚未通过，不以可变单位或直接数据库注入绕过。另一次等待重启的税款探针在创建采购前即停服，没有生成测试交易，不计为跨重启待核验通过。战时出口控制测试亦因 Beta 仓库选址不在本国领土而未执行到控制分支。
+
+隔离服于 13:36:25 正常停止，配置还原为测试前 300 秒补给周期且无临时 campaign 覆盖。上述证据仍只覆盖实际列出的路径；待完成范围包括围城、待核验期间重启恢复、插件关闭/世界卸载、贸易拒绝分支及后续源码修复后的最终构建，不代表完整开发目标完成。
 
 对待核验的结算，具备 `starsupply.admin` 的管理员可以在核对 StarCore 结算记录后执行 `/supply reconcile <结算UUID> <paid|unpaid>`。库存交接则用 `/supply reconcile-inventory <库存收据UUID> <applied|untouched>`，选择依据为已核对的玩家存档与交接日志。缺少证据时保持待核验状态。
 

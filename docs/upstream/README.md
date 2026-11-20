@@ -36,4 +36,8 @@ $env:MAVEN_OPTS = '-Xmx512m -XX:ActiveProcessorCount=2 -XX:TieredStopAtLevel=1'
 
 2026-11-20 第一版财政修复的独立 `package` 已成功，产物为该检出中的 `target/starcore-1.0.0.jar`，大小 19,507,084 字节，SHA-256 为 `3440310F482196EB322CC6EE792A94477C98EE91ABE63106F2AB1BF69109F8EA`；构建日志为 `target-siege-package.log`。此旧产物尚不包含部署生命周期修复，不应作为当前组合补丁的运行验证依据。产物没有安装到本地 Maven 仓库或覆盖原固定依赖。
 
+2026-11-20 组合补丁已重新完整编译生产源码与测试源码，并通过四个选定套件：财政生命周期 3 项、部署生命周期 3 项、模块管理 8 项、军队扩展生命周期 6 项，共 20 项，0 失败、0 错误、0 跳过。构建完成于 13:54:02，用时 3 分 37 秒，日志为 `target-siege-tests-combined.log`。组合包另行构建，Paper 围城和部署验收仍以主验收记录为准；该结果不替代上游全部测试。
+
+组合补丁独立 `package` 于 14:00:32 成功，用时 2 分 59 秒；产物仍为 `target/starcore-1.0.0.jar`，SHA-256 `676CF4E4D6AE52183AA80DB13A6E4A2E486A1AF93AE965A0176B08108C42AFC3`。日志为 `target-siege-package-combined.log`。该包包含财政与部署两项修复，将用于隔离服验收，未执行 `install`。
+
 复现工作目录为 `C:\Users\Administrator\Documents\starsupply-deps\starcore-siege-fix`，其 HEAD 保持上述固定提交，改动只包含此补丁的生产文件和新增测试。原检出 `starsupply-deps\starcore` 未被修改。

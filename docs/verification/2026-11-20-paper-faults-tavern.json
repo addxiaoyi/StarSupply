@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-20",
+  "starsupply_sha256": "939C804E2EEE24ECB8BB546D316493150F1D291F1EEB739BA7051FA03B7BCE78",
+  "starcore_stage_dependency_patch_sha256": "3440310F482196EB322CC6EE792A94477C98EE91ABE63106F2AB1BF69109F8EA",
+  "tavern": {"commit": "7a676978f9c4a825275a9f905c3f860ac05a6827", "sha256": "9A355A00ED2E5F19F241F0FA0ED2CBECB49700EBC847804855DD41A3E6690CA2"},
+  "fault_bootstrap": {"sha256": "FF7DAC8974F1FAEC265418ED5FF9AB0BB42120DCA04B647954ABC4CBCE74032A", "test_only": true, "public_service_proxy": true, "independent_evidence_fsynced": true, "writes_business_databases": false},
+  "tax_after": {
+    "settlement": "ed8f90a2-a432-4373-a1e7-290d149d3bac",
+    "purchase": "ba0fd2c4-3a58-44c9-b328-ec9274c2a140",
+    "gross": "20.00", "tax": "2.00", "delegate_called": true, "delegate_result": "2.00",
+    "treasury_before": "2254.20", "treasury_after": "2256.20",
+    "held_payment": "REVIEW", "held_purchase": "REVIEW", "held_tax": "REVIEW",
+    "manual_action_after_independent_evidence": "reconcile-tax funded",
+    "final_payment": "PAID", "final_purchase": "BOUGHT", "final_inventory": "STORED", "final_tax": "FUNDED",
+    "duplicate_reconcile_rejected": true,
+    "evidence_note": "Original successful workflow summary was later overwritten by a failed held-restart fixture. Authoritative server log, fsynced fault evidence and readonly SQL still prove this transaction's recovery."
+  },
+  "tax_before": {
+    "settlement": "8ada012f-e2a4-4c2c-9b81-59c64a774e9c",
+    "purchase": "c8bd0ff4-5751-4d9b-a15f-922ee9fd8678",
+    "gross": "20.00", "tax": "2.00", "delegate_called": false,
+    "held_payment": "REVIEW", "held_purchase": "REVIEW", "held_tax": "REVIEW",
+    "manual_action_after_independent_evidence": "reconcile-tax unfunded",
+    "final_payment": "PAID", "final_purchase": "BOUGHT", "final_inventory": "STORED", "final_tax": "FUNDED"
+  },
+  "premium_after": {
+    "shipment": "31567008-028d-4c98-b0fe-83a000e0ad9d",
+    "policy": "b410fa26-61f8-4ae6-96a2-7ed0448713a8",
+    "premium": "4.20", "delegate_called": true, "delegate_result": "true",
+    "treasury_before": "2186.20", "treasury_after": "2190.40",
+    "held_policy": "INSURING", "held_premium_credit": "REVIEW",
+    "accept_and_cancel_blocked": true,
+    "manual_action_after_independent_evidence": "premium_credit applied",
+    "activated_policy": "ACTIVE", "activated_at": 1795152150793,
+    "duplicate_reconcile_rejected": true, "uninsure_final": "CLOSED", "reserve_release": "APPLIED"
+  },
+  "premium_before": {
+    "shipment": "54f3cd37-b58a-4f59-bd5c-84a77257ec36",
+    "policy": "2227be08-b83d-4d14-8696-49e3460b949c",
+    "premium": "4.20", "delegate_called": false,
+    "held_policy": "INSURING", "held_premium_credit": "REVIEW",
+    "manual_action_after_independent_evidence": "premium_credit untouched",
+    "final_policy": "CLOSED", "premium_credit": "REJECTED", "premium_refund": "APPLIED", "reserve_release": "APPLIED"
+  },
+  "tavern_authenticity": {
+    "minimum_brew_level": 1,
+    "empty_hand_rejected": true, "raw_craftengine_brandy_level_0_rejected": true,
+    "public_api_bottle_level_2_accepted": true, "persisted_verified": true,
+    "before_after_amount": 1, "before_after_brew_level": 2,
+    "before_after_serialized_sha256": "8b746e850331fb101006b5d4b072b1d1e4a4c87a2e35f2d7e1230366f37adb55",
+    "item_consumed_or_modified": false
+  },
+  "pending": ["normal siege deployment completion and live pressure", "tax held-review restart recovery", "wartime strategic export control live rejection"],
+  "stage": {"stopped": true, "original_configuration_restored": true},
+  "goal_complete": false
+}
