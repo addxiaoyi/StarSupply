@@ -237,8 +237,8 @@ public final class StarCoreGateway implements CoreGateway {
 
     /** Sample mutable StarCore/World state only on Paper's server thread, never on the SQL worker. */
     public void captureCampaigns(List<Warehouse> fronts, long now) {
-        if (!Bukkit.isPrimaryThread()) {
-            throw new IllegalStateException("Campaign sampling requires the server thread");
+        if (!Bukkit.isGlobalTickThread()) {
+            throw new IllegalStateException("Campaign sampling requires the global server tick thread");
         }
         if (now <= 0) throw new IllegalArgumentException("Invalid campaign sample time");
         Objects.requireNonNull(fronts, "fronts");

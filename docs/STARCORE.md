@@ -29,6 +29,8 @@ StarSupply 的 `wartime-export-controls` 默认限制 `EQUIPMENT`、`STRATEGIC` 
 
 StarCore 的贸易协定执行器会搬运它自己的抽象国家资源。StarSupply 只读取协定和禁运状态，实物仍由玩家背包、StarSupply 批次和运输合同负责，避免一份贸易同时改变两套库存。跨国实物采购通过 StarCore `TaxationService` 取得进口国 `TARIFF` 报价：国家国库按毛额支出，出口玩家收到扣除关税后的净额，税款进入进口国国库。税费默认关闭，须由 StarCore 国家税务配置启用。StarSupply 将原始税额快照和税款阶段写入独立 SQL；若外部税收结果含糊，订单与货物保持冻结，管理员核查后用 `/supply reconcile-tax <结算UUID> <funded|unfunded>` 恢复。StarCore 当前税务 API 没有单笔税收回执查询接口；配置在报价后变化或入账异常时，不能凭余额推断结果，缺少独立证据时订单继续冻结。
 
+当前 StarSupply 实物采购仅支持卖家净额为正的报价。上游税务允许 100% 税率，若实际报价税额等于毛额，本插件在 SQL 托管准备校验时直接拒绝，在此之前不会扣除卖家背包或发起国库支出。该限制避免把零净额写成上游不接受的零金额玩家经济事务；并非已经扣款后转人工核验。调整税务配置，使该笔采购保留正净额后才能供货。
+
 StarSupply 还会读取 StarCore 当前有效国策和已解锁科技，用它们影响物流。`war_economy` 默认降低 10% 军队补给需求并增加 5% 战备系数，`military_drill` 增加 8% 战备系数；`railways` 默认提升路线效率 50%。这些国家级键值映射可在 StarSupply 配置中调整。读取快照缓存 5 秒，以限制对 StarCore 同步服务的轮询；过期国策最多可能再影响物流 5 秒。军需折减最大为 50%，战备系数加成最大为 10%，运输科技倍率最大为 150%；不修改 StarCore 的政策、科技或军队状态。若服务器使用自定义键，可在 `policy-logistics-bonuses`、`policy-combat-bonuses` 和 `technology-logistics-bonuses` 中替换映射。
 
 冬季远征和持续围城共用同一补给周期。StarSupply 每 5 秒在 Paper 服务线程读取 StarCore 季节与攻城快照，只有可战斗战争中的敌方器械围攻匹配本国前线附近的存活城墙时才累积压力。信息 15 秒过期后使用普通需求；持续性记录保存在 StarSupply v7 的 `campaign_siege`。当周期已经消费时，SQL 保存的需求不可变，中途季节、兵力或政策变化要到下个周期才改变消耗。效果与限幅见 [战役补给](CAMPAIGNS.md)。
@@ -48,7 +50,7 @@ StarSupply 先在本地 SQL 记下需支付的货物或交付工作，随后用�
 
 ## Folia 约束
 
-StarSupply 的玩家操作走实体调度器，位置相关操作使用 Paper 区域调度器适用的线程边界。当前 StarCore 版本没有 `folia-supported` 声明，其 `ArmyService` 也调用传统 `BukkitScheduler.runTaskTimer`。因此完整组合部署和验证使用 Paper。需要 StarCore 自身支持 Folia 后才能验证完整 Folia 组合，单独修改插件声明不能解决线程兼容性。
+StarSupply 的玩家操作走实体调度器，位置相关操作使用 Paper 区域调度器适用的线程边界；季节和围城快照在全局调度器执行，并通过 `Bukkit.isGlobalTickThread()` 检查。已验证的 Paper 实现把该检查委托给相同的主 tick 线程检查，使用此 API 不代表已经完成 Folia 组合验收。当前 StarCore 版本没有 `folia-supported` 声明，其 `ArmyService` 也调用传统 `BukkitScheduler.runTaskTimer`。因此完整组合部署和验证使用 Paper。需要 StarCore 自身支持 Folia 后才能验证完整 Folia 组合，单独修改插件声明不能解决线程兼容性。
 
 ## 从固定版本构建 StarCore
 
