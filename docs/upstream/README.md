@@ -43,3 +43,34 @@ $env:MAVEN_OPTS = '-Xmx512m -XX:ActiveProcessorCount=2 -XX:TieredStopAtLevel=1'
 隔离 Paper 已实际验证该组合包：公开创建和部署器械后，等待正常分钟更新进入 `READY`，再公开开始真实围城；StarSupply 压力达到配置上限，公开撤退后下周期恢复普通需求。真实军队战斗也证明后勤倍率进入实际伤害。详细运行环境、哈希和证据见 [Paper 验收记录](../PAPER-ACCEPTANCE.md)；验收后隔离服恢复原 StarCore JAR，原上游与正式服未被替换。
 
 复现工作目录为 `C:\Users\Administrator\Documents\starsupply-deps\starcore-siege-fix`，其 HEAD 保持上述固定提交，改动只包含此补丁的生产文件和新增测试。原检出 `starsupply-deps\starcore` 未被修改。
+
+## 实验 Folia 后勤 profile 与构建边界
+
+另一个独立检出 `starcore-folia` 正在迁移 StarSupply 所需的上游模块。实验开关为 `platform.folia-logistics-profile`，默认 `false`；启用后，模块范围限制为 `nation`、`economy`、`government`、`resolution`、`treasury`、`diplomacy`、`resource`、`technology`、`policy`、`officer`、`army`、`war`、`siege`、`taxation`、`event`。Treasury 仍注册 loan、budget、bankruptcy 权威服务。实验源码已导出为 [完整 Folia 后勤补丁](starcore-folia-logistics.patch)，包含上方攻城修复，应直接应用于固定原始提交，不要叠加旧攻城补丁。
+
+实验迁移使用显式全局、实体和区域调度，保留服务对权威数据的串行访问。覆盖范围包括军队与攻城周期、战争通知与动画、国家异步传送及退款台账、财政与政策科技周期，以及补给线路和战争模型的并发快照。玩家操作在实体所有权下执行，固定位置效果使用区域任务；关键确认写入与失败补偿仍保留原有持久确认语义，不将这些路径描述为全部异步。
+
+2026-11-20 17:21:56 的历史 `package` 使用 Java 21 和 Maven 3.9.11，重新编译 2234 个生产文件、1030 个测试文件。选中 971 项测试，其中 **967 项实际执行并通过，4 项跳过，0 失败、0 错误**。两项 MySQL 集成测试因未设置 `starcore.mysql.it` 而跳过；另外两项旧 `WarModuleAuthorityTest` 已因引用移除的方法而标记废弃。选定范围、具体用例名与原始跳过理由见 [上游定向测试记录](../verification/folia-upstream-targeted-tests-20261120.json)，不能把四项跳过计为执行通过。
+
+该批次全部 106 个改动或新增 Java 文件通过定向 Spotless apply/check；浅历史检出显式使用 `ratchetFrom=HEAD`。构建前后登记的 107 项改动或新增 `src` 文件，内容哈希及路径集合均无变化。这是该批改动的冻结核验，不是整个上游仓库所有源文件的哈希清单。历史 JAR 大小 19,546,152 字节，SHA-256 `5643DBBBA0E61F7B267491716FCDA561468E68C82816B5B2EA20ABA7A0D82F60`；未执行 `install`。后续可选命令与 profile 注册修订需另记新构建和新哈希，不能沿用这份历史产物的验证结论。
+
+17:26:48 的后续构建只追加 `StarCorePlugin` 与 `EconomyCommand` 两类源改动，处理缩减 profile 下未初始化的 HUD/旧压测命令注册，以及排行榜数据读取与玩家回调边界；34 项针对性测试实际执行通过，0 失败、0 错误、0 跳过。该新源包 SHA-256 为 `CDD264D1D5A4F4836D91CC645EB3DDD1A14342FF69F81F7146040CD3E4A40C74`。前述 971 项没有在这个新包上全量重跑，两次测试结果不能当作一个未发生的运行。
+
+为后续隔离 Folia 运行测试，单独测试副本只覆盖插件描述符的 `folia-supported: true`，使运行副本的哈希区别于源构建：StarCore 为 `0C0D340C40E540674F9DE7E9BB03216894D26C78C51D4350DD331C07C807D509`，StarSupply 为 `16A1ED43CB3AC67F7992BA6C6DF79B78683983B8EE4105B0B6AB6309978A867B`。这些副本描述符不改变主发布声明；本节记录的是测试准备与构建证据，没有 Folia 现场通过结论。
+
+这 971 项记录不包含 Folia 启动、多区域玩家、真实运输、重启或停服现场验收。当前主发布插件仍未声明 `folia-supported`，完整组合支持尚未完成；上述定向测试也不替代上游全量测试。后续运行验收应明确关联实际部署的 JAR 哈希、启用的模块和选装插件版本。
+
+补丁对原始固定检出的 `git apply --check` 已通过。可在独立目录复现，不覆盖原始 Maven 依赖：
+
+```powershell
+git worktree add --detach C:\path\to\starcore-folia f769e62799e769a18fe51305b545869a17f80cd1
+Set-Location C:\path\to\starcore-folia
+git apply --check C:\path\to\StarSupply\docs\upstream\starcore-folia-logistics.patch
+git apply C:\path\to\StarSupply\docs\upstream\starcore-folia-logistics.patch
+$env:JAVA_HOME = 'C:\path\to\jdk-21'
+$env:MAVEN_OPTS = '-Xmx512m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC'
+# 完整定向 selector 见上方 JSON；浅历史使用 HEAD，避免不存在的 HEAD^。
+.\mvnw.cmd '-Dspotless.ratchetFrom=HEAD' '-Dtest=CompatSchedulerTest,*Folia*Test,ModuleManagerTest,ArmyService*Test,*Siege*Test,War*Test,SupplyLine*Test,Battlefield*Test' package
+```
+
+该源码补丁保留生产描述符的保守状态。隔离运行夹具只对测试 JAR 增加 Folia 加载标识，并分别记录修改前后哈希；这允许实际检查线程归属，不构成发布支持声明。Profile 下的可选现代 HUD 和压力测试命令不注册，国家及 StarSupply 常规 GUI 继续提供。Folia 下停用 StarCore 时，其他实体线程上的瞬态科技属性随玩家重登或服务器重启清理；不支持通过热重载验证正式服生命周期。

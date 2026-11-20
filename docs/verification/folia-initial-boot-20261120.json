@@ -1,0 +1,53 @@
+{
+  "recorded_on": "2026-11-20",
+  "purpose": "Initial real Folia boot and normal shutdown of the experimental full logistics profile; gameplay still pending",
+  "engine": {
+    "minecraft": "1.21.11",
+    "java": "21.0.13.1+2",
+    "heap_max_mb": 768,
+    "folia_build": "14",
+    "tick_workers": 2,
+    "sha256": "F52C408490A0225611E67907A3CA19F7E6DA2C6BC899E715D5F46844E7103C39",
+    "revision": "529aabc"
+  },
+  "source_starcore_sha256": "CDD264D1D5A4F4836D91CC645EB3DDD1A14342FF69F81F7146040CD3E4A40C74",
+  "runtime_starcore_sha256": "0C0D340C40E540674F9DE7E9BB03216894D26C78C51D4350DD331C07C807D509",
+  "source_starsupply_sha256": "D2BFC503F45F110ECD2321E244C0F2211E13D7CBFD72674E44363F2416151C08",
+  "runtime_starsupply_sha256": "16A1ED43CB3AC67F7992BA6C6DF79B78683983B8EE4105B0B6AB6309978A867B",
+  "test_descriptor_override": "The two isolated test JAR descriptors add folia-supported:true; production source descriptors remain unchanged",
+  "actual_enabled_plugins": [
+    "CraftEngine 26.9.1",
+    "KaleidoscopeCookeryPlugin 1.3.0",
+    "StarCore 1.0.0",
+    "StarSupply 0.1.0"
+  ],
+  "core_profile": "platform.folia-logistics-profile=true",
+  "startup_seconds": 295.082,
+  "unsupported_scheduler_errors": 0,
+  "error_level_lines": 0,
+  "expected_optional_warning": "ProtocolLib unavailable; nation menu selected its configured fallback",
+  "public_console_observation": "plugins returned all four plugins enabled",
+  "normal_stop_command": "stop",
+  "owned_process_confirmed_exited": true,
+  "game_and_rcon_ports_confirmed_unbound_after_stop": true,
+  "events": [
+    "[17:32:36 INFO]: [StarCore] Enabling StarCore v1.0.0",
+    "[17:32:39 INFO]: [StarCore] Registered STARCORE public API.",
+    "[17:32:39 INFO]: [StarCore] STARCORE 1.0.0 enabled.",
+    "[17:32:39 INFO]: [StarSupply] Enabling StarSupply v0.1.0",
+    "[17:32:39 INFO]: [StarSupply] StarSupply 已启用，数据库 supply.db",
+    "[17:32:39 INFO]: Done (295.082s)! For help, type \"help\"",
+    "[17:35:08 INFO]: [StarSupply] Disabling StarSupply v0.1.0",
+    "[17:35:08 INFO]: [StarCore] Disabling StarCore v1.0.0",
+    "[17:35:08 INFO]: [StarCore] STARCORE disabled.",
+    "[17:35:08 INFO]: Waiting for all RegionFile I/O tasks to complete...",
+    "[17:35:08 INFO]: All RegionFile I/O tasks to complete"
+  ],
+  "remaining": [
+    "Two distant player regions with actual inventory and receipt custody",
+    "Real Cookery cargo purchase and transportation settlement",
+    "Front stock and actual combat effect",
+    "Disconnect, duplicate delivery and post-loop normal restart"
+  ],
+  "full_folia_stack_accepted": false
+}

@@ -1,0 +1,177 @@
+{
+  "recorded_on": "2026-11-20",
+  "purpose": "Historical targeted build evidence for an experimental StarCore Folia logistics profile; no Folia runtime acceptance is claimed",
+  "upstream": {
+    "repository": "https://github.com/addxiaoyi/starcore",
+    "base_commit": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "isolated_checkout": "starcore-folia",
+    "experimental_profile": "platform.folia-logistics-profile",
+    "profile_default": false,
+    "profile_modules": [
+      "nation",
+      "economy",
+      "government",
+      "resolution",
+      "treasury",
+      "diplomacy",
+      "resource",
+      "technology",
+      "policy",
+      "officer",
+      "army",
+      "war",
+      "siege",
+      "taxation",
+      "event"
+    ],
+    "main_plugin_folia_support_declared": false
+  },
+  "environment": {
+    "java": "21.0.13.1+2",
+    "maven": "3.9.11",
+    "offline": true,
+    "maven_heap_mb": 512,
+    "surefire_heap_mb": 384,
+    "active_processor_count": 2,
+    "jacoco_skipped": true,
+    "install_executed": false,
+    "server_started_by_this_run": false
+  },
+  "build": {
+    "finished_at": "2026-11-20T17:21:56+08:00",
+    "elapsed_seconds": 165,
+    "goal": "package",
+    "exit_code": 0,
+    "production_sources_compiled": 2234,
+    "test_sources_compiled": 1030,
+    "historical_artifact": {
+      "path_at_build": "target/starcore-1.0.0.jar",
+      "size_bytes": 19546152,
+      "sha256": "5643DBBBA0E61F7B267491716FCDA561468E68C82816B5B2EA20ABA7A0D82F60",
+      "scope": "The frozen migration batch tested below; later optional-command/profile-registration edits require their own build and artifact hash"
+    }
+  },
+  "format": {
+    "tool": "Spotless Maven plugin 3.6.0",
+    "scope": "All 106 modified or newly added Java files at this historical build",
+    "ratchet_from": "HEAD",
+    "file_filter": "Explicit comma-separated regular expressions, with unique path suffixes where filenames collide",
+    "apply_passed": true,
+    "check_passed": true,
+    "check_finished_at": "2026-11-20T17:19:08+08:00",
+    "check_report": {
+      "files": 106,
+      "changes_needed": 0,
+      "cached_files": 106
+    },
+    "shallow_history_note": "HEAD^ is unavailable in this isolated checkout; the check explicitly uses HEAD"
+  },
+  "source_freeze": {
+    "scope": "107 modified or newly added files under src, including 106 Java files; this is not a hash inventory of every upstream source file",
+    "entries": 107,
+    "content_changed_between_prebuild_and_postbuild": 0,
+    "path_set_changes_between_prebuild_and_postbuild": 0,
+    "prebuild_manifest_sha256": "DD552D17BD718331F96E9DBDC81BDBCAC5CC3FFAF08F464F935260332D6DA780",
+    "postbuild_checked_at": "2026-11-20T17:21:56.8871215+08:00"
+  },
+  "tests": {
+    "selected": 971,
+    "executed": 967,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "selector": "CompatSchedulerTest,Animation*Test,*Folia*Test,ArmyService*Test,ArmyExtensionLifecycleTest,ArmyMenuListenerLifecycleTest,*Siege*Test,*Treasury*Test,LoanService*Test,Budget*Test,Bankruptcy*Test,TaxationService*Test,PolicyModule*Test,PolicyEventListener*Test,ResearchScheduler*Test,Technology*Test,NativeNationResourceDistrict*Test,NationStatusBar*Test,NationModule*Test,TemporaryPermissionServiceTest,TimeSyncServiceTest,TerritoryLeaseServiceSchedulingTest,SeasonServiceTest,ConfigurationServiceFoliaProfileTest,Notification*Test,NavigationHubMenuTest,ParticleFeedback*Test,War*Test,PeaceTreaty*Test,ParticleEffectManager*Test,NationTeleport*Test,Region*Test,TerritoryVisualizer*Test,GameplayGuideListener*Test,ModuleManagerTest,ResourceModule*Test,SimpleResource*Test,Battlefield*Test,SupplyLine*Test,BattleResult*Test,JoinNationRequest*Test,CourtExecution*Test",
+    "scope": [
+      "Scheduler ownership, task cancellation and retirement",
+      "Profile configuration, module lifecycle, regional observation and player feedback",
+      "Army, siege, warfare, immutable supply snapshots and durable rollback",
+      "Treasury, loans, budgets, taxation, policies, research and technology",
+      "Entity-owned teleportAsync with serialized billing and durable reviewed refunds",
+      "Selected nation, region, resource and command callback contracts"
+    ],
+    "skip_details": [
+      {
+        "suite": "dev.starcore.starcore.module.treasury.MySqlTreasuryStateIntegrationTest",
+        "cases": [
+          "simultaneousReplayCommitsOneTransferAndIdleInstanceCanRefreshAndWrite",
+          "concurrentFirstSnapshotsHaveOneWinnerAndLoserCanReload"
+        ],
+        "count": 2,
+        "reported_reason": "System property [starcore.mysql.it] does not exist",
+        "implication": "The required external MySQL integration environment was not enabled; these two cases were not executed"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.WarModuleAuthorityTest",
+        "cases": [
+          "declarationFeeIsChargedOnceAndCompensatedWhenAuthorityFails",
+          "migrationImportsBothLegacyStoresBeforeClearingThem"
+        ],
+        "count": 2,
+        "reported_reason": "Deprecated: Tests reference removed methods (declareWarChecked, migrateLegacyState, importLegacyWar)",
+        "implication": "These two pre-existing deprecated cases were disabled; their names are not passed-test evidence"
+      }
+    ]
+  },
+  "reproduction": {
+    "command": "mvn -B -o -Dspotless.skip=true -Djacoco.skip=true '-DargLine=-Xmx384m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC -XX:TieredStopAtLevel=1' '-Dtest=<tests.selector>' package",
+    "prerequisite": "Use the exact historical source batch and cached dependencies; apply and check Spotless separately with ratchetFrom=HEAD and an explicit filter for all changed Java files",
+    "evidence_files_in_isolated_workspace": [
+      "folia-final-tests-package.log",
+      "folia-final-format-check.log",
+      "folia-final-java-format-files.json",
+      "folia-final-source-before.json",
+      "folia-final-package-result.json"
+    ],
+    "skip_reason_source": "Surefire XML testcase skipped elements for the two suites listed above"
+  },
+  "subsequent_build": {
+    "finished_at": "2026-11-20T17:26:48+08:00",
+    "sha256": "CDD264D1D5A4F4836D91CC645EB3DDD1A14342FF69F81F7146040CD3E4A40C74",
+    "source_delta": [
+      "StarCorePlugin.java",
+      "EconomyCommand.java"
+    ],
+    "changes": "Avoid registering unavailable HUD/legacy benchmark commands in the reduced profile; collect economy leaderboard data through serialized authority and return player results on the sender entity scheduler",
+    "production_sources_compiled": 2234,
+    "test_sources_compiled": 1030,
+    "tests": {
+      "selected": 34,
+      "executed": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": [
+      "EconomyCommandHandlerTest",
+      "ConfigurationServiceFoliaProfileTest",
+      "ModuleManagerTest",
+      "EconomyCommandThreadingTest"
+    ],
+    "evidence_log": "folia-final-bootstrap-package.log",
+    "boundary": "A separate follow-up package and targeted delta run; the 971-case suite was not rerun against this later artifact"
+  },
+  "isolated_runtime_test_setup": {
+    "descriptor_only_override": "folia-supported: true",
+    "base_starcore_sha256": "CDD264D1D5A4F4836D91CC645EB3DDD1A14342FF69F81F7146040CD3E4A40C74",
+    "runtime_starcore_sha256": "0C0D340C40E540674F9DE7E9BB03216894D26C78C51D4350DD331C07C807D509",
+    "base_starsupply_sha256": "D2BFC503F45F110ECD2321E244C0F2211E13D7CBFD72674E44363F2416151C08",
+    "runtime_starsupply_sha256": "16A1ED43CB3AC67F7992BA6C6DF79B78683983B8EE4105B0B6AB6309978A867B",
+    "boundary": "The descriptor overrides apply only to isolated test copies; this record contains no Folia runtime result and does not change the main release declarations"
+  },
+  "limits": [
+    "This is a selected upstream test run, not the complete StarCore test suite",
+    "No Folia server boot, two-region gameplay, connected-player transport, restart or shutdown acceptance is established by this record",
+    "No MySQL integration success is claimed for the skipped cases",
+    "Critical write-confirmation and compensation paths retain their durable confirmation semantics; persistence is not claimed to be universally asynchronous",
+    "The main release plugin still has no folia-supported declaration and complete Folia support remains unfinished",
+    "The historical artifact was followed by optional-command and profile-registration edits; its hash and test results must not be relabeled as proof for a later artifact"
+  ],
+  "portable_patch": {
+    "apply_check_passed": true,
+    "sha256": "402B6A3B45FDAE0FB6BDDC93A8CB0A705DA825217ABF01D009B9293011FC40B5",
+    "base_commit": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "includes_siege_patch": true,
+    "production_folia_declaration": false,
+    "path": "docs/upstream/starcore-folia-logistics.patch"
+  }
+}
