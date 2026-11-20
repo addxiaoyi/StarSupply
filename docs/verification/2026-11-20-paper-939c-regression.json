@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-20",
+  "artifact_sha256": "939C804E2EEE24ECB8BB546D316493150F1D291F1EEB739BA7051FA03B7BCE78",
+  "full_verify": {"tests": 69, "failures": 0, "errors": 0},
+  "server": {"paper": "1.21.11-132", "starcore_commit": "f769e62799e769a18fe51305b545869a17f80cd1", "supply_interval_seconds_for_test": 30, "original_interval_seconds_restored": 300, "stopped_after_test": true},
+  "insurance_migration": {"before_schema": 1, "after_schema": 2, "preserved_policy": "8a70b63b-c94f-441d-b1ca-b71af219517d", "preserved_state": "CLAIMED", "preserved_updated": 1795147714359, "activated_column_present": true},
+  "six_resource_loop": {"paid_purchase_count": 6, "paid_transport_count": 6, "delivered_count": 6, "coverage": 1, "combat_multiplier": 1.13, "cookery_mantou_included": true},
+  "self_escort": {"shipment": "aa436c38-2d6b-4c4f-a052-77a46d7fdd45", "player_joined_then_accepted": true, "escort_rows_after_accept": 0, "final_state": "DELIVERED"},
+  "front_access": {
+    "army": "6bff11d9-48a7-4b47-bec6-2501617a1887",
+    "radius_blocks": 256,
+    "out_of_range": {"observed_state": "ARMY_OUT_OF_RANGE", "duration_ms": 33021, "consumption_rows_before": 360, "consumption_rows_after": 360, "food_units_before": 7, "food_units_after": 7, "coverage": 0},
+    "control_lost": {"observed_state": "CONTROL_LOST", "public_unclaim_used": true, "no_new_consumption": true, "all_physical_lots_unchanged": true, "coverage": 0},
+    "recovery": {"observed_state": "CONNECTED", "public_claim_and_move_used": true, "consumption_resumed": true, "coverage": 0.45, "combat_multiplier": 1.02, "stock_limited": true}
+  },
+  "consumption_events": {"distinct_settlement_ids": 38, "maximum_count_per_id": 1, "payload_has_actual_consumption": true, "scope": "observed process lifetime with one-second maintenance polling; restart persistence is covered separately by lifecycle tests"},
+  "harness_issue": "First exact 10-block diagonal public movement encountered floating-point max-distance rejection. Retested with 7.5-block public movement; the final front-access phases passed and army position was restored.",
+  "no_authority_database_writes": true,
+  "goal_complete": false
+}
