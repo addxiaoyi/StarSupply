@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-20",
+  "starsupply_sha256": "870759C7FE4DA4A128C2BAA60444B7D55EC89B9292CA6CF653C13CCC90F44670",
+  "full_verify": {"tests": 69, "failures": 0, "errors": 0},
+  "runtime_starcore_sha256": "676CF4E4D6AE52183AA80DB13A6E4A2E486A1AF93AE965A0176B08108C42AFC3",
+  "change_since_939c": "Native isGlobalTickThread assertion for synchronous campaign sampling; Paper startup and fresh immutable samples verified",
+  "final_runtime": {
+    "enabled_at_local": "2026-11-20 14:37:11 +08:00",
+    "supply_interval_seconds": 300,
+    "campaign_observed_at": 1795156785828,
+    "observed_front_access": "CONNECTED",
+    "unique_consumption_event": "ff93491b-dace-3f6a-9e6e-4757832fee56",
+    "event_count": 1,
+    "fault_plugin_installed": false
+  },
+  "held_tax_restart": {
+    "purchase": "9b321739-7101-4f34-9c48-83b1d6a83c8c",
+    "settlement": "5c76c5d9-1409-4cf9-b673-39235c1a668e",
+    "fault_mode_before_restart": "TAX_AFTER",
+    "authority_delegate_called": true,
+    "authority_delegate_result": "2.00",
+    "independent_receipt_fsynced_before_restart": true,
+    "all_states_before_shutdown": "REVIEW",
+    "all_states_after_restart_before_manual_recovery": "REVIEW",
+    "preserved_payment_updated": 1795155818830,
+    "preserved_tax_updated": 1795155818826,
+    "public_tax_history_after_restart": "empty; not used to infer funding",
+    "manual_recovery": "funded after independent receipt check",
+    "final_purchase": "BOUGHT", "final_payment": "PAID", "final_inventory": "STORED", "final_tax": "FUNDED",
+    "duplicate_manual_recovery_rejected": true,
+    "balances_before_and_after_manual_recovery": {"Alpha": "2144.40", "Beta": "9000.00", "seller": "4994.07"},
+    "balances_unchanged": true,
+    "passed": true
+  },
+  "cleanup": {
+    "verified_at": "2026-11-20T14:42:44.8719624+08:00",
+    "stage_process_present": false,
+    "game_and_rcon_listeners": [],
+    "remaining_plugin_jars": ["craftengine-26.9.1.jar", "KaleidoscopeCookeryPlugin-1.3.0.jar", "StarCore-1.0.0.jar", "StarSupply-0.1.0.jar"],
+    "all_test_probe_jars_removed": true,
+    "optional_tavern_test_jar_removed": true,
+    "restored_original_starcore_sha256": "953F926F12384E0CFAFAE6F55D266A10C7156468E7E28BE75518C3F7B413884B",
+    "original_starcore_backup_sha256": "953F926F12384E0CFAFAE6F55D266A10C7156468E7E28BE75518C3F7B413884B",
+    "restored_configuration_sha256": "3BF2CA7786E19F006AEB32F88BDA72686CF7956F06E6D956461D48BC53B22E94",
+    "original_configuration_backup_sha256": "3BF2CA7786E19F006AEB32F88BDA72686CF7956F06E6D956461D48BC53B22E94"
+  },
+  "goal_complete": false
+}

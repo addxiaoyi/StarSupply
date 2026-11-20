@@ -10,6 +10,8 @@ StarSupply 第一阶段是面向 Paper 1.21.11 的国战后勤插件。军需官
 
 StarSupply 通过实体调度器操作背包和 GUI，路线计算与 SQL 使用独立后台线程。当前钉住的 StarCore 版本使用旧版 Bukkit 调度器，参考组合的运行目标是 Paper。
 
+完整 Folia 组合的剩余适配边界见 [Folia 状态](docs/FOLIA.md)。
+
 ## 开始游戏
 
 | 身份 | 操作 |

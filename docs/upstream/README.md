@@ -38,6 +38,8 @@ $env:MAVEN_OPTS = '-Xmx512m -XX:ActiveProcessorCount=2 -XX:TieredStopAtLevel=1'
 
 2026-11-20 组合补丁已重新完整编译生产源码与测试源码，并通过四个选定套件：财政生命周期 3 项、部署生命周期 3 项、模块管理 8 项、军队扩展生命周期 6 项，共 20 项，0 失败、0 错误、0 跳过。构建完成于 13:54:02，用时 3 分 37 秒，日志为 `target-siege-tests-combined.log`。组合包另行构建，Paper 围城和部署验收仍以主验收记录为准；该结果不替代上游全部测试。
 
-组合补丁独立 `package` 于 14:00:32 成功，用时 2 分 59 秒；产物仍为 `target/starcore-1.0.0.jar`，SHA-256 `676CF4E4D6AE52183AA80DB13A6E4A2E486A1AF93AE965A0176B08108C42AFC3`。日志为 `target-siege-package-combined.log`。该包包含财政与部署两项修复，将用于隔离服验收，未执行 `install`。
+组合补丁独立 `package` 于 14:00:32 成功，用时 2 分 59 秒；产物仍为 `target/starcore-1.0.0.jar`，SHA-256 `676CF4E4D6AE52183AA80DB13A6E4A2E486A1AF93AE965A0176B08108C42AFC3`。日志为 `target-siege-package-combined.log`。该包包含财政与部署两项修复，未执行 `install`。
+
+隔离 Paper 已实际验证该组合包：公开创建和部署器械后，等待正常分钟更新进入 `READY`，再公开开始真实围城；StarSupply 压力达到配置上限，公开撤退后下周期恢复普通需求。真实军队战斗也证明后勤倍率进入实际伤害。详细运行环境、哈希和证据见 [Paper 验收记录](../PAPER-ACCEPTANCE.md)；验收后隔离服恢复原 StarCore JAR，原上游与正式服未被替换。
 
 复现工作目录为 `C:\Users\Administrator\Documents\starsupply-deps\starcore-siege-fix`，其 HEAD 保持上述固定提交，改动只包含此补丁的生产文件和新增测试。原检出 `starsupply-deps\starcore` 未被修改。
