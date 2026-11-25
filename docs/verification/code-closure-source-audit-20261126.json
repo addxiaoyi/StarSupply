@@ -1,0 +1,436 @@
+{
+  "recorded_at": "2026-11-26T06:38:08+08:00",
+  "kind": "source-audit-after-thirteenth-patch",
+  "starsupply_source_base_commit": "7cc7f80731f895d65f3be3c1c23dcc5ae3d89a55",
+  "core_upstream_commit": "f769e62799e769a18fe51305b545869a17f80cd1",
+  "core_thirteen_patch_checkpoint": "90cda00fc76b2d58ffb32f5dabc073fb6fe8b373",
+  "audited_sources_match_checkpoint": true,
+  "scope": "Targeted static source/call-site review of known open work; not an exhaustive audit of all Core modules.",
+  "findings": [
+    {
+      "id": "nation-shared-lifecycle",
+      "priority": "P1",
+      "finding": "分裂/解散仍使用目录外文件日志；分裂保存失败仍反向转地，解散外部清理缺共享退役终态。",
+      "completion": "意图、终态与共享目录版本统一；领土原编号转移回执和取消封存；城市、外交、国库等持久退役拒绝迟到写入；覆盖跨实例普通修改。",
+      "evidence": [
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationModule.java",
+          "first_line": 170,
+          "last_line": 179,
+          "excerpt": "170:             context.persistenceService(),\n171:             context.plugin().getLogger());\n172:     this.territoryService = context.serviceRegistry().require(TerritoryService.class);\n173:     this.splitJournal =\n174:         new PersistenceNationSplitJournal(metadata().id(), context.persistenceService());\n175:     this.creationJournal =\n176:         new PersistenceNationCreationJournal(metadata().id(), context.persistenceService());\n177:     this.disbandJournal =\n178:         new PersistenceNationDisbandJournal(metadata().id(), context.persistenceService());\n179:     this.externalProtectionService ="
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java",
+          "first_line": 101,
+          "last_line": 104,
+          "excerpt": "101:   record Snapshot(\n102:       List<Nation> nations,\n103:       java.util.Map<UUID, NationCreationOperation> creations,\n104:       java.util.Map<UUID, NationClaimOperation> claims) {}"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java",
+          "first_line": 158,
+          "last_line": 174,
+          "excerpt": "158:     NationSplitTransaction transaction =\n159:         NationSplitTransaction.prepared(\n160:             UUID.randomUUID(),\n161:             source.id(),\n162:             created.id(),\n163:             transfer,\n164:             previousState,\n165:             targetState,\n166:             Instant.now());\n167:     journal.save(transaction);\n168:     applyCatalogChange(source, previousMember, created, normalizedName);\n169: \n170:     boolean claimsTransferred;\n171:     try {\n172:       claimsTransferred =\n173:           territories.transferClaims(sourceId.toString(), created.id().toString(), transfer);\n174:     } catch (RuntimeException exception) {"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java",
+          "first_line": 194,
+          "last_line": 199,
+          "excerpt": "194:     try {\n195:       storage.save(NationStateCodec.toProperties(nations.values(), creations, claims));\n196:     } catch (RuntimeException exception) {\n197:       compensateFailedSave(\n198:           source, previousMember, created, normalizedName, transfer, previousState, exception);\n199:     }"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java",
+          "first_line": 237,
+          "last_line": 252,
+          "excerpt": "237:     RuntimeException compensationFailure = null;\n238:     try {\n239:       boolean restored =\n240:           territories.transferClaims(created.id().toString(), source.id().toString(), transfer);\n241:       if (!restored) {\n242:         compensationFailure =\n243:             new IllegalStateException(\n244:                 \"Territory rollback rejected after nation split save failure\");\n245:       }\n246:     } catch (RuntimeException exception) {\n247:       compensationFailure = exception;\n248:     }\n249: \n250:     restoreCatalog(source, previousMember, created, normalizedName);\n251:     try {\n252:       storage.save(previousState);"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationModule.java",
+          "first_line": 2068,
+          "last_line": 2077,
+          "excerpt": "2068:     Properties before = stateProperties();\n2069:     NationDisbandTransaction transaction = prepareDisbandTransaction(targets);\n2070:     disbandJournal.save(transaction);\n2071:     try {\n2072:       for (Nation target : targets) {\n2073:         target.members().forEach(member -> membership.remove(member.playerId(), target.id()));\n2074:         names.remove(normalizeNationName(target.name()), target.id());\n2075:         nationsById.remove(target.id(), target);\n2076:       }\n2077:       stateStorage.save(stateProperties());"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java",
+          "first_line": 244,
+          "last_line": 280,
+          "excerpt": "244:     Set<TerritoryClaim> claimsToRelease = new LinkedHashSet<>();\n245:     transaction\n246:         .claims()\n247:         .forEach(\n248:             (nationId, coordinates) ->\n249:                 coordinates.forEach(\n250:                     coordinate ->\n251:                         claimsToRelease.add(new TerritoryClaim(nationId.toString(), coordinate))));\n252:     if (!claimsToRelease.isEmpty() && !territoryService.unclaimClaimsDurably(claimsToRelease)) {\n253:       throw new IllegalStateException(\n254:           \"Nation disband transaction \"\n255:               + transaction.transactionId()\n256:               + \" could not durably release all claims because a claim is owned by another nation\");\n257:     }\n258: \n259:     if (!cityIds.isEmpty()) {\n260:       for (UUID cityId : cityIds) {\n261:         if (!cityService.deleteCity(cityId) && cityService.getCity(cityId).isPresent()) {\n262:           throw new IllegalStateException(\"Failed to delete disbanded city \" + cityId);\n263:         }\n264:       }\n265:     }\n266: \n267:     for (NationId nationId : transaction.nationIds()) {\n268:       diplomacyService.clearNationRelations(nationId);\n269:       allianceService.clearNationRelations(nationId);\n270:       militaryAllianceService.clearNationRelations(nationId);\n271:       warService.clearNationWarState(nationId);\n272:     }\n273: \n274:     if (!transaction.treasuryNationIds().isEmpty()) {\n275:       for (NationId nationId : transaction.treasuryNationIds()) {\n276:         BigDecimal balance = treasuryService.balance(nationId);\n277:         if (balance.signum() > 0 && !treasuryService.withdraw(nationId, balance)) {\n278:           throw new IllegalStateException(\n279:               \"Failed to clear treasury for disbanded nation \" + nationId);\n280:         }"
+        }
+      ]
+    },
+    {
+      "id": "claim-derived-delivery",
+      "priority": "P2",
+      "finding": "新圈地资金和领土已完成原编号恢复；资源区刷新、发展提示、事件仍在提交后尽力执行。",
+      "completion": "持久投递与接收方原编号确认；退出和响应丢失后可恢复。旧无意图交易另行核对。",
+      "evidence": [
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationModule.java",
+          "first_line": 1048,
+          "last_line": 1075,
+          "excerpt": "1048:     if (result.state() == NationClaimService.State.CLAIMED\n1049:         && !completed.contains(result.request().operationId())) {\n1050:       try {\n1051:         Nation nation = nationsById.get(result.nationId());\n1052:         if (nation != null) {\n1053:           NationDevelopmentGuide before = currentDevelopmentGuide(nation);\n1054:           if (resourceDistrictService != null) resourceDistrictService.ensureDistricts(nation);\n1055:           refreshNationCache(nation.id());\n1056:           notifyDevelopmentAdvance(nation, before);\n1057:         }\n1058:         if (context != null && context.eventBus() != null)\n1059:           context\n1060:               .eventBus()\n1061:               .publish(\n1062:                   new NationClaimedEvent(\n1063:                       result.request().operationId(),\n1064:                       result.request().playerId(),\n1065:                       result.nationId(),\n1066:                       result.request().selection().chunkCount(),\n1067:                       result.request().selection().world()));\n1068:       } catch (RuntimeException failure) {\n1069:         java.util.logging.Logger.getLogger(\"NationModule\")\n1070:             .log(\n1071:                 java.util.logging.Level.WARNING,\n1072:                 \"Claim committed; derived refresh/notification failed \"\n1073:                     + result.request().operationId(),\n1074:                 failure);\n1075:       }"
+        }
+      ]
+    },
+    {
+      "id": "creation-financial-operations",
+      "priority": "P2",
+      "finding": "创建/圈地待恢复操作按整个目录互斥；旧无回执资金需要独立证据，不能靠当前余额恢复。",
+      "completion": "明确并验证更多并发准入、冲突重试和旧账核对流程。当前串行限制是保护措施，不等同数据丢失。",
+      "evidence": [
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java",
+          "first_line": 43,
+          "last_line": 52,
+          "excerpt": "43:     var existing = snapshot.creations().get(request.operationId());\n44:     if (existing != null) {\n45:       if (!existing.request().equals(request))\n46:         throw new IllegalArgumentException(\"Conflicting creation request\");\n47:       return advance(existing);\n48:     }\n49:     if (snapshot.creations().values().stream().anyMatch(op -> op.state().pending())\n50:         || snapshot.claims().values().stream().anyMatch(op -> op.state().pending()))\n51:       throw new IllegalStateException(\n52:           \"Nation creation recovery pending; retry its original operation ID\");"
+        }
+      ]
+    },
+    {
+      "id": "navy-real-army-and-ports",
+      "priority": "P2",
+      "finding": "装卸只有舰队搭载计数和舰队保存，没有真实军队转移/返还；自动港口补给选项未被业务调用。",
+      "completion": "军队/舰队守恒、可恢复运兵与登陆/伤亡；真实港口条件和物资/资金来源。",
+      "evidence": [
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/navy/NavyService.java",
+          "first_line": 434,
+          "last_line": 455,
+          "excerpt": "434:   public boolean embarkUnits(UUID id, int count) {\n435:     synchronized (mutation) {\n436:       ready();\n437:       NavyUnit fleet = required(id);\n438:       if (!fleet.embarkUnits(count)) return false;\n439:       Map<UUID, String> values = new HashMap<>(state.fleets());\n440:       values.put(id, codec.encode(fleet));\n441:       commit(new NavyStore.Snapshot(values, state.payments(), state.cooldowns()));\n442:       return true;\n443:     }\n444:   }\n445: \n446:   public int disembarkUnits(UUID id, int count) {\n447:     synchronized (mutation) {\n448:       ready();\n449:       NavyUnit fleet = required(id);\n450:       int actual = fleet.disembarkUnits(count);\n451:       Map<UUID, String> values = new HashMap<>(state.fleets());\n452:       values.put(id, codec.encode(fleet));\n453:       commit(new NavyStore.Snapshot(values, state.payments(), state.cooldowns()));\n454:       return actual;\n455:     }"
+        }
+      ]
+    },
+    {
+      "id": "wounded-battle-and-replenishment",
+      "priority": "P2",
+      "finding": "伤兵战斗结果方法未找到生产调用；康复删除记录并返回人数，定时任务忽略返回值；医院只检查世界存在。",
+      "completion": "真实战斗伤亡生成、军队原编号回补、军队消失/换归属处理、医院条件和耐久事件。",
+      "evidence": [
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/wounded/listener/WoundedListener.java",
+          "first_line": 114,
+          "last_line": 135,
+          "excerpt": "114:   public void onBattleResult(BattleResult result, ArmyUnit attacker, ArmyUnit defender) {\n115:     // 计算伤亡\n116:     int attackerLosses = calculateLosses(attacker, result);\n117:     int defenderLosses = calculateLosses(defender, result);\n118: \n119:     // 将伤亡转为伤兵\n120:     if (attackerLosses > 0) {\n121:       try {\n122:         woundedService.createWounded(attacker, attackerLosses);\n123:       } catch (Exception e) {\n124:         plugin.getLogger().warning(\"Failed to create wounded for attacker army: \" + e.getMessage());\n125:       }\n126:     }\n127: \n128:     if (defenderLosses > 0) {\n129:       try {\n130:         woundedService.createWounded(defender, defenderLosses);\n131:       } catch (Exception e) {\n132:         plugin.getLogger().warning(\"Failed to create wounded for defender army: \" + e.getMessage());\n133:       }\n134:     }\n135:   }"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/wounded/WoundedServiceImpl.java",
+          "first_line": 231,
+          "last_line": 237,
+          "excerpt": "231:   public int completeHealing(UUID woundedId) {\n232:     WoundedRecord record = woundedRecords.get(woundedId);\n233:     if (record == null || !record.isHealing()) {\n234:       return 0;\n235:     }\n236: \n237:     int recoveredSoldiers = record.currentWounded();"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/wounded/WoundedServiceImpl.java",
+          "first_line": 257,
+          "last_line": 276,
+          "excerpt": "257:     // 从内存移除（已康复）\n258:     woundedRecords.remove(woundedId);\n259:     healingWounded.remove(woundedId);\n260: \n261:     // 从索引移除\n262:     Set<UUID> nationSet = nationWounded.get(record.nationId());\n263:     if (nationSet != null) {\n264:       nationSet.remove(woundedId);\n265:     }\n266:     if (record.playerId() != null) {\n267:       Set<UUID> playerSet = playerWounded.get(record.playerId());\n268:       if (playerSet != null) {\n269:         playerSet.remove(woundedId);\n270:       }\n271:     }\n272: \n273:     // 从持久化移除\n274:     removePersistedRecord(woundedId);\n275: \n276:     return recoveredSoldiers;"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/wounded/WoundedServiceImpl.java",
+          "first_line": 408,
+          "last_line": 411,
+          "excerpt": "408:       // 检查是否治疗完成\n409:       if (now >= record.expectedRecoveryAt()) {\n410:         completeHealing(woundedId);\n411:         continue;"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/wounded/WoundedServiceImpl.java",
+          "first_line": 439,
+          "last_line": 443,
+          "excerpt": "439:   /** 检查是否为医院位置 */\n440:   private boolean isHospitalLocation(Location location) {\n441:     // 可以检查特定方块或区域\n442:     // 目前简化处理，只要在世界内即可\n443:     return location != null && location.getWorld() != null;"
+        }
+      ]
+    },
+    {
+      "id": "doctrine-effects-and-payment",
+      "priority": "P2",
+      "finding": "学说效果未发现模块外生产调用；随机付款编号在扣款前没有耐久业务意图；预算测试类为空且禁用。",
+      "completion": "战斗/消耗实效接线、原编号切换付款恢复、有效行为和故障测试。",
+      "evidence": [
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/doctrine/DoctrineServiceImpl.java",
+          "first_line": 101,
+          "last_line": 128,
+          "excerpt": "101:       UUID transactionId = null;\n102:       BigDecimal cost = BigDecimal.valueOf(switchCost);\n103:       if (nationSpendingService != null && doctrine != DoctrineType.NONE && cost.signum() > 0) {\n104:         transactionId = UUID.randomUUID();\n105:         NationSpendingService.SpendRequest request =\n106:             new NationSpendingService.SpendRequest(\n107:                 transactionId.toString(),\n108:                 new NationId(nationId),\n109:                 cost,\n110:                 NationSpendingService.SpendingCategory.OTHER,\n111:                 \"Switch military doctrine to \" + doctrine.name());\n112:         if (!nationSpendingService.spend(request).applied()) {\n113:           return false;\n114:         }\n115:       }\n116: \n117:       Map<UUID, NationDoctrine> candidateSnapshot = new HashMap<>(nationDoctrines);\n118:       candidateSnapshot.put(nationId, candidate);\n119:       try {\n120:         persistSnapshot(candidateSnapshot);\n121:       } catch (RuntimeException failure) {\n122:         compensateExpenseOrThrow(transactionId, failure);\n123:         throw new IllegalStateException(\"doctrine.error.persist-failed\", failure);\n124:       }\n125: \n126:       nationDoctrines.put(nationId, candidate);\n127:       updateDoctrineStats(previousType, doctrine);\n128:       fireDoctrineChanged(new DoctrineChangedEvent(nationId, previousType, doctrine, changedBy));"
+        },
+        {
+          "path": "src/test/java/dev/starcore/starcore/module/army/doctrine/DoctrineServiceBudgetSpendingTest.java",
+          "first_line": 1,
+          "last_line": 6,
+          "excerpt": "1: package dev.starcore.starcore.module.army.doctrine;\n2: \n3: import org.junit.jupiter.api.Disabled;\n4: \n5: @Disabled(\"NationSpendingService API changed to SpendRequest - old 5-param spend removed\")\n6: class DoctrineServiceBudgetSpendingTest {}"
+        }
+      ]
+    },
+    {
+      "id": "other-modules-folia-and-lifecycle",
+      "priority": "P2",
+      "finding": "雇佣兵、社交/邮件仍有旧 Bukkit 调度路径；其余共享状态、权限、事件和启停尚未完整审计。",
+      "completion": "逐模块线程归属、共享状态、权限、停用屏障、失败清理及行为测试；不把已有模块描述为空实现。",
+      "evidence": [
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/mercenary/MercenaryService.java",
+          "first_line": 1682,
+          "last_line": 1693,
+          "excerpt": "1682:           }\n1683:         };\n1684: \n1685:     try {\n1686:       if (plugin == null || Bukkit.isPrimaryThread()) {\n1687:         guarded.run();\n1688:       } else {\n1689:         plugin.getServer().getScheduler().runTask(plugin, guarded);\n1690:       }\n1691:     } catch (RuntimeException failure) {\n1692:       plugin\n1693:           .getLogger()"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/social/mail/MailService.java",
+          "first_line": 451,
+          "last_line": 478,
+          "excerpt": "451:   private synchronized void scheduleExpirationCleanup() {\n452:     if (expirationCleanupTask != null || cacheCleanupTask != null) {\n453:       return;\n454:     }\n455:     expirationCleanupTask =\n456:         plugin\n457:             .getServer()\n458:             .getScheduler()\n459:             .runTaskTimerAsynchronously(\n460:                 plugin,\n461:                 () -> {\n462:                   synchronized (yamlSaveLock) {\n463:                     if (acceptingOperations && useDatabase && sqlStorage != null) {\n464:                       sqlStorage.cleanupExpiredMails();\n465:                     }\n466:                   }\n467:                 },\n468:                 72000L,\n469:                 72000L); // 数据库清理保持异步\n470:     cacheCleanupTask =\n471:         plugin\n472:             .getServer()\n473:             .getScheduler()\n474:             .runTaskTimer(\n475:                 plugin,\n476:                 this::cleanupExpiredMailsInCache,\n477:                 72000L,\n478:                 72000L); // Bukkit 在线状态检查与缓存变更在主线程执行"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/mail/attachment/MailAttachmentServiceImpl.java",
+          "first_line": 178,
+          "last_line": 190,
+          "excerpt": "178: \n179:   /** 安排过期清理任务 */\n180:   private void scheduleExpirationCleanup() {\n181:     expirationCleanupTask =\n182:         Bukkit.getScheduler()\n183:             .runTaskTimerAsynchronously(\n184:                 plugin,\n185:                 () -> {\n186:                   cleanupExpiredMails();\n187:                 },\n188:                 72000L,\n189:                 72000L); // 1小时后开始，每小时执行\n190:   }"
+        }
+      ]
+    },
+    {
+      "id": "budget-recovery-operations",
+      "priority": "P2",
+      "finding": "新付款可恢复，但普通 cancelBudget 不能取消已执行预算；待恢复付款先于普通写入处理，缺独立安全撤销入口及旧月余款处置。",
+      "completion": "待恢复操作的安全撤销、跨实例封存与旧预拨结转/退回；无回执旧账独立核对。",
+      "evidence": [
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/treasury/BudgetServiceImpl.java",
+          "first_line": 351,
+          "last_line": 359,
+          "excerpt": "351:   @Override\n352:   public boolean cancelBudget(UUID billId) {\n353:     Objects.requireNonNull(billId, \"billId\");\n354:     BudgetBill cancelled;\n355:     synchronized (stateLock) {\n356:       readyLocked();\n357:       BudgetBill budget = budgets.get(billId);\n358:       if (budget == null || budget.status() == BudgetBill.BudgetStatus.EXECUTED) {\n359:         return false;"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/treasury/BudgetServiceImpl.java",
+          "first_line": 554,
+          "last_line": 558,
+          "excerpt": "554:   private void readyLocked() {\n555:     refreshStateLocked();\n556:     for (var operation : List.copyOf(operations.values()))\n557:       if (operation.status() == BudgetMoneyOperation.Status.PREPARED) finishLocked(operation);\n558:   }"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/treasury/BudgetServiceImpl.java",
+          "first_line": 1104,
+          "last_line": 1127,
+          "excerpt": "1104:   private void performMonthlyReset() {\n1105:     YearMonth now = YearMonth.now(clock);\n1106:     List<UUID> toCancel = new ArrayList<>();\n1107:     List<UUID> toExecute = new ArrayList<>();\n1108:     synchronized (stateLock) {\n1109:       readyLocked();\n1110:       for (UUID billId : currentBudgets.values()) {\n1111:         BudgetBill budget = budgets.get(billId);\n1112:         if (budget == null || budget.status() != BudgetBill.BudgetStatus.APPROVED) {\n1113:           continue;\n1114:         }\n1115:         YearMonth period = YearMonth.of(budget.year(), budget.month());\n1116:         if (!period.isBefore(now)) {\n1117:           continue;\n1118:         }\n1119:         if (budgetConfig.requireApproval()) {\n1120:           toCancel.add(billId);\n1121:         } else {\n1122:           toExecute.add(billId);\n1123:         }\n1124:       }\n1125:     }\n1126:     toCancel.forEach(this::cancelBudget);\n1127:     toExecute.forEach(this::executeBudget);"
+        }
+      ]
+    },
+    {
+      "id": "exercise-missing-recipient-and-authority",
+      "priority": "P2",
+      "finding": "奖励必须得到原编号经验回执；收件国家消失后仍待恢复，没有放弃/转发协议。文件权威只做同进程互斥与字节比较。",
+      "completion": "失效奖励的有证据处置，以及多服务器权威/迁移协议。",
+      "evidence": [
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/exercise/ExerciseServiceImpl.java",
+          "first_line": 445,
+          "last_line": 477,
+          "excerpt": "445:   @Override\n446:   public synchronized void recoverRewards() {\n447:     ready();\n448:     RuntimeException pending = null;\n449:     for (var result : List.copyOf(results.values()))\n450:       for (var p : result.participantResults()) {\n451:         if (p.experienceGained() <= 0) continue;\n452:         String id = ExerciseSnapshot.rewardId(result.exerciseId(), p.nationId());\n453:         if (rewarded.contains(id)) continue;\n454:         try {\n455:           var grant =\n456:               new NationExperienceService.Grant(\n457:                   id, new NationId(p.nationId()), (long) p.experienceGained());\n458:           var proof = experience.experienceReceipt(grant.nationId(), id);\n459:           if (proof.isEmpty()) {\n460:             experience.grantExperience(grant);\n461:             proof = experience.experienceReceipt(grant.nationId(), id);\n462:           }\n463:           if (proof.isEmpty() || !proof.get().grant().equals(grant))\n464:             throw new IllegalStateException(\"Exercise reward confirmation pending: \" + id);\n465:           mutate(\n466:               () -> {\n467:                 rewarded.add(id);\n468:                 return null;\n469:               });\n470:         } catch (RuntimeException failure) {\n471:           if (pending == null)\n472:             pending = new IllegalStateException(\"Exercise rewards remain pending\");\n473:           pending.addSuppressed(failure);\n474:           if (failed) throw pending;\n475:         }\n476:       }\n477:     if (pending != null) throw pending;"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/exercise/FileExerciseStateStorage.java",
+          "first_line": 53,
+          "last_line": 70,
+          "excerpt": "53:   public synchronized void save(Properties properties) {\n54:     synchronized (GUARDS[Math.floorMod(path.hashCode(), GUARDS.length)]) {\n55:       if (!loaded) load();\n56:       requireLoaded();\n57:       var canonical = new ExerciseStateCodec().encode(new ExerciseStateCodec().decode(properties));\n58:       try {\n59:         byte[] current = read();\n60:         if (!Arrays.equals(expected, current))\n61:           throw new IllegalStateException(new IOException(\"Exercise file changed\"));\n62:         var buffer = new ByteArrayOutputStream();\n63:         canonical.store(buffer, \"STARCORE exercise state\");\n64:         byte[] candidate = buffer.toByteArray();\n65:         if (candidate.length > 64 * 1024 * 1024)\n66:           throw new IOException(\"Exercise snapshot too large\");\n67:         try {\n68:           AtomicFilePersistence.replace(path, temp -> Files.write(temp, candidate));\n69:           if (!Arrays.equals(read(), candidate))\n70:             throw new IOException(\"Exercise snapshot not published\");"
+        }
+      ]
+    },
+    {
+      "id": "retention-capacity-and-unloaded-worlds",
+      "priority": "P2",
+      "finding": "持久操作/回执/演习历史仍需保留重放防护的归档协议和容量验证；严格快照的世界解析失败会阻止加载。",
+      "completion": "有界归档/迁移、规模与同步写延迟验证、离线世界维护和重新解析协议。",
+      "evidence": [
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/exercise/FileExerciseStateStorage.java",
+          "first_line": 63,
+          "last_line": 70,
+          "excerpt": "63:         canonical.store(buffer, \"STARCORE exercise state\");\n64:         byte[] candidate = buffer.toByteArray();\n65:         if (candidate.length > 64 * 1024 * 1024)\n66:           throw new IOException(\"Exercise snapshot too large\");\n67:         try {\n68:           AtomicFilePersistence.replace(path, temp -> Files.write(temp, candidate));\n69:           if (!Arrays.equals(read(), candidate))\n70:             throw new IOException(\"Exercise snapshot not published\");"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java",
+          "first_line": 193,
+          "last_line": 202,
+          "excerpt": "193:     if (durable\n194:         && (nations.size() != count\n195:             || !toProperties(nations).equals(properties)\n196:             || nations.stream().map(Nation::id).distinct().count() != count\n197:             || nations.stream()\n198:                     .map(n -> n.name().trim().toLowerCase(Locale.ROOT))\n199:                     .distinct()\n200:                     .count()\n201:                 != count))\n202:       throw new IllegalArgumentException(\"Incomplete nation experience authority\");"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java",
+          "first_line": 273,
+          "last_line": 277,
+          "excerpt": "273:       // 恢复首都位置\n274:       Location capitalLocation = parseLocation(properties.getProperty(prefix + \"capitalLocation\"));\n275:       if (capitalLocation != null) {\n276:         nation.setCapitalLocation(capitalLocation);\n277:       }"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java",
+          "first_line": 460,
+          "last_line": 468,
+          "excerpt": "460:       String[] parts = value.split(\",\");\n461:       if (parts.length < 4) {\n462:         return null;\n463:       }\n464:       String worldName = parts[0];\n465:       World world = org.bukkit.Bukkit.getWorld(worldName);\n466:       if (world == null) {\n467:         return null;\n468:       }"
+        },
+        {
+          "path": "src/main/java/dev/starcore/starcore/module/army/navy/storage/NavyStateCodec.java",
+          "first_line": 78,
+          "last_line": 85,
+          "excerpt": "78:     // 位置\n79:     JsonObject locJson = obj.getAsJsonObject(\"location\");\n80:     String worldName = locJson.get(\"world\").getAsString();\n81:     World world = worlds.apply(worldName);\n82:     if (world == null) {\n83:       throw new IllegalArgumentException(\"Navy world is unavailable: \" + worldName);\n84:     }\n85:     if (locJson.has(\"worldId\")"
+        }
+      ]
+    }
+  ],
+  "search_probes": [
+    {
+      "id": "navy-port-option-references",
+      "command": [
+        "rg",
+        "-n",
+        "autoSupplyAtPort|auto-supply-at-port",
+        "src/main/java"
+      ],
+      "exit_code": 0,
+      "matches": [
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\navy\\NavyService.java:595:      boolean autoSupplyAtPort,",
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\navy\\NavyService.java:618:          section.getBoolean(\"auto-supply-at-port\", true),"
+      ]
+    },
+    {
+      "id": "doctrine-outside-module",
+      "command": [
+        "rg",
+        "-n",
+        "DoctrineService|calculateAttackBonus\\(|calculateDefenseBonus\\(|calculateEffectiveSoldiers\\(|getCostMultiplier\\(|getMoraleConsumptionMultiplier\\(|getAmbushBonus\\(|getMobilityBonus\\(",
+        "src/main/java",
+        "-g",
+        "!**/module/army/doctrine/**"
+      ],
+      "exit_code": 1,
+      "matches": []
+    },
+    {
+      "id": "battle-result-references",
+      "command": [
+        "rg",
+        "-n",
+        "onBattleResult\\(",
+        "src/main/java"
+      ],
+      "exit_code": 0,
+      "matches": [
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\wounded\\listener\\WoundedListener.java:114:  public void onBattleResult(BattleResult result, ArmyUnit attacker, ArmyUnit defender) {",
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\gui\\ArmyMenuActions.java:328:      onBattleResult(player, result);",
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\gui\\ArmyMenuActions.java:515:  public void onBattleResult(Player player, BattleResult result) {",
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\gui\\ArmyMenuActions.java:635:                                    onBattleResult(player, result);",
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\gui\\ArmyMenuActions.java:655:                                    onBattleResult(player, result);",
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\listener\\ArmyInvasionListener.java:125:        onBattleResult(result);",
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\listener\\ArmyInvasionListener.java:161:  private void onBattleResult(BattleResult result) {"
+      ]
+    },
+    {
+      "id": "wounded-replenishment-references",
+      "command": [
+        "rg",
+        "-n",
+        "completeHealing\\(",
+        "src/main/java"
+      ],
+      "exit_code": 0,
+      "matches": [
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\wounded\\WoundedServiceImpl.java:231:  public int completeHealing(UUID woundedId) {",
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\wounded\\WoundedServiceImpl.java:410:        completeHealing(woundedId);",
+        "src/main/java\\dev\\starcore\\starcore\\module\\army\\wounded\\WoundedService.java:66:    int completeHealing(UUID woundedId);"
+      ]
+    }
+  ],
+  "files": {
+    "src/main/java/dev/starcore/starcore/module/nation/NationModule.java": {
+      "sha256": "4FC1CD6766B3AC82C7571579FA77BD0EC873C035DB7E08D2A367A43EEE76C51F",
+      "bytes": 88895
+    },
+    "src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java": {
+      "sha256": "8CA49FD6870D9F6ACAD50932EB47372D9EBB63CF3AFA0C3D8BA78CEE5F9B886A",
+      "bytes": 20055
+    },
+    "src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java": {
+      "sha256": "C6478E0BB97BA511AFF191AC3C8EEDF9A480E8F3807C4D5616D974A729921251",
+      "bytes": 11669
+    },
+    "src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java": {
+      "sha256": "6B4C01938E27456961AD2D33146B8C8BFE644EBC213D7CFEB76976EDADB2D949",
+      "bytes": 10657
+    },
+    "src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java": {
+      "sha256": "A577C73E4B44D37AD3D467FA10AB61B38CC2D8B574680A5D3E0686788AD6FFF8",
+      "bytes": 7547
+    },
+    "src/main/java/dev/starcore/starcore/module/army/navy/NavyService.java": {
+      "sha256": "E55974F7A0848BDE56C1B62BE6AFDF089911AD3A3B8F09264ECA139D72E6C6F1",
+      "bytes": 23062
+    },
+    "src/main/java/dev/starcore/starcore/module/army/wounded/listener/WoundedListener.java": {
+      "sha256": "4417A6CEFFB0BA5B8DED2D283D0FCE2D959A8E8F360F75E4D2D55C9D16CB69D3",
+      "bytes": 5781
+    },
+    "src/main/java/dev/starcore/starcore/module/army/wounded/WoundedServiceImpl.java": {
+      "sha256": "25C8F253BD07FB32312DE404CF238FB42F7EF17E408C64AFE6FBF96257A15800",
+      "bytes": 17131
+    },
+    "src/main/java/dev/starcore/starcore/module/army/doctrine/DoctrineServiceImpl.java": {
+      "sha256": "3DB3DED419C5F817AEEB36C1BE588C5B9BA958248CC0789B1D038E623C8C7B07",
+      "bytes": 10067
+    },
+    "src/test/java/dev/starcore/starcore/module/army/doctrine/DoctrineServiceBudgetSpendingTest.java": {
+      "sha256": "640263D45A9E9AF280F970F4CED23918EE4FAAC09053219C35B6A1210224AFB8",
+      "bytes": 227
+    },
+    "src/main/java/dev/starcore/starcore/module/army/mercenary/MercenaryService.java": {
+      "sha256": "0BF6264AE11EFF5243EE0DED1F64E78B9B2B89A2153C13612EB2EBEFE71E4FB6",
+      "bytes": 83676
+    },
+    "src/main/java/dev/starcore/starcore/social/mail/MailService.java": {
+      "sha256": "6CD78A8121EDB5E7A10822B4F274176DDA08EE3D25E827E103A7808D7828A67C",
+      "bytes": 25285
+    },
+    "src/main/java/dev/starcore/starcore/module/mail/attachment/MailAttachmentServiceImpl.java": {
+      "sha256": "47FB780E648974A54FF8B1D8AC8A87D06B17A22492A9CCE7632186AA3FE5026A",
+      "bytes": 25864
+    },
+    "src/main/java/dev/starcore/starcore/module/treasury/BudgetServiceImpl.java": {
+      "sha256": "876059DA5F6BB93F29395684172D44166BA25F84A5637488B10C86C02A827AB0",
+      "bytes": 44986
+    },
+    "src/main/java/dev/starcore/starcore/module/army/exercise/ExerciseServiceImpl.java": {
+      "sha256": "F785231D8C2EE0AB4DA6C538E2BC1E1FF0ED740FF93700CC33F018022A9E23D2",
+      "bytes": 21179
+    },
+    "src/main/java/dev/starcore/starcore/module/army/exercise/FileExerciseStateStorage.java": {
+      "sha256": "F3E1FF11F5CA8057DEEFFFA086B25118775D6C9282F86508BB23F666C3675D7C",
+      "bytes": 4576
+    },
+    "src/main/java/dev/starcore/starcore/module/army/navy/storage/NavyStateCodec.java": {
+      "sha256": "0BD803B8247DEFD40A3F74CDF818251A56F4A3741DCB9E1D990040F5E8D4E5ED",
+      "bytes": 5931
+    }
+  },
+  "unchanged_artifacts": {
+    "starsupply": {
+      "sha256": "267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C",
+      "bytes": 14695959
+    },
+    "core": {
+      "sha256": "D5CBFE11C94883C098F1E768608DF0C41C8FA7B12CD99F8093CFDD22301A4DB0",
+      "bytes": 19835048
+    }
+  },
+  "validation_boundary": {
+    "new_production_changes": false,
+    "new_behavior_tests": false,
+    "servers_started": false,
+    "world_or_player_data_changed": false,
+    "prior_targeted_tests": {
+      "core": 1666,
+      "starsupply_with_final_core": 177,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "prior_test_evidence": "workspace-claim-recovery-20261126.json",
+    "still_required": [
+      "Full clean Core verify",
+      "Latest MySQL integration",
+      "Current full optional-plugin Paper/Folia acceptance",
+      "Six-resource survival production/delivery/consumption/restart",
+      "Multi-region interactions and client visual acceptance"
+    ],
+    "absence_search_limits": "Production-source references only; static search does not prove behavior under reflection or external plugins."
+  }
+}
