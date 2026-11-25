@@ -14,6 +14,8 @@
 
 ## 阶段进度
 
+2026-11-26 已追加第六份 [Clan 闭环补丁](upstream/CLAN-CLOSURE.md)：存取款接入真实玩家资金与耐久回执，氏族元数据先于转账落盘，损坏存档冻结写入；修复聊天状态、成员并发、权限、命令结果和实体线程回调，并接入启动/停用及实验后勤 profile。370 项 Core 定向测试（新增 48 项 Clan）与该实际 Core 成品下 StarSupply 全套 177 项通过。未启动实服，Religion 和其他白名单外模块仍未完成 Folia 适配。见[本轮验证](verification/workspace-clan-closure-20261126.json)。
+
 2026-11-26 已继续补齐 HUD 的实际设置与菜单行为，追加第五份 [HUD 设置补丁](upstream/HUD-SETTINGS.md)：个人样式、粒子与呼吸开关持久化，权限控制下真实重载，彩色主题和实体线程背景动画，以及禁用模块入口和设置导航。Core 定向 154 项与新 Core 成品下 StarSupply 全套 177 项通过。没有启动实服；完整 Folia 模块和当前组合验收仍待完成。见[本轮验证](verification/workspace-hud-settings-20261126.json)。
 
 此前第四份反馈补丁已完成音效、客户端震动和 HUD 线程/会话适配；该轮 132 项 Core 与 177 项配套测试的历史证据仍见[反馈验证](verification/workspace-folia-feedback-20261126.json)。
@@ -37,7 +39,7 @@
 
 ## 最新构建与验证
 
-- 本轮 StarSupply 生产和测试源码未变，保留 157 项 verify 与原 JAR 哈希；最新 Core 为 `464AB484F12E4BAFCD1BAAB8E7469DA0CDA083BD00D77343FC74C8497F9DBE6A`（19,606,901 字节），定向 154 项与该成品配套的 StarSupply 全套 177 项通过。6 个生产源与 4 个测试源增量编译，10 个 Java 文件格式检查通过；不是 Core 全仓 verify。第五份 11 文件补丁重放后，全部 3,535 个 src 文件匹配；原生存存档哈希不变。见[HUD 设置记录](verification/workspace-hud-settings-20261126.json)。
+- 本轮 StarSupply 源码和 157 项 verify 的生产 JAR 未变；最新 Core 为 `47D90F517D9DE131C8CF8F41B847A6792FBC7021FE7AAACD153FA8870D5B0838`（19,634,432 字节），定向 370 项与该成品配套的 StarSupply 全套 177 项通过。8 个生产源与 9 个测试源增量编译，13 个改动 Java 文件格式检查通过；不是 Core 全仓 verify。第六份 14 文件补丁重放后，全部 3,539 个 src 文件匹配，24 个改动源产生的 class 条目与 JAR 相符；原生存存档哈希不变。见[Clan 闭环记录](verification/workspace-clan-closure-20261126.json)。
 
 - Java 21；Maven Wrapper 3.9.16；Paper API 1.21.11。当前生产 JAR 大小 14,695,959 字节，SHA-256 `267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C`。
 - 完整 `mvnw.cmd -o -B -ntp -DforkCount=0 verify`：157 项测试，0 失败/错误/跳过；最终实际兼容 Core 下 177 项通过，包含 11 个真实玩家资金场景与 9 个真实税款场景。Core 财政定向测试 116 项：114 项执行通过，2 项 MySQL 环境测试跳过。未改写 Maven 依赖、未启动 Paper/Folia。详见[税款记录](verification/workspace-tax-funding-receipts-20261126.json)；此前玩家接口证据仍见[玩家资金记录](verification/workspace-player-money-receipts-20261125.json)。
@@ -53,7 +55,9 @@
 | --- | --- | --- |
 | 玩家资金恢复的部署与旧账处理 | 新回执协议代码与自动化故障测试已完成；旧无标记交易不迁移，已有 REVIEW 不自动解冻 | 部署兼容 Core 后进行实服验收；旧账继续按独立证据核对。MySQL 存储与大规模历史回执性能仍未验证 |
 | 税款自动恢复 | 新协议已通过完整报价绑定的国库耐久回执恢复，意图不作为到账凭证；SQL/事务记录写回失败保持原编号重试，人工标志不能制造到账 | 当前新组合待实服、MySQL 与规模验收；旧无协议税款继续独立核对 |
-| 完整 Folia 支持范围 | 后勤 profile 已接回音效、客户端震动和 HUD；Clan、Religion 及其他白名单外模块仍限制；生产描述符未声明支持 | 完成目标模块/可选插件的线程归属与生命周期适配，并对明确组合验收；不能只改描述符 |
+| 完整 Folia 支持范围 | 后勤 profile 已接回音效、客户端震动、HUD 和 Clan；Religion 及其他白名单外模块仍限制；生产描述符未声明支持 | 完成目标模块/可选插件的线程归属与生命周期适配，并对明确组合验收；不能只改描述符 |
+| Clan 功能与资金 | 已完成真实存取款、耐久恢复、存档屏障、聊天/权限/并发和生命周期接线；新增 48 项行为测试 | 代码与定向自动化已闭环；当前组合的现场迁移、跨区域操作和重启仍待验 |
+| 历史流水规模与存储 | 玩家/国库/Clan 新回执保证原编号恢复；Clan 使用完整文件快照，没有历史归档/压缩协议 | 补 MySQL 与大规模历史数据验证，再完成有界存储方案；归档不能删除重放保护 |
 | HUD 偏好命令与动画 | 已接通个人设置持久化、默认配置重载、管理员权限、彩色背景动画、禁用模块入口及实际导航；关闭/重连/停用回调与保存失败有行为测试，详见 [HUD 设置](upstream/HUD-SETTINGS.md) | 本轮代码与自动化闭环完成；当前新 JAR 的实服界面/效果仍待验 |
 
 六类来源补产、采购运输、连续消费及重启核对入口已经实现并有自动化测试，剩余是实服证明。当前无法将其标为六类完整生存闭环；图形资源包也属于待验项。
@@ -76,7 +80,7 @@ $env:JAVA_HOME = 'C:\path\to\jdk-21'
 .\tools\build.ps1 -StarCoreRoot ..\starsupply-starcore-api -JavaHome $env:JAVA_HOME
 ```
 
-运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch` 和 `starcore-folia-feedback.patch`；这个组合补丁已包含攻城补丁，不能再重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。本轮兼容 Core 成品 SHA-256 为 `E87A005E2E313040D9F41F75B878C9DF75D6A5211D011B14CD76907D2E17FBA8`，不同构建需登记自己的哈希。
+运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `47D90F517D9DE131C8CF8F41B847A6792FBC7021FE7AAACD153FA8870D5B0838`。
 
 依赖已安装时，低内存构建命令为：
 

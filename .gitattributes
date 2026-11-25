@@ -1,4 +1,4 @@
-# Unified diff context lines intentionally contain one space for blank source lines.
-*.patch text eol=lf whitespace=-blank-at-eol
+# Unified diff context lines can be blank source lines, including the last line of a patch.
+*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof
 mvnw text eol=lf
 mvnw.cmd text eol=crlf

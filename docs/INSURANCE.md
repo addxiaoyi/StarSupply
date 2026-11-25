@@ -55,4 +55,6 @@ StarSupply 的承运收入险由发单国家承保，只对本国承运者开放
 
 后续公共反馈补丁的新 Core 为 `E87A005E2E313040D9F41F75B878C9DF75D6A5211D011B14CD76907D2E17FBA8`，其下重新通过 StarSupply 全套 177 项，包括既有保险与实际资金/税款回执测试；保险源码未变。见[当前兼容测试](verification/workspace-folia-feedback-20261126.json)。
 
-最新 HUD 设置补丁的 Core 为 `464AB484F12E4BAFCD1BAAB8E7469DA0CDA083BD00D77343FC74C8497F9DBE6A`，该实际成品下全套 177 项配套测试通过，包含真实资金、税款与保险相关回归；保险源码未变，未启动实服。见[当前配套记录](verification/workspace-hud-settings-20261126.json)。
+此前 HUD 设置补丁的 Core 为 `464AB484F12E4BAFCD1BAAB8E7469DA0CDA083BD00D77343FC74C8497F9DBE6A`，该实际成品下全套 177 项配套测试通过，包含真实资金、税款与保险相关回归；保险源码未变，未启动实服。见[当前配套记录](verification/workspace-hud-settings-20261126.json)。
+
+最新 Clan 补丁的 Core 为 `47D90F517D9DE131C8CF8F41B847A6792FBC7021FE7AAACD153FA8870D5B0838`，该实际成品下 StarSupply 全套 177 项通过，保险源码未变。未启动实服，见[当前配套记录](verification/workspace-clan-closure-20261126.json)。

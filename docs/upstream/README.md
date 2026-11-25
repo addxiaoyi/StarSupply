@@ -1,6 +1,8 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-当前最新兼容包按顺序应用五份补丁，在下述四份补丁后追加 [starcore-hud-settings.patch](starcore-hud-settings.patch)。个人设置持久化、真实重载、呼吸动画和彩色主题等 HUD 缺口已补齐；配置、命令、构建与验收范围见 [HUD-SETTINGS](HUD-SETTINGS.md)。
+当前最新兼容包按顺序应用六份补丁：后勤、玩家资金回执、税款回执、公共反馈、HUD 设置、[Clan 闭环](CLAN-CLOSURE.md)。第六份补丁提供真实银行交易与回执恢复、原子存档、聊天和线程/生命周期修复；当前代码测试范围见 [Clan 说明](CLAN-CLOSURE.md)。
+
+此前 HUD 兼容包按顺序应用五份补丁，在下述四份补丁后追加 [starcore-hud-settings.patch](starcore-hud-settings.patch)。个人设置持久化、真实重载、呼吸动画和彩色主题等 HUD 缺口已补齐；配置、命令、构建与验收范围见 [HUD-SETTINGS](HUD-SETTINGS.md)。
 
 此前公共反馈检查点在前三份补丁后追加 [starcore-folia-feedback.patch](starcore-folia-feedback.patch)：音效、客户端震动与现代 HUD 现在进入实体/区域线程并接回 profile，停用、退役与菜单回调有定向测试。应用顺序、已知命令缺口和实服边界见 [FOLIA-FEEDBACK](FOLIA-FEEDBACK.md)。下方未叠加第四份补丁的历史描述仍按其原始范围理解。
 

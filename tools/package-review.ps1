@@ -34,6 +34,8 @@ $feedbackPatch = 'docs/upstream/starcore-folia-feedback.patch'
 $feedbackPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $feedbackPatch) -Algorithm SHA256).Hash
 $hudPatch = 'docs/upstream/starcore-hud-settings.patch'
 $hudPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $hudPatch) -Algorithm SHA256).Hash
+$clanPatch = 'docs/upstream/starcore-clan-closure.patch'
+$clanPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $clanPatch) -Algorithm SHA256).Hash
 $companionSha = $null
 if ($StarCoreJar) {
     $StarCoreJar = (Resolve-Path -LiteralPath $StarCoreJar).Path
@@ -117,6 +119,8 @@ $manifest = [ordered]@{
     starcore_feedback_patch_sha256 = $feedbackPatchSha
     starcore_hud_patch = $hudPatch
     starcore_hud_patch_sha256 = $hudPatchSha
+    starcore_clan_patch = $clanPatch
+    starcore_clan_patch_sha256 = $clanPatchSha
     starcore_companion_jar_sha256 = $companionSha
 }
 $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $release 'manifest.json') -Encoding utf8

@@ -2,13 +2,19 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
+## 2026-11-26 Clan 代码与自动化闭环
+
+2026-11-26 已追加第六份 [Clan 闭环补丁](upstream/CLAN-CLOSURE.md)：存取款接入真实玩家资金与耐久回执，氏族元数据先于转账落盘，损坏存档冻结写入；修复聊天状态、成员并发、权限、命令结果和实体线程回调，并接入启动/停用及实验后勤 profile。370 项 Core 定向测试（新增 48 项 Clan）与该实际 Core 成品下 StarSupply 全套 177 项通过。未启动实服，Religion 和其他白名单外模块仍未完成 Folia 适配。见[本轮验证](verification/workspace-clan-closure-20261126.json)。
+
+当前 Core SHA-256：`47D90F517D9DE131C8CF8F41B847A6792FBC7021FE7AAACD153FA8870D5B0838`。该构建尚未实服验收。
+
 ## 2026-11-26 HUD 设置闭环与公共反馈适配
 
 2026-11-26 已继续补齐 HUD 的实际设置与菜单行为，追加第五份 [HUD 设置补丁](upstream/HUD-SETTINGS.md)：个人样式、粒子与呼吸开关持久化，权限控制下真实重载，彩色主题和实体线程背景动画，以及禁用模块入口和设置导航。Core 定向 154 项与新 Core 成品下 StarSupply 全套 177 项通过。没有启动实服；完整 Folia 模块和当前组合验收仍待完成。见[本轮验证](verification/workspace-hud-settings-20261126.json)。
 
 此前第四份反馈补丁已完成音效、客户端震动和 HUD 线程/会话适配；该轮 132 项 Core 与 177 项配套测试的历史证据仍见[反馈验证](verification/workspace-folia-feedback-20261126.json)。
 
-本轮 Core 成品 SHA-256：`E87A005E2E313040D9F41F75B878C9DF75D6A5211D011B14CD76907D2E17FBA8`。StarSupply 仍为 `267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C`；旧实服证据不能移用于新 Core。
+此前公共反馈 Core 成品 SHA-256：`E87A005E2E313040D9F41F75B878C9DF75D6A5211D011B14CD76907D2E17FBA8`。StarSupply 仍为 `267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C`；旧实服证据不能移用于新 Core。
 
 ## 2026-11-25 续接开发与待验状态
 
