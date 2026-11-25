@@ -1,0 +1,243 @@
+{
+  "date": "2026-11-26",
+  "kind": "source-audit-only",
+  "supply_checkpoint": "a20cf347d698313436bfda86a01228811e39926b",
+  "core_upstream_base": "f769e62799e769a18fe51305b545869a17f80cd1",
+  "applied_patch_count": 11,
+  "reproduction_checkpoint": "380270f5e1df1fedbf2fbcfbb2d52b4d3d7b041c",
+  "production_code_changed": false,
+  "new_tests_run": false,
+  "fault_injection_run": false,
+  "live_server_started": false,
+  "prior_test_evidence": "workspace-exercise-recovery-20261126.json",
+  "status": "Nation creation receipt recovery is not implemented; the overall goal remains open.",
+  "findings": [
+    {
+      "id": "NATION-CREATION-MONEY",
+      "priority": "P1",
+      "observation": "Recovery infers debit/refund from current balance; ordinary deposit has no original operation receipt."
+    },
+    {
+      "id": "NATION-CREATION-JOURNAL",
+      "priority": "P1",
+      "observation": "Creation has no pending-journal admission guard; the file journal save replaces the existing intent."
+    },
+    {
+      "id": "NATION-CLAIM-MONEY",
+      "priority": "P1",
+      "observation": "Claim charges before claiming chunks; compensation is an in-memory loop followed by an unchecked ordinary refund."
+    },
+    {
+      "id": "NATION-SPLIT-STALE-SNAPSHOT",
+      "priority": "P1",
+      "observation": "Committed split tolerates journal cleanup failure; ordinary catalog changes remain possible; recovery writes the old full snapshot based on claim ownership alone."
+    },
+    {
+      "id": "NATION-DISBAND-JOURNAL",
+      "priority": "P1",
+      "observation": "External cleanup failure retains the disband journal, but another disband can replace its single pending intent."
+    }
+  ],
+  "sources": [
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationModule.java",
+      "sha256_lf": "18D977338D557BAE5ACBB6C63A854921BBEEE767517ECAA21693FEF19B7304FC",
+      "matches_exercise_reproduction": true,
+      "anchors": [
+        {
+          "line": 387,
+          "match": "public synchronized Nation createNation(",
+          "excerpt": "  public synchronized Nation createNation(UUID founderId, String founderName, String nationName) {\n    playerProfiles.recordSeen(founderId, founderName);\n    if (membership.containsKey(founderId)) {\n      throw new IllegalStateException(msg(\"nation.service.already-in-nation-create\"));\n    }\n    if (foundedCount(founderId, NationKind.NATION) >= configuration.maxNationsPerPlayer()) {\n      throw new IllegalStateException("
+        },
+        {
+          "line": 423,
+          "match": "public synchronized Nation createCityState(",
+          "excerpt": "  public synchronized Nation createCityState(\n      UUID founderId, String founderName, String cityStateName) {\n    playerProfiles.recordSeen(founderId, founderName);\n    Nation parentNation =\n        nationOf(founderId)\n            .orElseThrow(\n                () -> new IllegalStateException(msg(\"nation.service.city-parent-required\")));"
+        },
+        {
+          "line": 827,
+          "match": "public ClaimSelectionResult claimSelection(",
+          "excerpt": "  public ClaimSelectionResult claimSelection(UUID playerId, ChunkClaimSelection selection) {\n    ClaimSelectionPreview preview = previewClaimSelection(playerId, selection);\n    if (!preview.canSubmit()) {\n      throw new IllegalStateException(preview.message());\n    }\n    Nation nation = nationsById.get(preview.nationId());\n    if (nation == null) {"
+        },
+        {
+          "line": 837,
+          "match": "charge(playerId, preview.price(),",
+          "excerpt": "    charge(playerId, preview.price(), msg(\"nation.service.action-claim\"));\n    List<ChunkCoordinate> claimed = new java.util.ArrayList<>(preview.chunkCount());\n    String ownerId = preview.nationId().toString();\n    try {\n      for (ChunkCoordinate coordinate : selection.coordinates()) {\n        if (!territoryService.claim(ownerId, coordinate)) {\n          throw new IllegalStateException(msg(\"nation.service.overlap-during-claim\"));"
+        },
+        {
+          "line": 848,
+          "match": "for (ChunkCoordinate coordinate : claimed)",
+          "excerpt": "      for (ChunkCoordinate coordinate : claimed) {\n        territoryService.unclaim(ownerId, coordinate);\n      }\n      if (preview.price().signum() > 0) {\n        economyService.deposit(playerId, preview.price(), true);\n      }\n      throw exception;"
+        },
+        {
+          "line": 852,
+          "match": "economyService.deposit(playerId, preview.price(), true);",
+          "excerpt": "        economyService.deposit(playerId, preview.price(), true);\n      }\n      throw exception;\n    }\n    if (resourceDistrictService != null) {\n      resourceDistrictService.ensureDistricts(nation);\n    }"
+        },
+        {
+          "line": 932,
+          "match": "public synchronized boolean renameNation(",
+          "excerpt": "  public synchronized boolean renameNation(NationId nationId, String newName) {\n    Nation nation = nationsById.get(nationId);\n    if (nation == null) {\n      return false;\n    }\n    String normalized = normalizeNationName(newName);\n    NationId existing = names.get(normalized);"
+        },
+        {
+          "line": 1011,
+          "match": "public synchronized boolean addExperience(",
+          "excerpt": "  public synchronized boolean addExperience(NationId nationId, long amount) {\n    if (amount <= 0L) {\n      return false;\n    }\n    // 上限保护：单次经验添加不超过 10000，防止刷等级\n    if (amount > 10_000L) {\n      java.util.logging.Logger.getLogger(\"NationModule\")"
+        },
+        {
+          "line": 1042,
+          "match": "public synchronized Receipt grantExperience(",
+          "excerpt": "  public synchronized Receipt grantExperience(Grant grant) {\n    Objects.requireNonNull(grant);\n    if (experienceAuthorityUnavailable || stateStorage == null)\n      throw new IllegalStateException(\"Nation experience authority unavailable\");\n    Nation nation = nationsById.get(grant.nationId());\n    if (nation == null)\n      throw new IllegalStateException(\"Experience recipient nation no longer exists\");"
+        },
+        {
+          "line": 1246,
+          "match": "private NationCreationTransaction prepareCreationTransaction(",
+          "excerpt": "  private NationCreationTransaction prepareCreationTransaction(\n      Nation nation, UUID founderId, BigDecimal cost) {\n    if (cost == null || cost.signum() <= 0) {\n      return null;\n    }\n    return new NationCreationTransaction(\n        UUID.randomUUID(),"
+        },
+        {
+          "line": 1260,
+          "match": "private void chargeCreation(",
+          "excerpt": "  private void chargeCreation(NationCreationTransaction transaction, String actionName) {\n    if (transaction == null) {\n      return;\n    }\n    creationJournal.save(transaction);\n    if (!economyService.withdraw(transaction.founderId(), transaction.cost(), true)) {\n      creationJournal.clear();"
+        },
+        {
+          "line": 1844,
+          "match": "disbandJournal.save(transaction);",
+          "excerpt": "    disbandJournal.save(transaction);\n    try {\n      for (Nation target : targets) {\n        target.members().forEach(member -> membership.remove(member.playerId(), target.id()));\n        names.remove(normalizeNationName(target.name()), target.id());\n        nationsById.remove(target.id(), target);\n      }"
+        },
+        {
+          "line": 1900,
+          "match": "NationDisbandRecovery.completeCommitted(",
+          "excerpt": "      NationDisbandRecovery.completeCommitted(\n          transaction,\n          territoryService,\n          diplomacyService,\n          treasuryService,\n          allianceService,\n          militaryAllianceService,"
+        }
+      ]
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationCreationRecovery.java",
+      "sha256_lf": "E8C5B7BE874F2DF239FB38E9E264B719371E614D0465484966090443C578AED3",
+      "matches_exercise_reproduction": true,
+      "anchors": [
+        {
+          "line": 35,
+          "match": "BigDecimal currentBalance =",
+          "excerpt": "    BigDecimal currentBalance = economyService.balance(transaction.founderId());\n    BigDecimal expectedAfterCharge = transaction.balanceBefore().subtract(transaction.cost());\n    if (currentBalance.compareTo(transaction.balanceBefore()) == 0) {\n      journal.clear();\n      logger.info(\"Cleared uncharged nation creation transaction \" + transaction.transactionId());\n      return;\n    }"
+        },
+        {
+          "line": 37,
+          "match": "if (currentBalance.compareTo(transaction.balanceBefore()) == 0)",
+          "excerpt": "    if (currentBalance.compareTo(transaction.balanceBefore()) == 0) {\n      journal.clear();\n      logger.info(\"Cleared uncharged nation creation transaction \" + transaction.transactionId());\n      return;\n    }\n    if (currentBalance.compareTo(expectedAfterCharge) != 0) {\n      throw new IllegalStateException("
+        },
+        {
+          "line": 53,
+          "match": "if (!economyService.deposit(",
+          "excerpt": "    if (!economyService.deposit(transaction.founderId(), transaction.cost(), true)) {\n      throw new IllegalStateException(\n          \"Failed to refund interrupted nation creation transaction \"\n              + transaction.transactionId());\n    }\n    journal.clear();\n    logger.info(\"Refunded interrupted nation creation transaction \" + transaction.transactionId());"
+        }
+      ]
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationCreationTransaction.java",
+      "sha256_lf": "E2481C58B5B3DA47B721EC5846BDE936AD669A956897B08B7004D480C3732489",
+      "matches_exercise_reproduction": true,
+      "anchors": [
+        {
+          "line": 9,
+          "match": "record NationCreationTransaction(",
+          "excerpt": "record NationCreationTransaction(\n    UUID transactionId,\n    NationId nationId,\n    NationKind kind,\n    UUID founderId,\n    BigDecimal cost,\n    BigDecimal balanceBefore) {"
+        }
+      ]
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/PersistenceNationCreationJournal.java",
+      "sha256_lf": "CD363DCD901169913536561EE799B56803D17EF98731BCB50BEEA1CE3AF043B7",
+      "matches_exercise_reproduction": true,
+      "anchors": [
+        {
+          "line": 45,
+          "match": "public void save(NationCreationTransaction transaction)",
+          "excerpt": "  public void save(NationCreationTransaction transaction) {\n    Properties properties = new Properties();\n    properties.setProperty(\"transactionId\", transaction.transactionId().toString());\n    properties.setProperty(\"nationId\", transaction.nationId().toString());\n    properties.setProperty(\"kind\", transaction.kind().name());\n    properties.setProperty(\"founderId\", transaction.founderId().toString());\n    properties.setProperty(\"cost\", transaction.cost().toPlainString());"
+        },
+        {
+          "line": 53,
+          "match": "persistence.saveProperties(namespace, FILE_NAME, properties);",
+          "excerpt": "    persistence.saveProperties(namespace, FILE_NAME, properties);\n  }\n\n  @Override\n  public void clear() {\n    persistence.saveProperties(namespace, FILE_NAME, new Properties());\n  }"
+        }
+      ]
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java",
+      "sha256_lf": "1FD26B5AC236DA32F9296FE8269DB944898E47C5CE1378BFDF1E480C41A96A87",
+      "matches_exercise_reproduction": true,
+      "anchors": [
+        {
+          "line": 163,
+          "match": "storage.save(NationStateCodec.toProperties(nations.values()));",
+          "excerpt": "      storage.save(NationStateCodec.toProperties(nations.values()));\n    } catch (RuntimeException exception) {\n      compensateFailedSave(\n          source, previousMember, created, normalizedName, transfer, previousState, exception);\n    }\n    try {\n      journal.clear();"
+        },
+        {
+          "line": 170,
+          "match": "catch (RuntimeException cleanupFailure)",
+          "excerpt": "    } catch (RuntimeException cleanupFailure) {\n      logger.log(\n          Level.SEVERE,\n          \"Nation split committed but transaction journal cleanup failed; startup recovery will\"\n              + \" retry \"\n              + transaction.transactionId(),\n          cleanupFailure);"
+        }
+      ]
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationSplitRecovery.java",
+      "sha256_lf": "39C7B84B5BE1A970EC16BA7BF18530B868D926157723A782627F1F33F8EE991C",
+      "matches_exercise_reproduction": true,
+      "anchors": [
+        {
+          "line": 37,
+          "match": "storage.save(allTarget ? transaction.targetState() : transaction.previousState());",
+          "excerpt": "        storage.save(allTarget ? transaction.targetState() : transaction.previousState());\n        journal.clear();\n    }\n}"
+        }
+      ]
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/PersistenceNationDisbandJournal.java",
+      "sha256_lf": "6D5A81DCD2D98844504F7CB0CC0116BC5640BC09226110E83E4C2D58D443E87F",
+      "matches_exercise_reproduction": true,
+      "anchors": [
+        {
+          "line": 101,
+          "match": "public void save(NationDisbandTransaction transaction)",
+          "excerpt": "  public void save(NationDisbandTransaction transaction) {\n    Properties properties = new Properties();\n    properties.setProperty(\"transactionId\", transaction.transactionId().toString());\n    properties.setProperty(\"nation.count\", Integer.toString(transaction.nationIds().size()));\n    for (int index = 0; index < transaction.nationIds().size(); index++) {\n      properties.setProperty(\"nation.\" + index, transaction.nationIds().get(index).toString());\n    }"
+        },
+        {
+          "line": 142,
+          "match": "persistence.saveProperties(namespace, FILE_NAME, properties);",
+          "excerpt": "    persistence.saveProperties(namespace, FILE_NAME, properties);\n  }\n\n  @Override\n  public void clear() {\n    persistence.saveProperties(namespace, FILE_NAME, new Properties());\n  }"
+        }
+      ]
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java",
+      "sha256_lf": "6B4C01938E27456961AD2D33146B8C8BFE644EBC213D7CFEB76976EDADB2D949",
+      "matches_exercise_reproduction": true,
+      "anchors": [
+        {
+          "line": 113,
+          "match": "Properties persisted = stateStorage.load();",
+          "excerpt": "    Properties persisted = stateStorage.load();\n    Set<NationId> existing = new HashSet<>();\n    NationStateCodec.fromProperties(persisted).forEach(nation -> existing.add(nation.id()));\n    long present = transaction.nationIds().stream().filter(existing::contains).count();\n    if (present == transaction.nationIds().size()) {\n      journal.clear();\n      logger.info(\"Cleared uncommitted nation disband transaction \" + transaction.transactionId());"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\starcore-1.0.0.jar",
+      "sha256": "B2B19F1F5EEDA9FC81A4085CC026A45C6A563427F42121282FB9E2DFA1BE48EA",
+      "size": 19770247,
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply\\target\\StarSupply-0.1.0.jar",
+      "sha256": "267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C",
+      "size": 14695959,
+      "unchanged": true
+    }
+  ],
+  "limitations": [
+    "Findings are from source control-flow inspection, not newly executed runtime reproduction.",
+    "Prior 1238 Core targeted tests and 177 companion tests do not prove these uncovered failure paths.",
+    "No current full Core clean verify, latest MySQL integration or live Paper/Folia acceptance was performed."
+  ]
+}
