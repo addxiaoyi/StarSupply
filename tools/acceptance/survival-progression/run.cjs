@@ -9,7 +9,8 @@ const {readSavedPickaxe, readSavedResourcePhase, readSavedInventory} = require('
 const {stopViaRcon, commandViaRcon} = require('./rcon-stop.cjs');
 const {validatePlan, journalPath, prepareCycle, verifyStoppedCycle} = require('./logistics-cycle.cjs');
 const {prepareReplay, probeCredits, verifyReplayStopped} = require('./native-replay.cjs');
-const {hash, archiveSavedPlayer, linkProductionEvidence} = require('./production-evidence.cjs');
+const {hash, archiveSavedPlayer, linkProductionEvidence, readProductionEvidence} = require('./production-evidence.cjs');
+const {prepareProduction, beginProduction, finishProduction, verifyTracedPhase, productionForLogistics} = require('./production-session.cjs');
 const {writeJson} = require('./durable-json.cjs');
 const {PHASES, productionCounts} = require('./production-targets.cjs');
 const {captureDemand, createDemandPlan, verifyDemandBudget, assertDemandFits, saveDemandPlan} = require('./demand-plan.cjs');
@@ -123,6 +124,7 @@ async function main() {
   const proofDirectory = path.join(stage, 'folia-proof');
   fs.mkdirSync(proofDirectory, {recursive: true});
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const resultPath = `folia-proof/survival-progression-${timestamp}-result.json`;
   const worldIdentity = {level: properties['level-name'], uidSha256: hash(fs.readFileSync(path.join(stage, properties['level-name'], 'uid.dat')))};
   let logisticsPlan, productionPlan, seedPlan, savedBefore;
   if (resourceClient) savedBefore = archiveSavedPlayer(stage,
@@ -141,9 +143,15 @@ async function main() {
     verifyDemandBudget(logisticsPlan, {plugins, worldIdentity});
     if (replayOnly) prepareReplay(stage, logisticsPlan, plugins, savedBefore);
     else {
+      let production;
+      if (logisticsPlan.traceProduction) {
+        const previous = fs.existsSync(journalPath(stage, logisticsPlan))
+          ? JSON.parse(fs.readFileSync(journalPath(stage, logisticsPlan), 'utf8')) : null;
+        production = productionForLogistics(stage, logisticsPlan, username, plugins, worldIdentity, previous?.savedBefore ?? savedBefore);
+      }
       const journal = prepareCycle({stage, plan: logisticsPlan, player: username, inventory: savedBefore.inventory, savedBefore, plugins});
-      if (logisticsPlan.productionEvidence) {
-        const production = linkProductionEvidence(stage, logisticsPlan, journal.savedBefore, username, plugins);
+      if (logisticsPlan.productionEvidence || logisticsPlan.traceProduction) {
+        production ??= linkProductionEvidence(stage, logisticsPlan, journal.savedBefore, username, plugins);
         if (JSON.stringify(production.worldIdentity) !== JSON.stringify(worldIdentity)) throw new Error('Production and logistics worlds differ');
         journal.productionEvidence = production;
         writeJson(journalPath(stage, logisticsPlan), journal);
@@ -153,6 +161,14 @@ async function main() {
   if ((planningOnly || productionPlan?.demandBudget || logisticsPlan?.demandBudget || logisticsPlan?.nativeReplay)
       && !plugins.some(row => row.name === 'SupplyNativeProof-1.0.0.jar')) {
     throw new Error('Install the current isolated SupplyNativeProof fixture before planning or validating this logistics plan');
+  }
+  let productionSession;
+  if (productionPlan?.traceProduction) {
+    if (clientArguments.length !== 2) throw new Error('Traced production accepts exactly a phase and a plan path');
+    productionSession = prepareProduction({stage, plan: productionPlan, player: username, plugins, worldIdentity, savedBefore});
+    const contextFile = path.join(proofDirectory, `survival-production-${timestamp}-context.json`);
+    beginProduction(stage, productionPlan, productionSession, clientArguments[0], resultPath, contextFile);
+    clientArguments.push(contextFile);
   }
 
   const serverLogPath = path.join(proofDirectory, `survival-progression-${timestamp}-server.log`);
@@ -342,7 +358,8 @@ async function main() {
     plugins,
     clientSources,
     phase: resourceClient ? clientArguments[0] ?? 'mining' : 'iron-pickaxe',
-    productionProtocolVersion: 1,
+    productionProtocolVersion: 2,
+    productionSession: productionSession ? productionPlan.runId : undefined,
     productionTargets: productionCounts(plannedOutput ?? productionPlan ?? logisticsPlan ?? seedPlan),
     demandEvidence,
     generatedPlan,
@@ -370,7 +387,28 @@ async function main() {
     clientLog: path.relative(stage, clientLogPath).replace(/\\/g, '/'),
     clientLogSha256: hash(fs.readFileSync(clientLogPath))
   };
-  writeJson(path.join(proofDirectory, `survival-progression-${timestamp}-result.json`), summary, {exclusive: true});
+  // A preliminary saved result survives interruption before journal advancement.
+  // It never claims phase completion before the traced-quantity gate has run.
+  const physicalPass = summary.pass;
+  if (productionSession) summary.pass = false;
+  writeJson(path.join(stage, resultPath), summary, {exclusive: true});
+  if (productionSession && savedCheckpoint && normalStopObserved && gamePortClosed && rconPortClosed && !health.failure) {
+    try {
+      const evidence = readProductionEvidence(stage, [...productionSession.journal.results.map(row => row.path), resultPath],
+        savedCheckpoint, username, plugins, {strict: true});
+      if (physicalPass) {
+        summary.tracedInventory = verifyTracedPhase(summary.phase, productionPlan, evidence, savedCheckpoint.inventory);
+        summary.pass = true;
+      }
+      writeJson(path.join(stage, resultPath), summary);
+      finishProduction(stage, productionPlan, productionSession);
+    } catch (error) {
+      runFailure = runFailure ?? error;
+      summary.pass = false; summary.failure = runFailure.message;
+      writeJson(path.join(stage, resultPath), summary);
+      // The pending result remains inspectable and is validated on the next run.
+    }
+  }
   console.log(JSON.stringify(summary));
 
   if (runFailure) throw runFailure;

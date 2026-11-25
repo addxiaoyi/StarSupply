@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const {test} = require('node:test');
-const {inventoryCount, smeltingState, smeltUntil} = require('./survival-smelting.cjs');
+const {inventoryCount, smeltingState, smeltUntil, drainSavedFurnace} = require('./survival-smelting.cjs');
 
 function fixture({pending = 0, ready = 0, owned = 0, raw = 0, coal = 1, fuel = 0, target = 6} = {}) {
   const names = ['raw_iron', 'iron_ingot', 'coal', 'charcoal'];
@@ -111,4 +111,19 @@ test('large demand batches refill a 64-item furnace slot instead of overfilling 
   assert.equal(inventoryCount(f.window, 'iron_ingot'), 130);
   assert.equal(f.actions.filter(row => row[0] === 'input').reduce((n, row) => n + row[1], 0), 130);
   assert.equal(f.slots[0], null);
+});
+
+test('traced smelting first drains saved contents without spending or certifying backpack ore', async () => {
+  const f = fixture({pending: 3, ready: 2, owned: 7, raw: 6, coal: 2});
+  const retained = await drainSavedFurnace(f.bot, f.window, 'raw_iron', 'iron_ingot', {check: f.cook, pollMs: 1, timeoutMs: 1000});
+  assert.equal(retained, 5);
+  assert.equal(inventoryCount(f.window, 'iron_ingot'), 12);
+  assert.equal(inventoryCount(f.window, 'raw_iron'), 6);
+  assert.equal(f.window.inputItem(), null); assert.equal(f.window.outputItem(), null);
+  assert.equal(f.actions.filter(row => row[0] === 'input').length, 0);
+  f.slots[3].count += 3; // A separate, captured survival acquisition.
+  await smeltUntil(f.bot, f.window, 'raw_iron', 'iron_ingot', 15, {check: f.cook, pollMs: 1, timeoutMs: 1000});
+  assert.equal(inventoryCount(f.window, 'iron_ingot'), 15);
+  assert.equal(inventoryCount(f.window, 'raw_iron'), 6);
+  assert.deepEqual(f.actions.filter(row => row[0] === 'input'), [['input', 3]]);
 });

@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-25",
+  "base_commit": "e51a8c5dcfbb5248a0677bab5c31f2ad67eaceda",
+  "change": "Replenish proven survival quantities alongside retained historical inventory, persist production evidence across phases and resume from saved attempts.",
+  "implementation": {
+    "option": "traceProduction: true",
+    "production_protocol": 2,
+    "ledger": "Recipe outputs require recorded ingredient inputs; starting stock and unexplained gains receive zero credit. Unexplained losses spend traced quantities first. Phase targets use proven balances.",
+    "session": "One immutable plan/player/world/plugin identity; pending attempt written before launch; committed result hashes and archived NBT checkpoints; failed normally saved attempts retain captured progress.",
+    "recovery": "Recover a result committed before journal advancement. Missing result can retry only with unchanged saved player bytes; unrecorded changed saves stop for inspection. Startup-only unchanged saves add no credit.",
+    "furnace": "Finish and retain saved furnace content as untraced stock, then produce the missing traced batch using captured ingredients. The actual current container player slots supply inventory counts.",
+    "logistics": "Require all six passed source-linked phases and enough traced delivery quantities before creating the initial logistics journal or issuing any economic command; resume uses the original saved baseline.",
+    "compatibility": "Legacy inventory-target workflows remain available. Protocol 1 and 2 evidence cannot mix. No automatic certification of retained historical ingredients."
+  },
+  "tests": {
+    "node_total": 107,
+    "node_failures": 0,
+    "node_skipped": 0,
+    "new_tests": 16,
+    "log": "target/survival-traced-production-final-tests-20261125.log",
+    "log_sha256": "2F6E9BA5A1AC85483CDDC334F1F060046B946A1B338BBE03B0DB7DF3FC0AD9BE",
+    "node_syntax_files": 39,
+    "powershell_restoration_checks": 7,
+    "coverage": "Retained stock plus fresh recipes; conservative loss accounting; partial outputs and honey bottles; current container inventory; saved furnace drain without spending backpack ore; six-phase source handoff; failed saved runs; result/journal interruption; unchanged unstarted/startup-only attempts; identity/checkpoint/result conflicts; legacy evidence rejection. Direct gameplay logistics rejects a missing or unverified source handoff before any command.",
+    "boundary": "Gameplay and checkpoints in source tests are fixtures, not live Minecraft. Session archive tests hash fixture bytes, not actual NBT. Existing logistics regressions exercise real SQLite. No server was started."
+  },
+  "production_plugin": {
+    "source_changed": false,
+    "existing_java_verify_tests": 124,
+    "java_suite_rerun_this_change": false,
+    "jar_sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+    "compatible_core_sha256": "6BB059707AEDCFE3E7D65BAD768329E891BA7144C6DA6B1B9A1C30790E8A4B0A"
+  },
+  "preserved_stage": {
+    "player": "SupplyCook",
+    "player_save_sha256": "747194DCF7BBF6FAA52996FA9DA2A59939227354612FC69A0F05AC92D0BD24D0",
+    "player_save_unchanged": true,
+    "live_acceptance_performed": false,
+    "observed_folia_jvms": 0,
+    "observed_stage_listeners": 0
+  },
+  "remaining": [
+    "Run current demand/trace-production/logistics/restart flow on the isolated Folia world.",
+    "Natural sources, free backpack space and actual terrain routes still require live verification.",
+    "Ambiguous player credits, premiums and tax legs remain REVIEW without upstream business-UUID receipts.",
+    "Complete current optional-plugin Folia and graphical resource-pack acceptance; production Folia declaration remains disabled."
+  ]
+}

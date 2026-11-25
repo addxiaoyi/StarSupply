@@ -3,16 +3,24 @@ const path = require('node:path');
 const {createHash} = require('node:crypto');
 const helpers = require('./iron-pickaxe.cjs');
 const {installServerDigConfirmation} = require('./server-dig.cjs');
-const {smeltingState, smeltUntil} = require('./survival-smelting.cjs');
+const {smeltingState, smeltUntil, drainSavedFurnace} = require('./survival-smelting.cjs');
 const {ITEMS, validatePlan, runCycle} = require('./logistics-cycle.cjs');
 const {productionCounts, productionNeeds, craftToTarget, harvestToTarget} = require('./production-targets.cjs');
+const {ProductionLedger} = require('./production-ledger.cjs');
+const {isDeepStrictEqual} = require('node:util');
+const {playerItems} = require('./inventory-view.cjs');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function main() {
-  const [stage, mineflayerModule, pathfinderModule, username = 'SupplyCook', phase = 'mining', planFile] = process.argv.slice(2);
+  const [stage, mineflayerModule, pathfinderModule, username = 'SupplyCook', phase = 'mining', planFile, contextFile] = process.argv.slice(2);
   const productionPlan = planFile ? validatePlan(JSON.parse(fs.readFileSync(planFile, 'utf8'))) : null;
   const logisticsPlan = phase === 'logistics' ? productionPlan : null;
   const targets = productionCounts(productionPlan);
+  const tracedProduction = productionPlan?.traceProduction === true && phase !== 'logistics';
+  const context = tracedProduction && contextFile ? JSON.parse(fs.readFileSync(contextFile, 'utf8')) : null;
+  if (tracedProduction && (!context || context.player !== username || !isDeepStrictEqual(context.plan, productionPlan))) {
+    throw new Error('Traced production requires the runner-verified session context');
+  }
   const mineflayer = require(mineflayerModule), pf = require(pathfinderModule);
   const Vec3 = require(path.join(path.dirname(mineflayerModule), 'vec3')).Vec3;
   const properties = Object.fromEntries(fs.readFileSync(path.join(stage, 'server.properties'), 'utf8')
@@ -38,19 +46,38 @@ async function main() {
   bot.on('kicked', reason => { failure = new Error(`Kicked: ${JSON.stringify(reason)}`); });
   bot.on('death', () => { failure = new Error('Survival player died; saved progress requires recovery'); bot.pathfinder.setGoal(null); });
   bot.on('messagestr', message => log('message', {message}));
-  const count = name => bot.inventory.items().filter(item => item.name === name).reduce((n, item) => n + item.count, 0);
-  const acquired = (item, before, source, inputs = {}) => {
+  const count = name => playerItems(bot).filter(item => item.name === name).reduce((n, item) => n + item.count, 0);
+  let productionLedger;
+  const acquired = (item, before, source, inputs = {}, beforeInventory) => {
     const after = count(item);
-    if (after > before) log('production_acquired', {item, before, after, count: after - before, source, inputs, inventory: inventory()});
+    if (after > before) {
+      const action = {item, before, after, count: after - before, source, inputs, beforeInventory, inventory: inventory()};
+      productionLedger?.acquire(action);
+      log('production_acquired', action);
+    }
   };
-  const inventory = () => bot.inventory.items().map(item => ({slot: item.slot, name: item.name, count: item.count}));
+  const inventory = () => playerItems(bot).map(item => ({slot: item.slot, name: item.name, count: item.count}));
   const inventoryCounts = () => {
     const values = {};
     for (const item of inventory()) values[item.name] = (values[item.name] ?? 0) + item.count;
     return values;
   };
-  const needs = () => productionNeeds(productionPlan, inventoryCounts());
-  const craftUntil = (output, target, ingredients) => craftToTarget({output, target, ingredients, count, craft});
+  const observeInventory = () => {
+    const values = inventoryCounts();
+    productionLedger?.observe(values);
+    log('production_observed', {inventory: values});
+    return values;
+  };
+  const available = name => {
+    if (!productionLedger) return count(name);
+    if (!isDeepStrictEqual(productionLedger.inventory, inventoryCounts())) observeInventory();
+    return productionLedger.available(name);
+  };
+  const needs = () => {
+    if (productionLedger) available('bread');
+    return productionNeeds(productionPlan, productionLedger?.traced ?? inventoryCounts());
+  };
+  const craftUntil = (output, target, ingredients) => craftToTarget({output, target, ingredients, count: available, craft});
   async function until(read, label, timeout = 10000) {
     const deadline = Date.now() + timeout;
     while (Date.now() < deadline) {
@@ -229,13 +256,13 @@ async function main() {
   }
   async function gather(blockNames, dropName, desired, tool, maxDistance = 24) {
     let failures = 0;
-    while (count(dropName) < desired) {
+    while (available(dropName) < desired) {
       const existing = Object.values(bot.entities).find(entity => entity.name === 'item'
         && entity.getDroppedItem()?.name === dropName && entity.position.distanceTo(bot.entity.position) < 12);
       if (existing) {
         try { await collect(dropName, count(dropName), existing.position); }
         catch (error) { log('existing_drop_unreachable', {dropName, reason: error.message}); }
-        if (count(dropName) >= desired) return;
+        if (available(dropName) >= desired) return;
       }
       const candidates = bot.findBlocks({matching: block => blockNames.includes(block.name), maxDistance, count: 80})
         .sort((a, b) => a.distanceTo(bot.entity.position) - b.distanceTo(bot.entity.position));
@@ -254,13 +281,14 @@ async function main() {
           block = bot.blockAt(position);
           if (tool) await equip(tool);
           const before = count(dropName);
+          const beforeInventory = observeInventory();
           if (!helpers.hasDirectRay(bot, block)) throw new Error(`No clear survival digging ray to ${block.name}`);
           log('harvest_started', {block: block.name, position, before, held: bot.heldItem?.name, player: bot.entity.position.clone()});
           await within(bot.dig(block, true, 'auto'), `harvest ${block.name}`, 20000);
           await until(() => !blockNames.includes(bot.blockAt(position)?.name), 'server block removal');
           await collect(dropName, before, position.offset(0.5, 0.5, 0.5));
           log('harvest_collected', {drop: dropName, before, after: count(dropName), position, inventory: inventory()});
-          acquired(dropName, before, 'harvest');
+          acquired(dropName, before, 'harvest', {}, beforeInventory);
           gathered = true; break;
         } catch (error) {
           bot.pathfinder.setGoal(null); bot.clearControlStates(); failures++;
@@ -293,6 +321,7 @@ async function main() {
     const Item = require(path.join(path.dirname(mineflayerModule), 'prismarine-item'))(bot.registry);
     const table = await workbench();
     for (let repetition = 0; repetition < repetitions; repetition++) {
+      const beforeInventory = observeInventory();
       const before = count(output), window = await bot.openBlock(table);
       let confirmedOutput = false, confirmedInventory = false;
       const onSlot = packet => {
@@ -332,7 +361,7 @@ async function main() {
       await delay(500);
       if (count(output) <= before) throw new Error(`Crafted ${output} was not retained`);
       log('crafted', {output, ingredients, before, after: count(output), inventory: inventory()});
-      acquired(output, before, 'craft', Object.fromEntries(ingredients.map(([name, slots]) => [name, slots.length])));
+      acquired(output, before, 'craft', Object.fromEntries(ingredients.map(([name, slots]) => [name, slots.length])), beforeInventory);
     }
   }
   async function furnace() {
@@ -350,17 +379,36 @@ async function main() {
     await approach(block); return block;
   }
   async function smelt(input, output, desired, gatherMissing) {
-    if (count(output) >= desired) return;
-    const before = count(output);
+    if (available(output) >= desired) return;
     const block = await furnace();
     let window = await bot.openFurnace(block);
+    let before, beforeInventory;
     try {
-      const state = smeltingState(window, input, output, desired);
-      if (state.acquireInput && gatherMissing) {
-        window.close();
-        await gatherMissing(state.missingInput);
+      if (productionLedger) {
+        // Saved furnace contents lack a player-inventory source receipt. Finish
+        // and retain them as untraced stock before starting a fresh traced batch.
+        const retained = await drainSavedFurnace(bot, window, input, output,
+          {log, check: () => { if (failure) throw failure; }});
+        if (retained) {
+          window.close(); await delay(500); observeInventory();
+          log('saved_furnace_recovered', {input, output, count: retained, provenance: 'untraced'});
+        } else window.close();
+        const missing = desired - available(output);
+        await gatherMissing(missing);
         await approach(bot.blockAt(block.position));
         window = await bot.openFurnace(bot.blockAt(block.position));
+        if (window.inputItem() || window.outputItem()) throw new Error('Fresh traced furnace batch requires empty input/output');
+        beforeInventory = observeInventory(); before = count(output);
+        desired = before + missing;
+      } else {
+        const state = smeltingState(window, input, output, desired);
+        if (state.acquireInput && gatherMissing) {
+          window.close();
+          await gatherMissing(state.missingInput);
+          await approach(bot.blockAt(block.position));
+          window = await bot.openFurnace(bot.blockAt(block.position));
+        }
+        beforeInventory = observeInventory(); before = count(output);
       }
       log('smelting_started', {input, output, desired, position: block.position});
       await smeltUntil(bot, window, input, output, desired, {log, check: () => { if (failure) throw failure; }});
@@ -368,14 +416,19 @@ async function main() {
     await delay(500);
     if (count(output) < desired) throw new Error(`Smelting output did not persist: ${output}`);
     log('smelting_collected', {output, count: count(output), inventory: inventory()});
-    acquired(output, before, 'smelt', {[input]: count(output) - before});
+    // Only inputs actually removed from this player's inventory can establish
+    // recipe lineage. Legacy resumed furnace output remains an observed gain.
+    const produced = count(output) - before;
+    if ((beforeInventory[input] ?? 0) - count(input) === produced) {
+      acquired(output, before, 'smelt', {[input]: produced}, beforeInventory);
+    } else observeInventory();
   }
 
   async function farmBread() {
-    if (count('bread') >= targets.FOOD && count('sugar_cane') >= needs().sugarCane) return;
+    if (available('bread') >= targets.FOOD && available('sugar_cane') >= needs().sugarCane) return;
     await travel(new Vec3(-60, 65, -1), 4);
     await gather(['sugar_cane'], 'sugar_cane', needs().sugarCane, null, 16);
-    if (count('bread') >= targets.FOOD) return;
+    if (available('bread') >= targets.FOOD) return;
     const farm = bot.findBlocks({matching: block => block.name === 'wheat', maxDistance: 12, count: 8});
     const soils = bot.findBlocks({matching: block => ['dirt', 'grass_block', 'farmland'].includes(block.name), maxDistance: 12, count: 200});
     for (const position of soils) {
@@ -400,7 +453,7 @@ async function main() {
     }
     if (!farm.length) throw new Error('No reachable hydrated farmland for wheat');
     const deadline = Date.now() + 1800000;
-    while (count('wheat') + count('bread') * 3 < targets.FOOD * 3) {
+    while (available('wheat') + available('bread') * 3 < targets.FOOD * 3) {
       if (Date.now() >= deadline) throw new Error('Wheat is still growing; saved crops can resume next run');
       for (const position of farm) {
         let crop = bot.blockAt(position);
@@ -415,23 +468,24 @@ async function main() {
         }
         if (Number(crop.getProperties().age) !== 7) continue;
         const before = count('wheat');
+        const beforeInventory = observeInventory();
         await bot.dig(crop, true, 'auto'); await collect('wheat', before, position.offset(0.5, 0.5, 0.5));
         log('wheat_harvested', {position, count: count('wheat')});
-        acquired('wheat', before, 'harvest');
+        acquired('wheat', before, 'harvest', {}, beforeInventory);
         if (count('wheat_seeds')) {
           await equip('wheat_seeds');
           await helpers.placeBlockEventually(bot, bot.blockAt(position.offset(0, -1, 0)), new Vec3(0, 1, 0), 'wheat', 'replant survival wheat', log);
         }
       }
-      if (count('wheat') + count('bread') * 3 < targets.FOOD * 3) await delay(10000);
+      if (available('wheat') + available('bread') * 3 < targets.FOOD * 3) await delay(10000);
     }
     await craftUntil('bread', targets.FOOD, [['wheat', [4, 5, 6]]]);
   }
 
   async function harvestHoney() {
-    await harvestToTarget({target: targets.MEDICAL, count: () => count('honey_bottle'), wait: delay, round: async () => {
+    await harvestToTarget({target: targets.MEDICAL, count: () => available('honey_bottle'), wait: delay, round: async () => {
     for (const coordinates of [[-6, 86, 91], [-87, 73, 117], [60, 89, 140]]) {
-      if (count('honey_bottle') >= targets.MEDICAL) return;
+      if (available('honey_bottle') >= targets.MEDICAL) return;
       const position = new Vec3(...coordinates);
       await travel(position, 3);
       const nest = bot.blockAt(position);
@@ -452,16 +506,17 @@ async function main() {
       }
       if (!smoke) throw new Error(`No safe campfire smoke path under bee nest at ${position}`);
       await equip('glass_bottle');
+      const beforeInventory = observeInventory();
       const before = count('honey_bottle'); await bot.activateBlock(nest);
       await until(() => count('honey_bottle') > before && Number(bot.blockAt(position).getProperties().honey_level) === 0,
         'server honey bottle and emptied nest');
       log('honey_harvested', {position, before, after: count('honey_bottle')});
-      acquired('honey_bottle', before, 'honey', {glass_bottle: count('honey_bottle') - before});
+      acquired('honey_bottle', before, 'honey', {glass_bottle: count('honey_bottle') - before}, beforeInventory);
     }
     }});
   }
   async function lootGunpowder(desired) {
-    if (count('gunpowder') >= desired) return;
+    if (available('gunpowder') >= desired) return;
     // Naturally generated dungeon chests located by the read-only terrain survey.
     // Their random loot remains unopened until a normal player interaction.
     for (const coordinates of [[-29, 40, 104], [-28, 40, 108], [-41, 32, 110], [-44, 32, 109]]) {
@@ -481,15 +536,16 @@ async function main() {
           const item = window.containerItems().find(item => item.name === name);
           if (!item) continue;
           const before = count(name);
+          const beforeInventory = observeInventory();
           await window.withdraw(item.type, null, item.count);
           await until(() => count(name) > before, `collect natural ${name} loot`);
           log('natural_loot_collected', {position, name, before, after: count(name)});
-          acquired(name, before, 'natural-chest');
+          acquired(name, before, 'natural-chest', {}, beforeInventory);
         }
       } finally { window.close(); }
-      if (count('gunpowder') >= desired) return;
+      if (available('gunpowder') >= desired) return;
     }
-    throw new Error(`Natural chests supplied ${count('gunpowder')}/${desired} gunpowder; another survival source is required`);
+    throw new Error(`Natural chests supplied ${available('gunpowder')}/${desired} gunpowder; another survival source is required`);
   }
 
   try {
@@ -508,9 +564,13 @@ async function main() {
     const before = inventory();
     log('started', {player: username, position: bot.entity.position.clone(), inventory: before, productionTargets: targets,
       pluginSha256: createHash('sha256').update(fs.readFileSync(path.join(stage, 'plugins/StarSupply-0.1.0.jar'))).digest('hex').toUpperCase()});
+    if (tracedProduction) {
+      if (!isDeepStrictEqual(inventoryCounts(), context.savedBefore.inventory)) throw new Error('Login inventory differs from the recorded production checkpoint');
+      productionLedger = new ProductionLedger(inventoryCounts(), context.traced);
+    }
     if (phase === 'mining') {
-      const ironMissing = Math.max(0, targets.EQUIPMENT - count('iron_ingot'));
-      const glassToMake = Math.max(0, needs().bottleBatches * 3 - count('glass'));
+      const ironMissing = Math.max(0, targets.EQUIPMENT - available('iron_ingot'));
+      const glassToMake = Math.max(0, needs().bottleBatches * 3 - available('glass'));
       await gather(['coal_ore', 'deepslate_coal_ore'], 'coal', Math.ceil((ironMissing + glassToMake) / 8) + 3, 'iron_pickaxe');
       if (ironMissing) {
         await smelt('raw_iron', 'iron_ingot', targets.EQUIPMENT,
@@ -540,11 +600,11 @@ async function main() {
       await harvestHoney();
     } else if (phase === 'scaffolding') {
       if (needs().scaffoldBatches > 0) {
-        if (count('bamboo') < needs().bamboo) {
+        if (available('bamboo') < needs().bamboo) {
           await travel(new Vec3(114, 96, -144), 3);
           await gather(['bamboo'], 'bamboo', needs().bamboo, 'stone_sword', 20);
         }
-        if (count('string') < needs().string) {
+        if (available('string') < needs().string) {
           await travel(new Vec3(-73, 75, 41), 4);
           await descendTo(26);
           await gather(['cobweb'], 'string', needs().string, 'stone_sword', 24);
@@ -553,7 +613,7 @@ async function main() {
       }
     } else if (phase === 'fireworks') {
       if (needs().rocketBatches > 0) {
-        if (count('sugar_cane') < needs().sugarCane) {
+        if (available('sugar_cane') < needs().sugarCane) {
           await travel(new Vec3(-60, 65, -1), 4);
           await gather(['sugar_cane'], 'sugar_cane', needs().sugarCane, null, 16);
         }

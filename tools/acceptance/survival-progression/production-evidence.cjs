@@ -4,6 +4,7 @@ const {createHash} = require('node:crypto');
 const {isDeepStrictEqual} = require('node:util');
 const {ITEMS, RESOURCES} = require('./logistics-cycle.cjs');
 const {offlinePlayerId} = require('./survival-checkpoint.cjs');
+const {ProductionLedger} = require('./production-ledger.cjs');
 const requireThat = (value, message) => { if (!value) throw new Error(message); };
 const PHASES = ['mining', 'surface', 'farming', 'honey', 'scaffolding', 'fireworks'];
 const hash = bytes => createHash('sha256').update(bytes).digest('hex').toUpperCase();
@@ -33,11 +34,10 @@ function archiveSavedPlayer(stage, save, prefix) {
 
 // This links captured production actions and NBT checkpoints. It deliberately
 // does not infer survival acquisition from a pre-existing stack or crafted item.
-function linkProductionEvidence(stage, plan, savedBefore, player, plugins) {
-  const results = plan.productionEvidence;
-  requireThat(Array.isArray(results) && results.length >= 6 && results.length <= 100
+function readProductionEvidence(stage, results, savedBefore, player, plugins, {complete = false, strict = false} = {}) {
+  requireThat(Array.isArray(results) && results.length >= (complete ? 6 : 0) && results.length <= 100
     && new Set(results).size === results.length, 'Provide ordered, distinct production run result paths');
-  const phases = new Set(), entries = [], production = Object.fromEntries(RESOURCES.map(resource => [resource, 0]));
+  const phases = new Set(), entries = [];
   let previous, worldIdentity;
   const corePlugins = list => list.filter(row => /^(StarCore|StarSupply)-/.test(row.name));
   const inventoryCounts = list => {
@@ -46,22 +46,29 @@ function linkProductionEvidence(stage, plan, savedBefore, player, plugins) {
     return counts;
   };
   const balance = {};
+  let ledger;
+  let protocol;
   for (const relative of results) {
     const bytes = fs.readFileSync(evidenceFile(stage, relative)), run = JSON.parse(bytes);
-    requireThat(run.event === 'survival_progression_run' && run.productionProtocolVersion === 1 && PHASES.includes(run.phase)
+    requireThat(run.event === 'survival_progression_run' && [1, 2].includes(run.productionProtocolVersion) && PHASES.includes(run.phase)
       && run.player === player && run.normalStopObserved && run.gamePortClosed && run.rconPortClosed
       && run.serverExit?.code === 0 && !run.runtimeHealth?.failure
       && ['coreReady', 'supplyReady', 'serverReady', 'rconReady'].every(key => run.runtimeHealth?.[key]),
     'Production run lacks a normal saved survival checkpoint');
+    requireThat(!strict || run.productionProtocolVersion === 2, 'Traced production requires protocol 2 observations');
+    requireThat(!protocol || protocol === run.productionProtocolVersion, 'Production evidence protocols cannot be mixed');
+    protocol = run.productionProtocolVersion;
     requireThat(run.worldIdentity && (!worldIdentity || isDeepStrictEqual(run.worldIdentity, worldIdentity)), 'Production world identity changed');
     worldIdentity = run.worldIdentity;
     requireThat(isDeepStrictEqual(corePlugins(run.plugins), corePlugins(plugins)), 'Production plugin binaries differ from logistics');
-    requireThat(['six-resources.cjs', 'run.cjs', 'production-evidence.cjs'].every(file => run.clientSources?.some(row =>
+    const sourceFiles = ['six-resources.cjs', 'run.cjs', 'production-evidence.cjs', ...(protocol === 2 ? ['production-ledger.cjs'] : [])];
+    requireThat(sourceFiles.every(file => run.clientSources?.some(row =>
       row.file === file && /^[A-F0-9]{64}$/.test(row.sha256))), 'Production source hashes are incomplete');
     archivedSave(stage, run.savedBefore); archivedSave(stage, run.savedCheckpoint);
     requireThat(run.savedBefore.playerId === offlinePlayerId(player) && run.savedCheckpoint.playerId === offlinePlayerId(player),
       'Production saved player identity changed');
     if (previous) requireThat(previous.sha256 === run.savedBefore.sha256, 'Production NBT checkpoint chain has a gap');
+    if (!ledger) ledger = new ProductionLedger(run.savedBefore.inventory);
     const logBytes = fs.readFileSync(evidenceFile(stage, run.clientLog));
     requireThat(hash(logBytes) === run.clientLogSha256, 'Production action log hash mismatch');
     const actions = logBytes.toString('utf8').split(/\r?\n/).filter(line => line.startsWith('{')).map(line => JSON.parse(line));
@@ -73,7 +80,16 @@ function linkProductionEvidence(stage, plan, savedBefore, player, plugins) {
       requireThat(isDeepStrictEqual(inventoryCounts(end[0].after), run.savedCheckpoint.inventory), 'Production final inventory differs from NBT');
       phases.add(run.phase);
     }
-    for (const action of actions.filter(row => row.event === 'production_acquired')) {
+    for (const action of actions) {
+      if (run.productionProtocolVersion === 2 && action.event === 'production_observed') {
+        requireThat(action.phase === run.phase, 'Production observation phase changed');
+        ledger.observe(action.inventory); continue;
+      }
+      if (action.event !== 'production_acquired') continue;
+      if (run.productionProtocolVersion === 2) {
+        requireThat(action.phase === run.phase, 'Production action phase changed');
+        ledger.acquire(action); continue;
+      }
       requireThat(action.phase === run.phase && Number.isSafeInteger(action.count) && action.count > 0
         && Number.isSafeInteger(action.before) && action.after - action.before === action.count,
         'Invalid production quantity evidence');
@@ -98,13 +114,22 @@ function linkProductionEvidence(stage, plan, savedBefore, player, plugins) {
     // Conservative cap removes consumed/lost items. Never turn retained but
     // untraced starting stock into newly acquired evidence.
     for (const item of Object.keys(balance)) balance[item] = Math.min(balance[item], run.savedCheckpoint.inventory[item] ?? 0);
+    if (run.productionProtocolVersion === 2) ledger.observe(run.savedCheckpoint.inventory);
+    else ledger = new ProductionLedger(run.savedCheckpoint.inventory, balance);
     previous = run.savedCheckpoint;
     entries.push({result: relative, sha256: hash(bytes), phase: run.phase, pass: run.pass,
       clientLog: run.clientLog, clientLogSha256: run.clientLogSha256, sources: run.clientSources});
   }
-  requireThat(PHASES.every(phase => phases.has(phase)), 'All six production phases need a completed saved run');
-  requireThat(previous.sha256 === savedBefore.sha256 && previous.playerId === savedBefore.playerId,
+  if (complete) requireThat(PHASES.every(phase => phases.has(phase)), 'All six production phases need a completed saved run');
+  requireThat(!previous || previous.sha256 === savedBefore.sha256 && previous.playerId === savedBefore.playerId,
     'Logistics does not start at the final production checkpoint');
+  return {worldIdentity, entries, phases: [...phases], balance: ledger?.traced ?? {}};
+}
+
+function linkProductionEvidence(stage, plan, savedBefore, player, plugins) {
+  const {worldIdentity, entries, balance} = readProductionEvidence(stage, plan.productionEvidence, savedBefore, player, plugins,
+    {complete: true, strict: plan.traceProduction === true});
+  const production = {};
   for (const resource of RESOURCES) production[resource] = Math.min(balance[ITEMS[resource]] ?? 0, savedBefore.inventory[ITEMS[resource]] ?? 0);
   const missing = Object.fromEntries(RESOURCES.filter(resource => production[resource] < plan.counts[resource])
     .map(resource => [resource, plan.counts[resource] - production[resource]]));
@@ -113,4 +138,4 @@ function linkProductionEvidence(stage, plan, savedBefore, player, plugins) {
     scope: 'Captured gameplay acquisition/recipe records chained to archived survival NBT; initial inventory is not assumed produced.'};
 }
 
-module.exports = {hash, evidenceFile, archiveSavedPlayer, linkProductionEvidence};
+module.exports = {hash, evidenceFile, archiveSavedPlayer, readProductionEvidence, linkProductionEvidence};

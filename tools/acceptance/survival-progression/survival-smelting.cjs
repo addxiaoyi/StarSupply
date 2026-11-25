@@ -59,4 +59,12 @@ async function smeltUntil(bot, window, input, output, desired, options = {}) {
   }
 }
 
-module.exports = {inventoryCount, smeltingState, smeltUntil};
+async function drainSavedFurnace(bot, window, input, output, options = {}) {
+  smeltingState(window, input, output, Math.max(1, inventoryCount(window, output)));
+  const retained = (window.inputItem()?.count ?? 0) + (window.outputItem()?.count ?? 0);
+  if (retained) await smeltUntil(bot, window, input, output, inventoryCount(window, output) + retained, options);
+  if (window.inputItem() || window.outputItem()) throw new Error('Saved furnace contents were not fully recovered');
+  return retained;
+}
+
+module.exports = {inventoryCount, smeltingState, smeltUntil, drainSavedFurnace};

@@ -1,5 +1,6 @@
 {
   "runId": "survival-six-resources-01",
+  "traceProduction": true,
   "depot": "survival-depot",
   "front": "survival-front",
   "army": "00000000-0000-0000-0000-000000000000",

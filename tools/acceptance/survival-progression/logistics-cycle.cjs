@@ -37,6 +37,7 @@ function validatePlan(plan) {
     'Invalid expected supply interval');
   requireThat(money(plan.price) > 0n && money(plan.reward) > 0n, 'Prices and freight must be positive');
   requireThat(plan.nativeReplay === undefined || typeof plan.nativeReplay === 'boolean', 'nativeReplay must be boolean');
+  requireThat(plan.traceProduction === undefined || typeof plan.traceProduction === 'boolean', 'traceProduction must be boolean');
   for (const resource of RESOURCES) requireThat(Number.isInteger(plan.counts?.[resource])
     && plan.counts[resource] >= plan.cycles && plan.counts[resource] <= 256, `Invalid ${resource} delivery count`);
   return plan;
@@ -262,6 +263,14 @@ function prepareCycle({stage, plan, player, inventory, savedBefore, plugins}) {
 
 async function runCycle({stage, plan, player, inventory, world, travel, chat, until, log}) {
   const file = journalPath(stage, plan);
+  if (plan.traceProduction) {
+    requireThat(fs.existsSync(file), 'Start traced logistics through the runner after production verification');
+    const admitted = JSON.parse(fs.readFileSync(file, 'utf8'));
+    requireThat(admitted.productionEvidence?.survivalProductionVerified === true,
+      'Traced logistics has no verified production handoff');
+    require('./production-session.cjs').productionForLogistics(stage, plan, player, admitted.plugins,
+      admitted.productionEvidence.worldIdentity, admitted.savedBefore);
+  }
   const journal = prepareCycle({stage, plan, player, inventory: inventory()});
   const depot = journal.baseline.warehouses.find(row => row.id === plan.depot);
   const front = journal.baseline.warehouses.find(row => row.id === plan.front);
