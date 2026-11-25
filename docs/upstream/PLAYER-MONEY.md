@@ -21,6 +21,7 @@ git checkout --detach f769e62799e769a18fe51305b545869a17f80cd1
 git apply C:\path\to\StarSupply\docs\upstream\starcore-folia-logistics.patch
 git apply --check C:\path\to\StarSupply\docs\upstream\starcore-player-money-receipts.patch
 git apply C:\path\to\StarSupply\docs\upstream\starcore-player-money-receipts.patch
+git apply C:\path\to\StarSupply\docs\upstream\starcore-tax-funding-receipts.patch
 $env:JAVA_HOME = 'C:\path\to\jdk-21'
 $env:MAVEN_OPTS = '-Xms32m -Xmx384m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC -Djdk.attach.allowAttachSelf=true'
 .\mvnw.cmd -B -ntp '-Dspotless.ratchetFrom=HEAD' '-DforkCount=0' `
@@ -43,6 +44,6 @@ StarSupply 仍使用原固定依赖执行 `mvnw verify`。然后可单独用新�
   -StarCoreJar C:\path\to\starcore-folia\target\starcore-1.0.0.jar
 ```
 
-StarSupply 通过公开方法反射桥读取新增接口；没有新接口时保留旧保守路径。新交易持久保存 `playerMoneyProtocol=1`，标记后的操作不能降级到普通余额接口。旧无标记的不明交易仍须独立核对，已有 REVIEW 也不自动解冻。人工“未到账”不能覆盖已到账回执；税款阶段继续独立冻结。
+StarSupply 通过公开方法反射桥读取新增接口；没有新接口时保留旧保守路径。新交易持久保存 `playerMoneyProtocol=1`，标记后的操作不能降级到普通余额接口。旧无标记的不明交易仍须独立核对，已有 REVIEW 也不自动解冻。人工“未到账”不能覆盖已到账回执。后续[税款补丁](TAX-FUNDING.md)已补齐新税款恢复；旧无标记税款继续核验。复现脚本现在同时运行玩家与税款用例，须使用三份补丁构建的兼容包。
 
 本轮没有启动 Paper/Folia；完整组合、图形资源包和六类生存流程的现场验证仍待完成。

@@ -1,6 +1,6 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-当前玩家资金恢复还需在 `starcore-folia-logistics.patch` 之后追加 [starcore-player-money-receipts.patch](starcore-player-money-receipts.patch)。公开协议、文件/SQL 迁移、旧版兼容、定向测试与打包顺序见 [PLAYER-MONEY](PLAYER-MONEY.md)。该补丁不扩大 Folia 支持声明；原后勤组合补丁已包含本页的攻城修复，不要重复叠加。
+当前玩家资金恢复还需在 `starcore-folia-logistics.patch` 之后追加 [starcore-player-money-receipts.patch](starcore-player-money-receipts.patch)。公开协议、文件/SQL 迁移、旧版兼容、定向测试与打包顺序见 [PLAYER-MONEY](PLAYER-MONEY.md)。随后追加[税款回执补丁](starcore-tax-funding-receipts.patch)，接口、原报价恢复和构建范围见 [TAX-FUNDING](TAX-FUNDING.md)。这些补丁不扩大 Folia 支持声明；原后勤组合补丁已包含本页的攻城修复，不要重复叠加。
 
 补丁 [starcore-siege-treasury.patch](starcore-siege-treasury.patch) 适用于公开仓库 `addxiaoyi/starcore` 的固定提交 `f769e62799e769a18fe51305b545869a17f80cd1`。这是单独、可审查的上游源码修复，不包含编译产物，也未推送到远端。StarSupply 的编译 API 仍以该固定提交为基础。
 

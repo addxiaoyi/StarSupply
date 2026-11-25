@@ -1,0 +1,1207 @@
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/FundedTaxLedger.java b/src/main/java/dev/starcore/starcore/module/treasury/FundedTaxLedger.java
+index ee4412b..65998a8 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/FundedTaxLedger.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/FundedTaxLedger.java
+@@ -4,7 +4,6 @@ import dev.starcore.starcore.core.database.DatabaseService;
+ import dev.starcore.starcore.module.nation.model.NationId;
+ import dev.starcore.starcore.module.treasury.TaxationService.TaxQuote;
+ import dev.starcore.starcore.module.treasury.TaxationService.TaxType;
+-
+ import java.math.BigDecimal;
+ import java.sql.SQLException;
+ import java.util.Objects;
+@@ -13,126 +12,181 @@ import java.util.concurrent.ConcurrentHashMap;
+ import java.util.concurrent.ConcurrentMap;
+ 
+ final class FundedTaxLedger {
+-    private static final String TABLE = "treasury_funded_taxes";
++  private static final String TABLE = "treasury_funded_taxes";
+ 
+-    private final ConcurrentMap<java.util.UUID, TaxQuote> funded = new ConcurrentHashMap<>();
+-    private final DatabaseService database;
++  private record Entry(TaxQuote quote, String protocol) {}
+ 
+-    FundedTaxLedger() {
+-        this.database = null;
+-    }
++  private static final String LEGACY = "LEGACY", RECEIPT = "RECEIPT_V1";
++  private final ConcurrentMap<java.util.UUID, Entry> funded = new ConcurrentHashMap<>();
++  private final DatabaseService database;
+ 
+-    FundedTaxLedger(DatabaseService database) {
+-        this.database = Objects.requireNonNull(database, "database");
+-        database.execute("""
+-            CREATE TABLE IF NOT EXISTS treasury_funded_taxes (
+-                transaction_id VARCHAR(36) PRIMARY KEY,
+-                nation_id VARCHAR(36) NOT NULL,
+-                tax_type VARCHAR(32) NOT NULL,
+-                payer_id VARCHAR(36) NOT NULL,
+-                taxable_amount VARCHAR(64) NOT NULL,
+-                tax_amount VARCHAR(64) NOT NULL
+-            )
+-            """);
+-    }
++  FundedTaxLedger() {
++    this.database = null;
++  }
+ 
+-    boolean claim(TaxQuote quote) {
+-        Objects.requireNonNull(quote, "quote");
+-        if (database != null) {
+-            return claimPersistent(quote);
+-        }
+-        TaxQuote existing = funded.putIfAbsent(quote.transactionId(), quote);
+-        return resolveClaim(quote, existing);
++  FundedTaxLedger(DatabaseService database) {
++    this.database = Objects.requireNonNull(database, "database");
++    database.execute(
++        """
++        CREATE TABLE IF NOT EXISTS treasury_funded_taxes (
++            transaction_id VARCHAR(36) PRIMARY KEY,
++            nation_id VARCHAR(36) NOT NULL,
++            tax_type VARCHAR(32) NOT NULL,
++            payer_id VARCHAR(36) NOT NULL,
++            taxable_amount VARCHAR(64) NOT NULL,
++            tax_amount VARCHAR(64) NOT NULL,
++            funding_protocol VARCHAR(32) NOT NULL DEFAULT 'LEGACY'
++        )
++        """);
++    boolean present =
++        database.query(
++            "SELECT * FROM " + TABLE + " WHERE 1=0",
++            rows -> {
++              try {
++                for (int i = 1; i <= rows.getMetaData().getColumnCount(); i++) {
++                  if ("funding_protocol".equalsIgnoreCase(rows.getMetaData().getColumnName(i)))
++                    return true;
++                }
++                return false;
++              } catch (SQLException e) {
++                throw new IllegalStateException("Cannot inspect tax schema", e);
++              }
++            });
++    if (!present) {
++      database.execute(
++          "ALTER TABLE "
++              + TABLE
++              + " ADD COLUMN funding_protocol VARCHAR(32) NOT NULL DEFAULT 'LEGACY'");
++      // execute can log DDL errors without throwing. Verify the column before using it.
++      database.query("SELECT funding_protocol FROM " + TABLE + " WHERE 1=0", rows -> true);
+     }
++  }
+ 
+-    boolean release(TaxQuote quote) {
+-        Objects.requireNonNull(quote, "quote");
+-        if (database != null) {
+-            return database.update(
+-                "DELETE FROM " + TABLE + " WHERE transaction_id = ? AND nation_id = ? "
+-                    + "AND tax_type = ? AND payer_id = ? AND taxable_amount = ? AND tax_amount = ?",
+-                values(quote)
+-            ) == 1;
+-        }
+-        return funded.remove(quote.transactionId(), quote);
++  java.util.Optional<TaxQuote> receiptIntent(UUID id) {
++    Entry entry = find(Objects.requireNonNull(id));
++    if (entry == null) return java.util.Optional.empty();
++    if (!RECEIPT.equals(entry.protocol()))
++      throw new IllegalArgumentException("Legacy tax claim requires review: " + id);
++    return java.util.Optional.of(entry.quote());
++  }
++
++  boolean claimReceipted(TaxQuote quote) {
++    return claim(quote, RECEIPT);
++  }
++
++  boolean claim(TaxQuote quote) {
++    return claim(quote, LEGACY);
++  }
++
++  private boolean claim(TaxQuote quote, String protocol) {
++    Objects.requireNonNull(quote, "quote");
++    if (database != null) {
++      return claimPersistent(quote, protocol);
+     }
++    Entry existing = funded.putIfAbsent(quote.transactionId(), new Entry(quote, protocol));
++    return resolveClaim(quote, protocol, existing);
++  }
+ 
+-    private boolean claimPersistent(TaxQuote quote) {
+-        try {
+-            database.update(
+-                "INSERT INTO " + TABLE + " (transaction_id, nation_id, tax_type, payer_id, "
+-                    + "taxable_amount, tax_amount) VALUES (?, ?, ?, ?, ?, ?)",
+-                values(quote)
+-            );
+-            return true;
+-        } catch (RuntimeException insertFailure) {
+-            TaxQuote existing;
+-            try {
+-                existing = find(quote.transactionId());
+-            } catch (RuntimeException lookupFailure) {
+-                insertFailure.addSuppressed(lookupFailure);
+-                throw new IllegalStateException(
+-                    "Unable to claim funded tax transaction " + quote.transactionId(),
+-                    insertFailure
+-                );
+-            }
+-            if (existing == null) {
+-                throw new IllegalStateException(
+-                    "Unable to claim funded tax transaction " + quote.transactionId(),
+-                    insertFailure
+-                );
+-            }
+-            return resolveClaim(quote, existing);
+-        }
++  boolean release(TaxQuote quote) {
++    Objects.requireNonNull(quote, "quote");
++    Entry existing = find(quote.transactionId());
++    if (existing == null) return false;
++    resolveClaim(quote, LEGACY, existing);
++    if (database != null) {
++      return database.update(
++              "DELETE FROM "
++                  + TABLE
++                  + " WHERE transaction_id = ? AND nation_id = ? AND tax_type = ? AND payer_id = ?"
++                  + " AND taxable_amount = ? AND tax_amount = ? AND funding_protocol = ?",
++              values(quote, LEGACY))
++          == 1;
+     }
++    return funded.remove(quote.transactionId(), existing);
++  }
+ 
+-    private boolean resolveClaim(TaxQuote quote, TaxQuote existing) {
+-        if (existing == null) {
+-            return true;
+-        }
+-        if (existing.equals(quote)) {
+-            return false;
+-        }
++  private boolean claimPersistent(TaxQuote quote, String protocol) {
++    try {
++      int inserted =
++          database.update(
++              "INSERT INTO "
++                  + TABLE
++                  + " (transaction_id, nation_id, tax_type, payer_id, "
++                  + "taxable_amount, tax_amount, funding_protocol) VALUES (?, ?, ?, ?, ?, ?, ?)",
++              values(quote, protocol));
++      if (inserted != 1) throw new IllegalStateException("Tax intent was not stored");
++      return true;
++    } catch (RuntimeException insertFailure) {
++      Entry existing;
++      try {
++        existing = find(quote.transactionId());
++      } catch (RuntimeException lookupFailure) {
++        insertFailure.addSuppressed(lookupFailure);
++        throw new IllegalStateException(
++            "Unable to claim funded tax transaction " + quote.transactionId(), insertFailure);
++      }
++      if (existing == null) {
+         throw new IllegalStateException(
+-            "Tax transaction id was reused with different details: " + quote.transactionId());
++            "Unable to claim funded tax transaction " + quote.transactionId(), insertFailure);
++      }
++      return resolveClaim(quote, protocol, existing);
+     }
++  }
+ 
+-    private TaxQuote find(UUID transactionId) {
+-        return database.query(
+-            "SELECT nation_id, tax_type, payer_id, taxable_amount, tax_amount FROM "
+-                + TABLE + " WHERE transaction_id = ?",
+-            rows -> {
+-                try {
+-                    if (!rows.next()) {
+-                        return null;
+-                    }
+-                    return new TaxQuote(
+-                        transactionId,
+-                        new NationId(UUID.fromString(rows.getString("nation_id"))),
+-                        TaxType.valueOf(rows.getString("tax_type")),
+-                        UUID.fromString(rows.getString("payer_id")),
+-                        new BigDecimal(rows.getString("taxable_amount")),
+-                        new BigDecimal(rows.getString("tax_amount"))
+-                    );
+-                } catch (SQLException exception) {
+-                    throw new IllegalStateException(
+-                        "Unable to read funded tax transaction " + transactionId,
+-                        exception
+-                    );
+-                }
+-            },
+-            transactionId.toString()
+-        );
++  private boolean resolveClaim(TaxQuote quote, String protocol, Entry existing) {
++    if (existing == null) {
++      return true;
+     }
+-
+-    private Object[] values(TaxQuote quote) {
+-        return new Object[]{
+-            quote.transactionId().toString(),
+-            quote.nationId().value().toString(),
+-            quote.type().name(),
+-            quote.payerId().toString(),
+-            quote.taxableAmount().toPlainString(),
+-            quote.taxAmount().toPlainString()
+-        };
++    if (!protocol.equals(existing.protocol())) {
++      throw new IllegalArgumentException(
++          "Tax transaction belongs to another protocol: " + quote.transactionId());
+     }
++    if (existing.quote().equals(quote)) {
++      return false;
++    }
++    throw new IllegalStateException(
++        "Tax transaction id was reused with different details: " + quote.transactionId());
++  }
++
++  private Entry find(UUID transactionId) {
++    if (database == null) return funded.get(transactionId);
++    return database.query(
++        "SELECT nation_id, tax_type, payer_id, taxable_amount, tax_amount, funding_protocol FROM "
++            + TABLE
++            + " WHERE transaction_id = ?",
++        rows -> {
++          try {
++            if (!rows.next()) {
++              return null;
++            }
++            String protocol = rows.getString("funding_protocol");
++            if (!LEGACY.equals(protocol) && !RECEIPT.equals(protocol))
++              throw new IllegalArgumentException("Unknown tax funding protocol");
++            return new Entry(
++                new TaxQuote(
++                    transactionId,
++                    new NationId(UUID.fromString(rows.getString("nation_id"))),
++                    TaxType.valueOf(rows.getString("tax_type")),
++                    UUID.fromString(rows.getString("payer_id")),
++                    new BigDecimal(rows.getString("taxable_amount")),
++                    new BigDecimal(rows.getString("tax_amount"))),
++                protocol);
++          } catch (SQLException exception) {
++            throw new IllegalStateException(
++                "Unable to read funded tax transaction " + transactionId, exception);
++          }
++        },
++        transactionId.toString());
++  }
++
++  private Object[] values(TaxQuote quote, String protocol) {
++    return new Object[] {
++      quote.transactionId().toString(),
++      quote.nationId().value().toString(),
++      quote.type().name(),
++      quote.payerId().toString(),
++      quote.taxableAmount().toPlainString(),
++      quote.taxAmount().toPlainString(),
++      protocol
++    };
++  }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/TaxFundingService.java b/src/main/java/dev/starcore/starcore/module/treasury/TaxFundingService.java
+new file mode 100644
+index 0000000..96d55bb
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/treasury/TaxFundingService.java
+@@ -0,0 +1,27 @@
++package dev.starcore.starcore.module.treasury;
++
++import dev.starcore.starcore.module.treasury.TaxationService.TaxQuote;
++import java.time.Instant;
++import java.util.Objects;
++import java.util.Optional;
++import java.util.UUID;
++
++/** Recoverable funding of a positive, previously withheld transaction-tax quote. */
++public interface TaxFundingService {
++  record Receipt(TaxQuote quote, Instant fundedAt) {
++    public Receipt {
++      Objects.requireNonNull(quote, "quote");
++      Objects.requireNonNull(fundedAt, "fundedAt");
++      fundedAt = Instant.ofEpochMilli(fundedAt.toEpochMilli());
++      if (quote.taxAmount().signum() <= 0 || !fundedAt.isAfter(Instant.EPOCH)) {
++        throw new IllegalArgumentException("Invalid funded tax receipt");
++      }
++    }
++  }
++
++  /** Honors the original withheld quote. Exceptions never prove nonpayment. */
++  Receipt fundTaxWithReceipt(TaxQuote quote);
++
++  /** Only a matching treasury credit proves funding; an intent alone never does. */
++  Optional<Receipt> taxFundingReceipt(UUID transactionId);
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/TaxationServiceImpl.java b/src/main/java/dev/starcore/starcore/module/treasury/TaxationServiceImpl.java
+index dcaded4..086a2fa 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/TaxationServiceImpl.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/TaxationServiceImpl.java
+@@ -35,7 +35,8 @@ import org.bukkit.scheduler.BukkitTask;
+  *
+  * <p>商业活动和所得税数据通过已注册的交易历史、贸易服务和经济服务读取； 缺少必要数据时本次征收按零处理并记录可诊断日志。
+  */
+-public final class TaxationServiceImpl implements StarCoreModule, TaxationService {
++public final class TaxationServiceImpl
++    implements StarCoreModule, TaxationService, TaxFundingService {
+   private static final int SCALE = 2;
+ 
+   private static final ModuleMetadata METADATA =
+@@ -44,7 +45,7 @@ public final class TaxationServiceImpl implements StarCoreModule, TaxationServic
+           "税收系统",
+           ModuleLayer.MODULE,
+           List.of("nation", "treasury"),
+-          List.of(TaxationService.class),
++          List.of(TaxationService.class, TaxFundingService.class),
+           "Provides multiple tax types: land, business, income, and tariff.");
+ 
+   // 国家税种配置: nationId -> (taxType -> config)
+@@ -67,6 +68,7 @@ public final class TaxationServiceImpl implements StarCoreModule, TaxationServic
+   private final TaxCollectionSchedule collectionSchedule = new TaxCollectionSchedule();
+   private final TaxQuoteFactory taxQuoteFactory = new TaxQuoteFactory();
+   private volatile FundedTaxLedger fundedTaxLedger;
++  private final Set<UUID> observedFundedReceipts = new HashSet<>();
+ 
+   private BukkitTask autoCollectTask;
+   private StarCoreContext currentContext;
+@@ -334,6 +336,134 @@ public final class TaxationServiceImpl implements StarCoreModule, TaxationServic
+     return taxQuoteFactory.quote(transactionId, nationId, config, payerId, taxableAmount);
+   }
+ 
++  @Override
++  public synchronized TaxFundingService.Receipt fundTaxWithReceipt(TaxQuote quote) {
++    Objects.requireNonNull(quote, "quote");
++    if (quote.taxAmount().signum() <= 0
++        || (quote.type() != TaxType.TARIFF && quote.type() != TaxType.BUSINESS_TAX)) {
++      throw new IllegalArgumentException("Receipt funding requires a positive transaction tax");
++    }
++    // This records ownership of the original withheld quote, never proof of treasury payment.
++    var intent = fundedTaxLedger().receiptIntent(quote.transactionId());
++    if (intent.isPresent() && !intent.get().equals(quote)) {
++      throw new IllegalArgumentException("Tax transaction is bound to a different quote");
++    }
++    fundedTaxLedger().claimReceipted(quote);
++    NationCreditService credits = taxCredits();
++    TaxFundingService.Receipt receipt;
++    boolean newlyApplied = false;
++    synchronized (credits) {
++      var request = taxCreditRequest(quote);
++      var stored = credits.creditReceipt(request.transactionId());
++      if (stored.isEmpty()) {
++        var result = credits.credit(request);
++        newlyApplied =
++            result != null && result.status() == NationCreditService.CreditStatus.APPLIED;
++        stored = credits.creditReceipt(request.transactionId());
++      }
++      receipt =
++          validateTaxCredit(
++              quote,
++              stored.orElseThrow(
++                  () ->
++                      new IllegalStateException(
++                          "Tax credit has no durable receipt; retry original quote")));
++    }
++    observeFundedReceipt(receipt);
++    if (newlyApplied) {
++      try {
++        recordTaxEvent(quote.nationId(), quote.type(), quote.taxAmount());
++      } catch (RuntimeException auditFailure) {
++        // Money and its complete audit identity are already durable. Events are best effort.
++        java.util.logging.Logger.getLogger(TaxationServiceImpl.class.getName())
++            .log(Level.WARNING, "Funded tax event failed: " + quote.transactionId(), auditFailure);
++      }
++    }
++    return receipt;
++  }
++
++  @Override
++  public synchronized Optional<TaxFundingService.Receipt> taxFundingReceipt(UUID transactionId) {
++    Objects.requireNonNull(transactionId, "transactionId");
++    var intent = fundedTaxLedger().receiptIntent(transactionId);
++    NationCreditService credits = taxCredits();
++    synchronized (credits) {
++      var credit = credits.creditReceipt(taxCreditKey(transactionId));
++      if (credit.isEmpty()) return Optional.empty();
++      var quote =
++          intent.orElseThrow(
++              () -> new IllegalArgumentException("Tax receipt has no original intent"));
++      var receipt = validateTaxCredit(quote, credit.get());
++      observeFundedReceipt(receipt);
++      return Optional.of(receipt);
++    }
++  }
++
++  private NationCreditService taxCredits() {
++    if (currentContext == null) throw new IllegalStateException("Taxation is unavailable");
++    return currentContext
++        .serviceRegistry()
++        .find(NationCreditService.class)
++        .orElseThrow(() -> new IllegalStateException("National credit receipts are unavailable"));
++  }
++
++  private static String taxCreditKey(UUID id) {
++    return "starcore:tax-funding:v1:" + id;
++  }
++
++  private static NationCreditService.CreditRequest taxCreditRequest(TaxQuote quote) {
++    return new NationCreditService.CreditRequest(
++        taxCreditKey(quote.transactionId()),
++        quote.nationId(),
++        quote.taxAmount(),
++        NationCreditService.CreditCategory.OTHER,
++        "TaxFunding/v1;transaction="
++            + quote.transactionId()
++            + ";nation="
++            + quote.nationId().value()
++            + ";type="
++            + quote.type()
++            + ";payer="
++            + quote.payerId()
++            + ";gross="
++            + quote.taxableAmount().toPlainString()
++            + ";tax="
++            + quote.taxAmount().toPlainString());
++  }
++
++  private static TaxFundingService.Receipt validateTaxCredit(
++      TaxQuote quote, NationCreditService.CreditReceipt credit) {
++    var request = taxCreditRequest(quote);
++    if (!request.transactionId().equals(credit.transactionId())
++        || !request.nationId().equals(credit.nationId())
++        || request.amount().compareTo(credit.amount()) != 0
++        || request.category() != credit.category()
++        || !request.description().equals(credit.description())) {
++      throw new IllegalArgumentException(
++          "Conflicting authoritative tax credit: " + quote.transactionId());
++    }
++    return new TaxFundingService.Receipt(quote, credit.appliedAt());
++  }
++
++  private void observeFundedReceipt(TaxFundingService.Receipt receipt) {
++    if (!observedFundedReceipts.add(receipt.quote().transactionId())) return;
++    var quote = receipt.quote();
++    List<TaxRevenue> history =
++        taxHistories.computeIfAbsent(quote.nationId(), id -> new CopyOnWriteArrayList<>());
++    synchronized (history) {
++      history.add(
++          0,
++          new TaxRevenue(
++              quote.nationId(),
++              quote.type(),
++              quote.taxAmount(),
++              receipt.fundedAt(),
++              taxQuoteFactory.contextFor(
++                  quote.type(), new TaxPayer(quote.payerId(), quote.taxableAmount()))));
++      while (history.size() > MAX_HISTORY_SIZE) history.remove(history.size() - 1);
++    }
++  }
++
+   @Override
+   public synchronized BigDecimal fundTax(TaxQuote quote) {
+     Objects.requireNonNull(quote, "quote");
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java b/src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java
+index 60f4a45..e6825a6 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java
+@@ -104,6 +104,7 @@ public final class TreasuryModule
+   private final AtomicBoolean stateRefreshInProgress = new AtomicBoolean();
+   private final AtomicBoolean stateRefreshFailureLogged = new AtomicBoolean();
+   private TreasuryStateStorage stateStorage;
++  private boolean stateUncertain;
+   private BukkitTask stateRefreshTask;
+   private volatile boolean stateRefreshEnabled;
+   private BukkitTask dailyIncomeTask;
+@@ -215,7 +216,8 @@ public final class TreasuryModule
+   }
+ 
+   @Override
+-  public BigDecimal balance(NationId nationId) {
++  public synchronized BigDecimal balance(NationId nationId) {
++    ensureStateKnown();
+     if (nationId == null) {
+       return BigDecimal.ZERO.setScale(SCALE, RoundingMode.DOWN);
+     }
+@@ -487,6 +489,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public synchronized boolean tryDeposit(NationId nationId, BigDecimal amount) {
++    ensureStateKnown();
+     if (nationId == null) {
+       return false;
+     }
+@@ -525,6 +528,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public synchronized boolean withdraw(NationId nationId, BigDecimal amount) {
++    ensureStateKnown();
+     if (nationId == null) {
+       return false;
+     }
+@@ -548,6 +552,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public synchronized SpendResult spend(SpendRequest request) {
++    ensureStateKnown();
+     if (request == null) {
+       throw new IllegalArgumentException("request must not be null");
+     }
+@@ -589,7 +594,8 @@ public final class TreasuryModule
+   }
+ 
+   @Override
+-  public Optional<SpendingReceipt> spendingReceipt(String transactionId) {
++  public synchronized Optional<SpendingReceipt> spendingReceipt(String transactionId) {
++    ensureStateKnown();
+     if (transactionId == null || transactionId.isBlank()) {
+       return Optional.empty();
+     }
+@@ -598,6 +604,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public synchronized boolean refund(String transactionId) {
++    ensureStateKnown();
+     if (transactionId == null || transactionId.isBlank()) {
+       return false;
+     }
+@@ -640,6 +647,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public synchronized CreditResult credit(CreditRequest request) {
++    ensureStateKnown();
+     if (request == null) {
+       throw new IllegalArgumentException("request must not be null");
+     }
+@@ -710,7 +718,8 @@ public final class TreasuryModule
+   }
+ 
+   @Override
+-  public Optional<CreditReceipt> creditReceipt(String transactionId) {
++  public synchronized Optional<CreditReceipt> creditReceipt(String transactionId) {
++    ensureStateKnown();
+     if (transactionId == null || transactionId.isBlank()) {
+       return Optional.empty();
+     }
+@@ -740,6 +749,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public synchronized TransferResult transfer(TransferRequest request) {
++    ensureStateKnown();
+     if (request == null) {
+       throw new IllegalArgumentException("request must not be null");
+     }
+@@ -807,7 +817,8 @@ public final class TreasuryModule
+   }
+ 
+   @Override
+-  public Optional<TransferReceipt> transferReceipt(String transactionId) {
++  public synchronized Optional<TransferReceipt> transferReceipt(String transactionId) {
++    ensureStateKnown();
+     if (transactionId == null || transactionId.isBlank()) {
+       return Optional.empty();
+     }
+@@ -815,7 +826,8 @@ public final class TreasuryModule
+   }
+ 
+   @Override
+-  public String summary() {
++  public synchronized String summary() {
++    ensureStateKnown();
+     BigDecimal total =
+         balances.values().stream()
+             .reduce(BigDecimal.ZERO, BigDecimal::add)
+@@ -932,7 +944,8 @@ public final class TreasuryModule
+     return sb.toString().trim();
+   }
+ 
+-  private void saveState() {
++  private synchronized void saveState() {
++    ensureStateKnown();
+     if (stateStorage == null) {
+       return;
+     }
+@@ -943,7 +956,9 @@ public final class TreasuryModule
+   private void saveStateSyncOrThrow() {
+     if (stateStorage != null) {
+       stateGeneration.incrementAndGet();
++      stateUncertain = true;
+       stateStorage.save(TreasuryStateCodec.toProperties(snapshotState()));
++      stateUncertain = false;
+     }
+   }
+ 
+@@ -1131,7 +1146,8 @@ public final class TreasuryModule
+ 
+   private void reloadStateAfterPersistenceFailure(RuntimeException failure) {
+     if (stateStorage == null
+-        || (!(failure instanceof TreasuryStateConflictException)
++        || (!stateUncertain
++            && !(failure instanceof TreasuryStateConflictException)
+             && !(failure instanceof TreasuryStateReconciliationException))) {
+       return;
+     }
+@@ -1155,11 +1171,13 @@ public final class TreasuryModule
+     };
+   }
+ 
+-  private void flushState() {
+-    if (stateStorage == null) {
+-      return;
+-    }
+-    stateStorage.save(TreasuryStateCodec.toProperties(snapshotState()));
++  private synchronized void flushState() {
++    ensureStateKnown();
++    saveStateSyncOrThrow();
++  }
++
++  private void ensureStateKnown() {
++    if (stateUncertain) loadState();
+   }
+ 
+   private TreasuryStateCodec.TreasuryState snapshotState() {
+@@ -1168,10 +1186,12 @@ public final class TreasuryModule
+   }
+ 
+   private synchronized void loadState() {
++    stateUncertain = true;
+     TreasuryStateCodec.TreasuryState state =
+         TreasuryStateCodec.stateFromProperties(
+             stateStorage == null ? new java.util.Properties() : stateStorage.load());
+     applyStateSnapshot(state);
++    stateUncertain = false;
+     stateGeneration.incrementAndGet();
+   }
+ 
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/TreasuryStateCodec.java b/src/main/java/dev/starcore/starcore/module/treasury/TreasuryStateCodec.java
+index 62432d1..4bc1693 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/TreasuryStateCodec.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/TreasuryStateCodec.java
+@@ -41,6 +41,7 @@ final class TreasuryStateCodec {
+ 
+   static Properties toProperties(TreasuryState state) {
+     Properties properties = new Properties();
++    properties.setProperty("receiptFormatVersion", "1");
+     writeBalances(properties, state.balances());
+     writeSpendingReceipts(properties, state.spendingReceipts());
+     writeCreditReceipts(properties, state.creditReceipts());
+@@ -56,11 +57,29 @@ final class TreasuryStateCodec {
+     if (properties == null || properties.isEmpty()) {
+       return TreasuryState.empty();
+     }
+-    return new TreasuryState(
+-        readBalances(properties),
+-        readSpendingReceipts(properties),
+-        readCreditReceipts(properties),
+-        readTransferReceipts(properties));
++    String format = properties.getProperty("receiptFormatVersion");
++    if (format != null) {
++      if (!format.equals("1"))
++        throw new IllegalArgumentException("Unknown treasury receipt format");
++      for (String key : List.of("count", "spending.count", "credit.count", "transfer.count")) {
++        int count = Integer.parseInt(properties.getProperty(key));
++        if (count < 0 || count > properties.size()) {
++          throw new IllegalArgumentException("Invalid treasury receipt count: " + key);
++        }
++      }
++    }
++    TreasuryState state =
++        new TreasuryState(
++            readBalances(properties),
++            readSpendingReceipts(properties),
++            readCreditReceipts(properties),
++            readTransferReceipts(properties));
++    // Newly written snapshots must round-trip without dropping an invalid receipt or field.
++    // Otherwise corruption could be mistaken for permission to apply the same money again.
++    if (format != null && !toProperties(state).equals(properties)) {
++      throw new IllegalArgumentException("Incomplete or noncanonical treasury receipt snapshot");
++    }
++    return state;
+   }
+ 
+   private static void writeBalances(Properties properties, Map<NationId, BigDecimal> balances) {
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/TaxFundingReceiptTest.java b/src/test/java/dev/starcore/starcore/module/treasury/TaxFundingReceiptTest.java
+new file mode 100644
+index 0000000..9240c23
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/treasury/TaxFundingReceiptTest.java
+@@ -0,0 +1,422 @@
++package dev.starcore.starcore.module.treasury;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.StarCoreContext;
++import dev.starcore.starcore.core.database.DatabaseService;
++import dev.starcore.starcore.core.service.ServiceRegistry;
++import dev.starcore.starcore.module.event.EventService;
++import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.treasury.TaxationService.*;
++import java.lang.reflect.*;
++import java.math.BigDecimal;
++import java.nio.file.Path;
++import java.sql.*;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.function.Function;
++import java.util.logging.Logger;
++import javax.sql.DataSource;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++import org.sqlite.SQLiteDataSource;
++
++class TaxFundingReceiptTest {
++  @TempDir Path directory;
++  private final NationId nation = NationId.random();
++  private final TaxQuote quote =
++      new TaxQuote(
++          UUID.randomUUID(),
++          nation,
++          TaxType.TARIFF,
++          UUID.randomUUID(),
++          new BigDecimal("100"),
++          new BigDecimal("5"));
++
++  @ParameterizedTest
++  @ValueSource(strings = {"credit.count", "credit.0.amount", "credit.0.appliedAt"})
++  void corruptedSnapshotCannotBecomeAnAbsentTaxReceipt(String property) throws Exception {
++    try (Harness h = new Harness()) {
++      h.taxes.fundTaxWithReceipt(quote);
++      h.database.update(
++          "UPDATE starcore_treasury_state SET property_value=? WHERE property_key=?",
++          property.equals("credit.count") ? "0" : "corrupted",
++          property);
++      assertThatThrownBy(h::reopen).isInstanceOf(InvocationTargetException.class);
++      assertThatThrownBy(
++              () -> h.treasury.creditReceipt("starcore:tax-funding:v1:" + quote.transactionId()))
++          .isInstanceOf(RuntimeException.class);
++      assertThatThrownBy(() -> h.treasury.tryDeposit(nation, BigDecimal.ONE))
++          .isInstanceOf(RuntimeException.class);
++    }
++  }
++
++  @Test
++  void retryAndReopenHonorOriginalQuoteEvenWhenConfigChanges() throws Exception {
++    try (Harness h = new Harness()) {
++      var receipt = h.taxes.fundTaxWithReceipt(quote);
++      assertThat(receipt.quote()).isEqualTo(quote);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("5");
++      h.reopen(); // Default config is disabled: funding still honors the withheld quote.
++      assertThat(h.taxes.taxFundingReceipt(quote.transactionId())).contains(receipt);
++      assertThat(h.taxes.fundTaxWithReceipt(quote)).isEqualTo(receipt);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("5");
++      assertThat(h.taxes.getTaxHistory(nation, TaxType.TARIFF, 10)).hasSize(1);
++      assertThat(h.taxes.getTaxHistory(nation, TaxType.TARIFF, 10).getFirst().collectedAt())
++          .isEqualTo(receipt.fundedAt());
++    }
++  }
++
++  @Test
++  void durableIntentCannotProveTreasuryFundingAndSurvivesRollback() throws Exception {
++    try (Harness h = new Harness()) {
++      h.database.execute(
++          "CREATE TRIGGER refuse_credit BEFORE INSERT ON starcore_treasury_state WHEN"
++              + " NEW.property_key <> '__starcore_revision__' BEGIN SELECT RAISE(ABORT,'fault');"
++              + " END");
++      assertThatThrownBy(() -> h.taxes.fundTaxWithReceipt(quote))
++          .isInstanceOf(IllegalStateException.class);
++      assertThat(h.taxes.taxFundingReceipt(quote.transactionId())).isEmpty();
++      assertThat(new FundedTaxLedger(h.database).receiptIntent(quote.transactionId()))
++          .contains(quote);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("0");
++      h.database.execute("DROP TRIGGER refuse_credit");
++      h.reopen();
++      h.taxes.fundTaxWithReceipt(quote);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("5");
++    }
++  }
++
++  @Test
++  void lostJdbcCommitReplyRecoversSameReceipt() throws Exception {
++    try (Harness h = new Harness()) {
++      h.loseCommit.set(true);
++      var result = h.taxes.fundTaxWithReceipt(quote);
++      assertThat(h.taxes.taxFundingReceipt(quote.transactionId())).contains(result);
++      h.reopen();
++      assertThat(h.taxes.fundTaxWithReceipt(quote)).isEqualTo(result);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("5");
++    }
++  }
++
++  @Test
++  void unresolvedCommitBlocksReceiptsOtherMutationsAndShutdownFlush() throws Exception {
++    try (Harness h = new Harness()) {
++      h.blockAfterCommit.set(true);
++      h.loseCommit.set(true);
++      assertThatThrownBy(() -> h.taxes.fundTaxWithReceipt(quote))
++          .isInstanceOf(RuntimeException.class);
++      assertThatThrownBy(() -> h.treasury.creditReceipt("missing"))
++          .isInstanceOf(RuntimeException.class);
++      assertThatThrownBy(() -> h.treasury.tryDeposit(nation, BigDecimal.ONE))
++          .isInstanceOf(RuntimeException.class);
++      assertThatThrownBy(() -> h.treasury.withdraw(nation, BigDecimal.ONE))
++          .isInstanceOf(RuntimeException.class);
++      Method flush = TreasuryModule.class.getDeclaredMethod("flushState");
++      flush.setAccessible(true);
++      assertThatThrownBy(() -> flush.invoke(h.treasury))
++          .isInstanceOf(InvocationTargetException.class);
++      h.blockConnections.set(false);
++      var receipt = h.taxes.fundTaxWithReceipt(quote);
++      assertThat(receipt.quote()).isEqualTo(quote);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("5");
++    }
++  }
++
++  @Test
++  void responseLostOutsideTreasuryRecoversWithoutRepeatingCredit() throws Exception {
++    try (Harness h = new Harness()) {
++      NationCreditService delegate = h.treasury;
++      h.services.register(
++          NationCreditService.class,
++          new NationCreditService() {
++            @Override
++            public CreditResult credit(CreditRequest r) {
++              delegate.credit(r);
++              throw new IllegalStateException("reply lost");
++            }
++
++            @Override
++            public Optional<CreditReceipt> creditReceipt(String id) {
++              return delegate.creditReceipt(id);
++            }
++          });
++      assertThatThrownBy(() -> h.taxes.fundTaxWithReceipt(quote))
++          .isInstanceOf(IllegalStateException.class);
++      h.reopen();
++      h.taxes.fundTaxWithReceipt(quote);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("5");
++    }
++  }
++
++  @Test
++  void legacySchemaMigratesWithoutPromotingAmbiguousClaims() throws Exception {
++    try (Harness h = new Harness()) {
++      h.database.execute(
++          "CREATE TABLE treasury_funded_taxes (transaction_id VARCHAR(36) PRIMARY KEY, nation_id"
++              + " VARCHAR(36),tax_type VARCHAR(32),payer_id VARCHAR(36),taxable_amount"
++              + " VARCHAR(64),tax_amount VARCHAR(64))");
++      h.database.update(
++          "INSERT INTO treasury_funded_taxes VALUES(?,?,?,?,?,?)",
++          quote.transactionId().toString(),
++          nation.value().toString(),
++          "TARIFF",
++          quote.payerId().toString(),
++          "100.00",
++          "5.00");
++      assertThatThrownBy(() -> h.taxes.fundTaxWithReceipt(quote))
++          .isInstanceOf(IllegalArgumentException.class);
++      assertThatThrownBy(() -> h.taxes.taxFundingReceipt(quote.transactionId()))
++          .isInstanceOf(IllegalArgumentException.class);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("0");
++      assertThat(
++              h.database.<String>query(
++                  "SELECT funding_protocol FROM treasury_funded_taxes",
++                  r -> {
++                    try {
++                      r.next();
++                      return r.getString(1);
++                    } catch (SQLException e) {
++                      throw new RuntimeException(e);
++                    }
++                  }))
++          .isEqualTo("LEGACY");
++    }
++  }
++
++  @Test
++  void changedQuoteOrLegacyReversalCannotReuseReceiptIdentity() throws Exception {
++    try (Harness h = new Harness()) {
++      h.taxes.fundTaxWithReceipt(quote);
++      for (TaxQuote changed :
++          List.of(
++              new TaxQuote(
++                  quote.transactionId(),
++                  nation,
++                  TaxType.TARIFF,
++                  UUID.randomUUID(),
++                  quote.taxableAmount(),
++                  quote.taxAmount()),
++              new TaxQuote(
++                  quote.transactionId(),
++                  nation,
++                  TaxType.BUSINESS_TAX,
++                  quote.payerId(),
++                  quote.taxableAmount(),
++                  quote.taxAmount()),
++              new TaxQuote(
++                  quote.transactionId(),
++                  nation,
++                  quote.type(),
++                  quote.payerId(),
++                  new BigDecimal("200"),
++                  quote.taxAmount()),
++              new TaxQuote(
++                  quote.transactionId(),
++                  nation,
++                  quote.type(),
++                  quote.payerId(),
++                  quote.taxableAmount(),
++                  BigDecimal.ONE),
++              new TaxQuote(
++                  quote.transactionId(),
++                  NationId.random(),
++                  quote.type(),
++                  quote.payerId(),
++                  quote.taxableAmount(),
++                  quote.taxAmount()))) {
++        assertThatThrownBy(() -> h.taxes.fundTaxWithReceipt(changed))
++            .isInstanceOf(RuntimeException.class);
++      }
++      assertThatThrownBy(() -> h.taxes.reverseFundedTax(quote))
++          .isInstanceOf(IllegalArgumentException.class);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("5");
++      assertThat(h.taxes.taxFundingReceipt(quote.transactionId())).isPresent();
++    }
++  }
++
++  @Test
++  void existingTreasuryReceiptMustBindEveryTaxField() throws Exception {
++    try (Harness h = new Harness()) {
++      h.treasury.credit(
++          new NationCreditService.CreditRequest(
++              "starcore:tax-funding:v1:" + quote.transactionId(),
++              nation,
++              quote.taxAmount(),
++              NationCreditService.CreditCategory.OTHER,
++              "another payer"));
++      assertThatThrownBy(() -> h.taxes.fundTaxWithReceipt(quote))
++          .isInstanceOf(IllegalArgumentException.class);
++      assertThatThrownBy(() -> h.taxes.taxFundingReceipt(quote.transactionId()))
++          .isInstanceOf(IllegalArgumentException.class);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("5");
++    }
++  }
++
++  @Test
++  void intentWriteFailureDoesNotTouchTreasury() throws Exception {
++    try (Harness h = new Harness()) {
++      new FundedTaxLedger(h.database);
++      h.database.execute(
++          "CREATE TRIGGER refuse_intent BEFORE INSERT ON treasury_funded_taxes BEGIN SELECT"
++              + " RAISE(ABORT,'fault'); END");
++      assertThatThrownBy(() -> h.taxes.fundTaxWithReceipt(quote))
++          .isInstanceOf(IllegalStateException.class);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("0");
++      h.database.execute("DROP TRIGGER refuse_intent");
++      h.taxes.fundTaxWithReceipt(quote);
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("5");
++    }
++  }
++
++  @Test
++  void auditFailureDoesNotReverseFundedMoneyAndConcurrentRetriesRemainUnique() throws Exception {
++    try (Harness h = new Harness()) {
++      EventService events = mock(EventService.class);
++      doThrow(new IllegalStateException("event unavailable"))
++          .when(events)
++          .record(any(), anyString(), anyString(), anyString());
++      h.services.register(EventService.class, events);
++      try (ExecutorService workers = Executors.newFixedThreadPool(3)) {
++        List<Future<TaxFundingService.Receipt>> results = new ArrayList<>();
++        for (int i = 0; i < 6; i++)
++          results.add(workers.submit(() -> h.taxes.fundTaxWithReceipt(quote)));
++        var first = results.getFirst().get(10, TimeUnit.SECONDS);
++        for (var result : results) assertThat(result.get(10, TimeUnit.SECONDS)).isEqualTo(first);
++      }
++      assertThat(h.treasury.balance(nation)).isEqualByComparingTo("5");
++      assertThat(h.taxes.getTaxHistory(nation, TaxType.TARIFF, 10)).hasSize(1);
++      verify(events, times(1)).record(any(), anyString(), anyString(), anyString());
++    }
++  }
++
++  final class Harness implements AutoCloseable {
++    final SQLiteDataSource source = new SQLiteDataSource();
++    final AtomicBoolean loseCommit = new AtomicBoolean(),
++        blockAfterCommit = new AtomicBoolean(),
++        blockConnections = new AtomicBoolean();
++    final JdbcDatabase database;
++    final ServiceRegistry services = new ServiceRegistry();
++    SqlTreasuryStateStorage storage;
++    TreasuryModule treasury;
++    TaxationServiceImpl taxes;
++
++    Harness() throws Exception {
++      source.setUrl("jdbc:sqlite:" + directory.resolve("tax.db"));
++      database = new JdbcDatabase(source);
++      reopen();
++    }
++
++    void reopen() throws Exception {
++      if (storage != null) storage.shutdown();
++      DataSource faultSource =
++          (DataSource)
++              Proxy.newProxyInstance(
++                  getClass().getClassLoader(),
++                  new Class<?>[] {DataSource.class},
++                  (p, m, args) -> {
++                    if (!m.getName().equals("getConnection")) return invoke(m, source, args);
++                    if (blockConnections.get()) throw new SQLException("reload blocked");
++                    Connection connection = source.getConnection();
++                    return Proxy.newProxyInstance(
++                        getClass().getClassLoader(),
++                        new Class<?>[] {Connection.class},
++                        (p2, method, a) -> {
++                          Object result = invoke(method, connection, a);
++                          if (method.getName().equals("commit")
++                              && loseCommit.compareAndSet(true, false)) {
++                            if (blockAfterCommit.get()) blockConnections.set(true);
++                            throw new SQLException("commit response lost");
++                          }
++                          return result;
++                        });
++                  });
++      storage =
++          new SqlTreasuryStateStorage(faultSource, new Properties(), Logger.getAnonymousLogger());
++      treasury = new TreasuryModule();
++      set(treasury, "stateStorage", storage);
++      Method load = TreasuryModule.class.getDeclaredMethod("loadState");
++      load.setAccessible(true);
++      load.invoke(treasury);
++      services.register(NationCreditService.class, treasury);
++      services.register(TreasuryService.class, treasury);
++      taxes = new TaxationServiceImpl();
++      set(
++          taxes,
++          "currentContext",
++          new StarCoreContext(
++              null, null, null, null, null, null, database, null, null, null, services));
++    }
++
++    @Override
++    public void close() {
++      blockConnections.set(false);
++      storage.shutdown();
++    }
++  }
++
++  static void set(Object receiver, String name, Object value) throws Exception {
++    Field f = receiver.getClass().getDeclaredField(name);
++    f.setAccessible(true);
++    f.set(receiver, value);
++  }
++
++  static Object invoke(Method method, Object receiver, Object[] args) throws Throwable {
++    try {
++      return method.invoke(receiver, args);
++    } catch (InvocationTargetException e) {
++      throw e.getCause();
++    }
++  }
++
++  static final class JdbcDatabase extends DatabaseService {
++    private final DataSource source;
++
++    JdbcDatabase(DataSource source) {
++      super(null, null);
++      this.source = source;
++    }
++
++    @Override
++    public boolean execute(String sql) {
++      try (Connection c = source.getConnection();
++          Statement s = c.createStatement()) {
++        return s.execute(sql);
++      } catch (SQLException e) {
++        throw new IllegalStateException(e);
++      }
++    }
++
++    @Override
++    public int update(String sql, Object... args) {
++      try (Connection c = source.getConnection();
++          PreparedStatement s = c.prepareStatement(sql)) {
++        bind(s, args);
++        return s.executeUpdate();
++      } catch (SQLException e) {
++        throw new IllegalStateException(e);
++      }
++    }
++
++    @Override
++    public <T> T query(String sql, Function<ResultSet, T> mapper, Object... args) {
++      try (Connection c = source.getConnection();
++          PreparedStatement s = c.prepareStatement(sql)) {
++        bind(s, args);
++        try (ResultSet rows = s.executeQuery()) {
++          return mapper.apply(rows);
++        }
++      } catch (SQLException e) {
++        throw new IllegalStateException(e);
++      }
++    }
++
++    private void bind(PreparedStatement s, Object[] args) throws SQLException {
++      for (int i = 0; i < args.length; i++) s.setObject(i + 1, args[i]);
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/TreasuryDiagnosticsTest.java b/src/test/java/dev/starcore/starcore/module/treasury/TreasuryDiagnosticsTest.java
+index 7c886ec..8d59c90 100644
+--- a/src/test/java/dev/starcore/starcore/module/treasury/TreasuryDiagnosticsTest.java
++++ b/src/test/java/dev/starcore/starcore/module/treasury/TreasuryDiagnosticsTest.java
+@@ -217,6 +217,12 @@ class TreasuryDiagnosticsTest {
+     ConcurrentMap<NationId, BigDecimal> balances =
+         (ConcurrentMap<NationId, BigDecimal>) balancesField.get(module);
+     balances.put(nationId, amount);
++    // Seed the authoritative test storage too: uncertain writes now reload it.
++    Field storageField = TreasuryModule.class.getDeclaredField("stateStorage");
++    storageField.setAccessible(true);
++    if (storageField.get(module) instanceof RejectingStorage storage) {
++      storage.persisted = TreasuryStateCodec.toProperties(balances);
++    }
+   }
+ 
+   private static Logger capturingLogger(AtomicReference<LogRecord> lastRecord) {
+@@ -267,10 +273,13 @@ class TreasuryDiagnosticsTest {
+   private static final class RejectingStorage implements TreasuryStateStorage {
+     private static final IllegalStateException FAILURE =
+         new IllegalStateException("treasury storage unavailable");
++    private Properties persisted = new Properties();
+ 
+     @Override
+     public Properties load() {
+-      return new Properties();
++      Properties copy = new Properties();
++      copy.putAll(persisted);
++      return copy;
+     }
+ 
+     @Override
+@@ -288,6 +297,7 @@ class TreasuryDiagnosticsTest {
+     private final Set<Integer> failingSaves;
+     private int saveCount;
+     private IllegalStateException failure;
++    private Properties persisted = new Properties();
+ 
+     private SequencedStorage(Set<Integer> failingSaves) {
+       this.failingSaves = failingSaves;
+@@ -295,7 +305,9 @@ class TreasuryDiagnosticsTest {
+ 
+     @Override
+     public Properties load() {
+-      return new Properties();
++      Properties copy = new Properties();
++      copy.putAll(persisted);
++      return copy;
+     }
+ 
+     @Override
+@@ -305,6 +317,8 @@ class TreasuryDiagnosticsTest {
+         failure = new IllegalStateException("treasury storage unavailable #" + saveCount);
+         throw failure;
+       }
++      persisted = new Properties();
++      persisted.putAll(properties);
+     }
+ 
+     @Override

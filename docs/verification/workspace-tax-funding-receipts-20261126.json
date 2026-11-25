@@ -1,0 +1,972 @@
+{
+  "recorded_date": "2026-11-26",
+  "kind": "workspace-development-and-regression-only",
+  "source_base_commit": "1e1857a21bc25629ad0bfa17206a36b2e52db408",
+  "scope": "Original-quote tax funding with authoritative treasury receipts and safe automatic replay of new marked settlements",
+  "artifacts": {
+    "starsupply": {
+      "path": "target/starsupply-0.1.0.jar",
+      "sha256": "267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C",
+      "bytes": 14695959
+    },
+    "core_companion": {
+      "path": "target/starcore-1.0.0.jar",
+      "sha256": "B1F800DEB55B423123E54E79AC41B161D1734A7E3C48B481BE60E53FFECA11B3",
+      "bytes": 19578695
+    }
+  },
+  "main_verify": {
+    "command": ".\\mvnw.cmd -o -B -ntp -DforkCount=0 verify",
+    "heap_mib": 192,
+    "completed_at": "2026-11-26T00:09:48+08:00",
+    "totals": {
+      "tests": 157,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": [
+      {
+        "suite": "dev.starsupply.bukkit.AsyncTasksTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D80E871FCE4FE8C21A1A5B44C4BC0CB9B0A05618242093AAF7ADDD7C131601B1",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.EntityCallbacksTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "28EA1D5CA54755AA10D6A5FFA82F87F3B420C187EEAFE9CA7CFE693BF7EE4694",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.InventoryTasksTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8154188771951A0169231053591B3BBE5AEEAA02D616A5B6E3902A2A43EE4A16",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.InventoryFingerprintTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9B43778FBC936C91ED610D023F22D20B77E59F836A91C15B568E70F1D4FCC219",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.PlayerDataReceiptTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3CCC96981E499CAA4C8F8DA9B519072E4B13EC58C54DC17C7A5F6B03BD8F2603",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.ResourceMappingConfigTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "48C9130BCE345CAFCCDD690E8F39E69DF9424AC5C0B11951BA26547E806E3A57",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.LifecycleGateTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5DA4082EBD7F5089DA58DAAD0B8EBDDE586518AF2FB52959FD28CA390AE9B187",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CampaignSiegeTargetTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "58D59F8A457C05FBBCC42CC0FDBF0C2CCEC2DD0CAC4261C383298FB35D4B01BA",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CoreInsurancePaymentTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "03321C15E8F873D7A93DC8742C2DC799B2452B6F06EF7F536C72DAD1FD6DEFC9",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePaymentTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F8A85D03104E806A1C92C01619AF8126967E5B46EF53B0302B864AFC46C60D2A",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePlayerMoneyTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5B1F45E1336A7194A3CCC715BAC561DEF376BF9569F1530DCD486096E6007762",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePremiumCreditTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6CC8089A9ACC93D1E1B7B692CBD64CE58A54A1051F0B3808901B381D472C30A2",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CoreTaxPaymentTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9163196A513EC0562D230C0DE602D0CE8F4AA79FF45621B7DB5ABC8B4A8DE40E",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.NativeSupplyBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4B74CC8204105FA02EA9233C9FA4D337A5A088632A2C73C6866576936D64C580",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.TemporaryMoraleBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B1B65B744D47B0DB4007E65A2785553EFBE57580A879E3EDC915C9BC5FAA9642",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.route.RoutePlannerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3F500822D586C71EF90B93A20373C38C9C4F4AF6A0B4DB677A3066804FC5E00F",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.service.ArmySupplyRulesTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C811B2E457A42E7CF58A6F686C1E5AF1AA4FBE938EE1E3605D8020D6B7DD151A",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.service.CampaignRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "708FF079C79EC50BBF584550B56568A420C55BA744D05239C185B3C519A706B6",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.service.CaravanInsuranceTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "63B09743BEFC61F3DAC585AD84E6762586A4EBB6818B02D6FFFCD2FA4F253B37",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.service.MarketRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "FA4520843C5043D1A699513895F931CC3E4EA69771D8FAE0972DA055DCBC7301",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.service.TavernServiceTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5B4672BD1471CDDACC07E2E627BAC459BA0ED22B7CEA415986FA156BB395D3B9",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.storage.CampaignPersistenceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "49398CEC82FCFE0D9D208A071A2472BAD9A55DF70AA7514C4ABE5E04C49BF92C",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.storage.SqlTransactionsTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8EFE256DBC570D8EA30456874945591DC6D01A3914FC3AB6C90D2C0269F35642",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.storage.SupplyLifecycleTest",
+        "tests": 33,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "FF7CADD971DB809585B479BCB33F7B0DAC1091AC76FDF51FE5C64A923CEF9C44",
+        "skips": []
+      }
+    ]
+  },
+  "companion_regression": {
+    "command": ".\\tools\\test-player-money.ps1 -StarCoreJar <final-core> -JavaHome <jdk21> -Offline",
+    "actual_player_money_scenarios": 11,
+    "actual_tax_scenarios": 9,
+    "pinned_core_excluded": true,
+    "maven_repository_modified": false,
+    "totals": {
+      "tests": 177,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": [
+      {
+        "suite": "dev.starsupply.bukkit.AsyncTasksTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "AD711A636030CC08466815DA122889B611C94A3E6C9BFD5F1AC0A1DDAF6DE451",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.EntityCallbacksTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A2E122BE0996FC843BF9724A5C6F8AC68B464FEDA4433DD33C5A8034420AC012",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.InventoryTasksTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4B86F843CBB51EA5A4C03AEEE32C62103FC42A6E5EC1CB1BE78727F0E764EA3B",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.InventoryFingerprintTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7F558037A2D02131B274D923384119C12580C9B5E78EEFD93A6855D2E01EB7E7",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.PlayerDataReceiptTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "FA62AAEFBB1A2C66C1AF992E6FB8C292CD1CF4CFB8371798B49BE370988F03C3",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.ResourceMappingConfigTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "964BA27481A62387EF97F97E78056DEE5F29C16832AC00BFA3EE949ECD163A1A",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.bukkit.LifecycleGateTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "60E1BE4715A88A667A06A30FA00D7E3FF091F6213E691F8CABD5F31766DDDF29",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CampaignSiegeTargetTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C4AA2602C10B87E5993E1D24A45810132BCC2558C51CF6E1D2DD70E1FF55D427",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CoreInsurancePaymentTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "DF0521B2F618313122D6273E07ECC67A1071460AE2133776F745CB0CD17B79B7",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePaymentTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B58B8854F7E21F6E5F98063DCED0702CB3AF580ED33494769698FFD107DA8772",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePlayerMoneyTest",
+        "tests": 22,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "895CA35F268B26DAF4EA8E1A1E8BA962BF50B108D9630F7ED8A06A1564DDC262",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePremiumCreditTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "BCEC279D5AA563A8078A6E3E29B6DB4DB6CF6299BA31D96CF532B227A56CD3D3",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.CoreTaxPaymentTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F7D3B8A4BDFDE333ED5F599DA65CC64A69036FF0AE11C3BB5EAF3872F5A8C79F",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.NativeSupplyBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "60C618EE8220F0F1A2DA11D6A30852170EE5BDAC7BD46A019C220FB7AD5AA66A",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.integration.TemporaryMoraleBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "AD5F6F1AB2B41D133F45638A7F6ACE328869CB1480B5C5CB70E97A90CD72C8DF",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.route.RoutePlannerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B25A75A68B6E2096B0A4363616802637DCE5D05AC9B0B5479D9CC27967204C54",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.service.ArmySupplyRulesTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "DAB198CF36C7C634B980E5FFB171CCBB9391B3EF8432048065D9C9405DD507B4",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.service.CampaignRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "CA3483FF62AA7AF9A2E5CE13D1039995B5CD669F763AD1909B56DC5BEEFD30ED",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.service.CaravanInsuranceTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E154D8E013F4648C3C17B558300229804C81F363C0CDD033DF350CFFCEA5D149",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.service.MarketRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B7E1D95B2599040BA2D29B63D019C393FC12657F4E95240A1E8F1A02A256A5D1",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.service.TavernServiceTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9DAA8E4274219F0D9EFB8D5050B300CDD9B3AD602608CE39CCE03FC2B70FEE28",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.storage.CampaignPersistenceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A54217E48D78E3736EEC83B932A624162244095464EDD872DF1406123F213C49",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.storage.SqlTransactionsTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0F00A9D78E324E1B0F3C06AE88BD2647733E5821C7E3D8A97EF1558FC3E56325",
+        "skips": []
+      },
+      {
+        "suite": "dev.starsupply.storage.SupplyLifecycleTest",
+        "tests": 33,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1200CB8E9DB0E29C3182B0678576209A97793491988C134BAB0CDB4E1C735EF8",
+        "skips": []
+      }
+    ]
+  },
+  "core_regression": {
+    "selector": "dev.starcore.starcore.module.treasury.*Test,FundedTaxMigrationTest,PublicApiCompatibilityTest",
+    "new_tax_invocations": 13,
+    "completed_at": "2026-11-26T00:13:14+08:00",
+    "totals": {
+      "tests": 116,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "suites": [
+      {
+        "suite": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "DEAE32CC28BF5A64B21316172E4B04F3CBDA39E67AF9EAFA706BB8222845F87E",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.core.database.FundedTaxMigrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ADE5617238CD4ED64AC3C062402CBDA045B793FB44B2178AAAA2F9F04E9600E8",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BankruptcyReasonTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "EF78DFC357C43E976575BF656AA93814EE2895DD38DD27A73F7721307F200CC5",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BankruptcyServicePersistenceDiagnosticsTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "320FE7E0C8418387D103C4FBB7CD76FA8F127BAE6B4C52D558D2B71DF02DB22F",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetServiceImplSpendingTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E829207E603F7A64DDD5A35ADEDF2CB8B892FB5B915A1D8B3B26FA40FB4DF786",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetStateCodecTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6B35381B26240E3A5D91141364AE527AE71763DF39BCE42536EAA7825C0A9CC8",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.FundedTaxLedgerTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "887D89F2B55FBF344EDE899BECD2365940AA9C10B0E4D2C43D99F5E3139CC9F0",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.LoanServiceValidationTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "29A113056AA0AFB59B99B41CE9659015789E2776CF9995375EAA2B63E46DA62C",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.MySqlTreasuryStateIntegrationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 2,
+        "sha256": "9C2C639971A8531CA6AC70DCC5E48406C54CACC3C4A57441054DAA5235A760EE",
+        "skips": [
+          {
+            "case": "simultaneousReplayCommitsOneTransferAndIdleInstanceCanRefreshAndWrite",
+            "reason": "System property [starcore.mysql.it] does not exist"
+          },
+          {
+            "case": "concurrentFirstSnapshotsHaveOneWinnerAndLoserCanReload",
+            "reason": "System property [starcore.mysql.it] does not exist"
+          }
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.NationTransferEconomyStateTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E8442FD8210B439AD3768E3E95A70247789B010821EAEA1020605BE1C7A3F416",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.SqlBudgetStateStorageTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "006851ECD707E4C66CA17C434202F7DFF6959CBCA4B2171280D442FCFECCEE72",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.SqlTreasuryBusyRetryTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E595D3288F664970FA5B41BDD2409FDA650A8858C705560D53462D4E8AD1C705",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.SqlTreasuryStateStorageTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3BABA463F277C388F6B592CDEA1272E8C233B6E0690EF26AAAE320F41CB4169C",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxAssessmentTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2767203F2B5C890BE904498416947DE4EED86E80BCB3F80CD5984C0583C4C018",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceCompensationFailureTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "17533883F24CBF7A6B4FFB05573244A8B3C3BAF04AF2772FEE5DB06C3DDC370F",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceFundedTaxTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "31C5E692A50CF3F242C2525BB63D0C429BA7E99956C64B543016A0B5467D4BD9",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceInputValidationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0F72621F390ED2BBA27C40345B09EB0B81970B3580B4EEEB15DC1A008033F0AE",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceProviderMatrixTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "FE46576592BFEAAB754DFF6863A3DDFC3F6916176860D2659AADDBAE1C84B29F",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxCollectionWindowTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "78EFEB666AE2A1078F365707D442639F64860FAC2BD07DD030EB2DBC96AB31F2",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxFundingReceiptTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "73331AC2382E98D95B3FDEE8030978139B1F615F786332476ABDFFF63C56BEF7",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxQuoteFactoryTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C4FAE0E4E8C6CC114DE83FFBE8B93E5AB7AA7CA7A884A79104D6F10DB832E247",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryDiagnosticsTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B1FDECCFF766720675E1F2E10B99633461114A0403DE40528EE17E3728C3BB98",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryModuleRefreshLifecycleTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0A8FDE217068EB26CAF8CA04FCF953AEBB81EFFF70A0E74FF5FA0ABBB8677098",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryNationBoundaryTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "50C8192920B9B7050BBE4D6240885DC014A47112AA72F3B256CA0E2FBC132BEE",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryPlayerDepositRecoveryTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "222FEAA90BA296F7788553E52B4B4392AA9D80248B6147FA05E189AE4B810801",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryRequestAmountValidationTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "820069E8D14ECEB5C4B081061E0970BD0C06CBE437AEB64B8508B73543F900AD",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryStateCodecBoundaryTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "AA2C1305C0718072A9E7E1157B4C9CEFAAB93EC48F781DF2B1FC0AD89EAA5A90",
+        "skips": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryTransactionPersistenceTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "05CDB0BD7297C3A06ED4B28925A5CBE508885E860110D534AA770C1AF6568A78",
+        "skips": []
+      }
+    ],
+    "compilation": "Incremental standalone Java 21 compilation of five changed production sources and 27 treasury test sources on the previously fully compiled production baseline; 192 MiB heap, SerialGC, one processor",
+    "full_repository_verify": false,
+    "format": "Seven changed files passed targeted Spotless with ratchetFrom=HEAD",
+    "diagnostic_test_fixture_change": "Previously nonpersistent test storages now preserve seeded/successfully saved balances, so authoritative reloads are tested without relaxing rollback assertions"
+  },
+  "packaging": {
+    "executions": [
+      "jar:jar",
+      "shade:shade@minimize",
+      "shade:shade@restore-reflective-runtime"
+    ],
+    "previous_runtime_entries_missing": []
+  },
+  "patch_reproduction": {
+    "original_commit": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "prior_patch_baseline": "8c31df2",
+    "order": [
+      "starcore-folia-logistics.patch",
+      "starcore-player-money-receipts.patch",
+      "starcore-tax-funding-receipts.patch"
+    ],
+    "reverse_apply_and_apply_check": true,
+    "seven_source_files_match_tested_checkout": true
+  },
+  "protocol": {
+    "local_intent_marker": "taxFundingProtocol=1",
+    "local_intent_before_sql_funding": true,
+    "core_intent_table": "treasury_funded_taxes",
+    "core_intent_protocol": "RECEIPT_V1",
+    "legacy_migration": "Existing rows gain funding_protocol=LEGACY and are never promoted automatically",
+    "treasury_key": "starcore:tax-funding:v1:<UUID>",
+    "authority": "Complete original quote identity in the same snapshot as the national credit and balance",
+    "quote_identity": [
+      "transaction UUID",
+      "nation",
+      "tax type",
+      "payer",
+      "gross amount",
+      "tax amount"
+    ],
+    "timestamp_precision": "milliseconds, stable after reopening",
+    "quote_policy": "Already withheld original quote is honored after configuration changes; player is not charged again",
+    "legacy_reversal_for_new_protocol": "rejected"
+  },
+  "tested_failures": [
+    "Core intent write rollback prevents treasury call",
+    "Treasury write rollback leaves intent without a false receipt",
+    "Actual JDBC commit-response loss recovers durable balance and receipt",
+    "Failed authoritative reload blocks receipt reads, other mutations and shutdown flush",
+    "New-version snapshot corruption cannot be interpreted as a missing receipt",
+    "Lost adapter response resumes after SQL/fabric reopen",
+    "Taxation intent schema migration preserves legacy claims",
+    "Changed quote, conflicting national receipt and unavailable authority stay isolated",
+    "Tax event failure does not reverse committed money",
+    "Concurrent same-ID calls credit once",
+    "SQL FUNDING and FUNDED transition failures recover without another seller payment",
+    "TransactionFabric result-write failure recovers original tax receipt",
+    "Operator funded/unfunded flags cannot override authority"
+  ],
+  "limits": [
+    "Legacy unmarked FUNDING and existing REVIEW are not automatically unfrozen",
+    "New marked operations never downgrade to legacy APIs",
+    "Tax events and the existing in-memory tax history are not a reliable outbox; durable audit uses the UUID receipt",
+    "No live Paper/Folia server started",
+    "MySQL integration requires an unconfigured opt-in environment; two cases skipped",
+    "Historical receipt scalability not load-tested",
+    "Backups must preserve Core tax intents, treasury/player receipts, transaction fabric, StarSupply databases and player saves as one group"
+  ],
+  "remaining_goal_work": [
+    "Complete Folia module/optional-plugin compatibility scope and production acceptance",
+    "Six-resource survival production/logistics/restart live acceptance",
+    "Current optional-plugin combination and graphical resource-pack acceptance",
+    "MySQL and receipt-history scale validation"
+  ],
+  "folia_full_stack_verified": false,
+  "live_server_started": false,
+  "mysql_tested": false,
+  "main_source_files": [
+    {
+      "path": "src/main/java/dev/starsupply/bukkit/StarSupplyPlugin.java",
+      "sha256": "282FE47D6E7A91FBBFFD1D1EEAE9F9FE9A7D477A4D5BBD23CD4EFBE800ACF487",
+      "bytes": 78038
+    },
+    {
+      "path": "src/main/java/dev/starsupply/integration/CoreGateway.java",
+      "sha256": "04B9F6C11F4D7FCB42BC833CC3357DCC56768DB7D2C372F41F0023E29642E077",
+      "bytes": 6660
+    },
+    {
+      "path": "src/main/java/dev/starsupply/integration/CorePayment.java",
+      "sha256": "C50EFF64036E6A093823B27EC7063F606C99523A61FF842574C6A29129CB0A37",
+      "bytes": 26825
+    },
+    {
+      "path": "src/main/java/dev/starsupply/integration/CoreTaxPayment.java",
+      "sha256": "4900ABBFE20E892E1C6E379119D31FF02F12CDA968CA4132438B8B10BF0FAD61",
+      "bytes": 6134
+    },
+    {
+      "path": "src/main/java/dev/starsupply/integration/StarCoreGateway.java",
+      "sha256": "2C040B0E85E10DA6B0FF23FE006F875E99F7DBDFB8398142E1C16CB019AB4905",
+      "bytes": 27613
+    },
+    {
+      "path": "src/main/java/dev/starsupply/integration/TaxFundingRetryException.java",
+      "sha256": "B3D26B513A9B4CC7EB2D1416AA7CE1F99F27B77A954A54F2AA69A19E8649036B",
+      "bytes": 300
+    },
+    {
+      "path": "src/main/java/dev/starsupply/service/TariffFunding.java",
+      "sha256": "1BF158A69D8398473B9C40682326720D68B7CE054CE849BA8F367B6B06631AE2",
+      "bytes": 3646
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/treasury/ReceiptTaxFixture.java",
+      "sha256": "93049B031ECCA75F4CC38BDFA14EAF5869532E2796A1D6F276B377AD9332D9B9",
+      "bytes": 2273
+    },
+    {
+      "path": "src/test/java/dev/starsupply/integration/CoreTaxPaymentTest.java",
+      "sha256": "88655315BE5E690012FA88D89419A5F4DE64DE48EE80B1B37123F4A889C175CA",
+      "bytes": 14529
+    }
+  ],
+  "core_source_files": [
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/treasury/TaxFundingService.java",
+      "sha256": "2B32C9D633FC83821D3EA2DFA5C065AC5FD1876ECD5B15DCCEDCA36D34F840A0",
+      "bytes": 1027
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/treasury/FundedTaxLedger.java",
+      "sha256": "0CAE5948005CA254D2A955E7A15238EE8723B2A8CC006B64164291DF4E2977FF",
+      "bytes": 7188
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/treasury/TaxationServiceImpl.java",
+      "sha256": "E1E61C38CCDB0F3E112E4AE9D8EE3B34E05B965152E52D1497E22480972C35A3",
+      "bytes": 43825
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java",
+      "sha256": "B35D97C611ABCC66E3472553D13DDAD034FCDD6F14B1E13902E0AEEB73C8AA68",
+      "bytes": 76836
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/treasury/TreasuryStateCodec.java",
+      "sha256": "8A800A4DB37A90AB23D91575331504926F71A480312FCCE99DC3C89DD1696EAC",
+      "bytes": 14845
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/treasury/TaxFundingReceiptTest.java",
+      "sha256": "D666A6BE3AD94C092CDDE2D0B4B9D3DA266F038BCF5CFF7D4326D0F5BF404FC5",
+      "bytes": 16801
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/treasury/TreasuryDiagnosticsTest.java",
+      "sha256": "C586B56BEF2512E497926A429D68A6B5598B84550B8240DB610D11C0EAF4B1AE",
+      "bytes": 13213
+    }
+  ],
+  "portable_files": [
+    {
+      "path": "docs/upstream/starcore-tax-funding-receipts.patch",
+      "sha256": "9AB1255484D2784D831F10015DA87C80F3EC04B967DA07787B26AA846BBF87D9",
+      "bytes": 49408
+    },
+    {
+      "path": "tools/test-player-money.ps1",
+      "sha256": "9E7A226641C00543A27820497FB524FC6E3D65F3AFBA44EB5A83F6C3E2E5A4AA",
+      "bytes": 4845
+    },
+    {
+      "path": "tools/package-review.ps1",
+      "sha256": "D9A89F465DC4C077533B9373337888CF99FD357AEE6B711C3CF5232697EDFA1B",
+      "bytes": 7420
+    }
+  ],
+  "logs": [
+    {
+      "path": "target/tax-receipts-verify-final-20261126.log",
+      "sha256": "3389ACAED2F18686B34D8C01509B34DE11A91A0C403F5F3658628735CBDCD6B7",
+      "bytes": 698374
+    },
+    {
+      "path": "target/tax-receipts-companion-final-20261126.log",
+      "sha256": "27C82304C21B8E1890248034B3BE723A015595DE12C66688F4EFE7F552C5CA76",
+      "bytes": 1128844
+    },
+    {
+      "path": "target/tax-receipts-tests-final-20261126.log",
+      "sha256": "FE6B8DB077F148803E76F79FDE911D16AC8316BDE144C156A965033092EB95A7",
+      "bytes": 115464
+    },
+    {
+      "path": "target/tax-receipts-format-final-20261126.log",
+      "sha256": "DC9D681791C222C7E52B4A13E4372F9F570BB8E4A77D5AE0F69994666201376F",
+      "bytes": 1396
+    },
+    {
+      "path": "target/tax-main-javac-final-20261126.log",
+      "sha256": "9FE782DF81E4F87F85BE0C623DF9193E651C60CBCB6C0E373B16E2E8EE7F66AD",
+      "bytes": 273
+    },
+    {
+      "path": "target/tax-tests-javac-final-20261126.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0
+    },
+    {
+      "path": "target/tax-receipts-package-final-20261126.log",
+      "sha256": "A2597AB49D3E148464DABAF7FEE2B9D7E5E473161A017953674F8393AB92E399",
+      "bytes": 1189
+    }
+  ],
+  "unchanged_acceptance_tools": {
+    "rerun_this_iteration": false,
+    "previous_node_tests": 107,
+    "previous_syntax_checks": 39,
+    "previous_powershell_restoration_checks": 7
+  }
+}

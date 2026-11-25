@@ -33,9 +33,9 @@ StarSupply 的承运收入险由发单国家承保，只对本国承运者开放
 
 应用[玩家资金补丁](upstream/PLAYER-MONEY.md)后，新保费扣款/返还保存 `playerMoneyProtocol=1`，通过权威玩家余额与回执的原子提交恢复。STARTED 阶段由适配器核对原协议后重试；确定拒绝也有耐久回执。响应丢失或本地结果写回失败不会重复扣款/返还。旧无标记玩家操作与普通国库入账仍保留人工复核，已有 REVIEW 不自动解冻。新交易缺少相应接口时使用旧保守路径；已带回执标记的操作不能在接口缺失时降级。保险结算或待核验期间，承运、交付和取消被冻结。
 
-准备金和释放使用原国库凭证恢复；新理赔的玩家入账也使用原结算编号和玩家回执。本轮 148 项完整 Java verify、实际最终兼容 Core 下 159 项回归通过；新增 11 个场景同时覆盖测试权威和真实 Core，含准备金、国库、玩家 SQLite 与保险库结果回滚、提交后丢失响应及重启恢复。此前 13 项国库保费回执测试继续通过。没有新增实服资金验收，见[玩家资金回执记录](verification/workspace-player-money-receipts-20261125.json)、[前一版国库回执记录](verification/workspace-premium-credit-receipts-20261125.json)及[旧操作中断保护](verification/workspace-insurance-interruption-20261125.json)。
+准备金和释放使用原国库凭证恢复；新理赔的玩家入账也使用原结算编号和玩家回执。玩家回执阶段的 148/159 项回归已通过；当前包含税款恢复的版本通过 157 项完整 verify、实际最终 Core 下 177 项回归；新增 11 个场景同时覆盖测试权威和真实 Core，含准备金、国库、玩家 SQLite 与保险库结果回滚、提交后丢失响应及重启恢复。此前 13 项国库保费回执测试继续通过。没有新增实服资金验收，见[玩家资金回执记录](verification/workspace-player-money-receipts-20261125.json)、[前一版国库回执记录](verification/workspace-premium-credit-receipts-20261125.json)及[旧操作中断保护](verification/workspace-insurance-interruption-20261125.json)。
 
-当前测试的兼容 Core 为 `541E85710872D79FEF5F77F661A1259429CB71D72F0B4D724857E46D3429AB63`。上游新增回执支持文件存储与 SQLite；77 项定向测试通过，MySQL、规模压力和实服组合仍待验证。
+当前测试的兼容 Core 为 `B1F800DEB55B423123E54E79AC41B161D1734A7E3C48B481BE60E53FFECA11B3`。上游新增回执支持文件存储与 SQLite；此前玩家回执 77 项定向测试通过；本轮财政相关 116 项中 114 项执行通过、2 项 MySQL 环境测试跳过。见[当前构建证据](verification/workspace-tax-funding-receipts-20261126.json)。MySQL、规模压力和实服组合仍待验证。
 
 管理员核对独立经济证据后，可执行：
 

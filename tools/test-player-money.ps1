@@ -18,8 +18,9 @@ if ((Get-Item -LiteralPath $compiled).LastWriteTime -lt $newestSource) { throw '
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $jar = [System.IO.Compression.ZipFile]::OpenRead($companion)
 try {
-    if (-not $jar.GetEntry('dev/starcore/starcore/foundation/economy/PlayerMoneyService.class')) {
-        throw 'The companion must contain the player-money receipt patch.'
+    if (-not $jar.GetEntry('dev/starcore/starcore/foundation/economy/PlayerMoneyService.class') -or
+        -not $jar.GetEntry('dev/starcore/starcore/module/treasury/TaxFundingService.class')) {
+        throw 'The companion must contain both player-money and tax-funding receipt patches.'
     }
 } finally { $jar.Dispose() }
 $reports = Join-Path $root 'target/player-money-companion-reports'
@@ -73,4 +74,8 @@ if ($corePaths.Count -ne 1 -or $corePaths[0] -ne $companion) { throw 'The tests 
 $actualCases = @($receiptReport.testsuite.testcase | Where-Object { $_.name -match '\[2\]' })
 if (-not $actualCases.Count) { throw 'Actual Core receipt scenarios were not executed.' }
 Write-Output "Actual Core receipt scenarios: $($actualCases.Count)"
+[xml]$taxReport = Get-Content -LiteralPath (Join-Path $reports 'TEST-dev.starsupply.integration.CoreTaxPaymentTest.xml') -Raw
+$actualTaxCases = @($taxReport.testsuite.testcase | Where-Object { $_.name -match '\[2\]' })
+if (-not $actualTaxCases.Count) { throw 'Actual Core tax receipt scenarios were not executed.' }
+Write-Output "Actual Core tax receipt scenarios: $($actualTaxCases.Count)"
 Get-FileHash -LiteralPath $companion -Algorithm SHA256

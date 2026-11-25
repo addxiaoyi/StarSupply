@@ -45,6 +45,15 @@ public interface CoreGateway {
         throw new UnsupportedOperationException("StarCore transaction tax is unavailable");
     }
 
+    default boolean prepareTariffReceipts(TaxAssessment assessment) { return false; }
+
+    /** Reads the persisted protocol even when its current authority is unavailable. */
+    default boolean tariffUsesReceipts(TaxAssessment assessment) { return false; }
+
+    default boolean fundTariffReceipt(TaxAssessment assessment) {
+        throw new IllegalArgumentException("Core tax receipt authority is unavailable");
+    }
+
     default PaymentResult reconcileTariff(UUID settlementId, TaxAssessment assessment,
                                           boolean alreadyFunded,
                                           Predicate<TaxAssessment> fundTax) {

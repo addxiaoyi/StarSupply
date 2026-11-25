@@ -8,12 +8,12 @@ StarSupply 只把授权国家、军队、领土、战况和资金操作交给 St
 
 重新启用还必须等待旧 SQL 线程完全停止、执行中的实体回调返回，以及完整库存异步流程释放占用。结果对象已完成或被取消，不等于实体回调及其同步完成链已经退出。SQL 提交固定本次生命周期和线程池，避免提交途中改投新线程池。实体和 SQL 任务遇到 `Error` 时也先结束结果、释放依赖占用，再把致命错误交给宿主；线程池随后继续处理已接收队列。同步启动库存流程抛出 `Error` 同样释放占用。关闭步骤逐项隔离普通异常与链接错误，并在 `finally` 中停止和排空 SQL 线程。新增回归包含取消执行中结果、完成链内重启屏障、致命异常传播及失败线程退出后的队列收尾；112 项完整构建测试和适用边界见 [生命周期加固记录](verification/workspace-lifecycle-hardening-20261125.json)。
 
-保险恢复在同一进程内也检查遗留 STARTED。带 `nationCreditProtocol=1` 的国库保费，以及配合新 Core 补丁的 `playerMoneyProtocol=1` 玩家扣款/返还，均按权威回执恢复；新理赔、采购款和运费也接入玩家回执。旧无标记玩家阶段和旧国库入账继续 REVIEW，已有 REVIEW 不自动解冻。已标记交易不能降级，冲突回执不能授权退款。148 项全量 verify 与最终 Core 兼容包下 159 项测试通过，详见[玩家资金记录](verification/workspace-player-money-receipts-20261125.json)及[保险规则](INSURANCE.md)。
+保险恢复在同一进程内也检查遗留 STARTED。带 `nationCreditProtocol=1` 的国库保费，以及配合新 Core 补丁的 `playerMoneyProtocol=1` 玩家扣款/返还，均按权威回执恢复；新理赔、采购款和运费也接入玩家回执。旧无标记玩家阶段和旧国库入账继续 REVIEW，已有 REVIEW 不自动解冻。已标记交易不能降级，冲突回执不能授权退款。玩家阶段的旧证据为 148/159 项；当前税款恢复构建已通过 157 项全量 verify 与最终 Core 下 177 项测试，见[税款记录](verification/workspace-tax-funding-receipts-20261126.json)，详见[玩家资金记录](verification/workspace-player-money-receipts-20261125.json)及[保险规则](INSURANCE.md)。
 
 | 步骤 | 成功条件 | 失败后的归属 |
 | --- | --- | --- |
 | 接收卖家实物 | SQLite 先预留采购单，持久化物品批次和唯一收据。玩家所在实体线程重新核对背包，再从同一次玩家保存验证收据。 | 确认没有改动时开放订单。无法确认玩家保存结果时冻结该批物资，重登恢复或管理员核对。 |
-| 支付采购款 | StarCore 国库按毛额扣款、卖家按净额入账，SQLite 再把实物批次入库。配置了非零 TARIFF 的跨境合同会另由 StarCore `TaxationService` 将税款记入进口国国库。StarCore 报告 `INSUFFICIENT_FUNDS` 但 `balanceAfter` 仍足以覆盖付款时，保留同一结算并返回 `RETRY`，后续沿用原幂等凭证检查国库回执。 | StarCore 国库确认余额不足时可取回原物。关税或卖家入账结果不明时批次保持冻结。先独立核对卖家入账并用 `/supply reconcile <结算UUID> <paid|unpaid>` 确认卖家款；若卖家已收款但关税仍待核验，再用 `/supply reconcile-tax <结算UUID> <funded|unfunded>` 处理税款阶段。 |
+| 支付采购款 | StarCore 国库按毛额扣款、卖家按净额入账，SQLite 再把实物批次入库。配置了非零 TARIFF 的跨境合同会另由 StarCore `TaxationService` 将税款记入进口国国库。StarCore 报告 `INSUFFICIENT_FUNDS` 但 `balanceAfter` 仍足以覆盖付款时，保留同一结算并返回 `RETRY`，后续沿用原幂等凭证检查国库回执。 | StarCore 国库确认余额不足时可取回原物。带回执协议的卖家款与关税按原编号自动恢复；旧无协议结果不明时批次保持冻结。旧交易先独立核对卖家入账并用 `/supply reconcile <结算UUID> <paid|unpaid>` 确认卖家款；若卖家已收款但关税仍待核验，再用 `/supply reconcile-tax <结算UUID> <funded|unfunded>` 处理税款阶段。 |
 | 发布运输合同 | 在同一个 SQLite 事务中锁定采购批次和开放合同，并生成唯一 convoy 风险值。 | 未结算的取消或超时解除锁定，实物仍在起点。同一物资批次后续重运沿用风险值，不能通过取消重抽。 |
 | 支付运费 | 先登记唯一结算，再通过 StarCore 支付。确认后同一批次从起点移到目的地。 | 已确认的付款拒绝解锁起点物资。待核验期间不能再次交付或取消。 |
 | 护送与路线风险 | 起运前最多 4 名本国玩家在起点加入护送队。护送人数、起运/绕行后的风险快照和准备时间保存在 SQL。护送者改为承运者时，在领取事务中移除其自己的护送登记。 | 自身不参与风险、计时或具体承运者保险报价的护送优惠；其他护送者最多降低 40% 路线风险并缩短 20% 运送时间。交付遭袭则运输为 `FAILED`、实物退回起点，不生成运费结算；重运仍用相同批次风险值。护送者无独立奖金。 |
@@ -23,7 +23,7 @@ StarSupply 只把授权国家、军队、领土、战况和资金操作交给 St
 | 战役额外需求 | 服务线程采样 StarCore 冬季与围城状态，工作线程记录连续性，再使用同一库存消费事务。 | 已消费周期的需求快照不变；停战、围城解除、过期观察或时间回退停止压力。 |
 | 承运收入保险 | 独立保单先通过 StarCore 真实预留赔款，再收保费并记入国库，全部确认才激活。 | 不确定经济阶段冻结保单及运输；只对持久化 `RISK` 原因的实际遭袭触发理赔，超时、取消或普通运费拒绝不赔。 |
 
-StarCore 的 `NationSpendingService` 提供幂等的国库扣款和退款凭证。应用[玩家资金补丁](upstream/PLAYER-MONEY.md)后，玩家余额与不可变操作回执由 Core 一起提交；新采购款、运费和理赔按原键恢复，仅权威拒绝才能触发国库退款。旧 Core 布尔接口和升级前的无协议交易仍须独立核对。`/supply reconcile <结算UUID> <paid|unpaid>` 对新协议服从权威回执，人工 unpaid 不能推翻已到账事实；税款阶段保持独立冻结。
+StarCore 的 `NationSpendingService` 提供幂等的国库扣款和退款凭证。应用[玩家资金补丁](upstream/PLAYER-MONEY.md)后，玩家余额与不可变操作回执由 Core 一起提交；新采购款、运费和理赔按原键恢复，仅权威拒绝才能触发国库退款。旧 Core 布尔接口和升级前的无协议交易仍须独立核对。`/supply reconcile <结算UUID> <paid|unpaid>` 对新协议服从权威回执，人工 unpaid 不能推翻已到账事实。新税款协议同样服从权威回执；旧税款阶段仍独立核验。
 
 StarCore 的 `INSUFFICIENT_FUNDS` 结果不总能单独证明余额不足。付款适配器同时收到足额 `balanceAfter` 时把本次结果视为可重试的国库写入冲突，不取消采购、不退款，也不生成新结算。真实余额不足仍按拒绝路径处理。v11 Paper 玩家回归观察到两笔 5.00 采购各结算一次并拒绝重复售货，但没有现场触发重试；回归分支由 `CorePaymentTest` 覆盖，运行证据见 [Paper v11 付款回归记录](verification/paper-v11-payment-retry-20261122.json)。
 
@@ -35,7 +35,7 @@ StarCore 的 `INSUFFICIENT_FUNDS` 结果不总能单独证明余额不足。付�
 
 `SupplyConsumptionEvent` 在首次消费提交后异步通知，包含本次需求和实际消耗；唯一 ID 由军队 UUID、周期 slot 和周期长度确定。消费记录负责幂等，事件本身不保证在提交后崩溃时可靠重发。监听器异常不会回滚已经提交的真实消费，不能依靠事件是否收到决定再次扣库存。
 
-含非零税额的订单把阶段保存在 `settlement_tax`：`QUOTED` 表示快照已保存，`FUNDING` 表示正在调用 StarCore，确认后为 `FUNDED`；异常或返回不确定时转 `REVIEW`。StarCore 当前 `TaxationService.fundTax` 对重复税务 ID 返回 0，且没有按交易 ID 查询税收回执的公开接口。内部 `FundedTaxLedger` 先认领税务 ID，再另行调用国库入账，两者并非同一原子提交；认领记录不能证明钱已到账。卖家已收款而税额结果不明时，不能再支付卖家或仅凭余额推断税款状态；订单与实物批次保持冻结。管理员须从独立 StarCore 账务证据确认 `funded`，或确认未缴后通过保存的同一报价补缴，再执行对应的 `reconcile-tax` 选项。
+含非零税额的订单把阶段保存在 `settlement_tax`。配合[税款回执补丁](upstream/TAX-FUNDING.md)，新操作先保存 `taxFundingProtocol=1` 意图，再从 QUOTED 推到 FUNDING；Core 将完整原报价身份与国库入账回执一起持久化。FUNDING 的响应丢失、本地写回失败或重启继续按原编号重试，只有权威回执匹配才变为 FUNDED 并放行货物。完整报价的恢复不重新按当前税率计算。新接口不再向玩家收费，也不允许旧撤销接口回收其 UUID。旧无标记 FUNDING 和已有 REVIEW 继续冻结；旧 `fundTax` 的认领记录仍不能证明国库到账。人工核对新协议时，funded/unfunded 均不能绕过回执。
 
 运输遭袭在解除实物预留的同一个 SQL 事务中保存 `failure_reason=RISK` 与 `failed_at`，超时保存 `EXPIRED`。保险根据这个原始发生时间判断理赔，不以重启后的当前时间猜测，也不把所有 `FAILED` 当成遭袭。保险与主货物数据库分别提交时，维护轮询会重新连接保单和最终运输状态；确认过的款项不会因这次连接重放。保单经济阶段及 `/supply reconcile-insurance` 的证据要求见 [保险恢复](INSURANCE.md)。
 

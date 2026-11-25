@@ -81,6 +81,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     private ScheduledTask periodic;
     private ScheduledTask campaignSampling;
     private SupplyStore store;
+    private dev.starsupply.service.TariffFunding tariffFunding;
     private StarCoreGateway core;
     private Logistics logistics;
     private ResourceItemRegistry items;
@@ -117,6 +118,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
                             "war_economy", 0.05), 0.10),
                     logisticsBonuses("technology-logistics-bonuses", Map.of("railways", 0.50), 1.5));
             store = new SupplyStore(getDataFolder().toPath().resolve("supply.db"));
+            tariffFunding = new dev.starsupply.service.TariffFunding(store, core, StarSupplyPlugin::now, getLogger());
             logistics = new Logistics(store, core,
                     number("warehouse-interaction-radius", 8, 1, 32),
                     number("transport-blocks-per-second", 10, 0.25, 1000),
@@ -309,31 +311,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     }
 
     private boolean fundTariff(SupplyModels.TaxAssessment assessment) {
-        try {
-            Optional<SupplyStore.TaxState> current = store.taxState(assessment.settlementId());
-            if (current.filter(state -> state == SupplyStore.TaxState.FUNDED).isPresent()) return true;
-            if (current.filter(state -> state == SupplyStore.TaxState.REVIEW).isPresent()) return false;
-            if (current.filter(state -> state == SupplyStore.TaxState.FUNDING).isPresent()) {
-                store.finishTaxFunding(assessment.settlementId(), false, now());
-                return false;
-            }
-            if (!store.beginTaxFunding(assessment.settlementId(), now())) return false;
-            boolean funded;
-            try {
-                funded = core.fundTariff(assessment);
-            } catch (RuntimeException uncertain) {
-                store.finishTaxFunding(assessment.settlementId(), false, now());
-                getLogger().log(Level.SEVERE, "StarCore tariff outcome needs reconciliation "
-                        + assessment.settlementId(), uncertain);
-                return false;
-            }
-            store.finishTaxFunding(assessment.settlementId(), funded, now());
-            return funded;
-        } catch (Exception uncertain) {
-            getLogger().log(Level.SEVERE, "StarCore tariff outcome needs reconciliation "
-                    + assessment.settlementId(), uncertain);
-            return false;
-        }
+        return tariffFunding.fund(assessment);
     }
 
     private void refreshArmies(boolean consume) throws Exception {
@@ -975,16 +953,18 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
                         || state == SupplyStore.TaxState.FUNDING || state == SupplyStore.TaxState.REVIEW
                         || state == SupplyStore.TaxState.FUNDED).isPresent(),
                 "关税不在人工核对状态");
-        boolean confirmFunded = alreadyFunded || taxState.filter(state -> state == SupplyStore.TaxState.FUNDED).isPresent();
+        boolean receipted = core.tariffUsesReceipts(tax);
+        boolean confirmFunded = !receipted && (alreadyFunded
+                || taxState.filter(state -> state == SupplyStore.TaxState.FUNDED).isPresent());
         if (!confirmFunded) {
-            store.reconcileTaxFunding(id, alreadyFunded, now());
+            store.reconcileTaxFunding(id, false, now());
         }
         PaymentResult outcome = core.reconcileTariff(id, tax, confirmFunded, this::fundTariff);
         if (outcome == PaymentResult.PAID) {
             if (confirmFunded) store.reconcileTaxFunding(id, true, now());
             store.finishSettlement(id, "PAID", now(), true).ifPresent(this::publish);
             getLogger().warning("关税人工核对成功 " + id + "，管理员 " + actor
-                    + (alreadyFunded ? "（已确认入账）" : "（确认未入账后已补缴）"));
+                    + (receipted ? "（权威回执确认）" : alreadyFunded ? "（已确认入账）" : "（确认未入账后已补缴）"));
             return "关税核对完成，采购已结算";
         }
         return "关税或卖家款仍待核对 " + id;

@@ -72,6 +72,7 @@ public final class StarCoreGateway implements CoreGateway {
     private final Map<String, Double> technologyLogisticsBonuses;
     private final ConcurrentMap<UUID, CachedLogisticsModifiers> logisticsCache = new ConcurrentHashMap<>();
     private final CorePayment payments;
+    private final CoreTaxPayment taxPayments;
     private volatile double campaignSiegeRadius = 128;
     private volatile Map<String, CampaignConditions> campaignCache = Map.of();
 
@@ -136,6 +137,7 @@ public final class StarCoreGateway implements CoreGateway {
                 require(api, TransactionFabric.class),
                 (id, amount) -> internal.deposit(id, amount, true, true, "starsupply:payment"),
                 this::nationExists, logger, PlayerMoneyBridge.bindOptional(internal));
+        taxPayments = new CoreTaxPayment(require(api, TransactionFabric.class), taxation.orElse(null));
     }
 
     private static <T> T require(StarCoreApi api, Class<T> type) {
@@ -336,6 +338,10 @@ public final class StarCoreGateway implements CoreGateway {
                 && assessment.taxAmount().signum() > 0;
     }
 
+    @Override public boolean prepareTariffReceipts(TaxAssessment assessment) { return taxPayments.prepare(assessment); }
+    @Override public boolean tariffUsesReceipts(TaxAssessment assessment) { return taxPayments.usesReceipts(assessment); }
+    @Override public boolean fundTariffReceipt(TaxAssessment assessment) { return taxPayments.fund(assessment); }
+
     private record CachedLogisticsModifiers(long expiresAtNanos, LogisticsModifiers modifiers) {}
 
     private static Map<String, Double> checkedBonuses(Map<String, Double> source, String kind) {
@@ -428,7 +434,8 @@ public final class StarCoreGateway implements CoreGateway {
     @Override
     public PaymentResult reconcileTariff(UUID settlementId, TaxAssessment assessment, boolean alreadyFunded,
                                          java.util.function.Predicate<TaxAssessment> fundTax) {
-        return payments.reconcileTax(settlementId, assessment, alreadyFunded, fundTax);
+        if (!settlementId.equals(assessment.settlementId())) return PaymentResult.REVIEW;
+        return taxPayments.reconcile(payments, assessment, alreadyFunded, fundTax);
     }
 
     /** Only call after checking both the local review and independent evidence for the player credit. */

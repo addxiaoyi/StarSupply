@@ -309,6 +309,9 @@ public final class CorePayment {
         if (tax != null && tax.taxAmount().signum() > 0) {
             try {
                 if (fundTax == null || !fundTax.test(tax)) return PaymentResult.REVIEW;
+            } catch (TaxFundingRetryException retryable) {
+                logger.log(Level.WARNING, "StarSupply will retry original tax receipt: " + tax.settlementId(), retryable);
+                return PaymentResult.RETRY;
             } catch (RuntimeException ambiguous) {
                 logger.log(Level.SEVERE, "StarSupply tariff result is ambiguous: " + tax.settlementId(), ambiguous);
                 return PaymentResult.REVIEW;
