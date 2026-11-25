@@ -54,9 +54,12 @@ $originalHash = (Get-FileHash -LiteralPath $stagedJar -Algorithm SHA256).Hash
 $optional = @()
 if ($Profile -eq 'vanilla') {
     $retainedPlugins = @('StarCore-1.0.0.jar', 'StarSupply-0.1.0.jar')
-    if ($ClientArguments.Count -ge 2 -and $ClientArguments[0] -in @('logistics', 'logistics-replay')) {
+    if ($ClientArguments.Count -ge 2 -and $ClientArguments[0] -in @('supply-plan', 'logistics', 'logistics-replay',
+            'mining', 'surface', 'farming', 'honey', 'scaffolding', 'fireworks')) {
         $logisticsPlan = Get-Content -LiteralPath $ClientArguments[1] -Raw | ConvertFrom-Json
-        if ($logisticsPlan.nativeReplay -eq $true) { $retainedPlugins += 'SupplyNativeProof-1.0.0.jar' }
+        if ($ClientArguments[0] -eq 'supply-plan' -or $logisticsPlan.nativeReplay -eq $true -or $logisticsPlan.demandBudget) {
+            $retainedPlugins += 'SupplyNativeProof-1.0.0.jar'
+        }
     }
     $optional = @(Get-ChildItem -LiteralPath $plugins -File -Filter '*.jar' |
         Where-Object Name -notin $retainedPlugins |

@@ -37,7 +37,12 @@ function confirmSavedInventory(player, required) {
   return {gameMode: 'survival', inventory, position: player.Pos, health: player.Health, food: player.foodLevel};
 }
 
-function confirmSavedResourcePhase(player, phase) {
+function confirmSavedResourcePhase(player, phase, productionPlan) {
+  if (productionPlan) {
+    const {phaseRequirements} = require('./production-targets.cjs');
+    const saved = confirmSavedInventory(player, {});
+    return {phase, ...confirmSavedInventory(player, phaseRequirements(phase, productionPlan, saved.inventory))};
+  }
   const requirements = {
     mining: {iron_ingot: 6, glass_bottle: 3},
     surface: {campfire: 3, stone_sword: 1},
@@ -50,8 +55,8 @@ function confirmSavedResourcePhase(player, phase) {
   return {phase, ...confirmSavedInventory(player, requirements[phase])};
 }
 
-async function readSavedResourcePhase(stage, levelName, username, mineflayerModule, phase) {
-  return readSavedPlayer(stage, levelName, username, mineflayerModule, player => confirmSavedResourcePhase(player, phase));
+async function readSavedResourcePhase(stage, levelName, username, mineflayerModule, phase, productionPlan) {
+  return readSavedPlayer(stage, levelName, username, mineflayerModule, player => confirmSavedResourcePhase(player, phase, productionPlan));
 }
 
 async function readSavedInventory(stage, levelName, username, mineflayerModule) {

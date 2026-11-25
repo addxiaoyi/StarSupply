@@ -43,8 +43,11 @@ async function smeltUntil(bot, window, input, output, desired, options = {}) {
     }
     if (state.acquireInput) throw new Error(`Need ${state.acquireInput} more ${input} to finish ${output}`);
     if (state.missingInput) {
-      await bounded(() => window.putInput(bot.registry.itemsByName[input].id, null, state.missingInput));
-      log('smelting_input_added', {input, count: state.missingInput});
+      const count = Math.min(state.missingInput, 64 - (window.inputItem()?.count ?? 0));
+      if (count > 0) {
+        await bounded(() => window.putInput(bot.registry.itemsByName[input].id, null, count));
+        log('smelting_input_added', {input, count});
+      }
     }
     if (window.inputItem() && !window.fuelItem() && !(window.fuelSeconds > 0 || window.fuel > 0)) {
       const fuel = ['coal', 'charcoal'].find(name => inventoryCount(window, name) > 0);

@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-25",
+  "base_commit": "9fea0d884621fd1cd495d9698cbc7316ac5f8f3d",
+  "change": "Budget six-resource production from live army demand bounds, replenish recipe deficits and validate the planned quantities in stopped-player NBT.",
+  "implementation": {
+    "planning_phase": "supply-plan",
+    "authority": "SupplyNativeProof reads public Core army and StarSupply status snapshots, then uses the deployed ArmySupplyRules and CampaignRules with the actual campaign configuration.",
+    "upper_bound": "Current troop count without supply-efficiency discounts, maximum configured winter food/medical costs and maximum siege food/material/engineering pressure; never below the currently charged demand.",
+    "budget_formula": "maximumDemand * (cycles + ceil(deliveryWindowMillis / intervalMillis) + reserveCycles)",
+    "default_delivery_window_ms": 120000,
+    "default_reserve_cycles": 1,
+    "guards": [
+      "Current correlated demand evidence, active connected army and matching interval/front.",
+      "Configured purchase limit, acceptance per-order limit and backpack stack capacity.",
+      "Plan output committed only after normal stop and unchanged player save, without overwriting an existing plan.",
+      "Same world and plugin hashes; fresh demand rechecked before each budgeted gameplay run.",
+      "Increased troop count or larger campaign demand bounds require replanning before more gameplay.",
+      "Observed consumption beyond the budget fails the completed physical logistics proof."
+    ],
+    "production": "All six phases accept the generated plan. Ingredient deficits account for existing outputs and whole recipe yields. Honey waits for natural refills, scaffolding/rockets repeat recipes, furnace input never exceeds 64 items, and construction materials are replenished after travel.",
+    "saved_nbt": "The runner validates the same planned output counts; legacy fixed minima cannot pass a larger planned batch.",
+    "server_database_writes": false,
+    "item_grants_or_teleports": false,
+    "provenance": "Existing ingredients still need their own acquisition evidence; demand planning does not certify their origin."
+  },
+  "tests": {
+    "command": "node --max-old-space-size=64 --test --test-concurrency=1 --test-reporter=spec <all survival-progression *.test.cjs>",
+    "node_total": 91,
+    "node_failures": 0,
+    "node_skipped": 0,
+    "new_tests": 11,
+    "log": "target/survival-demand-plan-final-tests-20261125.log",
+    "log_sha256": "42F64CB7251F210909183DFC84366281E799E4471D67519367D4CF31808C1F89",
+    "coverage": "Budget arithmetic; stale/disconnected/wrong-identity demand; purchase and backpack bounds; changed troops/configuration/binaries; correlated capture; exclusive plan files; recipe rounding; larger saved-NBT targets; partial/resumed recipes and honey; 130-item furnace refill; real SQLite physical consumption exceeding its planned bound.",
+    "simulation_boundary": "Core demand responses and gameplay actions are simulated. SQLite logistics tests use real v1-v11 migrations. These tests are not a live Minecraft/Folia run.",
+    "node_syntax_files": 33,
+    "powershell_restoration_checks": 7,
+    "launcher_powershell_syntax": "passed"
+  },
+  "native_probe_build": {
+    "result": "passed with Java 21 and the existing Core/Supply JARs",
+    "jar_sha256": "383034D5E3B2807A1B267D0B245E9E7AC094F80E6FF0AA3CD71397C9DAC963F1"
+  },
+  "production_plugin": {
+    "source_changed": false,
+    "jar_sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+    "existing_java_verify_tests": 124,
+    "java_suite_rerun_this_change": false
+  },
+  "preserved_stage": {
+    "player": "SupplyCook",
+    "player_save_sha256": "747194DCF7BBF6FAA52996FA9DA2A59939227354612FC69A0F05AC92D0BD24D0",
+    "player_save_unchanged": true,
+    "inventory_read": "6 coal, 6 raw iron, 146 cobblestone, iron/stone pickaxes, 8 wheat seeds and a wooden hoe remain in the authoritative survival save."
+  },
+  "environment": {
+    "read_only_shell_failure": "One parallel PowerShell source read exited with System.OutOfMemoryException. Subsequent reads, builds and tests ran sequentially; no test server was started.",
+    "live_acceptance_performed": false,
+    "live_demand_probe_verified": false,
+    "live_dynamic_production_verified": false,
+    "full_folia_stack_verified": false
+  },
+  "remaining": [
+    "Run the current demand/production/logistics/replay workflow on the isolated Folia world when memory permits.",
+    "Independently verify retained historical material sources or acquire fresh traced inputs.",
+    "Preserve REVIEW for ambiguous player, premium and tax operations while upstream replayable receipts are unavailable.",
+    "Finish current full optional-plugin Folia and graphical resource-pack acceptance."
+  ]
+}

@@ -20,6 +20,7 @@ function fixture({pending = 0, ready = 0, owned = 0, raw = 0, coal = 1, fuel = 0
   function transfer(label, id, count, destination) {
     const source = slots.findIndex((entry, index) => index >= 3 && entry?.name === names[id]);
     assert.ok(source >= 3 && slots[source].count >= count, 'only transfer existing ingredients');
+    assert.ok((slots[destination]?.count ?? 0) + count <= 64, 'respect the furnace slot stack limit');
     actions.push([label, count]);
     slots[destination] = item(names[id], (slots[destination]?.count ?? 0) + count);
     slots[source] = item(names[id], slots[source].count - count);
@@ -102,4 +103,12 @@ test('stalled transfers and stopped cooking both have bounded deadlines', async 
   await assert.rejects(transfer.run({timeoutMs: 20}), /Timed out smelting/);
   const stalled = fixture({pending: 6, fuel: 10});
   await assert.rejects(stalled.run({check: () => {}, timeoutMs: 20}), /Timed out smelting/);
+});
+
+test('large demand batches refill a 64-item furnace slot instead of overfilling it', async () => {
+  const f = fixture({raw: 130, coal: 17, target: 130});
+  await f.run({timeoutMs: 2000});
+  assert.equal(inventoryCount(f.window, 'iron_ingot'), 130);
+  assert.equal(f.actions.filter(row => row[0] === 'input').reduce((n, row) => n + row[1], 0), 130);
+  assert.equal(f.slots[0], null);
 });

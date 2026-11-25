@@ -132,6 +132,8 @@ function verifyCycle(plan, journal, snapshot) {
   requireThat(consumed.every(row => row.army === plan.army && RESOURCES.includes(row.resource)
     && row.interval_ms === plan.intervalMillis && Number.isInteger(row.units) && row.units >= 0
     && Number.isInteger(row.demand) && row.demand > 0 && row.units <= row.demand), 'Consumption interval or resource mismatch');
+  if (plan.demandBudget) requireThat(consumed.every(row => row.demand <= plan.demandBudget.maximumDemand[row.resource]),
+    'Observed consumption exceeded the planned demand bound');
   for (const resource of RESOURCES) requireThat(consumed.filter(row => row.resource === resource)
     .reduce((n, row) => n + row.units, 0) === spent[resource], 'Consumption is not attributable to the delivered physical lots');
   const groups = new Map();
@@ -220,6 +222,7 @@ function reconcileOrders(plan, journal, snapshot) {
 
 function prepareCycle({stage, plan, player, inventory, savedBefore, plugins}) {
   validatePlan(plan);
+  if (plan.demandBudget) require('./demand-plan.cjs').verifyDemandBudget(plan, {plugins});
   const file = journalPath(stage, plan), snapshot = readSnapshot(stage, plan), existed = fs.existsSync(file);
   let journal;
   if (!existed) {

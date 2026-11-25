@@ -11,6 +11,8 @@ const {validatePlan, journalPath, prepareCycle, verifyStoppedCycle} = require('.
 const {prepareReplay, probeCredits, verifyReplayStopped} = require('./native-replay.cjs');
 const {hash, archiveSavedPlayer, linkProductionEvidence} = require('./production-evidence.cjs');
 const {writeJson} = require('./durable-json.cjs');
+const {PHASES, productionCounts} = require('./production-targets.cjs');
+const {captureDemand, createDemandPlan, verifyDemandBudget, assertDemandFits, saveDemandPlan} = require('./demand-plan.cjs');
 
 const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
@@ -117,20 +119,26 @@ async function main() {
   }
   const resourceClient = clientScriptArg && path.resolve(clientScriptArg) === path.join(__dirname, 'six-resources.cjs');
   const replayOnly = resourceClient && clientArguments[0] === 'logistics-replay';
+  const planningOnly = resourceClient && clientArguments[0] === 'supply-plan';
   const proofDirectory = path.join(stage, 'folia-proof');
   fs.mkdirSync(proofDirectory, {recursive: true});
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const worldIdentity = {level: properties['level-name'], uidSha256: hash(fs.readFileSync(path.join(stage, properties['level-name'], 'uid.dat')))};
-  let logisticsPlan, savedBefore;
+  let logisticsPlan, productionPlan, seedPlan, savedBefore;
   if (resourceClient) savedBefore = archiveSavedPlayer(stage,
     await readSavedInventory(stage, properties['level-name'], username, mineflayerArg), `survival-${timestamp}-before`);
+  if (resourceClient && (planningOnly || PHASES.includes(clientArguments[0] ?? 'mining')) && clientArguments[1]) {
+    clientArguments[1] = path.resolve(clientArguments[1]);
+    const plan = validatePlan(JSON.parse(fs.readFileSync(clientArguments[1], 'utf8')));
+    if (planningOnly) seedPlan = plan;
+    else { productionPlan = plan; verifyDemandBudget(plan, {plugins, worldIdentity}); }
+  }
+  if (planningOnly && !seedPlan) throw new Error('Supply planning requires a seed logistics plan JSON');
   if (resourceClient && ['logistics', 'logistics-replay'].includes(clientArguments[0])) {
     if (!clientArguments[1]) throw new Error('The logistics phase requires an explicit plan JSON path');
     clientArguments[1] = path.resolve(clientArguments[1]);
     logisticsPlan = validatePlan(JSON.parse(fs.readFileSync(clientArguments[1], 'utf8')));
-    if (logisticsPlan.nativeReplay && !plugins.some(row => row.name === 'SupplyNativeProof-1.0.0.jar')) {
-      throw new Error('Install the current isolated SupplyNativeProof fixture before starting this logistics plan');
-    }
+    verifyDemandBudget(logisticsPlan, {plugins, worldIdentity});
     if (replayOnly) prepareReplay(stage, logisticsPlan, plugins, savedBefore);
     else {
       const journal = prepareCycle({stage, plan: logisticsPlan, player: username, inventory: savedBefore.inventory, savedBefore, plugins});
@@ -141,6 +149,10 @@ async function main() {
         writeJson(journalPath(stage, logisticsPlan), journal);
       }
     }
+  }
+  if ((planningOnly || productionPlan?.demandBudget || logisticsPlan?.demandBudget || logisticsPlan?.nativeReplay)
+      && !plugins.some(row => row.name === 'SupplyNativeProof-1.0.0.jar')) {
+    throw new Error('Install the current isolated SupplyNativeProof fixture before planning or validating this logistics plan');
   }
 
   const serverLogPath = path.join(proofDirectory, `survival-progression-${timestamp}-server.log`);
@@ -163,6 +175,7 @@ async function main() {
   let shutdownMethod;
   let clientSources;
   let nativeReplayProof;
+  let demandEvidence, plannedOutput, generatedPlan;
   const health = runtimeHealth(rconPort);
   const observe = (chunk, channel) => {
     health.push(chunk, channel);
@@ -207,14 +220,21 @@ async function main() {
       .filter((file, index, files) => files.indexOf(file) === index)
       .map(file => ({file: path.relative(__dirname, file).replace(/\\/g, '/'),
         sha256: createHash('sha256').update(fs.readFileSync(file)).digest('hex').toUpperCase()}));
-    const probe = restarting => probeCredits({stage, plan: logisticsPlan, restarting,
-      command: async command => {
+    const proofCommand = async command => {
         const reply = await commandViaRcon(rconPort, properties['rcon.password'], command);
         if (!reply.includes(`NATIVE_SUPPLY_PROOF_QUEUED ${command.split(' ')[1]}`)) throw new Error('Native replay probe was not accepted');
-      },
-      until: (read, label, timeout) => until(read, label, timeout,
-        () => health.failure ?? serverFailure ?? (serverExit ? new Error('Folia exited during native replay') : null))});
-    if (replayOnly) nativeReplayProof = await probe(true);
+    };
+    const proofUntil = (read, label, timeout) => until(read, label, timeout,
+      () => health.failure ?? serverFailure ?? (serverExit ? new Error('Folia exited during acceptance probe') : null));
+    const probe = restarting => probeCredits({stage, plan: logisticsPlan, restarting, command: proofCommand, until: proofUntil});
+    const budgetPlan = productionPlan ?? logisticsPlan;
+    if (planningOnly || (!replayOnly && budgetPlan?.demandBudget)) {
+      demandEvidence = await captureDemand({stage, plan: seedPlan ?? budgetPlan, command: proofCommand, until: proofUntil});
+      if (planningOnly) plannedOutput = createDemandPlan(seedPlan, demandEvidence, {plugins, worldIdentity});
+      else assertDemandFits(budgetPlan, demandEvidence);
+    }
+    if (planningOnly) { /* The plan is committed only after a verified normal stop. */ }
+    else if (replayOnly) nativeReplayProof = await probe(true);
     else {
       client = spawn(process.execPath, [
         '--max-old-space-size=256',
@@ -289,20 +309,24 @@ async function main() {
         await readSavedInventory(stage, properties['level-name'], username, mineflayerArg), `survival-${timestamp}-after`);
     } catch (error) { runFailure = runFailure ?? error; }
   }
-  const workSucceeded = replayOnly ? !!nativeReplayProof : clientExit?.code === 0;
+  const workSucceeded = planningOnly ? !!plannedOutput : replayOnly ? !!nativeReplayProof : clientExit?.code === 0;
   if (!runFailure && workSucceeded && normalStopObserved && gamePortClosed && rconPortClosed) {
     try {
       if (!clientScriptArg) {
         savedPlayer = await readSavedPickaxe(stage, properties['level-name'], username, mineflayerArg);
       } else if (path.resolve(clientScriptArg) === path.join(__dirname, 'six-resources.cjs')) {
-        if (logisticsPlan) {
+        if (planningOnly) {
+          if (savedBefore.sha256 !== savedCheckpoint.sha256) throw new Error('Planning changed the saved player inventory');
+          generatedPlan = saveDemandPlan(stage, plannedOutput);
+          savedPlayer = savedCheckpoint;
+        } else if (logisticsPlan) {
           savedPlayer = await readSavedInventory(stage, properties['level-name'], username, mineflayerArg);
           logisticsVerification = replayOnly
             ? verifyReplayStopped(stage, logisticsPlan, savedBefore, savedPlayer)
             : verifyStoppedCycle(stage, logisticsPlan, savedBefore, savedPlayer);
         } else {
           savedPlayer = await readSavedResourcePhase(stage, properties['level-name'], username, mineflayerArg,
-            clientArguments[0] ?? 'mining');
+            clientArguments[0] ?? 'mining', productionPlan);
         }
       }
     } catch (error) {
@@ -319,6 +343,10 @@ async function main() {
     clientSources,
     phase: resourceClient ? clientArguments[0] ?? 'mining' : 'iron-pickaxe',
     productionProtocolVersion: 1,
+    productionTargets: productionCounts(plannedOutput ?? productionPlan ?? logisticsPlan ?? seedPlan),
+    demandEvidence,
+    generatedPlan,
+    planningOnly: !!planningOnly,
     replayOnly: !!replayOnly,
     nativeReplayProof,
     worldIdentity,

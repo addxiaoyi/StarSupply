@@ -25,7 +25,7 @@ Each run writes separate server/client logs and a result JSON under the stage's 
 
 ## Six-resource progression
 
-`six-resources.cjs` continues this same saved player through the phases below. Pass `-ClientScript .\tools\acceptance\survival-progression\six-resources.cjs -ClientArguments @('mining')` to `stage-current.ps1`, replacing `mining` for later phases. These coordinates belong to the existing isolated world; this is not a general-purpose terrain solver. The source is implemented, but all six phases have not passed live acceptance.
+`six-resources.cjs` continues this same saved player through the phases below. Pass `-ClientScript .\tools\acceptance\survival-progression\six-resources.cjs -ClientArguments @('mining')` to `stage-current.ps1`, replacing `mining` for later phases. These coordinates belong to the existing isolated world; this is not a general-purpose terrain solver. The table shows legacy defaults; pass a logistics plan as the second client argument to use its actual production quantities and matching saved-NBT gates. The source is implemented, but all six phases have not passed live acceptance.
 
 | Phase | Normal survival actions | Required stopped-player inventory |
 | --- | --- | --- |
@@ -36,13 +36,32 @@ Each run writes separate server/client logs and a result JSON under the stage's 
 | `scaffolding` | Harvest bamboo and mineshaft cobweb string, craft scaffolding | 6 scaffolding |
 | `fireworks` | Craft paper, collect gunpowder from naturally generated dungeon chests, craft rockets | 3 firework rockets |
 
-Use `-ClientTimeoutMs 2100000` for farming, which may wait for natural crop growth. Each phase stops normally and requires its output in survival-mode NBT before reporting a pass. Inventory checkpoints establish possession; the action logs and previous saved checkpoints establish acquisition. They do not themselves prove subsequent purchase, transport or frontline consumption. Mining and walking remain bounded and stop on unsafe terrain, missing materials or unresolved server confirmation. No phase grants items or teleports a player.
+Use `-ClientTimeoutMs 2100000` for farming and honey, which may wait for natural growth. Larger batches may need multiple normally saved runs or a longer explicit client timeout. Each phase stops normally and requires its output in survival-mode NBT before reporting a pass. Inventory checkpoints establish possession; the action logs and previous saved checkpoints establish acquisition. They do not themselves prove subsequent purchase, transport or frontline consumption. Mining and walking remain bounded and stop on unsafe terrain, missing materials or unresolved server confirmation. No phase grants items or teleports a player.
 
 Explicit digging waits for real single- or multi-block server packets, including negative chunk coordinates; local Mineflayer prediction is insufficient. Craft output requires server window packets. Script hashes are captured before the gameplay client launches. `inspect-world.cjs <world> <mineflayerModule> [x y z]` provides a read-only survey of a stopped acceptance world, including natural resources and unopened loot containers; survey results only guide navigation and are not acquisition evidence.
 
 Placement now also requires a matching server packet for the target position and block type. A local world-cache change cannot pass; late server confirmation may recover a known Mineflayer placement timeout, while disconnects and other failures still stop the phase. All packet listeners are removed on completion or timeout.
 
-Smelting counts the open furnace's player inventory, pending input and finished output before gathering more ingredients. It collects partial batches, adds only missing input and replenishes depleted fuel from real coal or charcoal. Unrelated furnace contents are preserved, and shortages or closed windows fail with a resumable checkpoint. These fixes have automated protocol/fixture coverage; their live Folia validation remains pending.
+Smelting counts the open furnace's player inventory, pending input and finished output before gathering more ingredients. It collects partial batches, adds only missing input within the furnace's 64-item slot limit and replenishes depleted fuel from real coal or charcoal. Unrelated furnace contents are preserved, and shortages or closed windows fail with a resumable checkpoint. These fixes have automated protocol/fixture coverage; their live Folia validation remains pending.
+
+## Plan production from actual army demand
+
+Build the current disposable `../native-supply` fixture and place `SupplyNativeProof-1.0.0.jar` in the stopped isolated stage. Prepare the dedicated depot/front/road and army through normal authority, then fill in `logistics-plan.example.json` with those IDs. An optional `planning` object accepts `deliveryWindowMillis` (default 120000) and `reserveCycles` (default 1, minimum 1). The seed's example quantities are replaced by the observed budget.
+
+Run the launcher with the same stage/JDK/client module parameters as above, plus:
+
+```powershell
+-ClientScript .\tools\acceptance\survival-progression\six-resources.cjs `
+-ClientArguments @('supply-plan', 'C:\path\to\seed-logistics-plan.json')
+```
+
+This starts no gameplay client. The probe reads public army/status snapshots and calls the deployed StarSupply `ArmySupplyRules`/`CampaignRules` using the actual campaign configuration. Its upper bound assumes the current troop count, no efficiency discount, maximum configured winter costs and fully developed siege pressure. The runner waits for a current interval, requires an active connected army and commits `folia-proof/logistics-plan-<runId>.json` only after normal stop and unchanged player NBT. Existing output plans are never overwritten; use a new run ID to replan.
+
+For each resource, the delivery count is the per-cycle upper bound multiplied by `cycles + ceil(deliveryWindowMillis / intervalMillis) + reserveCycles`. Purchase limits and backpack capacity are checked without silently reducing quantities. The backpack estimate reserves eight slots for tools/ingredients and uses honey bottles' actual 16-item stack size. A batch too large for this single-player acceptance workflow is rejected; reduce the test army or delivery budget instead of weakening the required complete consumption cycles.
+
+Pass that generated plan to **every** production phase: `-ClientArguments @('mining', 'C:\path\to\generated-plan.json')`, then `surface`, `farming`, `honey`, `scaffolding` and `fireworks`. The vanilla launcher retains the probe for these budgeted plans. Each start samples demand again before gameplay; changed binaries/worlds, increased troop counts or larger demand bounds require replanning and replenishment before orders are created. The original logistics journal remains immutable if an already-started run needs inspection.
+
+Production targets account for existing outputs and whole recipe batches: bottles/rockets/paper yield three, scaffolding yields six, and wheat is budgeted for the remaining bread. Honey revisits the natural sources until the target or a bounded timeout; depleted dungeon loot is reported as a real shortage. Surface crafting supplies a missing hoe, mining reserves construction materials, and the fireworks phase tops up remaining delivery cobblestone after travel. Saved-NBT requirements use the same plan, so the old fixed counts cannot pass a larger batch. Actual consumption above the captured maximum also fails logistics verification. Terrain availability, source provenance and live Folia execution are still independently checked.
 
 Run the acceptance-tool regression tests without starting a server:
 
@@ -82,11 +101,11 @@ Rerun the same command and unchanged plan to resume. The driver compares the ori
 
 The current runner archives the before/after player NBT, records the stable world UID, hashes the complete client action log and records source/JAR hashes. Add an optional `productionEvidence` array to the logistics plan containing the ordered stage-relative `folia-proof/...-result.json` paths for all production attempts, including failed attempts with normal saved checkpoints. All six phases must eventually pass, each NBT hash must continue from the preceding checkpoint, and the final checkpoint must be the original logistics starting inventory. Core/Supply binaries and player/world identities must agree. Historical results lacking the new archives/protocol cannot be automatically promoted into this proof.
 
-The linker counts captured harvesting, natural-container collection and recipe/smelting actions. Recipe outputs require traced inputs; lost or used quantities are conservatively capped by recorded inventory. Initial inventory starts with **zero** acquisition credit. It reports `productionEvidenceLinked`, per-resource `tracedInventory` and `unprovenQuantities`; `survivalProductionVerified` is true only when all delivered counts have sufficient linked acquisition evidence. A complete set of phase passes or a full starting backpack alone cannot set that flag. The retained historical mining inventory may therefore still require independently reviewed source evidence or fresh production. Fixed production targets and automatic replenishment remain separate work.
+The linker counts captured harvesting, natural-container collection and recipe/smelting actions. Recipe outputs require traced inputs; lost or used quantities are conservatively capped by recorded inventory. Initial inventory starts with **zero** acquisition credit. It reports `productionEvidenceLinked`, per-resource `tracedInventory` and `unprovenQuantities`; `survivalProductionVerified` is true only when all delivered counts have sufficient linked acquisition evidence. A complete set of phase passes or a full starting backpack alone cannot set that flag. The retained historical mining inventory may therefore still require independently reviewed source evidence or fresh production. Demand-based replenishment does not automatically certify the origins of existing ingredients.
 
 ## Core receipt replay after restart
 
-Build the current disposable `../native-supply` fixture and put `SupplyNativeProof-1.0.0.jar` in the stopped isolated stage before the initial logistics run. Set `"nativeReplay": true` in that run's plan. The vanilla launcher retains this fixture only for a plan requesting replay; it is never a production dependency.
+Build the current disposable `../native-supply` fixture and put `SupplyNativeProof-1.0.0.jar` in the stopped isolated stage before the initial logistics run. Set `"nativeReplay": true` in that run's plan. The vanilla launcher retains this fixture for demand planning/budgeted production and for plans requesting replay; it is never a production dependency.
 
 After delivery and sustained consumption, the runner queries/retries every selected physical credit through the public Core API. It requires the matching immutable receipt, unchanged native supply/treasury, rejection of conflicting input and a fresh command correlation ID. A queue acknowledgement alone cannot pass. Normal shutdown then records the original settlements, transfers, consumption and outbox rows.
 

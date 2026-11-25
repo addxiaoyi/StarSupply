@@ -10,6 +10,8 @@
 
 继续开发已将物流日志升级为先刷盘临时文件再替换的 v2 格式，按既有订单恢复，避免重发已记录的经济命令；原始背包基线跨尝试保留。新增生产记录与存档哈希串联，以及 `logistics-replay` 独立重启阶段：按关联 UUID 和探针启动 ID 核验原生补给回执、既有结算/消费与玩家存档。初始已有物资不自动获得生存来源证明，旧 v1 日志也不自动升级。代码与自动化测试范围见[恢复和证据串联记录](verification/workspace-survival-recovery-evidence-20261125.json)；这些新路径尚未在 Folia 实服执行。
 
+最新开发增加 `supply-plan`：由探针读取实际军队与军需快照，使用已部署的生产规则计算冬季/围城需求上限及交货缓冲，正常停服后生成数量计划。六个生产阶段接受该计划，按配方批量与已有库存补产，NBT 也检查同一目标；每次预算生产/交付前重新读取需求，增加兵力或需求上限时停止并要求重新计划。91 项 Node 回归、7 项恢复检查及 Java 探针构建通过；未启动实服。详见[数量计划记录](verification/workspace-survival-demand-planning-20261125.json)。
+
 ## 阶段进度
 
 | 阶段 | 当前结果 | 后续工作 |
@@ -25,7 +27,7 @@
 
 - Java 21；Maven Wrapper 3.9.16；Paper API 1.21.11。当前生产 JAR 大小 14,678,765 字节，SHA-256 `87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980`。
 - `mvnw.cmd -B -ntp -DforkCount=0 verify`：124 项测试，0 失败/错误/跳过。生产源码在该构建后未改；后续修改是验收脚本和文档。见 [库存取消修复记录](verification/workspace-inventory-cancellation-20261125.json)。
-- 验收器：当前 80 项 Node 测试通过；29 个 Node 脚本语法检查通过，7 项 PowerShell 恢复检查复跑通过。后续收紧蜂蜜来源的玻璃瓶追溯后，5 项生产证据测试再次通过，不重复计数。新探针已用 Java 21 编译。恢复、生产证据和重启流程的范围见 [最新记录](verification/workspace-survival-recovery-evidence-20261125.json)。历史实服范围见 [六类续接记录](verification/folia-survival-six-resource-progress-20261125.json)，最新自动化范围见 [物流阶段记录](verification/workspace-survival-logistics-20261125.json)。
+- 验收器：当前 91 项 Node 测试通过；33 个 Node 脚本语法检查通过，7 项 PowerShell 恢复检查复跑通过。最新需求探针已用 Java 21 编译。范围、哈希和实服边界见 [数量计划记录](verification/workspace-survival-demand-planning-20261125.json)；此前恢复和证据串联见 [恢复记录](verification/workspace-survival-recovery-evidence-20261125.json)。
 - 当前构建的独立 Folia 区域恢复：两种库存边界、实际退役异常栈、唯一付款、重复恢复不变、停服玩家 NBT 和六库完整性均通过。见 [区域恢复记录](verification/folia-region-retirement-20261125.json)。
 - 最后实服运行 `2026-11-25T07-52-02-144Z`：Core/Supply/服务器均启用；Mineflayer 进程因内存分配失败退出 134，阶段未通过。服务器随后经 RCON 正常保存退出，两个端口关闭，全部插件按哈希恢复。玩家存档仍保留前述材料。
 
@@ -65,7 +67,7 @@ node --max-old-space-size=64 --test --test-concurrency=1 @($tests.FullName)
 
 ## 接续生存流程
 
-下一步是 **`mining`：6 粗铁烧炼为 6 铁锭，再回地表采沙、烧玻璃、合成 3 玻璃瓶**。随后依次 `surface`、`farming`、`honey`、`scaffolding`、`fireworks`。入口与每阶段存档条件见 [生存运行说明](../tools/acceptance/survival-progression/README.md)。
+接续检查点仍从 `mining` 开始。完整军需验收应先按正常权限准备专用空仓库/前线、道路和军队，安装当前隔离探针并运行 `supply-plan`；将生成的同一计划依次传给 `mining`、`surface`、`farming`、`honey`、`scaffolding`、`fireworks` 和 `logistics`。不传计划时保留旧数量默认值。入口、数量预算及存档条件见 [生存运行说明](../tools/acceptance/survival-progression/README.md)。
 
 需要重点继续实测的代码是 `six-resources.cjs` 的工作台/熔炉放置、垫方块上升、地表分段寻路和天然地牢取火药。旧路径会从 y=49 直接找沙而失败，现已改为先烧炼再上升；改后尚未成功跑通。服务器挖掘确认包装必须在 Mineflayer 登录后安装，避免被其异步插件覆盖；这项最终时点修正只有单元测试，尚无成功的后续实服确认。饲养/种植和正常掉落不能用免费物品代替。
 

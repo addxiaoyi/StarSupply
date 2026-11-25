@@ -8,7 +8,11 @@ import dev.starcore.starcore.module.army.model.ArmyUnit;
 import dev.starcore.starcore.module.nation.model.NationId;
 import dev.starcore.starcore.module.treasury.TreasuryService;
 import dev.starsupply.api.SupplyApi;
+import dev.starsupply.api.ResourceType;
+import dev.starsupply.api.SupplyModels.CampaignStatus;
 import dev.starsupply.api.event.SupplyConsumptionEvent;
+import dev.starsupply.service.ArmySupplyRules;
+import dev.starsupply.service.CampaignRules;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +38,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /** Disposable acceptance fixture. No SQL writes, private-field access or production installation. */
 public final class SupplyNativeProof extends JavaPlugin implements Listener {
     private final Map<UUID, Integer> events = new ConcurrentHashMap<>();
+    private final Map<UUID, Integer> demandWaits = new ConcurrentHashMap<>();
     private final UUID bootId = UUID.randomUUID();
 
     @Override public void onEnable() {
@@ -48,7 +53,7 @@ public final class SupplyNativeProof extends JavaPlugin implements Listener {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage("supplynativeproof prepare <army> <nativeSupply> <baseMorale> | state <army> | receipt/retry <request> [correlation] | accounts <nation> <player> <correlation> | watch <army> <seconds>");
+            sender.sendMessage("supplynativeproof prepare <army> <nativeSupply> <baseMorale> | state <army> | demand <army> <correlation> | receipt/retry <request> [correlation] | accounts <nation> <player> <correlation> | watch <army> <seconds>");
             return true;
         }
         String[] captured = args.clone();
@@ -69,6 +74,53 @@ public final class SupplyNativeProof extends JavaPlugin implements Listener {
         StarCoreApi core = Objects.requireNonNull(Bukkit.getServicesManager().load(StarCoreApi.class));
         ArmyService armies = core.service(ArmyService.class).orElseThrow();
         switch (a[0]) {
+            case "demand" -> {
+                require(a.length == 3, "demand <army> <correlation UUID>");
+                UUID armyId = UUID.fromString(a[1]);
+                UUID correlation = UUID.fromString(a[2]);
+                SupplyApi supply = Objects.requireNonNull(Bukkit.getServicesManager().load(SupplyApi.class));
+                var plugin = (JavaPlugin) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("StarSupply"));
+                var config = plugin.getConfig();
+                long intervalMillis = (long) config.getDouble("supply-interval-seconds", 300) * 1000;
+                long now = System.currentTimeMillis();
+                var status = supply.armySupply(armyId).orElse(null);
+                if (status == null || status.interval() != Math.floorDiv(now, intervalMillis)) {
+                    int attempts = demandWaits.merge(correlation, 1, Integer::sum);
+                    require(attempts <= 20, "Current army demand did not become available within 20 observations");
+                    Bukkit.getGlobalRegionScheduler().runDelayed(this, task -> {
+                        try { run(a); }
+                        catch (Throwable failure) {
+                            demandWaits.remove(correlation);
+                            emit("failed", Map.of("correlation", correlation, "operation", "demand", "error", failure.toString()));
+                            getLogger().log(java.util.logging.Level.SEVERE, "DEMAND_PROOF_FAILED", failure);
+                        }
+                    }, 20L);
+                    return;
+                }
+                demandWaits.remove(correlation);
+                var army = armies.getArmySnapshot(armyId).orElseThrow();
+                require(status.nationId().equals(army.nationId()), "Army ownership changed while sampling demand");
+                var campaigns = new CampaignRules.Config(config.getDouble("campaign.winter-food-extra", 0.25),
+                        config.getDouble("campaign.winter-medical-extra", 0.10),
+                        config.getDouble("campaign.siege-maximum-extra", 0.50),
+                        (long) config.getDouble("campaign.siege-ramp-seconds", 1800) * 1000,
+                        (long) config.getDouble("campaign.siege-continuity-gap-seconds", 60) * 1000);
+                // Use the production rules and actual configured maxima. Dropping
+                // an efficiency discount must not invalidate the prepared batch.
+                int soldiers = Math.max(status.soldiers(), army.soldiers());
+                var maximum = new java.util.EnumMap<ResourceType, Integer>(ResourceType.class);
+                maximum.putAll(CampaignRules.demand(ArmySupplyRules.demand(soldiers),
+                        new CampaignStatus(true, true, now, 0, campaigns.siegeMaximumExtra(), now), campaigns));
+                status.demand().forEach((resource, count) -> maximum.merge(resource, count, Math::max));
+                Map<String, Object> row = new LinkedHashMap<>();
+                row.put("protocolVersion", 1); row.put("correlation", correlation);
+                row.put("army", armyId); row.put("nation", status.nationId()); row.put("front", status.warehouseId());
+                row.put("soldiers", soldiers); row.put("atWar", status.atWar()); row.put("access", status.frontAccess());
+                row.put("intervalMillis", intervalMillis); row.put("slot", status.interval()); row.put("capturedAt", now);
+                row.put("currentDemand", status.demand()); row.put("maximumDemand", maximum);
+                row.put("maxPurchaseItems", (int) config.getDouble("max-purchase-items", 256));
+                emit("demand", row);
+            }
             case "accounts" -> {
                 require(a.length == 4, "accounts <nation> <player> <correlation UUID>");
                 UUID nation = UUID.fromString(a[1]);

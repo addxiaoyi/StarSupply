@@ -5,11 +5,14 @@ const helpers = require('./iron-pickaxe.cjs');
 const {installServerDigConfirmation} = require('./server-dig.cjs');
 const {smeltingState, smeltUntil} = require('./survival-smelting.cjs');
 const {ITEMS, validatePlan, runCycle} = require('./logistics-cycle.cjs');
+const {productionCounts, productionNeeds, craftToTarget, harvestToTarget} = require('./production-targets.cjs');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function main() {
   const [stage, mineflayerModule, pathfinderModule, username = 'SupplyCook', phase = 'mining', planFile] = process.argv.slice(2);
-  const logisticsPlan = phase === 'logistics' ? validatePlan(JSON.parse(fs.readFileSync(planFile, 'utf8'))) : null;
+  const productionPlan = planFile ? validatePlan(JSON.parse(fs.readFileSync(planFile, 'utf8'))) : null;
+  const logisticsPlan = phase === 'logistics' ? productionPlan : null;
+  const targets = productionCounts(productionPlan);
   const mineflayer = require(mineflayerModule), pf = require(pathfinderModule);
   const Vec3 = require(path.join(path.dirname(mineflayerModule), 'vec3')).Vec3;
   const properties = Object.fromEntries(fs.readFileSync(path.join(stage, 'server.properties'), 'utf8')
@@ -41,6 +44,13 @@ async function main() {
     if (after > before) log('production_acquired', {item, before, after, count: after - before, source, inputs, inventory: inventory()});
   };
   const inventory = () => bot.inventory.items().map(item => ({slot: item.slot, name: item.name, count: item.count}));
+  const inventoryCounts = () => {
+    const values = {};
+    for (const item of inventory()) values[item.name] = (values[item.name] ?? 0) + item.count;
+    return values;
+  };
+  const needs = () => productionNeeds(productionPlan, inventoryCounts());
+  const craftUntil = (output, target, ingredients) => craftToTarget({output, target, ingredients, count, craft});
   async function until(read, label, timeout = 10000) {
     const deadline = Date.now() + timeout;
     while (Date.now() < deadline) {
@@ -362,9 +372,10 @@ async function main() {
   }
 
   async function farmBread() {
-    if (count('bread') >= 6 && count('sugar_cane') >= 3) return;
+    if (count('bread') >= targets.FOOD && count('sugar_cane') >= needs().sugarCane) return;
     await travel(new Vec3(-60, 65, -1), 4);
-    await gather(['sugar_cane'], 'sugar_cane', 3, null, 16);
+    await gather(['sugar_cane'], 'sugar_cane', needs().sugarCane, null, 16);
+    if (count('bread') >= targets.FOOD) return;
     const farm = bot.findBlocks({matching: block => block.name === 'wheat', maxDistance: 12, count: 8});
     const soils = bot.findBlocks({matching: block => ['dirt', 'grass_block', 'farmland'].includes(block.name), maxDistance: 12, count: 200});
     for (const position of soils) {
@@ -389,7 +400,7 @@ async function main() {
     }
     if (!farm.length) throw new Error('No reachable hydrated farmland for wheat');
     const deadline = Date.now() + 1800000;
-    while (count('wheat') + count('bread') * 3 < 18) {
+    while (count('wheat') + count('bread') * 3 < targets.FOOD * 3) {
       if (Date.now() >= deadline) throw new Error('Wheat is still growing; saved crops can resume next run');
       for (const position of farm) {
         let crop = bot.blockAt(position);
@@ -412,14 +423,15 @@ async function main() {
           await helpers.placeBlockEventually(bot, bot.blockAt(position.offset(0, -1, 0)), new Vec3(0, 1, 0), 'wheat', 'replant survival wheat', log);
         }
       }
-      if (count('wheat') + count('bread') * 3 < 18) await delay(10000);
+      if (count('wheat') + count('bread') * 3 < targets.FOOD * 3) await delay(10000);
     }
-    while (count('bread') < 6) await craft('bread', [['wheat', [4, 5, 6]]]);
+    await craftUntil('bread', targets.FOOD, [['wheat', [4, 5, 6]]]);
   }
 
   async function harvestHoney() {
+    await harvestToTarget({target: targets.MEDICAL, count: () => count('honey_bottle'), wait: delay, round: async () => {
     for (const coordinates of [[-6, 86, 91], [-87, 73, 117], [60, 89, 140]]) {
-      if (count('honey_bottle') >= 3) return;
+      if (count('honey_bottle') >= targets.MEDICAL) return;
       const position = new Vec3(...coordinates);
       await travel(position, 3);
       const nest = bot.blockAt(position);
@@ -446,10 +458,10 @@ async function main() {
       log('honey_harvested', {position, before, after: count('honey_bottle')});
       acquired('honey_bottle', before, 'honey', {glass_bottle: count('honey_bottle') - before});
     }
-    if (count('honey_bottle') < 3) throw new Error('Natural honey sources need more time before another harvest');
+    }});
   }
-  async function lootGunpowder() {
-    if (count('gunpowder')) return;
+  async function lootGunpowder(desired) {
+    if (count('gunpowder') >= desired) return;
     // Naturally generated dungeon chests located by the read-only terrain survey.
     // Their random loot remains unopened until a normal player interaction.
     for (const coordinates of [[-29, 40, 104], [-28, 40, 108], [-41, 32, 110], [-44, 32, 109]]) {
@@ -475,9 +487,9 @@ async function main() {
           acquired(name, before, 'natural-chest');
         }
       } finally { window.close(); }
-      if (count('gunpowder')) return;
+      if (count('gunpowder') >= desired) return;
     }
-    throw new Error('Visited natural chests did not contain gunpowder; another survival source is required');
+    throw new Error(`Natural chests supplied ${count('gunpowder')}/${desired} gunpowder; another survival source is required`);
   }
 
   try {
@@ -494,53 +506,63 @@ async function main() {
     bot.on('path_update', update => log('path_update', {status: update.status, nodes: update.visitedNodes,
       pathLength: update.path?.length, nodeHeapMiB: Math.round(process.memoryUsage().heapUsed / 1048576)}));
     const before = inventory();
-    log('started', {player: username, position: bot.entity.position.clone(), inventory: before,
+    log('started', {player: username, position: bot.entity.position.clone(), inventory: before, productionTargets: targets,
       pluginSha256: createHash('sha256').update(fs.readFileSync(path.join(stage, 'plugins/StarSupply-0.1.0.jar'))).digest('hex').toUpperCase()});
     if (phase === 'mining') {
-      if (count('iron_ingot') < 6) {
-        await gather(['coal_ore', 'deepslate_coal_ore'], 'coal', 6, 'iron_pickaxe');
-        await smelt('raw_iron', 'iron_ingot', 6,
+      const ironMissing = Math.max(0, targets.EQUIPMENT - count('iron_ingot'));
+      const glassToMake = Math.max(0, needs().bottleBatches * 3 - count('glass'));
+      await gather(['coal_ore', 'deepslate_coal_ore'], 'coal', Math.ceil((ironMissing + glassToMake) / 8) + 3, 'iron_pickaxe');
+      if (ironMissing) {
+        await smelt('raw_iron', 'iron_ingot', targets.EQUIPMENT,
           needed => gather(['iron_ore', 'deepslate_iron_ore'], 'raw_iron', needed, 'iron_pickaxe'));
       }
-      if (count('glass_bottle') < 3) {
+      if (needs().bottleBatches > 0) {
         await ascendToSurface();
         await travel(new Vec3(-60, 65, -1), 4);
-        await smelt('sand', 'glass', 3, needed => gather(['sand'], 'sand', needed, null, 24));
-        await craft('glass_bottle', [['glass', [1, 3, 5]]]);
+        await smelt('sand', 'glass', needs().bottleBatches * 3, needed => gather(['sand'], 'sand', needed, null, 24));
+        await craftUntil('glass_bottle', needs().bottles, [['glass', [1, 3, 5]]]);
       }
+      await gather(['stone', 'cobblestone'], 'cobblestone', targets.MATERIALS + 12, 'iron_pickaxe', 24);
     } else if (phase === 'surface') {
       if (!await helpers.returnToFurnaceSurfaceSite(bot, pf, Vec3, log)) await ascendToSurface();
       const remainingCampfires = Math.max(0, 3 - count('campfire'));
       await gather(['birch_log'], 'birch_log', 6 + remainingCampfires * 3, null, 24);
       while (count('birch_planks') < 24) await craft('birch_planks', [['birch_log', [1]]]);
-      while (count('stick') < remainingCampfires * 3 + (count('stone_sword') ? 0 : 1)) await craft('stick', [['birch_planks', [1, 4]]]);
+      while (count('stick') < remainingCampfires * 3 + (count('stone_sword') ? 0 : 1) + (count('wooden_hoe') ? 0 : 2)) {
+        await craft('stick', [['birch_planks', [1, 4]]]);
+      }
       if (!count('stone_sword')) await craft('stone_sword', [['cobblestone', [2, 5]], ['stick', [8]]]);
+      if (!count('wooden_hoe')) await craft('wooden_hoe', [['birch_planks', [1, 2]], ['stick', [5, 8]]]);
       while (count('campfire') < 3) await craft('campfire', [['stick', [2, 4, 6]], ['coal', [5]], ['birch_log', [7, 8, 9]]]);
     } else if (phase === 'farming') {
       await farmBread();
     } else if (phase === 'honey') {
       await harvestHoney();
     } else if (phase === 'scaffolding') {
-      if (count('scaffolding') < 6) {
-        if (count('bamboo') < 6) {
+      if (needs().scaffoldBatches > 0) {
+        if (count('bamboo') < needs().bamboo) {
           await travel(new Vec3(114, 96, -144), 3);
-          await gather(['bamboo'], 'bamboo', 6, 'stone_sword', 20);
+          await gather(['bamboo'], 'bamboo', needs().bamboo, 'stone_sword', 20);
         }
-        if (!count('string')) {
+        if (count('string') < needs().string) {
           await travel(new Vec3(-73, 75, 41), 4);
-          const target = bot.blockAt(new Vec3(-73, 24, 41));
-          if (!target || target.name !== 'cobweb') throw new Error('Surveyed mineshaft cobweb is unavailable');
           await descendTo(26);
-          await gather(['cobweb'], 'string', 1, 'stone_sword', 24);
+          await gather(['cobweb'], 'string', needs().string, 'stone_sword', 24);
         }
-        await craft('scaffolding', [['bamboo', [1, 3, 4, 6, 7, 9]], ['string', [2]]]);
+        await craftUntil('scaffolding', targets.ENGINEERING, [['bamboo', [1, 3, 4, 6, 7, 9]], ['string', [2]]]);
       }
     } else if (phase === 'fireworks') {
-      if (count('firework_rocket') < 3) {
-        if (count('paper') < 1) await craft('paper', [['sugar_cane', [4, 5, 6]]]);
-        await lootGunpowder();
-        await craft('firework_rocket', [['paper', [1]], ['gunpowder', [2]]]);
+      if (needs().rocketBatches > 0) {
+        if (count('sugar_cane') < needs().sugarCane) {
+          await travel(new Vec3(-60, 65, -1), 4);
+          await gather(['sugar_cane'], 'sugar_cane', needs().sugarCane, null, 16);
+        }
+        await craftUntil('paper', needs().rocketBatches, [['sugar_cane', [4, 5, 6]]]);
+        await lootGunpowder(needs().gunpowder);
+        await craftUntil('firework_rocket', targets.STRATEGIC, [['paper', [1]], ['gunpowder', [2]]]);
       }
+      // Travel and support blocks may have consumed materials since mining.
+      await gather(['stone', 'cobblestone'], 'cobblestone', targets.MATERIALS, 'iron_pickaxe', 24);
     } else if (phase === 'logistics') {
       // The final inventory delta must be exactly the sold quantities. Navigate
       // existing passages without mining, placing blocks or consuming supplies.

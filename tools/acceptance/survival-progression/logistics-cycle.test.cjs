@@ -134,6 +134,14 @@ test('applied credits must match the full consumption cycles and army', t => {
   assert.throws(() => verifyCycle(f.config, f.journal(), f.snapshot()), /Awaiting matching native/);
 });
 
+test('an otherwise complete physical cycle cannot certify demand above the production budget', t => {
+  const f = fixture(t); f.populate();
+  f.db.exec('UPDATE consumption SET demand=2,units=2; UPDATE item_lot SET remaining=0');
+  assert.deepEqual(verifyCycle(f.config, f.journal(), f.snapshot()).fullSlots, [10, 11, 12]);
+  f.config.demandBudget = {maximumDemand: Object.fromEntries(RESOURCES.map(resource => [resource, 1]))};
+  assert.throws(() => verifyCycle(f.config, f.journal(), f.snapshot()), /exceeded the planned demand/);
+});
+
 test('stopped verification requires the exact saved inventory debit and player identity', t => {
   const f = fixture(t); f.populate();
   const file = path.join(f.stage, 'folia-proof', `survival-logistics-${f.config.runId}.json`);
