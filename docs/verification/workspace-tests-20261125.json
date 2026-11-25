@@ -1,0 +1,21 @@
+{
+  "recorded_on": "2026-11-25",
+  "purpose": "Run the complete StarSupply workspace test suite while continuing Folia survival acceptance work.",
+  "result": "passed",
+  "environment": {
+    "java": "21.0.13.1",
+    "maven": "3.9.16",
+    "working_tree_has_uncommitted_changes": true
+  },
+  "command": ".\\mvnw.cmd '-Dspotless.skip=true' test",
+  "tests": {
+    "run": 100,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "limits": [
+    "This run executed Maven test, not verify or package.",
+    "The existing v11 JAR was not rebuilt by this test run."
+  ]
+}

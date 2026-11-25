@@ -1,0 +1,89 @@
+{
+  "recorded_on": "2026-11-20",
+  "purpose": "Orderly restart and duplicate-request verification for the completed Folia six-resource loop",
+  "result": "restart_and_duplicate_request_checks_passed",
+  "full_folia_stack_accepted_by_this_record": false,
+  "environment": {
+    "server": "Folia 1.21.11-14-529aabc",
+    "stage": "folia-stage1-live",
+    "profile": "platform.folia-logistics-profile=true",
+    "starcore_before_shutdown_runtime_sha256": "0C0D340C40E540674F9DE7E9BB03216894D26C78C51D4350DD331C07C807D509",
+    "starcore_after_restart_source_sha256": "BD0B09DDA770E523B6666EF1126EA3ACDDA71DC2F2DC4CE502803D06E87C898A",
+    "starcore_after_restart_runtime_sha256": "6545ED6D20ABB4EC681B4E520F7A93B051ABAA268F7633FCE636837BC9247547",
+    "starsupply_runtime_sha256_unchanged": "16A1ED43CB3AC67F7992BA6C6DF79B78683983B8EE4105B0B6AB6309978A867B",
+    "test_descriptor_override_only": true,
+    "inspection_read_only": true,
+    "fixture_enabled_utc": "2026-11-20T10:22:27.178983Z",
+    "startup_seconds": 256.281,
+    "restart_note": "Normal shutdown recorded StarSupply disable and Saved all player data. The first restart attempt failed to bind before plugin enable. The unrelated listener was left untouched; startup on the replacement port succeeded with the SQLite-retry StarCore build. This record does not validate the later morale build or Tavern."
+  },
+  "transaction_rows": {
+    "selection": "Use purchase and shipment IDs from six-in-transit.json; select settlements by purchaseSettlement and shipment ID. Compare all fields ordered by ID across the three read-only snapshots.",
+    "purchases": {"unique": 6, "state": "BOUGHT", "identical_in_all_three_snapshots": true},
+    "shipments": {"unique": 6, "state": "DELIVERED", "identical_in_all_three_snapshots": true},
+    "settlements": {"unique": 12, "state": "PAID", "identical_in_all_three_snapshots": true},
+    "whole_table_counts_before_and_after": {"purchase": [58, 58], "shipment": [53, 53], "settlement": [106, 106]},
+    "item_transfers": {"before": 6, "after": 6, "state_in_both_snapshots": "STORED"}
+  },
+  "duplicate_actions": {
+    "shipment_id": "c15755b5-f9f1-4a0b-8d82-d0ad1c971cbb",
+    "buyer_accept": {"at": "2026-11-20T10:23:12.030Z", "response_at": "2026-11-20T10:23:12.088Z", "result": "Ticket already taken or closed"},
+    "carrier_deliver": {"at": "2026-11-20T10:23:12.177Z", "response_at": "2026-11-20T10:23:12.236Z", "result": "Already submitted, DELIVERED, original settlement ID"},
+    "settlement_events_between_restart_and_after_retry_fixture_sample": 0
+  },
+  "authority_balances": {
+    "nation_id": "b361b25b-b7a4-460d-be8d-8237afdf0920",
+    "source": "Public fixture balance queries on a Folia global tick",
+    "before_shutdown_utc": ["2026-11-20T09:58:04.425151800Z", "2026-11-20T09:58:04.475007100Z"],
+    "after_restart_before_retry_utc": ["2026-11-20T10:23:11.804736400Z", "2026-11-20T10:23:11.852716200Z"],
+    "after_retry_utc": ["2026-11-20T10:24:10.952770600Z", "2026-11-20T10:24:11.003085200Z"],
+    "values_at_all_three_samples": {"alpha_treasury": "814.40", "buyer_wallet": "6058.45", "carrier_wallet": "5084.07"}
+  },
+  "players": {
+    "buyer": {"uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d", "rejoined_at": "2026-11-20T10:22:56.572Z", "restored_xyz": [-21.5, 86.0, 68.5], "inventory": {"PAPER": 1, "WRITTEN_BOOK": 1, "IRON_INGOT": 16}},
+    "carrier": {"uuid": "b1ef34be-1610-379d-b9d3-97068ff1b518", "rejoined_at": "2026-11-20T10:22:56.566Z", "restored_xyz": [-4120.5, 70.0, 68.5], "inventory": {"WRITTEN_BOOK": 1}},
+    "restored_positions_match_last_observed_live_positions": true,
+    "post_restart_inventory_nbt_identical_before_and_after_retry": true,
+    "post_restart_inventory_receipts_absent_before_and_after_retry": true,
+    "scope_note": "The pre-shutdown disk snapshot preceded the final save and still showed an older carrier position. Live item types and counts matched, but live serialized stack bytes are not asserted identical across restart. Both post-restart disk inventories stayed equal across the retry. This is not a mid-write crash test."
+  },
+  "consumption_after_restart": {
+    "sample_end_utc": "2026-11-20T10:24:11.052342200Z",
+    "post_boot_slots": [59839004, 59839005, 59839006, 59839007, 59839008],
+    "largest_pre_boot_observed_slot": 59838957,
+    "event_ids_per_slot": [
+      ["9b7c28c5-4faf-3b78-af55-79a7b618e437", "633c02d2-4357-33fd-bad0-bf7b3783580b"],
+      ["189093d9-1378-3a60-acb8-38199dcef2b8", "056aa73b-f458-3d16-bc6a-d702368c0601"],
+      ["aa74645f-e3bc-3765-b8a2-72c921c947ec", "89d10284-5a0e-3683-af9e-8943bdbf0f71"],
+      ["d1cac12b-0404-338a-a816-498f2b13eafe", "1fd987fe-21d1-3523-98cb-b99a26a39bb3"],
+      ["afa92e78-0280-3217-bead-971eecadd973", "cee5e488-ccf4-3429-8799-4b4fd89c0c16"]
+    ],
+    "observed_count_per_event_id": 1,
+    "pre_boot_event_ids_replayed_in_sample": 0,
+    "existing_consumption_rows_preserved": 2256,
+    "new_consumption_rows": 60
+  },
+  "sqlite_fixed_build_live_exercise": {
+    "observed_utc": ["2026-11-20T10:26:40.558165700Z", "2026-11-20T10:26:40.901329500Z"],
+    "region_claims_succeeded": 4,
+    "claims_chunk_x": [-259, -260, -261, -262],
+    "claims_chunk_z": 4,
+    "gamma_public_treasury_seed_deposits_succeeded": 4,
+    "each_seed_amount": "1.00",
+    "gamma_balance_transitions": ["65500.00", "65501.00", "65502.00", "65503.00", "65504.00"],
+    "public_state_confirmed_final_treasury_and_all_claims": true,
+    "retry_branch_observed_in_live_log": false,
+    "scope_note": "Interleaved public authority calls completed on region and global ticks without a logged SQLite lock or persistence failure in the operation window. Deposits were fixture seed funds, not gameplay revenue. The live exercise does not prove the internal SQLITE_BUSY retry branch ran; separate two-connection tests cover it."
+  },
+  "stage_evidence": {
+    "selection_ids": {"path": "folia-proof/six-in-transit.json", "sha256": "18B8B9C2986264CF5098DF72B4CFA0B775F7986BEA8773D93185AAFD0598586A"},
+    "pre_shutdown_snapshot": {"path": "folia-proof/snapshot-before-business-restart.json", "sha256": "9AE3AB25EEE5763461B6EFDE2C1F3E5EB7A3EAB16C62F2CC63C546B8A959FC62"},
+    "post_restart_before_retry_snapshot": {"path": "folia-proof/snapshot-post-business-restart-before-retry.json", "sha256": "56DDF1E6BD62652349EFC1B2B242D0B5451F8B07E32CC8F1BB2BC596823DF085"},
+    "post_restart_after_retry_snapshot": {"path": "folia-proof/snapshot-post-business-restart-after-retry.json", "sha256": "4999B4D1F2C8DC81A9F264C9BC06FCBF8C8D729B34728AB473C53B64B61BB29A"},
+    "deployment": {"path": "folia-proof/post-loop-restart-deployment.json", "sha256": "EF726DF50383176EB1D92FACEDF936AF3AD189FDC51945786C7666680046DB04"},
+    "shutdown_log": {"path": "logs/2026-11-20-2.log.gz", "sha256": "CEF7A319E133F9BA35CFD9BCB9C3AAF2F0881345CD6D64AA6B0FB68E3975DAE9"},
+    "buyer_client_log": {"path": "folia-proof/bot-SupplyBuyer-postrestart-console.log", "sha256": "0168A854CBB0A77746E1612EF91BC0E2C918E33DA0870E7C2EDCE237C7D539BB"},
+    "carrier_client_log": {"path": "folia-proof/bot-SupplyCarrier-postrestart-console.log", "sha256": "571857595B7E7432BB575E1A40B215011176B60550FE0181B4ABCDF1463FBF4E"},
+    "public_fixture_events_append_prefix": {"path": "plugins/FoliaSupplyProof/evidence.jsonl", "prefix_bytes": 154453, "prefix_sha256": "EA87A60E83C8EAB5EC669FED54C70EBA8729582613874B221A9196176F043D8C"}
+  }
+}

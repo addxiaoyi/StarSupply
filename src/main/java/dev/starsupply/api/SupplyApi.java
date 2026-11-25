@@ -24,11 +24,22 @@ public interface SupplyApi {
     CompletionStage<Optional<Stock>> stock(String warehouseId);
     CompletionStage<Optional<MarketQuote>> marketQuote(String depotId, ResourceType resource);
     Optional<SupplyStatus> armySupply(UUID armyId);
+    /** Latest 128 durable physical FOOD obligations; read-only and ordered newest first. */
+    default CompletionStage<List<NativeSupplyCredit>> nativeSupplyCredits(UUID armyId) {
+        return java.util.concurrent.CompletableFuture.failedFuture(
+                new UnsupportedOperationException("Native supply receipts are unavailable"));
+    }
     CompletionStage<RouteNetwork> routeNetwork(UUID nationId);
     CompletionStage<Optional<RoutePlan>> route(UUID nationId, String origin, String target);
     CompletionStage<Purchase> createPurchase(Player actor, String depot, ResourceType resource, int count,
                                              BigDecimal totalPrice);
     CompletionStage<Purchase> createMarketPurchase(Player actor, String depot, ResourceType resource, int count);
+    /** Rebinds an existing national front to an unbound StarCore army while preserving its stock and routes. */
+    default CompletionStage<Warehouse> rebindFront(Player actor, String frontId, UUID armyId) {
+        return java.util.concurrent.CompletableFuture.failedFuture(
+                new UnsupportedOperationException("Front army rebinding is unavailable"));
+    }
+    /** Cancelling observation does not cancel an admitted physical inventory transaction. Recover by its receipt. */
     CompletionStage<String> sell(Player actor, UUID purchase);
     CompletionStage<Shipment> createTransport(Player actor, UUID purchase, String front, BigDecimal reward);
     CompletionStage<Shipment> acceptTransport(Player actor, UUID shipment);

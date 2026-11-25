@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-21",
+  "purpose": "Live Folia evidence for StarSupply main-menu and Tavern-board presentation on the player region.",
+  "result": "main_menu_and_tavern_board_presented",
+  "goal_complete": false,
+  "environment": {
+    "server": "Folia 1.21.11-14-529aabc",
+    "java": 21,
+    "production_plugin_sha256": "D2082B3543F12D0CAAB9DBB63E5BB16D2E3842BBEAE81A039A75D2995EA6CF8F",
+    "isolated_test_plugin_sha256": "7F152CE194A4651012953246B0331D2D49D17559A4ECDA7870A206C1DB1636AE",
+    "test_descriptor_override": true,
+    "descriptor_note": "Only the isolated test JAR adds folia-supported:true."
+  },
+  "observations": [
+    {
+      "command": "/supply",
+      "at_utc": "2026-11-20T22:45:11.549Z",
+      "window_type": "minecraft:generic_9x3",
+      "title": "StarSupply · 战略后勤",
+      "populated_slots": 9
+    },
+    {
+      "command": "/supply board folia-proof-inn",
+      "at_utc": "2026-11-20T22:47:02.569Z",
+      "window_type": "minecraft:generic_9x6",
+      "title": "酒馆与情报 · 1 / 1",
+      "populated_slots": 9
+    }
+  ],
+  "source_evidence": {
+    "client_log": "folia-proof/kitchen-SupplyBuyer.jsonl",
+    "client_log_sha256": "E8D39CCBCA93272BF8151161D91B580CD3B98EBE4836CB79E9CCD0584E37CB13",
+    "server_log": "folia-proof/starsupply-ui-folia-test.out.log",
+    "server_log_sha256": "05F6A3916712089A55F2A218A0CDEE340DDA465812E3C1E836C3020B8CDEE31A",
+    "server_error_log_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  "boundary": "This run validates only those two GUI presentation paths and their recorded binaries."
+}

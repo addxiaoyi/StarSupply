@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.UUID;
-import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
 /** Application rules. All mutation paths are invoked through the serialized background worker. */
@@ -135,6 +134,20 @@ public final class Logistics {
         }
         return store.addWarehouse(new Warehouse(id, nation, armyId == null ? WarehouseKind.DEPOT
                 : WarehouseKind.FRONT, position, armyId), armyId != null);
+    }
+
+    /** Reassigns one controlled front without moving its stock, lots, routes or transport custody. */
+    public Warehouse rebindFront(UUID actor, String frontId, UUID armyId) throws SQLException {
+        UUID nation = nation(actor);
+        manage(actor, nation);
+        require(armyId != null, "必须指定 StarCore 军队 UUID");
+        Warehouse front = warehouse(frontId);
+        require(front.kind() == WarehouseKind.FRONT && front.nationId().equals(nation),
+                "只能重绑定本国前线站");
+        requireControlled(front);
+        var army = core.army(armyId).orElseThrow(() -> new IllegalArgumentException("StarCore 军队不存在"));
+        require(army.nationId().equals(nation), "只能绑定本国军队");
+        return store.rebindFrontArmy(front.id(), nation, army.id());
     }
 
     public Road createRoad(UUID actor, String id, String from, String to, double efficiency, UUID coreLine)
@@ -503,13 +516,12 @@ public final class Logistics {
             var campaign = CampaignRules.status(conditions, siege.orElse(null), active, now, campaignConfig);
             var demand = CampaignRules.demand(ArmySupplyRules.demand(info.soldiers(), efficiency), campaign,
                     campaignConfig);
-            var spent = store.consumption(info.id(), slot);
+            var spent = store.consumption(info.id(), slot, supplyInterval);
             if (consume && active && access == FrontAccess.CONNECTED && spent.isEmpty() && !demand.isEmpty()) {
-                spent = store.consume(front, slot, demand);
+                spent = store.consume(front, slot, demand, supplyInterval);
                 Map<ResourceType, Integer> actual = new java.util.EnumMap<>(ResourceType.class);
                 spent.forEach((resource, consumption) -> actual.put(resource, consumption.units()));
-                UUID settlementId = UUID.nameUUIDFromBytes(("starsupply:consumption:" + info.id() + ":" + slot)
-                        .getBytes(StandardCharsets.UTF_8));
+                UUID settlementId = SupplyStore.consumptionId(info.id(), slot, supplyInterval);
                 consumptionListener.accept(new SupplyConsumption(settlementId, info.id(), front.nationId(), front.id(),
                         slot, demand, actual, now));
             }
@@ -523,11 +535,50 @@ public final class Logistics {
             double coverage = access == FrontAccess.CONNECTED ? ArmySupplyRules.coverage(demand, available, spent) : 0;
             statuses.put(info.id(), new SupplyStatus(info.id(), front.nationId(), front.id(), info.soldiers(),
                     demand, available, coverage, ArmySupplyRules.multiplier(active, coverage,
-                    strategic.get(front.nationId()).combatReadiness()), slot, active, campaign, access));
+                    strategic.get(front.nationId()).combatReadiness()), slot, active, campaign, access,
+                    ArmySupplyRules.moraleDelta(active, coverage)));
             prune |= consume && active;
         }
-        if (prune) store.pruneConsumption(slot - Math.max(2, (7 * 24 * 60 * 60 * 1000L) / supplyInterval));
+        if (consume) replenishNativeSupply(now);
+        if (prune) store.pruneConsumption(now > 7L * 24 * 60 * 60 * 1000L
+                ? now - 7L * 24 * 60 * 60 * 1000L : 0);
         return Map.copyOf(statuses);
+    }
+
+    /** Reconcile a review request only against StarCore's durable receipt or confirmed absence. */
+    public boolean reconcileNativeSupply(UUID requestId, long now) throws SQLException {
+        java.util.Objects.requireNonNull(requestId, "requestId");
+        require(now >= 0, "Invalid reconciliation time");
+        NativeSupplyCredit credit = store.nativeSupplyCredit(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("原生补给请求不存在"));
+        require(credit.state().equals("REVIEW"), "只有待核验的原生补给请求可对账");
+        Optional<CoreGateway.NativeSupplyReceipt> receipt = core.nativeSupplyReceipt(requestId);
+        if (receipt.isEmpty()) {
+            store.retryNativeSupply(requestId, now);
+            return false;
+        }
+        CoreGateway.NativeSupplyReceipt confirmed = receipt.get();
+        require(confirmed.requestId().equals(requestId) && confirmed.armyId().equals(credit.armyId())
+                        && confirmed.nationId().equals(credit.nationId())
+                        && confirmed.requestedPoints() == credit.points(),
+                "StarCore 回执与原生补给请求不匹配，请保留待核验状态");
+        store.confirmNativeSupply(requestId);
+        return true;
+    }
+
+    /** Replay only committed physical FOOD obligations, including those whose fronts were rebound. */
+    private void replenishNativeSupply(long now) throws SQLException {
+        for (var credit : store.pendingNativeSupply(now)) {
+            boolean confirmed;
+            try {
+                confirmed = core.replenishArmy(credit.id(), credit.armyId(), credit.nationId(), credit.points());
+            } catch (RuntimeException failure) {
+                store.deferNativeSupply(credit, now, failure instanceof IllegalArgumentException, failure.toString());
+                continue;
+            }
+            if (confirmed) store.confirmNativeSupply(credit.id());
+            else store.deferNativeSupply(credit, now, false, "StarCore has not confirmed its durable logistics receipt");
+        }
     }
 
     private BigDecimal money(BigDecimal price) {

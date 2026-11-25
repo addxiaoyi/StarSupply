@@ -1,0 +1,10 @@
+name: SupplyTradeProof
+version: '1.0-test-only'
+main: local.test.SupplyTradeProof
+api-version: '1.21.11'
+depend: [StarCore]
+loadbefore: [StarSupply]
+commands:
+  supplytradeproof:
+    description: Isolated StarCore trade state fixture, console and RCON only.
+    usage: /supplytradeproof state <agreementId>

@@ -4,9 +4,11 @@ StarSupply 第一阶段是面向 Paper 1.21.11 的国战后勤插件。军需官
 
 原始需求、实现位置和验收边界见 [需求对应表](docs/REQUIREMENTS.md)。
 
+**换设备继续开发：**先读 [2026-11-25 阶段进度与交接](docs/HANDOFF.md)。其中包含当前分支、构建步骤、已验证结果、六类生存流程的保存进度和剩余任务；完整目标尚未全部完成。
+
 ## 安装
 
-使用 Java 21 和 Paper 1.21.11。将 StarCore 1.0.0 和 `target/starsupply-0.1.0.jar` 放入 `plugins/`。在 StarCore 中选择内部经济 `economy.provider: internal`，并启用国家、官员、军队、战争与战场服务。兼容的 CraftEngine 和森罗物语 Cookery 可以提供品质军粮。默认配置也支持纯原版物品。
+使用 Java 21 和 Paper 1.21.11。将应用了 [StarSupply 兼容补丁](docs/upstream/README.md) 的 StarCore 1.0.0 和 `target/starsupply-0.1.0.jar` 放入 `plugins/`。当前完整版本要求 Core 提供真实临时士气注册和查询接口，未打补丁的固定原版会被明确拒绝；旧发布包的运行证据不能代替新版。选择内部经济 `economy.provider: internal`，并启用国家、官员、军队、战争与战场服务。兼容的 CraftEngine 和森罗物语 Cookery 可以提供品质军粮。默认配置也支持纯原版物品。
 
 StarSupply 通过实体调度器操作背包和 GUI，路线计算与 SQL 使用独立后台线程。当前钉住的 StarCore 版本使用旧版 Bukkit 调度器，参考组合的运行目标是 Paper。
 
@@ -18,6 +20,7 @@ StarSupply 通过实体调度器操作背包和 GUI，路线计算与 SQL 使用
 | --- | --- |
 | 国家元首或司库 | 在本国已占领的领土上用 `/supply depot <仓库名>` 登记国家仓库，再到前线用 `/supply front <前线名> <军队UUID或前缀>` 绑定军队。 |
 | 随军军需官 | 军队推进后，在新的本国已占领位置用 `/supply front <新前线名> <同一军队UUID或前缀>` 转移军队绑定；旧站库存和运输留在原处，另行建立道路和补给。 |
+| 随军军需官 | 若要保留已有路线和物资，可用 `/supply rebind-front <前线名> <新军队UUID>` 在原站原地重绑定；站点位置、库存批次、道路和运输记录均保留。 |
 | 军需官 | 用 `/supply route <道路名> <仓库> <前线> 1.0` 建立有向补给线路。 |
 | 军需官 | 用 `/supply buy <仓库> food 8 40` 发布一张 8 件军粮、总价 40 的采购单。 |
 | 厨师 | 用原版面包或 Cookery 馒头备货，到仓库点击 `/supply orders` 的采购单，或执行 `/supply sell <采购UUID>`。 |
@@ -26,6 +29,7 @@ StarSupply 通过实体调度器操作背包和 GUI，路线计算与 SQL 使用
 | 本国承运者 | 出发前在起点用 `/supply insurance <运输UUID>` 查阅收入险报价，用 `/supply insure <运输UUID>` 支付保费投保；保险仅补偿遭袭失去的部分运费。 |
 | 军需官与侦察兵 | 用 `/supply tavern <集合点ID>` 登记本国酒馆；到道路旁 `/supply scout <道路ID>`，回酒馆 `/supply intel <报告UUID> <集合点ID>` 发布情报，再用 `/supply board <集合点ID>` 查看。 |
 | 军需官 | 使用 `/supply` 查看仓库、合同、路线与前线补给，用 `/supply status [军队UUID]` 查看战力系数。 |
+| 军需管理者与管理员 | 用 `/supply native-credits <军队UUID或前缀>` 查看本国军队的实物军粮结转记录；管理员可用 `/supply reconcile-native-supply <请求UUID>` 核对 StarCore 回执并恢复待核验请求。 |
 
 在采购仓库可用 `/supply market <仓库> <物资>` 查看该地区每件物品的动态参考价与库存/需求；`/supply buy <仓库> <物资> <件数> market` 会按当时参考价锁定合同总价。手工填写总价的采购仍保留议价空间。默认参考价和缓冲件数见 `market-base-prices` 与 `market-buffer-items` 配置。
 

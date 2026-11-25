@@ -210,6 +210,11 @@ public final class CorePayment {
                 }
                 NationSpendingService.SpendResult spend = spending.spend(spendRequest(transaction));
                 if (spend.status() == NationSpendingService.SpendingStatus.INSUFFICIENT_FUNDS) {
+                    if (spend.balanceAfter() != null
+                            && spend.balanceAfter().compareTo(transaction.amount()) >= 0) {
+                        // StarCore can report a failed treasury write as insufficient funds.
+                        return PaymentResult.RETRY;
+                    }
                     move(transaction, DEBIT_FAILED, "insufficient national treasury balance");
                     move(transaction, CANCELLED, "national spend rejected before debit");
                     return PaymentResult.REJECTED;

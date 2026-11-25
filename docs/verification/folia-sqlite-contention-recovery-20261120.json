@@ -1,0 +1,202 @@
+{
+  "recorded_on": "2026-11-20",
+  "purpose": "Targeted build and original-runtime evidence for a SQLite treasury snapshot contention fix; post-fix runtime contention replay remains pending",
+  "upstream": {
+    "repository": "https://github.com/addxiaoyi/starcore",
+    "base_commit": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "isolated_checkout": "starcore-folia",
+    "changed_files": [
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.java",
+        "sha256": "7C2038CFAE26F1286623A368DC45386FD9A827901FDAA98F09D65DDF055CF723"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/module/treasury/SqlTreasuryBusyRetryTest.java",
+        "sha256": "82A80F93E97E329922DE0B0C939947A9C5C81ADD650F0E98823BF10B441194B3"
+      }
+    ]
+  },
+  "original_runtime_failure": {
+    "core_source_sha256": "CDD264D1D5A4F4836D91CC645EB3DDD1A14342FF69F81F7146040CD3E4A40C74",
+    "core_runtime_sha256": "0C0D340C40E540674F9DE7E9BB03216894D26C78C51D4350DD331C07C807D509",
+    "observed_local_time": "2026-11-20T17:46:57+08:00",
+    "operation": "Public ArmyService.createArmy for Gamma, 10 infantry, requiring TreasuryService.withdraw(1000.00)",
+    "error_header": "code=TREASURY_WITHDRAW_PERSISTENCE_FAILURE operation=withdraw rollback=true nation=5c4732f4-cedd-46ab-8bb9-8c20b7246a75 amount=1000.00 txId=1",
+    "wrapper": "TreasuryStateConflictException: code=TREASURY_STATE_CONFLICT Treasury state changed concurrently; reload and retry",
+    "cause": "org.sqlite.SQLiteException: [SQLITE_BUSY] The database file is locked (database is locked)",
+    "failed_statement": "UPDATE starcore_treasury_state SET property_value = ? WHERE property_key = ? AND property_value = ?",
+    "diagnosis": "A deferred SQLite WAL read transaction can fail when upgraded to a writer after another connection commits. The existing busy timeout cannot refresh the earlier read snapshot.",
+    "tx_id_interpretation": "txId=1 is TreasuryModule.logPersistenceFailure diagnostic txSeq.incrementAndGet(), not a monetary receipt or SQL unique key",
+    "public_authority_observations": [
+      {
+        "at": "2026-11-20T09:45:32.318466800Z",
+        "treasury": "66500.00",
+        "army_count": 1,
+        "meaning": "Before failed army creation"
+      },
+      {
+        "at": "2026-11-20T09:52:19.324281600Z",
+        "treasury": "66500.00",
+        "army_count": 1,
+        "meaning": "After failed army creation: original balance and army count preserved"
+      },
+      {
+        "at": "2026-11-20T09:55:08.395593800Z",
+        "treasury_before": "66500.00",
+        "treasury_after": "65500.00",
+        "created_army": "197a7eba-dca2-4a91-a10b-a757b19c2c33",
+        "meaning": "A later explicit single public create succeeded without the previous concurrent claim; it was not automatic payment retry"
+      }
+    ],
+    "duplicate_debit_observed": false,
+    "evidence": {
+      "raw_log": {
+        "path": "logs/2026-11-20-2.log.gz",
+        "bytes": 38900,
+        "sha256": "CEF7A319E133F9BA35CFD9BCB9C3AAF2F0881345CD6D64AA6B0FB68E3975DAE9",
+        "scope": "Complete immutable rotated server log; decompress to inspect original error stack"
+      },
+      "public_events": {
+        "path": "plugins/FoliaSupplyProof/evidence.jsonl",
+        "recorded_prefix_bytes": 136963,
+        "recorded_prefix_sha256": "FAE16E4B5AF91DE99591F542B6EA6CEB9EA04FA569792D5FA8BB0885BEC810AC",
+        "scope": "Append-only evidence prefix captured while preparing this record"
+      },
+      "missing_requested_archive": "folia-proof/six-loop-before-restart does not exist in the inspected stage; evidence uses the actual rotated log instead"
+    }
+  },
+  "fix_contract": {
+    "owner": "SqlTreasuryStateStorage.writeSnapshot",
+    "retry_unit": "Only the SQL snapshot transaction; never the external withdraw, payment, inventory handoff or military creation",
+    "maximum_additional_attempts": 2,
+    "maximum_total_attempts": 3,
+    "additional_attempt_start_budget_ms": 100,
+    "budget_scope": "Elapsed-time check before starting another attempt; this is not a timeout on a JDBC call already in progress",
+    "eligible_primary_sqlite_error_codes": [
+      5,
+      6
+    ],
+    "eligibility": [
+      "SQLite lock-contention SQL exception",
+      "Commit has not been attempted",
+      "Rollback returned successfully",
+      "Connection auto-commit state was restored successfully"
+    ],
+    "every_attempt_rechecks_original_expected_revision": true,
+    "stale_snapshot_cas_not_bypassed": true,
+    "sleeps_or_external_withdraw_retry_added": false,
+    "commit_outcome_unknown": "TreasuryStateReconciliationException; no snapshot replay",
+    "rollback_outcome_unknown": "TreasuryStateReconciliationException; no replay and no auto-commit restoration that could accidentally commit the unresolved transaction"
+  },
+  "build": {
+    "goal": "package",
+    "offline": true,
+    "install_executed": false,
+    "exit_code": 0,
+    "finished_at": "2026-11-20T18:03:50+08:00",
+    "elapsed_seconds": 204,
+    "production_sources_compiled": 2234,
+    "test_sources_compiled": 1031,
+    "source_jar": {
+      "path": "target/starcore-1.0.0.jar",
+      "size_bytes": 19548109,
+      "sha256": "BD0B09DDA770E523B6666EF1126EA3ACDDA71DC2F2DC4CE502803D06E87C898A"
+    },
+    "prior_test_groups": "The earlier 967 executed tests and 34 bootstrap-delta tests remain separate historical groups; they were not rerun as part of this 65-test execution"
+  },
+  "format": {
+    "tool": "Spotless Maven plugin 3.6.0",
+    "files": 2,
+    "ratchet_from": "HEAD",
+    "apply_passed": true,
+    "check_passed": true,
+    "check_finished_at": "2026-11-20T18:00:22+08:00"
+  },
+  "source_freeze": {
+    "scope": "110 modified or newly added src entries, not the entire upstream source tree",
+    "entries": 110,
+    "changed_after_build": [],
+    "path_set_changes": [],
+    "checked_at": "2026-11-20T18:03:51.0876076+08:00"
+  },
+  "tests": {
+    "selector": "SqlTreasuryBusyRetryTest,SqlTreasuryStateStorage*Test,TreasuryModule*Test,*Treasury*Test",
+    "selected": 67,
+    "executed": 65,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2,
+    "new_suite": "SqlTreasuryBusyRetryTest",
+    "new_tests_executed": 4,
+    "cases": [
+      {
+        "name": "restartedWithdrawalSurvivesAnotherTablesWalCommitWithoutDoubleDebit",
+        "evidence": "Two real SQLite connections in WAL mode; an unrelated table commits between treasury revision read and update; the first update hits SQLITE_BUSY, a single public withdrawal succeeds after retry, exactly one commit records the debit, restart retains the 1000.00 remaining from 2000.00"
+      },
+      {
+        "name": "retryStillRejectsAnActuallyNewerTreasuryRevision",
+        "evidence": "Another treasury storage commits a new revision; retry still rejects the stale original snapshot, public withdrawal returns false, latest 1500.00 authority state remains, no stale commit"
+      },
+      {
+        "name": "aLostCommitAcknowledgementNeverRetriesTheSnapshot",
+        "evidence": "A real commit succeeds but acknowledgement throws SQLITE_BUSY; reconciliation exception occurs after one update and one commit, restart shows exactly one debit"
+      },
+      {
+        "name": "anUnconfirmedRollbackNeverRetriesOrEnablesAutoCommit",
+        "evidence": "Rollback outcome is made unknown after a real lock conflict; reconciliation exception occurs, one update attempt, no commits and no enabling auto-commit; restart retains the original 2000.00"
+      }
+    ],
+    "skipped_cases": [
+      {
+        "class": "MySqlTreasuryStateIntegrationTest",
+        "name": "simultaneousReplayCommitsOneTransferAndIdleInstanceCanRefreshAndWrite",
+        "reason": "System property [starcore.mysql.it] does not exist"
+      },
+      {
+        "class": "MySqlTreasuryStateIntegrationTest",
+        "name": "concurrentFirstSnapshotsHaveOneWinnerAndLoserCanReload",
+        "reason": "System property [starcore.mysql.it] does not exist"
+      }
+    ]
+  },
+  "post_fix_runtime": {
+    "requested_source_core_sha256": "BD0B09DDA770E523B6666EF1126EA3ACDDA71DC2F2DC4CE502803D06E87C898A",
+    "isolated_runtime_core_sha256": "6545ED6D20ABB4EC681B4E520F7A93B051ABAA268F7633FCE636837BC9247547",
+    "isolated_runtime_starsupply_sha256": "16A1ED43CB3AC67F7992BA6C6DF79B78683983B8EE4105B0B6AB6309978A867B",
+    "descriptor_override_only": true,
+    "first_restart_attempt": "The first post-loop restart failed to bind before plugin enable because its old game port had acquired an unrelated owner; that process was left untouched",
+    "later_restart": "A later isolated restart was requested on alternate ports; this record does not certify its startup, replay or post-loop durability result",
+    "contention_replay_passed": false,
+    "business_restart_accepted": false,
+    "status": "Pending parent-owned actual runtime verification at the time this evidence file was prepared"
+  },
+  "artifacts": [
+    {
+      "path": "folia-sqlite-busy-tests-package.log",
+      "bytes": 50363,
+      "sha256": "3441705ABFA3BFEB43FBFB15835DC0CB99CB991AE74631755A28DA1F60027644"
+    },
+    {
+      "path": "folia-sqlite-busy-package-result.json",
+      "bytes": 365,
+      "sha256": "8628B55F544CFD0F676E617E9229737FAE1F42A30D271B3985C3961772795274"
+    },
+    {
+      "path": "folia-sqlite-busy-format.log",
+      "bytes": 3495,
+      "sha256": "D34EBDCE73A68D0A8A9B467219153C300C38EFB12FF1545AA68DAB845C4AF8EE"
+    },
+    {
+      "path": "folia-sqlite-busy-format-check.log",
+      "bytes": 3165,
+      "sha256": "32E0E9B4D47FBF1B3D4626A045C7801D34DB95CC1B2C51F230F768EDD2184DF0"
+    },
+    {
+      "path": "folia-sqlite-busy-source-before.json",
+      "bytes": 20697,
+      "sha256": "A52072407A357BBE4CED90304EEA1FDF4AC9C9D7F59E98672230D5E9C2910F9B"
+    }
+  ],
+  "full_folia_stack_accepted": false,
+  "full_goal_complete": false
+}

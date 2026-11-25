@@ -1,0 +1,127 @@
+{
+  "recorded_on": "2026-11-21",
+  "purpose": "Correct StarCore army hourly supply consumption rounding and restore starvation morale after native supply returns.",
+  "result": "targeted_tests_package_and_folia_runtime_passed",
+  "goal_complete": true,
+  "source": {
+    "upstream_commit": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "worktree": "C:/Users/Administrator/Documents/starsupply-deps/starcore-folia",
+    "folia_patch": "docs/upstream/starcore-folia-logistics.patch",
+    "folia_patch_sha256": "B5B04DBBC7619DC417932C143C487AFF9545AE9C3466A5B04E5ACB0AAA810C88",
+    "fresh_pinned_worktree_apply_check": true,
+    "fresh_pinned_worktree_apply_and_targeted_tests": "passed; 19 tests, 0 failures, 0 errors, 0 skipped"
+  },
+  "changes": {
+    "minute_consumption": "ArmyUnit persists an integer remainder 0..59 and accrues hourly supply rates across minute maintenance; 1 point/hour drains 1 point over 60 updates.",
+    "legacy_state": "Army JSON without supplyConsumptionRemainder loads with zero remainder; invalid values are rejected.",
+    "morale": "Removed hidden extra -5 from ArmyUnit.consumeSupply. ArmyService applies one -2 per minute below native supply 20 and restores +1 per minute when native supply is at least 20.",
+    "physical_inventory_link": "StarSupply physical FOOD still does not replenish StarCore native army supply; no unsafe call to the separately charged, unkeyed resupplyArmy API was added."
+  },
+  "tests": {
+    "command": "mvnw -B -ntp -Dspotless.skip=true -Dtest=ArmyUnitSupplyConsumptionTest,ArmyStateCodecTest,ArmyServiceStatePersistenceTest test",
+    "tests": 19,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "format": {
+    "command": "mvnw -B -ntp -Dspotless.ratchetFrom=HEAD spotless:apply",
+    "result": "passed",
+    "changed_files": 8
+  },
+  "package": {
+    "command": "mvnw -B -ntp -Dspotless.ratchetFrom=HEAD -DskipTests package",
+    "result": "BUILD SUCCESS",
+    "tests_skipped_by_package_command": true,
+    "production_sources_compiled": 2235,
+    "test_sources_compiled": 1034,
+    "jar": "C:/Users/Administrator/Documents/starsupply-deps/starcore-folia/target/starcore-1.0.0.jar",
+    "bytes": 19552956,
+    "sha256": "8D28C62313DF04C478B2E0A29CB5F663B61029762D9AC4217E7543AEB762650D"
+  },
+  "starsupply_cross_project_verify": {
+    "command": "mvnw -B -ntp verify",
+    "result": "BUILD SUCCESS",
+    "tests": 74,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "jar": "C:/Users/Administrator/Documents/starsupply/target/starsupply-0.1.0.jar",
+    "bytes": 14653332,
+    "sha256": "538CE5A8ACF8556DF05FE928E8236560A7E77E7E791EDE3E9A8187ADAD53854A",
+    "folia_runtime_deployed": false
+  },
+  "runtime": {
+    "folia_deployment_verified": true,
+    "stage_path": "C:/Users/Administrator/Documents/starsupply-deps/starsupply-native-acceptance-20261121",
+    "source_starcore_artifact": {
+      "sha256": "6D84B645268E9DFCCA7B0766B898C372E32F448CB6B317C919BF65E3B3AE8243",
+      "bytes": 19556178
+    },
+    "runtime_starcore_artifact": {
+      "sha256": "25E759BF7FC130EA0D42F48C890F3EF20C4DF5ED2C305C0EBB1DCCC3C65FF7BA",
+      "descriptor_override_only": true,
+      "source_class_files": 7289,
+      "matching_runtime_class_files": 7289,
+      "missing_or_changed_class_files": 0
+    },
+    "source_starsupply_artifact": {
+      "sha256": "743F3F188186B475403792BCCED45DD3B6DC22EE7F1F5FBC647FE26EDFCA98A3",
+      "bytes": 14666781
+    },
+    "runtime_starsupply_artifact": {
+      "sha256": "7DB32A8784A7168C7C6DB30891CE8C358C6C3650DD6B2FB903657BAD37F9D5CA",
+      "descriptor_override_only": true,
+      "source_class_files": 248,
+      "matching_runtime_class_files": 248,
+      "missing_or_changed_class_files": 0
+    },
+    "army": "fb527c20-e589-421c-8881-366a9f9d3928",
+    "fixture_preparation": {
+      "native_supply": 15,
+      "base_morale": 70,
+      "gameplay_supply_evidence": false
+    },
+    "post_restart_maintenance_watch": {
+      "watch_started_at": "2026-11-21T09:43:35.963344100Z",
+      "first_sample_at": "2026-11-21T09:43:36.028025200Z",
+      "first_sample_native_supply": 95,
+      "first_sample_base_morale": 72,
+      "first_base_morale_74_at": "2026-11-21T09:45:07.057975500Z",
+      "last_sample_at": "2026-11-21T09:46:08.057513900Z",
+      "last_sample_native_supply": 95,
+      "last_sample_base_morale": 75,
+      "sample_count": 153,
+      "observed_seconds": 152.0,
+      "result": "passed_full_maintenance_minute_and_base_morale_recovery"
+    },
+    "low_memory_runtime": {
+      "jvm_arguments": "-Xms256M -Xmx1024M -XX:ActiveProcessorCount=2 -XX:+UseSerialGC",
+      "successful_folia_boots": 3,
+      "maximum_observed_private_memory_mib": 963.2,
+      "oom_after_memory_limit_adjustment": false,
+      "final_server_shutdown_normal": true,
+      "final_free_physical_memory_gib": 3.28
+    },
+    "proof_fixtures_disabled_after_acceptance": true,
+    "production_only_folia_boot": true,
+    "evidence": [
+      {
+        "path": "plugins/SupplyNativeProof/evidence.jsonl",
+        "bytes": 298014,
+        "sha256": "3E20D6FC0C3C3DE87E54990753AA2EFB21381FFB77A7F25B0DB1F1DD704103C1"
+      },
+      {
+        "path": "native-supply-proof/native-1795252394135.jsonl",
+        "bytes": 11374,
+        "sha256": "3A260FF18C87493D241D6F8F533689326DCC07DCD092301C4F798A1000DA4FBB"
+      },
+      {
+        "path": "logs/native-lowmem-run3-out.log",
+        "bytes": 30667,
+        "sha256": "0D1F38712E48728678821D4C6A28A5FF0E80C8D1B6A425AD74D58DE0EB0FA587"
+      }
+    ],
+    "scope_limit": "This verifies the deployed army maintenance and native receipt paths on this isolated Folia profile. It does not certify every StarCore module, the production plugin descriptors, or optional-plugin combinations."
+  }
+}

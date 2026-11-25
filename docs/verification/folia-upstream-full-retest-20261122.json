@@ -1,0 +1,149 @@
+{
+  "label": "folia-upstream-full-retest-20261122",
+  "baseCommit": "f769e62799e769a18fe51305b545869a17f80cd1",
+  "portablePatchSha256": "90340B2BE29EF76D071F618EE65B7F44ED82F4A803FC8BE8CD9A40C812FD5350",
+  "runtime": {
+    "operatingSystem": "Windows",
+    "java": "OpenJDK 21.0.13.1+2-LTS",
+    "mavenWrapper": "3.9.16",
+    "worktree": "C:/Users/Administrator/Documents/starsupply-deps/starcore-folia"
+  },
+  "initialFullSuite": {
+    "command": "mvnw.cmd -Dspotless.skip=true test",
+    "finishedAtLocal": "2026-11-22T05:50:40+08:00",
+    "tests": 7095,
+    "failures": 3,
+    "errors": 100,
+    "skipped": 21,
+    "diagnostics": {
+      "publicApiBaselineMismatch": 1,
+      "dungeonWorldFilesFailures": 2,
+      "temporaryPathSymlinkErrors": 69,
+      "directorySyncErrors": 29,
+      "resolutionChatMockServerErrors": 2
+    },
+    "rerunAfterFollowUpFixes": false
+  },
+  "followUp": {
+    "apiBaselineUpdatedForSynchronizedModifiers": true,
+    "pluginServerConfiguredInResolutionChatTest": true,
+    "targetedRepairCommand": "mvnw.cmd -Dspotless.skip=true -Dstarcore.api.update=true -Dtest=PublicApiCompatibilityTest,ResolutionChatListenerContractTest test",
+    "repairTests": 5,
+    "repairFailures": 0,
+    "repairErrors": 0,
+    "repairSkipped": 0
+  },
+  "dungeonSubsetWithDedicatedTempRoot": {
+    "command": "mvnw.cmd -Dspotless.skip=true -Dtest=*Dungeon*Test,DungeonFileDurabilityTest test",
+    "javaToolOptions": "-Djava.io.tmpdir=C:\\tmp\\starcore-folia-junit-tmp",
+    "finishedAtLocal": "2026-11-22T06:12:49+08:00",
+    "tests": 339,
+    "failures": 1,
+    "errors": 94,
+    "skipped": 0,
+    "pathAliasErrors": 0,
+    "directorySyncCause": "java.nio.file.AccessDeniedException from WindowsFileSystemProvider when opening directories",
+    "remainingFailure": "DungeonWorldFilesTest.rejectsContainerReplacedWithAnotherDirectoryAfterInitialization",
+    "fileKeyProbe": {
+      "beforeReplacement": null,
+      "afterReplacement": null,
+      "equal": true
+    }
+  },
+  "postFixDungeonTests": {
+    "command": "mvnw.cmd -B -ntp -Dtest=*Dungeon*Test,DungeonFileDurabilityTest test",
+    "javaToolOptions": "-Djava.io.tmpdir=C:\\tmp\\starcore-folia-junit-tmp",
+    "finishedAtLocal": "2026-11-22T18:19:11+08:00",
+    "tests": 340,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "fixes": {
+      "missingFileKey": "Uses a persistent UUID identity marker in the world container.",
+      "windowsDirectorySync": "Treats Windows AccessDeniedException while opening a directory as unsupported and logs once."
+    }
+  },
+  "postFixFullSuite": {
+    "command": "mvnw.cmd -B -ntp -Dspotless.skip=true test",
+    "javaToolOptions": "-Djava.io.tmpdir=C:\\tmp\\starcore-folia-junit-tmp",
+    "mavenOpts": "-Xms128m -Xmx768m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC",
+    "finishedAtLocal": "2026-11-22T18:28:53+08:00",
+    "tests": 7096,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 21,
+    "skippedCategories": {
+      "mysqlIntegration": 10,
+      "redisIntegration": 2,
+      "livePlayerNarrative": 7,
+      "deprecatedWarAuthority": 2
+    },
+    "build": "SUCCESS"
+  },
+  "postFixFullVerify": {
+    "command": "mvnw.cmd -B -ntp -Dspotless.ratchetFrom=HEAD verify",
+    "javaToolOptions": "-Djava.io.tmpdir=C:\\tmp\\starcore-folia-junit-tmp",
+    "mavenOpts": "-Xms128m -Xmx768m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC",
+    "finishedAtLocal": "2026-11-22T19:46:50+08:00",
+    "spotless": "SUCCESS",
+    "tests": 7096,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 21,
+    "build": "SUCCESS",
+    "artifact": {
+      "path": "target/starcore-1.0.0.jar",
+      "bytes": 19557442,
+      "sha256": "6BB059707AEDCFE3E7D65BAD768329E891BA7144C6DA6B1B9A1C30790E8A4B0A"
+    },
+    "cycloneDx": {
+      "jsonPath": "target/starcore-1.0.0-sbom.json",
+      "components": 36,
+      "sha256": "77CEC8E7F5D94DF019F06FADFE4444E2AAE797E4821755FE6135A6DC4C181515",
+      "remotePomMetadataWarnings": true
+    }
+  },
+  "sqliteBusyRetryTelemetry": {
+    "command": "mvnw.cmd -B -ntp -Dtest=SqlTreasuryBusyRetryTest test",
+    "finishedAtLocal": "2026-11-22T19:41:08+08:00",
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "observedLog": "SQLITE_BUSY_RETRY namespace=test attempt=1 maxRetries=2 elapsedMs=18 retryAllowed=true",
+    "productionJarContainsTelemetry": true,
+    "testAssertsObservedLog": true,
+    "foliaRuntimeRetryObserved": true,
+    "foliaRuntimeEvidence": "folia-sqlite-contention-live-retry-20261122.json",
+    "previousRuntimeJarSha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B"
+  },
+  "targetedFoliaPackage": {
+    "command": "mvnw.cmd -Dspotless.ratchetFrom=HEAD -Dtest=CompatSchedulerTest,*Folia*Test,ModuleManagerTest,ArmyService*Test,*Siege*Test,War*Test,SupplyLine*Test,Battlefield*Test,PublicApiCompatibilityTest,ResolutionChatListenerContractTest package",
+    "finishedAtLocal": "2026-11-22T06:00:18+08:00",
+    "tests": 464,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 2,
+    "build": "SUCCESS"
+  },
+  "foliaRuntimeSqliteRetry": {
+    "evidence": "folia-sqlite-contention-live-retry-20261122.json",
+    "server": "Folia 1.21.11-14-529aabc",
+    "telemetryLineObserved": "SQLITE_BUSY_RETRY namespace=treasury attempt=1 maxRetries=2 elapsedMs=8 retryAllowed=true",
+    "publicArmyCreatedAfterRetry": "07a4c2a9-86d7-4447-a79d-417bc2fb2edf",
+    "testDatabaseIntegrity": "ok",
+    "normalShutdown": true,
+    "originalDatabaseUnchanged": true,
+    "originalStageJarAndConfigRestored": true
+  },
+  "artifact": {
+    "path": "target/starcore-1.0.0.jar",
+    "bytes": 19556178,
+    "sha256": "6D84B645268E9DFCCA7B0766B898C372E32F448CB6B317C919BF65E3B3AE8243",
+    "matchesPreviouslyRuntimeVerifiedArtifact": true
+  },
+  "remaining": [
+    "The native directory force path has not been exercised on a filesystem that supports opening directories through FileChannel.",
+    "The SQLite runtime retry was verified using the disposable stage and a copied database, not on a production server."
+  ]
+}

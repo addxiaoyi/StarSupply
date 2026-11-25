@@ -1,0 +1,303 @@
+{
+  "recorded_on": "2026-11-21",
+  "purpose": "Persist physical StarSupply FOOD consumption into StarCore native army supply with durable idempotency and operator recovery.",
+  "result": "tests_builds_and_folia_receipt_acceptance_passed",
+  "goal_complete": true,
+  "starcore": {
+    "upstream_commit": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "worktree": "C:/Users/Administrator/Documents/starsupply-deps/starcore-folia",
+    "patch": "docs/upstream/starcore-folia-logistics.patch",
+    "patch_sha256": "A7CB351DA0B6D70E8E3754E85D6BA5A5D93B774A36528CEE6F143FA2605DF010",
+    "public_methods": [
+      "ArmyService.applyLogisticsSupply(UUID, UUID, UUID, int)",
+      "ArmyService.logisticsSupplyReceipt(UUID)"
+    ],
+    "targeted_test_reports": [
+      {
+        "suite": "ArmyLogisticsSupplyTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "ArmyServiceStatePersistenceTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "ArmyUnitSupplyConsumptionTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "targeted_test_total": 24,
+    "package": {
+      "command": "mvnw -B -ntp -Dspotless.ratchetFrom=HEAD -DskipTests package",
+      "result": "BUILD SUCCESS",
+      "tests_skipped_by_package_command": true,
+      "production_sources_compiled": 2236,
+      "test_sources_compiled": 1035,
+      "jar": "C:/Users/Administrator/Documents/starsupply-deps/starcore-folia/target/starcore-1.0.0.jar",
+      "bytes": 19556178,
+      "sha256": "6D84B645268E9DFCCA7B0766B898C372E32F448CB6B317C919BF65E3B3AE8243",
+      "built_at": "2026-11-21T14:29:56+08:00",
+      "public_api_verified_in_jar": true
+    }
+  },
+  "starsupply": {
+    "main_schema": 10,
+    "verify": {
+      "command": "mvnw -B -ntp verify",
+      "result": "BUILD SUCCESS",
+      "tests": 92,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "built_at": "2026-11-21T14:42:56+08:00",
+      "jar": "target/starsupply-0.1.0.jar",
+      "bytes": 14666781,
+      "sha256": "743F3F188186B475403792BCCED45DD3B6DC22EE7F1F5FBC647FE26EDFCA98A3"
+    }
+  },
+  "acceptance_fixture": {
+    "result": "BUILD SUCCESS",
+    "command": "tools/acceptance/native-supply/build.ps1",
+    "compiled_against_starcore_sha256": "6D84B645268E9DFCCA7B0766B898C372E32F448CB6B317C919BF65E3B3AE8243",
+    "compiled_against_starsupply_sha256": "743F3F188186B475403792BCCED45DD3B6DC22EE7F1F5FBC647FE26EDFCA98A3",
+    "jar": "tools/acceptance/native-supply/build/SupplyNativeProof-1.0.0.jar",
+    "jar_sha256": "A048A8B19604D3DEA18F22A3A38704D1ABC578FB65BBA0AFD74D522952C29CDE",
+    "runtime_started": true,
+    "runtime_completed": true,
+    "cleanup_state": "proof fixture jars renamed to .jar.disabled in the isolated runtime"
+  },
+  "runtime": {
+    "status": "passed",
+    "stage_path": "C:/Users/Administrator/Documents/starsupply-deps/starsupply-native-acceptance-20261121",
+    "server_process_running_at_last_check": false,
+    "final_shutdown_normal": true,
+    "server_jar_deployed": true,
+    "starcore_jar_deployed": true,
+    "starsupply_jar_deployed": true,
+    "paper_or_folia_runtime_verified": true,
+    "isolated_descriptor_change": "folia-supported: true was added to the disposable runtime copies only.",
+    "deployed_jars": [
+      {
+        "name": "StarCore-1.0.0.jar",
+        "bytes": 19496823,
+        "sha256": "25E759BF7FC130EA0D42F48C890F3EF20C4DF5ED2C305C0EBB1DCCC3C65FF7BA"
+      },
+      {
+        "name": "StarSupply-0.1.0.jar",
+        "bytes": 14663219,
+        "sha256": "7DB32A8784A7168C7C6DB30891CE8C358C6C3650DD6B2FB903657BAD37F9D5CA"
+      },
+      {
+        "name": "FoliaSupplyProof-1.0.0.jar",
+        "bytes": 23883,
+        "sha256": "05F745074CA9A7A7DCFC6D02C944A6D670927F7FD1EB6CDC1F9A064C04012485"
+      },
+      {
+        "name": "SupplyNativeProof-1.0.0.jar",
+        "bytes": 8785,
+        "sha256": "A048A8B19604D3DEA18F22A3A38704D1ABC578FB65BBA0AFD74D522952C29CDE"
+      }
+    ],
+    "test_army": "fb527c20-e589-421c-8881-366a9f9d3928",
+    "normal_player_workflow": {
+      "resources": [
+        "FOOD",
+        "MEDICAL",
+        "EQUIPMENT",
+        "MATERIALS",
+        "ENGINEERING",
+        "STRATEGIC"
+      ],
+      "purchases_paid_once": 6,
+      "transports_paid_once": 6,
+      "deliveries": 6,
+      "unique_purchase_and_transport_settlements_each": 1,
+      "treasury_during_both_receipt_replays": 224.4
+    },
+    "multi_resource_consumption": {
+      "army": "fb527c20-e589-421c-8881-366a9f9d3928",
+      "configured_cycle_seconds": 30,
+      "consumption_events_for_army": 20,
+      "unique_consumption_ids": true,
+      "each_event_published_once": true,
+      "fully_supplied_all_resource_cycles_before_shutdown": 6,
+      "full_cycles": [
+        {
+          "at": "2026-11-21T09:14:30.288464300Z",
+          "consumption_id": "e91724fe-4b4d-3e48-818b-b76f3ccd11d3",
+          "interval": 59841749,
+          "demand": 1,
+          "consumed_per_resource": 1
+        },
+        {
+          "at": "2026-11-21T09:15:00.516359Z",
+          "consumption_id": "216c886e-ba6c-3ece-85a3-023852b7d81e",
+          "interval": 59841750,
+          "demand": 1,
+          "consumed_per_resource": 1
+        },
+        {
+          "at": "2026-11-21T09:42:07.151313500Z",
+          "consumption_id": "d94de878-ad32-38d8-9c68-72ecae43ebef",
+          "interval": 59841804,
+          "demand": 1,
+          "consumed_per_resource": 1
+        },
+        {
+          "at": "2026-11-21T09:42:30.927202800Z",
+          "consumption_id": "6c5d8605-3954-3a30-bbad-70d6119f997d",
+          "interval": 59841805,
+          "demand": 1,
+          "consumed_per_resource": 1
+        },
+        {
+          "at": "2026-11-21T09:43:00.924450500Z",
+          "consumption_id": "8e7ba581-22fe-3651-8569-ae612a68ce09",
+          "interval": 59841806,
+          "demand": 1,
+          "consumed_per_resource": 1
+        },
+        {
+          "at": "2026-11-21T09:43:30.923805400Z",
+          "consumption_id": "7e841bb1-bfa3-3c7e-a0b1-9cca9d28091c",
+          "interval": 59841807,
+          "demand": 1,
+          "consumed_per_resource": 1
+        }
+      ]
+    },
+    "native_supply": {
+      "preparation_supply": 15,
+      "initial_delivery_run_maximum": 55,
+      "post_restart_watch_supply": 95,
+      "full_coverage_observed": true,
+      "initial_delivery_run_credits": [
+        {
+          "id": "8435aeb7-a516-3542-9d45-ce0deec4b6d6",
+          "slot": 59841747,
+          "points": 10,
+          "state": "APPLIED",
+          "attempts": 0
+        },
+        {
+          "id": "cdd68382-ea71-34f9-94fa-e74150964375",
+          "slot": 59841748,
+          "points": 10,
+          "state": "APPLIED",
+          "attempts": 0
+        },
+        {
+          "id": "e91724fe-4b4d-3e48-818b-b76f3ccd11d3",
+          "slot": 59841749,
+          "points": 10,
+          "state": "APPLIED",
+          "attempts": 0
+        },
+        {
+          "id": "216c886e-ba6c-3ece-85a3-023852b7d81e",
+          "slot": 59841750,
+          "points": 10,
+          "state": "APPLIED",
+          "attempts": 0
+        }
+      ],
+      "morale_observation": {
+        "watch_started_at": "2026-11-21T09:43:35.963344100Z",
+        "watch_samples": 153,
+        "first_sample": {
+          "at": "2026-11-21T09:43:36.028025200Z",
+          "native_supply": 95,
+          "base_morale": 72
+        },
+        "first_sample_at_morale_74": {
+          "at": "2026-11-21T09:45:07.057975500Z",
+          "native_supply": 95,
+          "base_morale": 74
+        },
+        "last_sample": {
+          "at": "2026-11-21T09:46:08.057513900Z",
+          "native_supply": 95,
+          "base_morale": 75
+        },
+        "observation_seconds": 152.0,
+        "result": "passed_full_maintenance_minute_observed_after_native_supply_above_20"
+      },
+      "gameplay_recipe_production_verified": false,
+      "administrative_item_grants_used_for_test_setup": true
+    },
+    "receipt_replays": [
+      {
+        "stage": "before_normal_shutdown",
+        "at": "2026-11-21T09:43:07.221195800Z",
+        "request": "216c886e-ba6c-3ece-85a3-023852b7d81e",
+        "receipt_points": 10,
+        "native_supply_before": 85,
+        "native_supply_after": 85,
+        "treasury_before": 224.4,
+        "treasury_after": 224.4,
+        "conflict_rejected": true
+      },
+      {
+        "stage": "after_normal_restart",
+        "at": "2026-11-21T09:47:28.636355800Z",
+        "request": "216c886e-ba6c-3ece-85a3-023852b7d81e",
+        "receipt_points": 10,
+        "native_supply_before": 95,
+        "native_supply_after": 95,
+        "treasury_before": 224.4,
+        "treasury_after": 224.4,
+        "conflict_rejected": true
+      }
+    ],
+    "receipt_survived_normal_restart": true,
+    "outbox_request_after_restart": {
+      "id": "216c886e-ba6c-3ece-85a3-023852b7d81e",
+      "state": "APPLIED",
+      "attempts": 0
+    },
+    "proof_fixtures_disabled": [
+      "FoliaSupplyProof-1.0.0.jar.disabled",
+      "SupplyNativeProof-1.0.0.jar.disabled"
+    ],
+    "production_only_folia_boot": {
+      "result": "passed",
+      "plugins_loaded": [
+        "StarCore",
+        "StarSupply"
+      ],
+      "normal_shutdown": true
+    },
+    "probe_failure": {
+      "cause": "The read-only acceptance inspector ordered item_lot by a nonexistent id column.",
+      "corrected": true,
+      "correction": "Use item_lot's composite transfer,ordinal key with bounded rows and explicit columns.",
+      "corrected_inspector_ran_successfully": true
+    },
+    "jvm_memory_failure": {
+      "historical_failure": true,
+      "command_line_heap": "-Xms512M -Xmx1536M",
+      "crash_reports": [
+        "hs_err_pid12828.log",
+        "hs_err_pid32596.log"
+      ],
+      "failure": "JVM native memory allocation failed while requesting about 1 MiB.",
+      "recovery_command_line": "-Xms256M -Xmx1024M -XX:ActiveProcessorCount=2 -XX:+UseSerialGC",
+      "bounded_heap_boots_succeeded": 3,
+      "maximum_observed_private_memory_mib": 963.2,
+      "free_physical_memory_after_final_shutdown_gib": 3.28,
+      "additional_oom_after_bounded_restart": false
+    },
+    "not_covered_by_this_acceptance": [
+      "Cookery recipe production was not tested; administrative item grants were used to prepare physical inventory for the purchase and delivery workflow."
+    ]
+  }
+}

@@ -174,7 +174,40 @@ public final class SupplyStore implements AutoCloseable {
                 }
                 version = 8;
             }
-            if (version != 8) {
+            if (version == 8) {
+                try (InputStream input = SupplyStore.class.getResourceAsStream("/db/v9.sql")) {
+                    if (input == null) throw new IOException("Missing SQLite migration v9");
+                    String migration = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+                    tx(() -> {
+                        for (String ddl : migration.split(";")) if (!ddl.isBlank()) execute(ddl);
+                        return null;
+                    });
+                }
+                version = 9;
+            }
+            if (version == 9) {
+                try (InputStream input = SupplyStore.class.getResourceAsStream("/db/v10.sql")) {
+                    if (input == null) throw new IOException("Missing SQLite migration v10");
+                    String migration = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+                    tx(() -> {
+                        for (String ddl : migration.split(";")) if (!ddl.isBlank()) execute(ddl);
+                        return null;
+                    });
+                }
+                version = 10;
+            }
+            if (version == 10) {
+                try (InputStream input = SupplyStore.class.getResourceAsStream("/db/v11.sql")) {
+                    if (input == null) throw new IOException("Missing SQLite migration v11");
+                    String migration = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+                    tx(() -> {
+                        for (String ddl : migration.split(";")) if (!ddl.isBlank()) execute(ddl);
+                        return null;
+                    });
+                }
+                version = 11;
+            }
+            if (version != 11) {
                 throw new SQLException("Unsupported StarSupply database schema " + version);
             }
         } catch (SQLException | IOException | RuntimeException ex) {
@@ -211,6 +244,20 @@ public final class SupplyStore implements AutoCloseable {
 
     public synchronized Optional<Warehouse> warehouse(String id) throws SQLException {
         return one("SELECT * FROM warehouse WHERE id=?", SupplyStore::warehouse, id);
+    }
+
+    /** Changes only an existing front's army key; physical stock and all order rows remain at this station. */
+    public synchronized Warehouse rebindFrontArmy(String id, UUID nation, UUID army) throws SQLException {
+        return tx(() -> {
+            require(army != null, "必须指定 StarCore 军队 UUID");
+            Warehouse front = warehouse(id).orElseThrow(() -> error("前线站不存在"));
+            require(front.kind() == WarehouseKind.FRONT && front.nationId().equals(nation), "只能重绑定本国前线站");
+            require(one("SELECT 1 FROM warehouse WHERE army=? AND id<>?", row -> true, army, id).isEmpty(),
+                    "该军队已绑定其他前线站");
+            require(execute("UPDATE warehouse SET army=? WHERE id=? AND nation=? AND kind='FRONT'",
+                    army, id, nation) == 1, "前线站绑定未更新");
+            return warehouse(id).orElseThrow();
+        });
     }
 
     public synchronized List<Warehouse> warehouses(UUID nation) throws SQLException {
@@ -780,9 +827,19 @@ public final class SupplyStore implements AutoCloseable {
     /** Spend whole physical items once per army and time bucket; surplus value is capped at demand. */
     public synchronized Map<ResourceType, Consumption> consume(Warehouse front, long interval,
                                                                Map<ResourceType, Integer> demand) throws SQLException {
+        return consume(front, interval, demand, 0);
+    }
+
+    public synchronized Map<ResourceType, Consumption> consume(Warehouse front, long interval,
+                                                               Map<ResourceType, Integer> demand,
+                                                               long intervalMillis) throws SQLException {
         require(front.kind() == WarehouseKind.FRONT && front.armyId() != null, "前线站未绑定军队");
+        require(intervalMillis >= 0 && intervalMillis <= 86_400_000L,
+                "补给周期长度超出范围");
+        long consumedAt = intervalMillis == 0 ? System.currentTimeMillis()
+                : Math.multiplyExact(interval, intervalMillis);
         return tx(() -> {
-            var existing = consumption(front.armyId(), interval);
+            var existing = consumption(front.armyId(), interval, intervalMillis);
             if (!existing.isEmpty()) return existing;
             Map<ResourceType, Consumption> consumed = new EnumMap<>(ResourceType.class);
             for (var entry : demand.entrySet()) {
@@ -803,26 +860,100 @@ public final class SupplyStore implements AutoCloseable {
                     }
                 }
                 int supplied = needed - remaining;
-                execute("INSERT INTO consumption VALUES(?,?,?,?,?)", front.armyId(), interval, entry.getKey(),
-                        needed, supplied);
+                execute("INSERT INTO consumption(army,slot,interval_ms,consumed_at,resource,demand,units) "
+                                + "VALUES(?,?,?,?,?,?,?)",
+                        front.armyId(), interval, intervalMillis, consumedAt, entry.getKey(), needed, supplied);
                 consumed.put(entry.getKey(), new Consumption(needed, supplied));
+            }
+            // The obligation and physical debit commit together. Legacy cycles are never backfilled.
+            Consumption food = consumed.get(ResourceType.FOOD);
+            if (food != null && food.units() > 0) {
+                int points = (int) Math.min(10, (10L * food.units() + food.demand() - 1) / food.demand());
+                execute("INSERT INTO native_supply_credit(id,army,nation,slot,interval_ms,points) "
+                                + "VALUES(?,?,?,?,?,?)",
+                        consumptionId(front.armyId(), interval, intervalMillis), front.armyId(), front.nationId(),
+                        interval, intervalMillis, points);
             }
             return Map.copyOf(consumed);
         });
     }
 
+    public static UUID consumptionId(UUID army, long interval) {
+        return consumptionId(army, interval, 0);
+    }
+
+    public static UUID consumptionId(UUID army, long interval, long intervalMillis) {
+        require(intervalMillis >= 0 && intervalMillis <= 86_400_000L, "补给周期长度超出范围");
+        return UUID.nameUUIDFromBytes(("starsupply:consumption:" + army + ":" + interval + ":" + intervalMillis)
+                .getBytes(StandardCharsets.UTF_8));
+    }
+
+    public synchronized List<NativeSupplyCredit> pendingNativeSupply(long now) throws SQLException {
+        return rows("SELECT * FROM native_supply_credit WHERE state='PENDING' AND next_attempt<=? "
+                + "ORDER BY slot,interval_ms,id LIMIT 128", SupplyStore::nativeSupplyCredit, now);
+    }
+
+    public synchronized List<NativeSupplyCredit> nativeSupplyCredits(UUID army) throws SQLException {
+        return rows("SELECT * FROM native_supply_credit WHERE army=? ORDER BY slot DESC,interval_ms DESC LIMIT 128",
+                SupplyStore::nativeSupplyCredit, army);
+    }
+
+    public synchronized void confirmNativeSupply(UUID id) throws SQLException {
+        execute("UPDATE native_supply_credit SET state='APPLIED',last_error='' "
+                + "WHERE id=? AND state IN ('PENDING','REVIEW')", id);
+    }
+
+    public synchronized Optional<NativeSupplyCredit> nativeSupplyCredit(UUID id) throws SQLException {
+        return one("SELECT * FROM native_supply_credit WHERE id=?", SupplyStore::nativeSupplyCredit, id);
+    }
+
+    public synchronized void retryNativeSupply(UUID id, long now) throws SQLException {
+        require(execute("UPDATE native_supply_credit SET state='PENDING',next_attempt=?,last_error='' "
+                + "WHERE id=? AND state='REVIEW'", now, id) == 1, "仅可重新排队待核验的原生补给");
+    }
+
+    public synchronized void deferNativeSupply(NativeSupplyCredit credit, long now, boolean review,
+                                               String error) throws SQLException {
+        long delay = Math.min(300_000L, 5_000L << Math.min(credit.attempts(), 6));
+        execute("UPDATE native_supply_credit SET state=?,attempts=attempts+1,next_attempt=?,last_error=? "
+                        + "WHERE id=? AND state='PENDING'", review ? "REVIEW" : "PENDING",
+                Math.addExact(now, delay), error == null ? "Unknown upstream result" : error.substring(0, Math.min(500, error.length())),
+                credit.id());
+    }
+
+    private static NativeSupplyCredit nativeSupplyCredit(ResultSet row) throws SQLException {
+        return new NativeSupplyCredit(uuid(row, "id"), uuid(row, "army"), uuid(row, "nation"),
+                row.getLong("slot"), row.getLong("interval_ms"), row.getInt("points"), row.getString("state"),
+                row.getInt("attempts"), row.getString("last_error"));
+    }
+
     public synchronized Map<ResourceType, Consumption> consumption(UUID army, long interval) throws SQLException {
+        long intervalMillis = one("SELECT interval_ms FROM consumption WHERE army=? AND slot=? "
+                        + "ORDER BY CASE WHEN interval_ms=0 THEN 0 ELSE 1 END,consumed_at DESC,interval_ms DESC LIMIT 1",
+                row -> row.getLong(1), army, interval).orElse(0L);
+        return consumption(army, interval, intervalMillis);
+    }
+
+    public synchronized Map<ResourceType, Consumption> consumption(UUID army, long interval,
+                                                                    long intervalMillis) throws SQLException {
+        Map<ResourceType, Consumption> exact = readConsumption(army, interval, intervalMillis);
+        if (!exact.isEmpty() || intervalMillis == 0) return exact;
+        return readConsumption(army, interval, 0);
+    }
+
+    private Map<ResourceType, Consumption> readConsumption(UUID army, long interval, long intervalMillis)
+            throws SQLException {
         Map<ResourceType, Consumption> result = new EnumMap<>(ResourceType.class);
-        rows("SELECT resource,demand,units FROM consumption WHERE army=? AND slot=?", row -> {
+        rows("SELECT resource,demand,units FROM consumption WHERE army=? AND slot=? AND interval_ms=?", row -> {
             result.put(ResourceType.valueOf(row.getString("resource")),
                     new Consumption(row.getInt("demand"), row.getInt("units")));
             return true;
-        }, army, interval);
+        }, army, interval, intervalMillis);
         return Map.copyOf(result);
     }
 
     public synchronized void pruneConsumption(long before) throws SQLException {
-        execute("DELETE FROM consumption WHERE slot<?", before);
+        execute("DELETE FROM consumption WHERE consumed_at<?", before);
     }
 
     private void reopenPurchase(Transfer transfer) throws SQLException {
@@ -846,6 +977,7 @@ public final class SupplyStore implements AutoCloseable {
     }
 
     private PreparedStatement statement(String sql, Object... args) throws SQLException {
+        SqlTransactions.requireUsable(connection);
         PreparedStatement statement = connection.prepareStatement(sql);
         try {
             for (int i = 0; i < args.length; i++) {
@@ -878,21 +1010,7 @@ public final class SupplyStore implements AutoCloseable {
     }
 
     private <T> T tx(SqlWork<T> work) throws SQLException {
-        connection.setAutoCommit(false);
-        try {
-            T result = work.run();
-            connection.commit();
-            return result;
-        } catch (SQLException | RuntimeException ex) {
-            try {
-                connection.rollback();
-            } catch (SQLException rollback) {
-                ex.addSuppressed(rollback);
-            }
-            throw ex;
-        } finally {
-            connection.setAutoCommit(true);
-        }
+        return SqlTransactions.run(connection, work::run);
     }
 
     @FunctionalInterface private interface Row<T> { T read(ResultSet row) throws SQLException; }

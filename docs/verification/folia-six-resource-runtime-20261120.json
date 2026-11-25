@@ -1,0 +1,525 @@
+{
+  "recorded_on": "2026-11-20",
+  "purpose": "Actual Folia two-region six-resource physical custody, payment, disconnect and combat evidence",
+  "result": "listed_paths_passed_with_a_real_upstream_sqlite_failure_retained",
+  "full_goal_complete": false,
+  "production_folia_declaration": false,
+  "environment": {
+    "server": "Folia 1.21.11-14-529aabc",
+    "java": 21,
+    "tick_workers": 2,
+    "client": "Mineflayer 4.37.1 / Minecraft 1.21.11",
+    "active_production_plugins": [
+      "StarCore logistics profile",
+      "StarSupply",
+      "CraftEngine 26.9.1",
+      "KaleidoscopeCookeryPlugin 1.3.0"
+    ],
+    "tavern_plugin_loaded_in_this_run": false,
+    "runtime_jars": {
+      "craftengine-26.9.1.jar": "021260C87E3546730D321F4360B1744E6E33CAA1D68E98AE30DCDBBDC347AE0F",
+      "FoliaSupplyProof-1.0.0.jar": "48EA27CF87C43F38A49CD49ABC2F3553DAB1583CA688D49ECA30F07CB847792C",
+      "KaleidoscopeCookeryPlugin-1.3.0.jar": "B4D09DF6224A343E83D8C8E1998710E4835926E1104D0418B83845D6A077E336",
+      "StarCore-1.0.0.jar": "0C0D340C40E540674F9DE7E9BB03216894D26C78C51D4350DD331C07C807D509",
+      "StarSupply-0.1.0.jar": "16A1ED43CB3AC67F7992BA6C6DF79B78683983B8EE4105B0B6AB6309978A867B"
+    },
+    "test_descriptor_only_override": "folia-supported: true on the isolated runtime JARs; production metadata remains unchanged",
+    "config": {
+      "transport_blocks_per_second": 100.0,
+      "supply_interval_seconds": 30,
+      "clock": "actual server wall time; no time injection"
+    },
+    "read_only_extraction": true,
+    "direct_economy_database_writes": false,
+    "private_field_injection": false
+  },
+  "authority": {
+    "alpha": "b361b25b-b7a4-460d-be8d-8237afdf0920",
+    "gamma": "5c4732f4-cedd-46ab-8bb9-8c20b7246a75",
+    "buyer": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+    "carrier": "b1ef34be-1610-379d-b9d3-97068ff1b518",
+    "attacking_army": "1fa264df-1e65-464d-bff2-2a604e9ba938",
+    "defending_army": "197a7eba-dca2-4a91-a10b-a757b19c2c33",
+    "active_war": "73fe8400-4488-4a24-9b2f-7772a52638db",
+    "origin": "alpha-depot",
+    "front": "folia-remote-front",
+    "road": "folia-remote-road",
+    "core_supply_line_binding": null
+  },
+  "independent_regions": {
+    "observations": [
+      {
+        "type": "parallel-owned",
+        "at": "2026-11-20T09:47:13.765326500Z",
+        "thread": "Folia Region Scheduler Thread #1",
+        "global": false,
+        "elapsedMicros": 59,
+        "location": {
+          "z": 68.5,
+          "world": "starsupply-stage1-world",
+          "y": 86.0,
+          "x": -21.5
+        },
+        "owned": true,
+        "player": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+        "overlap": true,
+        "maxActive": 2
+      },
+      {
+        "type": "parallel-owned",
+        "at": "2026-11-20T09:47:13.765326500Z",
+        "thread": "Folia Region Scheduler Thread #0",
+        "global": false,
+        "elapsedMicros": 39893,
+        "location": {
+          "z": 68.5,
+          "world": "starsupply-stage1-world",
+          "y": 70.0,
+          "x": -4120.5
+        },
+        "owned": true,
+        "player": "b1ef34be-1610-379d-b9d3-97068ff1b518",
+        "overlap": true,
+        "maxActive": 2
+      }
+    ],
+    "horizontal_separation_blocks": 4099.0,
+    "real_overlap": true,
+    "rendezvous_bound_millis": 250,
+    "scope": "Bounded test callbacks on two distant entity owners; does not claim all plugin call sites or load tests are verified"
+  },
+  "physical_loop": {
+    "administrative_item_preparation": true,
+    "recipe_production_proven_by_this_run": false,
+    "preparation": "real CraftEngine/Cookery /ce item give and vanilla /give; later custody operations in SURVIVAL",
+    "six_resource_rows": [
+      {
+        "resource": "FOOD",
+        "purchase_id": "9da083a4-d783-4cc9-ae3f-a31ce3dc5a55",
+        "shipment_id": "c15755b5-f9f1-4a0b-8d82-d0ad1c971cbb",
+        "purchase_settlement_id": "fe3af52d-0e57-4061-92d4-e99e28b48baf",
+        "transport_settlement_id": "c15755b5-f9f1-4a0b-8d82-d0ad1c971cbb",
+        "item_id": "kaleidoscopecookery:mantou",
+        "items": 8,
+        "units": 16,
+        "purchase_amount": "40.00",
+        "transport_amount": "15.00",
+        "purchase_state": "BOUGHT",
+        "transfer_state": "STORED",
+        "shipment_state": "DELIVERED",
+        "settlement_events_each": 1,
+        "owner_receipt_observed_at": "2026-11-20T09:53:10.181075100Z",
+        "owner_thread": "Folia Region Scheduler Thread #0",
+        "payload_sha256": "8409B82382E2EC13A44FA13568C1AE09AF86E349D39032F867721A0CBB6CD5F0",
+        "prepared_stack_count": 8,
+        "stored_payload_count": 8,
+        "serialized_payload_exact_match": true,
+        "nbt_equal_excluding_count": true,
+        "items_reserved_before_disconnect": 8,
+        "remaining_at_first_post_delivery_snapshot": 6,
+        "remaining_before_normal_stop": 3
+      },
+      {
+        "resource": "MEDICAL",
+        "purchase_id": "0262b6f2-2b4b-4d51-bae7-d465e01be43a",
+        "shipment_id": "2e7824cc-520e-4acd-b474-9451c213f2b7",
+        "purchase_settlement_id": "e4abc6ff-0804-4fc8-a458-fcee7df0153a",
+        "transport_settlement_id": "2e7824cc-520e-4acd-b474-9451c213f2b7",
+        "item_id": "minecraft:honey_bottle",
+        "items": 8,
+        "units": 8,
+        "purchase_amount": "40.00",
+        "transport_amount": "15.00",
+        "purchase_state": "BOUGHT",
+        "transfer_state": "STORED",
+        "shipment_state": "DELIVERED",
+        "settlement_events_each": 1,
+        "owner_receipt_observed_at": "2026-11-20T09:53:13.681047500Z",
+        "owner_thread": "Folia Region Scheduler Thread #0",
+        "payload_sha256": "EC83EC8D7E7630F51B7F770161F900084DBD345940377487CD9B70F2E39EFA1C",
+        "prepared_stack_count": 8,
+        "stored_payload_count": 8,
+        "serialized_payload_exact_match": true,
+        "nbt_equal_excluding_count": true,
+        "items_reserved_before_disconnect": 8,
+        "remaining_at_first_post_delivery_snapshot": 6,
+        "remaining_before_normal_stop": 3
+      },
+      {
+        "resource": "EQUIPMENT",
+        "purchase_id": "67720325-bbd8-41a0-9109-150500148068",
+        "shipment_id": "48f197b1-0156-4a53-8d58-112c38ab2df4",
+        "purchase_settlement_id": "0f605210-bf75-4be5-a51d-69a1f49fb9a9",
+        "transport_settlement_id": "48f197b1-0156-4a53-8d58-112c38ab2df4",
+        "item_id": "minecraft:iron_ingot",
+        "items": 8,
+        "units": 8,
+        "purchase_amount": "40.00",
+        "transport_amount": "15.00",
+        "purchase_state": "BOUGHT",
+        "transfer_state": "STORED",
+        "shipment_state": "DELIVERED",
+        "settlement_events_each": 1,
+        "owner_receipt_observed_at": "2026-11-20T09:53:17.931575900Z",
+        "owner_thread": "Folia Region Scheduler Thread #0",
+        "payload_sha256": "DF93FA0971B6548158C3BBAF9E7C03D9C44822F5C7173E4565C6E365CBB30C8E",
+        "prepared_stack_count": 24,
+        "stored_payload_count": 8,
+        "serialized_payload_exact_match": false,
+        "nbt_equal_excluding_count": true,
+        "items_reserved_before_disconnect": 8,
+        "remaining_at_first_post_delivery_snapshot": 6,
+        "remaining_before_normal_stop": 3
+      },
+      {
+        "resource": "MATERIALS",
+        "purchase_id": "0e45b3bf-543d-433e-b0a4-bae7053ddd0d",
+        "shipment_id": "42325222-4143-42a7-a216-880d31289592",
+        "purchase_settlement_id": "cee71b70-3598-42ee-9bd9-f364c456cf12",
+        "transport_settlement_id": "42325222-4143-42a7-a216-880d31289592",
+        "item_id": "minecraft:cobblestone",
+        "items": 8,
+        "units": 8,
+        "purchase_amount": "40.00",
+        "transport_amount": "15.00",
+        "purchase_state": "BOUGHT",
+        "transfer_state": "STORED",
+        "shipment_state": "DELIVERED",
+        "settlement_events_each": 1,
+        "owner_receipt_observed_at": "2026-11-20T09:53:21.681523500Z",
+        "owner_thread": "Folia Region Scheduler Thread #0",
+        "payload_sha256": "793E1A3B7A28E51AE098F9785593DBAA0DC4491113DC4D3A768E0D2F40037A41",
+        "prepared_stack_count": 8,
+        "stored_payload_count": 8,
+        "serialized_payload_exact_match": true,
+        "nbt_equal_excluding_count": true,
+        "items_reserved_before_disconnect": 8,
+        "remaining_at_first_post_delivery_snapshot": 6,
+        "remaining_before_normal_stop": 3
+      },
+      {
+        "resource": "ENGINEERING",
+        "purchase_id": "a7db419a-3926-40ca-adbe-ce52f621b58b",
+        "shipment_id": "7b7c024c-5135-4951-9ffa-0b91bb802543",
+        "purchase_settlement_id": "6ac2c3c1-8cf1-48e5-9d07-5b709dcccb94",
+        "transport_settlement_id": "7b7c024c-5135-4951-9ffa-0b91bb802543",
+        "item_id": "minecraft:scaffolding",
+        "items": 8,
+        "units": 8,
+        "purchase_amount": "40.00",
+        "transport_amount": "15.00",
+        "purchase_state": "BOUGHT",
+        "transfer_state": "STORED",
+        "shipment_state": "DELIVERED",
+        "settlement_events_each": 1,
+        "owner_receipt_observed_at": "2026-11-20T09:53:25.982022500Z",
+        "owner_thread": "Folia Region Scheduler Thread #0",
+        "payload_sha256": "ACF6B46E0A50BB7D05122E28C549E14354C90CF8C6FF95E0E3E1C5882712A0B6",
+        "prepared_stack_count": 8,
+        "stored_payload_count": 8,
+        "serialized_payload_exact_match": true,
+        "nbt_equal_excluding_count": true,
+        "items_reserved_before_disconnect": 8,
+        "remaining_at_first_post_delivery_snapshot": 6,
+        "remaining_before_normal_stop": 3
+      },
+      {
+        "resource": "STRATEGIC",
+        "purchase_id": "0e887055-7e4f-4b76-9823-02d4542e5f84",
+        "shipment_id": "0211563d-aff5-467c-b59f-019d4d12f5f0",
+        "purchase_settlement_id": "7fe6e98f-e63f-4502-8bd0-73a0ca45dfb4",
+        "transport_settlement_id": "0211563d-aff5-467c-b59f-019d4d12f5f0",
+        "item_id": "minecraft:firework_rocket",
+        "items": 8,
+        "units": 8,
+        "purchase_amount": "40.00",
+        "transport_amount": "15.00",
+        "purchase_state": "BOUGHT",
+        "transfer_state": "STORED",
+        "shipment_state": "DELIVERED",
+        "settlement_events_each": 1,
+        "owner_receipt_observed_at": "2026-11-20T09:53:29.731715500Z",
+        "owner_thread": "Folia Region Scheduler Thread #0",
+        "payload_sha256": "E02CC8EDAB29EC4A56EF92993900E1EA89581322C91B7579A216036CDA9E19DF",
+        "prepared_stack_count": 8,
+        "stored_payload_count": 8,
+        "serialized_payload_exact_match": true,
+        "nbt_equal_excluding_count": true,
+        "items_reserved_before_disconnect": 8,
+        "remaining_at_first_post_delivery_snapshot": 6,
+        "remaining_before_normal_stop": 3
+      }
+    ],
+    "paid_purchase_count": 6,
+    "paid_transport_count": 6,
+    "purchase_total": "240.00",
+    "freight_total": "90.00",
+    "all_settlement_events_on": "StarSupply-SQL",
+    "max_settlement_event_count_per_id": 1,
+    "food_metadata": {
+      "item_id": "kaleidoscopecookery:mantou",
+      "display_name": "馒头",
+      "food_v1": {
+        "version": 1,
+        "sourceCommit": "2f4e386ce23f49a385ddf003c67fc6415c55417a",
+        "itemId": "kaleidoscopecookery:mantou",
+        "quality": {
+          "name": "BASE",
+          "ratio": 1.0
+        },
+        "food": {
+          "nutrition": 6,
+          "alwaysEat": true,
+          "meat": false,
+          "consumeTicks": 16,
+          "effects": [],
+          "saturation": 10.8
+        },
+        "drink": false,
+        "damage": 0,
+        "removeHarmful": false
+      },
+      "food_component": {
+        "nutrition": 6,
+        "saturation": 10.800000190734863,
+        "can_always_eat": 1
+      },
+      "consumable_component": {
+        "consume_seconds": 0.800000011920929
+      },
+      "item_model": "kaleidoscopecookery:mantou"
+    },
+    "inventory_receipt_evidence": "All six nonempty public PDC receipts observed on the player entity owner, followed by clearing; STORED SQL transfers match those IDs. Later player-save snapshots contain cleared receipts. No positive on-disk receipt was captured mid-operation.",
+    "unrelated_inventory_preserved": true,
+    "food_remaining_after_sale": 0,
+    "equipment_stack_note": "Preexisting 16 iron ingots were retained; preparation merged 8 into a stack of 24. Stored payload has count 8; decoded NBT matches after removing only top-level count."
+  },
+  "disconnect": {
+    "before": {
+      "at": "2026-11-20T09:45:41.960Z",
+      "session": "mwosn0n0",
+      "username": "SupplyCarrier",
+      "type": "spawn",
+      "uuid": "b1ef34be-1610-379d-b9d3-97068ff1b518",
+      "position": {
+        "x": -21.5,
+        "y": 86,
+        "z": 69.5
+      }
+    },
+    "quit": {
+      "at": "2026-11-20T09:54:09.703Z",
+      "session": "mwosn0n0",
+      "username": "SupplyCarrier",
+      "type": "end",
+      "reason": "disconnect with six shipments still in transit"
+    },
+    "after": {
+      "at": "2026-11-20T09:54:34.324Z",
+      "session": "mwosyj0w",
+      "username": "SupplyCarrier",
+      "type": "spawn",
+      "uuid": "b1ef34be-1610-379d-b9d3-97068ff1b518",
+      "position": {
+        "x": -21.5,
+        "y": 86,
+        "z": 69.5
+      }
+    },
+    "same_uuid": true,
+    "shipments_in_transit_before_and_after_disconnect": 6,
+    "all_six_later_delivered": true,
+    "automatic_business_command_replay_on_reconnect": false
+  },
+  "repeat_operations": {
+    "observations": [
+      {
+        "test": "second_actor_accept",
+        "at": "2026-11-20T09:57:42.199Z",
+        "command": "/supply accept c15755b5-f9f1-4a0b-8d82-d0ad1c971cbb",
+        "response": "[StarSupply] 运输单已经领取或关闭"
+      },
+      {
+        "test": "repeat_delivery",
+        "at": "2026-11-20T09:57:42.164Z",
+        "command": "/supply deliver c15755b5-f9f1-4a0b-8d82-d0ad1c971cbb",
+        "response": "[StarSupply] 该单已提交，状态 DELIVERED，结算编号 c15755b5-f9f1-4a0b-8d82-d0ad1c971cbb"
+      }
+    ],
+    "balances_before": {
+      "buyer": {
+        "at": "2026-11-20T09:57:10.374444100Z",
+        "balance": "6058.45",
+        "alpha_treasury": "814.40"
+      },
+      "carrier": {
+        "at": "2026-11-20T09:57:10.424798200Z",
+        "balance": "5084.07",
+        "alpha_treasury": "814.40"
+      }
+    },
+    "balances_after": {
+      "buyer": {
+        "at": "2026-11-20T09:58:04.425151800Z",
+        "balance": "6058.45",
+        "alpha_treasury": "814.40"
+      },
+      "carrier": {
+        "at": "2026-11-20T09:58:04.475007100Z",
+        "balance": "5084.07",
+        "alpha_treasury": "814.40"
+      }
+    },
+    "balances_unchanged": true,
+    "completed_settlement_rows_unchanged": true,
+    "scope": "Repeat delivery and a second actor accepting already-completed cargo; this run did not race two simultaneous initial claims"
+  },
+  "consumption": {
+    "army": "1fa264df-1e65-464d-bff2-2a604e9ba938",
+    "interval_seconds": 30,
+    "remote_intervals_observed": 22,
+    "remote_intervals_with_all_six_units_consumed": 5,
+    "max_event_count_per_id": 1,
+    "first_fully_consumed_interval": 59838953,
+    "last_fully_consumed_interval": 59838957,
+    "physical_items_each_resource": {
+      "before_delivery": 8,
+      "first_post_delivery_snapshot": 6,
+      "before_normal_stop": 3
+    },
+    "whole_item_note": "One complete item is consumed per resource/demand=1 interval. A mantou maps to 2 units; demand credit is capped at 1 while the whole item is removed."
+  },
+  "actual_combat": {
+    "at": "2026-11-20T09:57:42.074238Z",
+    "global_tick": true,
+    "coverage": 1.0,
+    "multiplier": 1.1300000000000001,
+    "baseline_damage": 30.0,
+    "supplied_damage": 33.900000000000006,
+    "ratio": 1.1300000000000001,
+    "defender_health_before": 1000.0,
+    "defender_health_after": 966.1000000000001,
+    "attacker_health_before": 1000.0,
+    "attacker_health_after": 970.0,
+    "actual_battle_persisted": true,
+    "both_armies_restored_and_persisted": true,
+    "passed": true
+  },
+  "rejected_preparation_attempt": {
+    "command_at": "2026-11-20T09:51:27.792Z",
+    "response_at": "2026-11-20T09:51:27.880Z",
+    "response": "[StarSupply] 只有生存或冒险模式可执行托管库存操作",
+    "reason": "Actor was still CREATIVE from positioning setup; production custody correctly rejected.",
+    "buyer_balance_before_and_after": "5818.45",
+    "alpha_treasury_before_and_after": "1144.40",
+    "food_items_still_present_when_switching_to_survival": 8,
+    "first_actual_transfer_created_millis": 1795168390087,
+    "later_survival_sale_completed": true
+  },
+  "real_upstream_failure": {
+    "at": "2026-11-20T09:46:57Z",
+    "failure": "SQLITE_BUSY during a Gamma military treasury withdrawal",
+    "error_headers": [
+      {
+        "line": 5454,
+        "text": "[17:46:57 ERROR]: [StarCore] [Treasury] code=TREASURY_WITHDRAW_PERSISTENCE_FAILURE operation=withdraw rollback=true nation=5c4732f4-cedd-46ab-8bb9-8c20b7246a75 amount=1000.00 txId=1"
+      },
+      {
+        "line": 5486,
+        "text": "[17:46:57 ERROR]: [FoliaSupplyProof] FOLIA_PROOF_FAILED"
+      }
+    ],
+    "reported_rollback": true,
+    "amount": "1000.00",
+    "gamma_before": "66500.00",
+    "gamma_after_failed_attempt": "66500.00",
+    "subsequent_manual_single_create_at": "2026-11-20T09:55:08.395593800Z",
+    "gamma_after_successful_create": "65500.00",
+    "followup_fix_in_tested_runtime": false,
+    "followup_build_and_runtime_verification": "pending at this evidence cutoff"
+  },
+  "shutdown": {
+    "normal_stop_at": "2026-11-20T09:58:37Z",
+    "core_disabled_and_all_player_data_saved_in_log": true,
+    "owned_pid": 17480,
+    "owned_pid_absent_at_documentation": true,
+    "game_and_rcon_listeners_absent_at_documentation": true,
+    "exit_code_not_independently_recorded": true,
+    "complete_post_loop_restart_verified": false
+  },
+  "remaining": [
+    "Rebuild and run the upstream SQLite concurrency fix with actual competing regional operations.",
+    "Complete a normal post-loop server restart and retry the same six settlement IDs against the rebuilt stack.",
+    "Validate Folia world unload, in-flight custody interruption and other recovery branches separately.",
+    "Validate optional Tavern and remaining enabled dependency/version combinations before a full support claim."
+  ],
+  "raw_evidence_root": "C:/Users/Administrator/Documents/starsupply-deps/folia-stage1-live",
+  "raw_sources": [
+    {
+      "path": "folia-proof/stage-descriptor-overrides.json",
+      "bytes": 1113,
+      "sha256": "D3149DC1AEE3C2C6387CBE828913115B71619A655A4B2A3DB4A7026A92809313",
+      "hash_scope": "complete file"
+    },
+    {
+      "path": "folia-proof/six-in-transit.json",
+      "bytes": 3069,
+      "sha256": "18B8B9C2986264CF5098DF72B4CFA0B775F7986BEA8773D93185AAFD0598586A",
+      "hash_scope": "complete file"
+    },
+    {
+      "path": "folia-proof/snapshot-six-in-transit-before-disconnect.json",
+      "bytes": 623132,
+      "sha256": "16E3064F7D96818BFADC516988991AFFF8509376B46CDB2C8C495685837725E9",
+      "hash_scope": "complete file"
+    },
+    {
+      "path": "folia-proof/snapshot-after-carrier-disconnect.json",
+      "bytes": 625430,
+      "sha256": "992D6A8693F7602AFEADAD7178AF9D7356BDB593B8E9C750EB0CE1DB56EAA3A6",
+      "hash_scope": "complete file"
+    },
+    {
+      "path": "folia-proof/snapshot-after-six-deliveries.json",
+      "bytes": 639134,
+      "sha256": "554DE03AA01F07AB8A64B75725A71EE72FE863A3F6513892807C6E53AB671B55",
+      "hash_scope": "complete file"
+    },
+    {
+      "path": "folia-proof/snapshot-before-business-restart.json",
+      "bytes": 646055,
+      "sha256": "9AE3AB25EEE5763461B6EFDE2C1F3E5EB7A3EAB16C62F2CC63C546B8A959FC62",
+      "hash_scope": "complete file"
+    },
+    {
+      "path": "plugins/FoliaSupplyProof/evidence.jsonl",
+      "bytes": 124434,
+      "sha256": "5CFBD3BE27DFCF61E7A9BBB46F8A857AF4F8BD69242111648A352FDDEE7A8AB2",
+      "hash_scope": "recorded prefix"
+    },
+    {
+      "path": "plugins/FoliaSupplyProof/combat-1795168662123.json",
+      "bytes": 2900,
+      "sha256": "A2CB91D28FC01BCAA2B99C5439C026991D87CBD99402285E5E580E710DE059D8",
+      "hash_scope": "complete file"
+    },
+    {
+      "path": "folia-proof/bot-SupplyBuyer.jsonl",
+      "bytes": 27111,
+      "sha256": "43BCDC272776E671B8BE8645F0837393B90A5D6B2E2BB61B2C08E18797F4156A",
+      "hash_scope": "recorded prefix"
+    },
+    {
+      "path": "folia-proof/bot-SupplyCarrier.jsonl",
+      "bytes": 13236,
+      "sha256": "24614C62F70628AB7E6EF27878E5700F91916C9696ABD9D71AB6D7451E137C51",
+      "hash_scope": "recorded prefix"
+    },
+    {
+      "path": "folia-proof/server-console.log",
+      "bytes": 449257,
+      "sha256": "EA13405E1570B85C0C3B3E494A08A8239754B52D54DEAAA89C775104BFA8407B",
+      "hash_scope": "recorded prefix"
+    }
+  ]
+}

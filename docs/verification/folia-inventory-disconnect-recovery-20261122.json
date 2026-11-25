@@ -1,0 +1,87 @@
+{
+  "purpose": "Folia player disconnect during a physical purchase handoff and evidence-backed recovery",
+  "date": "2026-11-22",
+  "runtime": {
+    "server": "Folia 1.21.11-14",
+    "process_id": 3416,
+    "game_address": "127.0.0.1:25729",
+    "rcon_address": "127.0.0.1:25739",
+    "starsupply_sha256": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+    "starcore_sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B"
+  },
+  "player": {
+    "name": "SupplyBuyer",
+    "uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+    "operator_level": 4,
+    "initial_iron_ingots": 4
+  },
+  "purchase": {
+    "id": "443e79ab-0960-4d51-b5f7-273a70f4616b",
+    "resource": "EQUIPMENT",
+    "item_count": 1,
+    "price": "5.00",
+    "item_id": "minecraft:iron_ingot"
+  },
+  "attempts": [
+    {
+      "action_id": "inventory-drop-quit-20261122-01",
+      "disconnect": "immediately after /supply sell",
+      "snapshot": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122/folia-proof/snapshot-inventory-drop-after-quit-20261122.json",
+      "result": "purchase OPEN; no transfer or settlement row; saved inventory retained four iron ingots; receipt absent"
+    },
+    {
+      "action_id": "inventory-drop-quit-20261122-02",
+      "disconnect_delay_ms": 50,
+      "snapshot": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122/folia-proof/snapshot-inventory-drop-after-quit-attempt2-20261122.json",
+      "result": "purchase RESERVED and transfer PREPARED; no settlement row; saved inventory retained four iron ingots; receipt absent",
+      "transfer_id": "c248ddbd-0f5e-4f4f-9421-a0e3cb23ca96",
+      "before_hash": "1ce85bebd29ab170cea69abf3293dbd5cc5fb3aebd4896fd06c5a3d86928b35c",
+      "after_hash": "5f45906f7acecca95035663ff60ea4909f52e3d2250732d208b54b195f1c105b"
+    }
+  ],
+  "reconnect": {
+    "action_id": "inventory-drop-join-recovery-20261122-01",
+    "old_runtime_result": "REVIEW",
+    "review_reason": "missing durable player receipt after interruption",
+    "saved_inventory_comparison": {
+      "before_and_after_iron_ingots": 4,
+      "receipt": null,
+      "target_iron_stack_unchanged": true,
+      "unrelated_component_map_order_changed": [
+        "slot 0: Cookery brandy paper item, lore and max_stack_size map entries changed order",
+        "slot 1: StarCore guide book item, tooltip_display and custom_name map entries changed order"
+      ]
+    },
+    "snapshot": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122/folia-proof/snapshot-inventory-drop-joined-after-review-20261122.json"
+  },
+  "reconciliation": {
+    "command": "/supply reconcile-inventory c248ddbd-0f5e-4f4f-9421-a0e3cb23ca96 untouched",
+    "actor": "SupplyBuyer",
+    "evidence": "Pre-sale, post-disconnect and post-reconnect player saves each retained four iron ingots and had no StarSupply receipt; StarSupply had no settlement row.",
+    "final_snapshot": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122/folia-proof/snapshot-inventory-drop-post-reconcile-20261122.json",
+    "purchase_state": "OPEN",
+    "transfer_state": "RETURNED",
+    "transfer_note": "no inventory debit",
+    "lot_remaining": 0,
+    "settlement_rows": 0,
+    "final_player_receipt": null,
+    "final_iron_ingots": 4
+  },
+  "public_balance_evidence": {
+    "before_at": "2026-11-21T23:54:54.112349400Z",
+    "after_at": "2026-11-22T00:16:42.459775200Z",
+    "player_balance_before": 5562.77,
+    "player_balance_after": 5562.77,
+    "alpha_treasury_before": 504.4,
+    "alpha_treasury_after": 504.4,
+    "after_evidence": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122/plugins/FoliaSupplyProof/evidence.jsonl"
+  },
+  "source_fix": {
+    "description": "New inventory fingerprints recursively sort Bukkit serialized map keys. Recovery also computes the former serializeAsBytes fingerprint so old prepared rows remain comparable.",
+    "workspace_jar_sha256": "77070BE6D8D25E9325D67DE8A9D04AF7EDC2BBC88AC22EB7F9627FCEA29CF1B3",
+    "workspace_jar_size_bytes": 14673367,
+    "verify_finished_at": "2026-11-22T08:25:13+08:00",
+    "automated_tests": 99,
+    "live_retest_status": "not deployed to the running Folia process; a new isolated runtime retest remains required"
+  }
+}

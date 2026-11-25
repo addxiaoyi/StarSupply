@@ -2,6 +2,8 @@
 
 使用独立的 Paper 1.21.11 测试服与 Java 21。把对应版本的 StarCore 和 `target/starsupply-0.1.0.jar` 放入 `plugins/`，确认二者均启用。StarCore 使用 `economy.provider: internal`，由它管理真实国库和玩家余额。要验收自定义军粮，再安装兼容的 CraftEngine、森罗物语 Cookery 及对应资源包。客户端需要接受资源包才能看到自定义物品模型。
 
+2026-11-21 的独立 Folia 实服补测完成了一份玩家自种小麦到 Cookery 馒头、国家采购、商队交付、前线 FOOD 消耗和战力/士气变化的真实链；见 [原始运行验收记录](verification/folia-cookery-trade-war-loop-20261121.json)。它只证明该一条 FOOD 链和一次单物资周期，不替代下方六类完整库存验收。隔离服测试 JAR 的 plugin 描述符用了仅供测试的 Folia 加载标记，生产包未启用该声明，也不代表整套 Folia 兼容。
+
 准备军需官、厨师、运输者三个账号。为三者授予 `starsupply.use`，为军需官授予 `starsupply.manage` 并在 StarCore 拥有本国管理权限。用两个国家进行战争验收。下列 StarCore 命令可用于测试服准备，前置费用和权限以 StarCore 反馈为准。
 
 ```text
@@ -81,7 +83,7 @@ SELECT army, slot, resource, demand, units FROM consumption ORDER BY rowid DESC 
 
 Alpha 对 Gamma 的战争已处于 `ACTIVE`。为 10 人军队绑定前线站后，使用真实 Cookery 馒头、蜂蜜瓶、铁锭、圆石、脚手架和烟花火箭，各完成一次国家采购、玩家实物托管、承运领取、前线交付及 StarCore 结算；6 笔 `PURCHASE` 和 6 笔 `TRANSPORT` 均为 `PAID`，全部运输为 `DELIVERED`。军队状态显示“战时 / 补给 100% / 作战 ×1.050”。SQLite 记录六类资源每周期需求 1 单位且本周期六项均消耗 1 单位；交付后的剩余前线库存每类均可继续满足下一周期。该记录验证了六类物资映射、真实物品与经济闭环以及 GUI 入口；同一隔离服数据库另外实测由 v2 迁移至 v5。该次 v5 验收尚未覆盖动态市场、跨国协定和护送；后续 v6 复验单独记录如下。
 
-StarCore 跨国协定准入、价格和额度已有自动化测试覆盖。后续 v8 记录验证了有效方向协定下的跨国采购与非零关税；第 9 项的额度耗尽、到期、取消与禁运拒绝分支仍需单独现场复测。
+StarCore 跨国协定准入、价格和额度已有自动化测试覆盖。v8 现场记录验证了有效方向协定下的跨国采购与非零关税；额度耗尽、到期、取消、价格不符及禁运拒绝的后续 Paper 实测见[跨国贸易拒绝分支](verification/paper-v11-cross-border-trade-rejections-20261123.json)。
 
 路线风险区块完整扫描与 4096/4097 区块边界已有自动化测试。StarCore 科技路线修正和国策军需/战备修正已在 Paper 实测：给 Alpha 解锁 `railways` 后路线 GUI 显示道路效率 1.50；激活 `military_drill` 后 10 人军队状态由 ×1.050 提高到 ×1.130。旧版四类与当前六类的实时验收均已分别记录，不应混用各自的补给需求结果。
 
@@ -130,6 +132,40 @@ B380 历史包发现普通未投保运输误调用保险出发超时检查，导
 本轮测试 StarCore 修正依赖后可创建攻城单位，但 `startSiege` 仍因未部署返回 `OUT_OF_RANGE`；公共 `deploySiege` 进入 `DEPLOYING` 后，固定源码缺少完成转为 `READY` 的调用。因此围城消耗爬升尚未通过，不以可变单位或直接数据库注入绕过。另一次等待重启的税款探针在创建采购前即停服，没有生成测试交易，不计为跨重启待核验通过。战时出口控制测试亦因 Beta 仓库选址不在本国领土而未执行到控制分支。
 
 隔离服于 13:36:25 正常停止，配置还原为测试前 300 秒补给周期且无临时 campaign 覆盖。上述证据仍只覆盖实际列出的路径；待完成范围包括围城、待核验期间重启恢复、插件关闭/世界卸载、贸易拒绝分支及后续源码修复后的最终构建，不代表完整开发目标完成。
+
+## v11 Paper 可选插件迁移与重启
+
+2026-11-22 在 Paper 1.21.11-132、Java 21 的独立副本完成 v10 到 v11 数据迁移，并进行第二次正常启动与停服。运行包中的 StarSupply 与构建产物一致，SHA-256 为 `43216A42FCC8345D12BEC7FCF548C2A87EFF2F2292BBC3487F8349269EBCF110`；测试环境使用 SHA-256 为 `D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B` 的 StarCore 兼容测试包。CraftEngine、Cookery、Deco、Doll、Tavern、StarCore 与 StarSupply 均完成启用。schema 升至 11 后，10,470 条历史消费记录全部保留为 `interval_ms=0` 幂等保护，新增 78 条 `interval_ms=30000` 记录；采购、运单与结算行数仍为 61、56、112。第二次启动后 schema 仍为 11，`supply.db`、`insurance.db`、`tavern.db` 完整性检查均为 `ok`。
+
+CraftEngine 在两次启动中均报告 725 条未知 Doll 行为；Doll 插件在 CraftEngine 解析内容后才启用。StarCore 使用 ProtocolLib 回退菜单提供方，PvP 排名服务不可用，部分导航项没有处理器。两次启动均无 ERROR，首次停服有 4 条日志 flush 警告，第二次没有。完整版本、计数、日志哈希与范围见 [Paper v11 迁移证据](verification/paper-v11-optional-plugin-migration-20261122.json)。本轮没有玩家连接，使用的是 StarCore 兼容测试包，未覆盖完整选装插件组合或玩家交易验收，也不证明 Folia 支持。
+
+## v11 玩家托管与重复售货复验
+
+2026-11-22 在上述 Paper 隔离副本使用 StarSupply SHA-256 `59F85DF940B3247625342218F2ACC1B9362C44D8268B0100D9D02459528A437D`、StarCore 兼容测试包 SHA-256 `D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B`，运行 Paper 1.21.11-132、Java 21。Alpha 的 SupplyBuyer 与 Beta 的 SupplyCarrier 各通过玩家命令创建 1 件 EQUIPMENT、总价 5.00 的采购单，再各用普通铁锭执行 `/supply sell`。两名玩家的售货命令相隔约 9 毫秒提交，库存测试物由隔离服 RCON 预置，物品序列化 SHA-256 均为 `752158D03116A359731391E78187071E29C262B974487077BAB9B63A8FC4B331`，不代表生存采集验收。
+
+采购 `617eaa05-fa22-4787-b7a1-553cf7b24ed3` 与 `fd0ceadd-c00e-4c88-931e-cfd2e384ec91` 分别完成一次实物托管，转账 `6a545d11-c1cc-4394-ab5f-bbe0fdee80eb` 与 `85801b62-7e95-4b62-8fce-fa901659bc7e` 均为 `PAID`，采购为 `BOUGHT`，转移为 `STORED`。交易前 Alpha 玩家/国库余额为 5582.77/484.40，Beta 为 5114.07/9000.00；交易后分别为 5587.77/479.40 与 5119.07/8995.00。探针中两笔结算事件计数各为 1。重复提交两笔售货均返回“采购单已被预订或关闭”，余额保持不变，未新增结算事件。
+
+本次线上支付均一次成功，没有观察到 StarCore 忙冲突重试。`CorePaymentTest` 覆盖 StarCore 返回 `INSUFFICIENT_FUNDS`、但返回余额仍足以付款时保留交易并返回 `RETRY` 的回归分支；现场结果不能替代该故障分支的真实重试验收。21:20:32 的两条 `player offline` 记录来自玩家登录前的余额诊断，不属于交易操作。正常退出客户端并停服后，schema 为 11；采购、实物转移、物资批次和结算行数分别为 65、63、63、116。最终玩家存档中两件铁锭均已移除且库存回执为空；StarSupply 三库和 StarCore 的 `religion.db`、`starcore.db` 完整性检查均为 `ok`。只读快照及详细余额、事件和库存收据证据见 [Paper v11 付款回归记录](verification/paper-v11-payment-retry-20261122.json)。
+
+## v11 国库付款自动重试
+
+2026-11-22 使用 StarSupply `77070BE6…` 和 StarCore 兼容包 `D031CDB0…` 在 Paper 1.21.11-132 隔离服复测。SupplyBuyer 用一件由管理员预置的铁锭提交 5.00 采购。独立故障夹具在第一次国库调用返回 `INSUFFICIENT_FUNDS`，并带回实际足额的 469.40 余额。此时 StarCore 尚无该交易的扣款回执，国库和卖家余额保持 469.40、5597.77，订单为 `SETTLING`，交接为 `TAKEN`，结算为 `PENDING`。
+
+维护任务沿用同一个 `starsupply:payment:` 交易 ID 调用真实 StarCore 服务，返回 `APPLIED` 并留下 5.00 回执。订单最终为 `BOUGHT`，铁锭一次入库为 `STORED`，结算只有一条 `PAID`。国库降至 464.40，卖家升至 5602.77。该轮使用合成失败响应触发分支，真实 SQLite 忙锁另见 [Folia 忙锁验收](verification/folia-sqlite-contention-live-retry-20261122.json)。
+
+隔离服正常停机，端口释放。17 个清单文件和 6 个辅助文件与原备份哈希一致，六个 SQLite 数据库完整性检查通过。世界的 `level.dat` 与区块文件在备份范围之外。完整交易 ID、时间戳和原始证据哈希见 [Paper 自动重试记录](verification/paper-v11-spending-live-retry-20261122.json)。
+
+## v11 跨国贸易拒绝分支
+
+2026-11-23 在 Paper 1.21.11-132 隔离服使用 SupplyBuyer（Alpha）与 SupplyCarrier（Beta），通过 StarCore 公共贸易服务建立、查询、取消和解除测试协定。普通面包按 FOOD 1 单位交易。一个单位上限的协定下首笔 2.50 采购由 `OPEN` 完成至 `BOUGHT/STORED/PAID`，同协定下一笔因额度已耗尽而拒绝。另分别验证 3 秒协定过期、有效协定取消、协定单价 3.00 与订单总价 2.50 不一致、以及有效禁运中的拒绝。五个拒绝订单均保持 `OPEN`，没有交接或结算行；卖家物品数量和三项公开余额在拒绝前后不变。过期状态通过 StarCore 公共服务确认，测试禁运随后解除。
+
+成功交易令 Alpha 国库从 474.40 变为 472.15、SupplyCarrier 从 5119.07 变为 5121.32；StarCore 对应同一结算编号有一张未退款的 2.50 回执。测试库存由管理员发放。运行副本恢复了 17 个数据文件、6 个辅助文件与六库完整性；SupplyCarrier 的存档另由两个哈希一致的隔离副本恢复并确认只含原有书和原位置。区块文件不在恢复范围，本轮没有方块或容器操作。详见 [跨国交易验收记录](verification/paper-v11-cross-border-trade-rejections-20261123.json)。
+
+## v11 旧库存指纹恢复复测
+
+2026-11-22 在隔离 Paper 1.21.11-132、Java 21 副本部署当前构建 SHA-256 `77070BE6D8D25E9325D67DE8A9D04AF7EDC2BBC88AC22EB7F9627FCEA29CF1B3`。使用含 Cookery 白兰地纸和 StarCore 指南书的玩家存档复测旧待处理库存记录时，无关物品组件映射顺序在保存/重载后变化，目标铁锭没有变化且收据缺失；旧记录保持 `REVIEW`。另一个隔离快照使用 `/supply reconcile-inventory 28df824b-8629-4f6b-ad75-b1fb820403aa untouched`，依据玩家存档核对后采购恢复 `OPEN`、交接为 `RETURNED / no inventory debit`，无交接结算，玩家仍保留 4 个铁锭。
+
+纯原版铁锭对照中的旧交接 `1c6e5525-5c6a-4c24-9bae-604dbeda96ab` 被自动清理，采购 `8940ccf5-e058-492b-954a-b9f0521922d6` 保持 `OPEN`，没有结算，玩家保留铁锭。验收监视器另有一次误把同采购单的 `RETURNED` 行与后续操作关联，导致隔离副本中的独立交接 `108b88ca-3c03-4131-a8e9-d52ea981063a` 正常入库并支付 5.00。最终计数因此为采购 67、交接 65、批次 65、结算 117；基础快照为 65、63、63、116。Paper 隔离服已正常停止且游戏/RCON 端口已释放。初次状态检查时 PID 3416 和 Folia 端口仍在运行；最终检查时该进程与端口已不存在。本轮没有向 Folia 发送停服、重启或部署操作，无法从验收动作确认它何时结束。完整分阶段状态和限制见 [Paper v11 库存指纹恢复记录](verification/paper-v11-legacy-fingerprint-recovery-20261122.json)。
 
 ## 上游部署修复后的围城与真实战斗
 

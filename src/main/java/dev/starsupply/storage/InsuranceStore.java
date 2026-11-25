@@ -32,8 +32,7 @@ public final class InsuranceStore implements AutoCloseable {
                 version = result.next() ? result.getInt(1) : -1;
                 if (version < 0 || version > 2) throw new SQLException("Unsupported insurance schema " + version);
             }
-            connection.setAutoCommit(false);
-            try {
+            transaction(() -> {
                 if (version == 0) {
                     statement.execute("CREATE TABLE insurance_policy (id TEXT PRIMARY KEY,shipment TEXT UNIQUE NOT NULL,"
                             + "purchase TEXT UNIQUE NOT NULL,nation TEXT NOT NULL,carrier TEXT NOT NULL,freight TEXT NOT NULL,"
@@ -50,11 +49,8 @@ public final class InsuranceStore implements AutoCloseable {
                     statement.execute("UPDATE insurance_policy SET activated=MAX(0,created,updated) WHERE state='ACTIVE'");
                 }
                 statement.execute("PRAGMA user_version=2");
-                connection.commit();
-            } catch (SQLException | RuntimeException failure) {
-                connection.rollback();
-                throw failure;
-            } finally { connection.setAutoCommit(true); }
+                return null;
+            });
         }
         // These legs lack an authority receipt. Calling again after a crash could debit/credit twice.
         update("UPDATE insurance_money SET state='REVIEW' WHERE state='STARTED' "
@@ -166,6 +162,7 @@ public final class InsuranceStore implements AutoCloseable {
     }
 
     private PreparedStatement prepare(String sql, Object... args) throws SQLException {
+        SqlTransactions.requireUsable(connection);
         PreparedStatement s = connection.prepareStatement(sql);
         for (int i = 0; i < args.length; i++) {
             Object value = args[i];
@@ -176,10 +173,7 @@ public final class InsuranceStore implements AutoCloseable {
     }
 
     private <T> T transaction(SqlWork<T> work) throws SQLException {
-        connection.setAutoCommit(false);
-        try { T value = work.run(); connection.commit(); return value; }
-        catch (SQLException | RuntimeException failure) { connection.rollback(); throw failure; }
-        finally { connection.setAutoCommit(true); }
+        return SqlTransactions.run(connection, work::run);
     }
 
     @FunctionalInterface private interface SqlWork<T> { T run() throws SQLException; }

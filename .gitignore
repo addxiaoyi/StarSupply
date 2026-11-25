@@ -12,3 +12,13 @@ target-expansion-verify.log
 *.db
 *.db-wal
 *.db-shm
+
+# Local runtime evidence and generated acceptance binaries stay on the test host.
+/hs_err_pid*.log
+/hs_err_pid*.mdmp
+/target-*.log
+/tools/acceptance/**/build/
+/tools/acceptance/**/out/
+/tools/acceptance/**/*.jar
+**/node_modules/
+**/__pycache__/

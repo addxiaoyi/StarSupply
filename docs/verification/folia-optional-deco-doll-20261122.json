@@ -1,0 +1,98 @@
+{
+  "recorded_on": "2026-11-22",
+  "purpose": "Check Folia startup and StarSupply player interfaces with the available Deco and Doll optional plugins enabled.",
+  "scope": "Partial optional-plugin startup and UI observation only. Music was unavailable, and this does not certify the full StarCore or optional-plugin combination.",
+  "runtime": {
+    "path": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122",
+    "server": "Folia 1.21.11-14-ver/1.21.11@529aabc",
+    "java": "OpenJDK 21.0.13.1+2-LTS",
+    "game_listener": "127.0.0.1:25729",
+    "rcon_listener": "127.0.0.1:25739",
+    "original_six_plugin_stack_restored_after_test": true,
+    "restored_stack_normal_shutdown_and_restart": true
+  },
+  "plugins": {
+    "StarCore-1.0.0.jar": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B",
+    "StarSupply-0.1.0.jar": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+    "KaleidoscopeDeco-0.1.0-dev.jar": {
+      "sha256": "1DB18976692F5DE6B284B31CFC5EF40E14D60F86925F75E87FE7DC3CF807F263",
+      "descriptor_folia_supported": true
+    },
+    "KaleidoscopeDoll-0.1.0-dev.jar": {
+      "sha256": "1A801810CE43B119B780F87998B4BACA0EAE0A5F539F5E3AB63DCEB2BCCCC9BC",
+      "descriptor_folia_supported": true
+    },
+    "CraftEngine-26.9.1.jar": "021260C87E3546730D321F4360B1744E6E33CAA1D68E98AE30DCDBBDC347AE0F",
+    "KaleidoscopeCookeryPlugin-1.3.0.jar": "8F6A56831674AB0EC739F8EFB270FC775314A6160AE994B0A3B8473FB8110616",
+    "KaleidoscopeTavern-0.1.0-dev.jar": "9A355A00ED2E5F19F241F0FA0ED2CBECB49700EBC847804855DD41A3E6690CA2"
+  },
+  "startup": {
+    "initialized_plugins": 8,
+    "enabled_plugins": [
+      "CraftEngine",
+      "FoliaSupplyProof",
+      "KaleidoscopeCookeryPlugin",
+      "KaleidoscopeDecoPlugin",
+      "KaleidoscopeDollPlugin",
+      "KaleidoscopeTavernPlugin",
+      "StarCore",
+      "StarSupply"
+    ],
+    "ready_at": "2026-11-21T20:36:48Z",
+    "public_starcore_starsupply_state_query_succeeded": true,
+    "craftengine_unknown_deco_behavior_warnings": 0,
+    "craftengine_unknown_doll_behavior_warnings": 725,
+    "error_log_entries": 0,
+    "stderr_bytes": 0
+  },
+  "player_ui": {
+    "player": "SupplyBuyer",
+    "uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+    "reconnected_at": "2026-11-21T20:39:29Z",
+    "position": {
+      "world": "starsupply-stage1-world",
+      "x": -21.5,
+      "y": 86.0,
+      "z": 68.5
+    },
+    "opened_main_menu": {
+      "command": "/supply",
+      "gui_type": "minecraft:generic_9x3"
+    },
+    "opened_tavern_board": {
+      "command": "/supply board folia-proof-inn",
+      "gui_type": "minecraft:generic_9x6"
+    },
+    "client_completed_and_disconnected_cleanly": true
+  },
+  "evidence": {
+    "server_stdout": {
+      "path": "folia-proof/optional-deco-doll-server-stdout-20261122.log",
+      "bytes": 163977,
+      "sha256": "B7A1C266304CFE8AF00D5F2FACDB144AFDCDFB16BEF3CB28733BEBEF12062092"
+    },
+    "server_stderr": {
+      "path": "folia-proof/optional-deco-doll-server-stderr-20261122.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    "buyer_bot_log": {
+      "path": "folia-proof/bot-SupplyBuyer.jsonl",
+      "bytes_at_final_test_snapshot": 233064,
+      "sha256_at_final_test_snapshot": "4F46F50E4E3A0EC95A9976B8764C3D099CCCAFC2D3D8B73D7F9E70E20C8A1A9B"
+    }
+  },
+  "cleanup": {
+    "temporary_test_player_disconnected": true,
+    "deco_and_doll_jars_preserved_disabled_for_original_runtime": true,
+    "disabled_plugin_hashes_verified": true,
+    "original_runtime_configuration_restored": true,
+    "original_six_plugin_stack_started_successfully": true
+  },
+  "acceptance": {
+    "deco_and_doll_startup_observed": true,
+    "starsupply_main_and_tavern_gui_opened": true,
+    "complete_optional_plugin_matrix_accepted": false,
+    "full_folia_stack_accepted": false
+  }
+}

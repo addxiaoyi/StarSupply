@@ -79,6 +79,29 @@ public interface CoreGateway {
     /** Uses a stable settlement ID. Call outside a local SQL transaction on the settlement worker. */
     PaymentResult pay(UUID settlementId, UUID nationId, UUID playerId, BigDecimal amount);
 
+    /** Confirms the same durable upstream receipt on every retry; never charges the nation. */
+    default boolean replenishArmy(UUID requestId, UUID armyId, UUID nationId, int supplyPoints) {
+        return false;
+    }
+
+    /** Reads StarCore's durable receipt for reconciling a physical-food obligation. */
+    default Optional<NativeSupplyReceipt> nativeSupplyReceipt(UUID requestId) {
+        return Optional.empty();
+    }
+
+    record NativeSupplyReceipt(UUID requestId, UUID armyId, UUID nationId,
+                               int requestedPoints, int appliedPoints) {
+        public NativeSupplyReceipt {
+            Objects.requireNonNull(requestId);
+            Objects.requireNonNull(armyId);
+            Objects.requireNonNull(nationId);
+            if (requestedPoints < 1 || requestedPoints > 100
+                    || appliedPoints < 0 || appliedPoints > requestedPoints) {
+                throw new IllegalArgumentException("Invalid StarCore native supply receipt");
+            }
+        }
+    }
+
     record Army(UUID id, UUID nationId, int soldiers, int supply, String world, int x, int y, int z) {}
 
     record Line(UUID id, UUID warId, String world, int startX, int startY, int startZ,

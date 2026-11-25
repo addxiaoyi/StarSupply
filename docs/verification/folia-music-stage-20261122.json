@@ -1,0 +1,205 @@
+{
+  "recorded_on": "2026-11-22",
+  "purpose": "Build and stage Kaleidoscope Music for the remaining isolated Folia optional-plugin combination.",
+  "result": "full_series_build_tests_and_music_folia_runtime_passed_client_render_pending",
+  "music_build": {
+    "checkout": "C:/Users/Administrator/Documents/starsupply-deps/senluo-tavern-pinned",
+    "revision": "7a676978f9c4a825275a9f905c3f860ac05a6827",
+    "working_tree_note": "Three pre-existing Cookery files are modified in this checkout. The Music and common source trees have no source changes, and the Music build does not depend on Cookery.",
+    "command": "gradlew.bat -p series :music:build --rerun-tasks --console=plain --no-daemon",
+    "gradle": "9.4.0",
+    "java": "OpenJDK 21.0.13.1+2-LTS",
+    "build_successful": true,
+    "tasks_executed": 7,
+    "artifact": {
+      "path": "series/music/build/libs/KaleidoscopeMusic-0.1.0-dev.jar",
+      "bytes": 134937,
+      "sha256": "983FB4B88B39BB5211E12EAD23D3202222624E114E2EE4137F48D49D434B1078",
+      "plugin": "KaleidoscopeMusicPlugin",
+      "folia_supported_declared": true,
+      "unrelocated_common_classes": 0
+    },
+    "tests": {
+      "suite": "net.kaleidoscope.music.MidiSongTest",
+      "executed": 14,
+      "passed": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "fresh_execution": true,
+      "report": "series/music/build/test-results/test/TEST-net.kaleidoscope.music.MidiSongTest.xml"
+    }
+  },
+  "series_full_build": {
+    "checkout": "C:/Users/Administrator/Documents/starsupply-deps/senluo-tavern-pinned",
+    "revision": "7a676978f9c4a825275a9f905c3f860ac05a6827",
+    "working_tree_note": "Three pre-existing Cookery modifications were preserved.",
+    "command": "gradlew.bat -p series build --rerun-tasks --no-daemon --max-workers=1 --console=plain -Dorg.gradle.jvmargs=-Xms128m -Xmx768m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC -Dfile.encoding=COMPAT",
+    "gradle": "9.4.0",
+    "java": "OpenJDK 21.0.13.1+2-LTS",
+    "build_successful": true,
+    "tasks_executed": 24,
+    "test_suites": 33,
+    "tests": {
+      "executed": 330,
+      "passed": 330,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "fresh_execution": true,
+      "modules": {
+        "common": 34,
+        "deco": 64,
+        "doll": 43,
+        "music": 14,
+        "tavern": 175
+      }
+    },
+    "artifacts": {
+      "common_sha256": "597D01A8947E67DABE7D0009214CC7A0A5A68C3BEF67A1E9192E7008BD8982F1",
+      "deco_sha256": "1DB18976692F5DE6B284B31CFC5EF40E14D60F86925F75E87FE7DC3CF807F263",
+      "doll_sha256": "3CA0E01E19F571F61AEC20F6DCA4211C375FE21FB6690D4B82A62BC1C04551FA",
+      "music_sha256": "983FB4B88B39BB5211E12EAD23D3202222624E114E2EE4137F48D49D434B1078",
+      "tavern_sha256": "9A355A00ED2E5F19F241F0FA0ED2CBECB49700EBC847804855DD41A3E6690CA2"
+    }
+  },
+  "player_acceptance_runner": {
+    "path": "tools/acceptance/music/run.cjs",
+    "sha256": "5B89953DE786A86915C0D2988F0B93CEB0E7FA960F54961D5D0DFD5A9D534E70",
+    "node": "v22.23.5",
+    "syntax_check_passed": true,
+    "server_start_or_stop_automated": false,
+    "operator_granted_before_player_login": true,
+    "inventory_item_id_parser_fixed": "Reads the craftengine:id string value from Mineflayer custom_data components.",
+    "fixture_parser_validation": {
+      "class": "net.kaleidoscope.music.MidiSong",
+      "short_fixture_note_count": 3,
+      "short_fixture_duration_ticks": 8,
+      "delayed_fixture_note_count": 2,
+      "delayed_fixture_second_note_tick": 100
+    },
+    "fixtures": [
+      {
+        "path": "plugins/KaleidoscopeMusicPlugin/songs/music-acceptance.mid",
+        "bytes": 57,
+        "sha256": "3F927628BC4D641857D84C509CFB4CD7FFA13CC559DC7E28287DE35C7DBF00DF"
+      },
+      {
+        "path": "plugins/KaleidoscopeMusicPlugin/songs/music-stop-acceptance.mid",
+        "bytes": 46,
+        "sha256": "0903DFA63CDE95C46ED6C3DF2EE353F2DFAB0C547EADD08911176778756B92EE"
+      }
+    ],
+    "player_run_completed": true,
+    "player_run": {
+      "path": "folia-proof/music-acceptance-latest.json",
+      "username": "MusicProof5",
+      "accepted": true,
+      "music_plugin_sha256": "983FB4B88B39BB5211E12EAD23D3202222624E114E2EE4137F48D49D434B1078",
+      "keyboard_window": "minecraft:generic_9x3",
+      "keyboard_note_sound_count": 1,
+      "midi_note_sound_count": 3,
+      "stop_fixture_sound_count": 1
+    },
+    "disconnect_cleanup": {
+      "path": "folia-proof/music-disconnect-acceptance.json",
+      "player": "MusicQuit3",
+      "observer": "MusicObserver3",
+      "accepted": true,
+      "observer_note_count": 1,
+      "notes_heard_after_player_disconnect": 0
+    }
+  },
+  "isolated_stage": {
+    "source": "C:/tmp/starsupply-v11-folia-acceptance-20261122",
+    "source_final_shutdown": "2026-11-22T02:21:55+08:00",
+    "path": "C:/tmp/starsupply-folia-music-full-stack-20261122",
+    "server": "Folia 1.21.11-14-ver/1.21.11@529aabc",
+    "java": "OpenJDK 21.0.13.1+2-LTS",
+    "game_listener": "127.0.0.1:25629",
+    "rcon_listener": "127.0.0.1:25639",
+    "stage_copy_succeeded": true,
+    "root_logs_cache_crash_reports_and_remapped_cache_excluded": true,
+    "source_stage_unchanged": true,
+    "plugins": [
+      "CraftEngine 26.9.1",
+      "FoliaSupplyProof 1.0.0 test fixture",
+      "KaleidoscopeCookeryPlugin 1.3.0",
+      "KaleidoscopeDecoPlugin 0.1.0-dev",
+      "KaleidoscopeDollPlugin 0.1.0-dev",
+      "KaleidoscopeMusicPlugin 0.1.0-dev",
+      "KaleidoscopeTavernPlugin 0.1.0-dev",
+      "StarCore 1.0.0 test copy",
+      "StarSupply 0.1.0 test copy"
+    ],
+    "artifacts": {
+      "StarSupply_production_sha256": "59F85DF940B3247625342218F2ACC1B9362C44D8268B0100D9D02459528A437D",
+      "StarSupply_test_copy_sha256": "32B211938CC8587E6C2F094244160CCB5F5494AE033BD14132E6BEC243C9244A",
+      "StarSupply_descriptor_override": "Added folia-supported: true to the isolated test copy only.",
+      "StarSupply_non_descriptor_entries": 362,
+      "StarSupply_non_descriptor_entry_differences": 0,
+      "StarCore_build_sha256": "6D84B645268E9DFCCA7B0766B898C372E32F448CB6B317C919BF65E3B3AE8243",
+      "StarCore_test_copy_sha256": "D8E066833D72C67F1E20554A210A3F4454E1F4E7F1371C4D639320D1822AF0B5",
+      "StarCore_descriptor_override": "Added folia-supported: true to the isolated test copy only.",
+      "StarCore_non_descriptor_entries": 8259,
+      "StarCore_non_descriptor_entry_differences": 0,
+      "KaleidoscopeMusic_sha256": "983FB4B88B39BB5211E12EAD23D3202222624E114E2EE4137F48D49D434B1078",
+      "KaleidoscopeDeco_sha256": "1DB18976692F5DE6B284B31CFC5EF40E14D60F86925F75E87FE7DC3CF807F263",
+      "KaleidoscopeDoll_previous_staged_sha256": "1A801810CE43B119B780F87998B4BACA0EAE0A5F539F5E3AB63DCEB2BCCCC9BC",
+      "KaleidoscopeDoll_sha256": "3CA0E01E19F571F61AEC20F6DCA4211C375FE21FB6690D4B82A62BC1C04551FA",
+      "KaleidoscopeDoll_refreshed_from_full_build": true,
+      "KaleidoscopeTavern_sha256": "9A355A00ED2E5F19F241F0FA0ED2CBECB49700EBC847804855DD41A3E6690CA2",
+      "KaleidoscopeCookery_sha256": "8F6A56831674AB0EC739F8EFB270FC775314A6160AE994B0A3B8473FB8110616",
+      "CraftEngine_sha256": "021260C87E3546730D321F4360B1744E6E33CAA1D68E98AE30DCDBBDC347AE0F"
+    },
+    "music_content": {
+      "path": "plugins/CraftEngine/resources/music",
+      "files": 9,
+      "bytes": 19404
+    },
+    "startup": {
+      "attempted": true,
+      "process_id": 6944,
+      "java_arguments": "-Xms256m -Xmx768m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC -jar folia.jar --nogui",
+      "started_at": "2026-11-22T07:08:18+08:00",
+      "ready_at": "2026-11-22T07:10:11+08:00",
+      "plugins_initialized": 9,
+      "paper_plugins_enabled": 1,
+      "bukkit_plugins_enabled": 8,
+      "startup_errors": 0,
+      "doll_unknown_behavior_warnings": 0,
+      "normal_shutdown_at": "2026-11-22T07:23:23+08:00",
+      "normal_shutdown_confirmed": true,
+      "isolated_listeners_released": true,
+      "existing_folia_service": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122",
+      "existing_game_listener": "127.0.0.1:25729",
+      "existing_rcon_listener": "127.0.0.1:25739",
+      "existing_service_pid": 3416,
+      "existing_service_remained_active": true,
+      "reason": "The isolated acceptance stage ran on loopback ports 25629/25639 with a 768 MiB heap cap. The existing service remained active on 25729/25739 and was not stopped or modified."
+    },
+    "resource_pack": {
+      "path": "plugins/CraftEngine/generated/resource_pack.zip",
+      "preexisting_in_stage_copy": true,
+      "last_modified": "2026-11-18T22:22:07+08:00",
+      "bytes": 12799511,
+      "sha256": "D4838F66209924FEDC1942D719F0AEDFEEECCF176A5D639C9AA7D475CC88B8E3",
+      "music_namespace_entries": 17,
+      "regenerated_during_this_run": false,
+      "client_rendering_verified": false
+    }
+  },
+  "acceptance": {
+    "music_plugin_startup": true,
+    "music_keyboard_menu": true,
+    "note_playback": true,
+    "midi_playback": true,
+    "midi_stop": true,
+    "player_disconnect_cleanup": true,
+    "complete_optional_plugin_stack": true
+  },
+  "not_covered": [
+    "CraftEngine resource-pack regeneration during this run",
+    "Minecraft client rendering of the generated CraftEngine pack and instrument model"
+  ]
+}

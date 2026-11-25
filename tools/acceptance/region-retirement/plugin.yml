@@ -1,0 +1,10 @@
+name: SupplyRetirementProof
+version: '1.0.0'
+main: local.test.SupplyRetirementProof
+api-version: '1.21.11'
+folia-supported: true
+depend: [StarCore, StarSupply]
+commands:
+  retirementproof:
+    description: Isolated region retirement acceptance
+    permission: starsupply.admin

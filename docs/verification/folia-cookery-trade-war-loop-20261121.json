@@ -1,0 +1,216 @@
+{
+  "recorded_on": "2026-11-21",
+  "purpose": "End-to-end real Cookery food procurement, shipment, frontline consumption and recoverable morale effect on the isolated Folia fixture.",
+  "result": "single_food_cookery_trade_delivery_and_war_effect_pass",
+  "goal_complete": false,
+  "environment": {
+    "server": "Folia 1.21.11-14-529aabc",
+    "starcore": "1.0.0; ArmyService used for test army creation and persistence",
+    "cookery": "Kaleidoscope Cookery 1.3.0; CraftEngine 26.9.1",
+    "test_player": "SupplyCook",
+    "nation": "Alpha",
+    "war": "Alpha vs Gamma ACTIVE",
+    "test_descriptor_override": true,
+    "descriptor_note": "Only the isolated runtime test JAR adds folia-supported:true. The production JAR and source plugin.yml do not declare Folia support."
+  },
+  "real_player_production": {
+    "agriculture": {
+      "actions": "player planted and bonemealed wheat, then harvested it in survival",
+      "item": "minecraft:wheat",
+      "count": 1,
+      "log_time": "2026-11-20T19:23:29.643Z"
+    },
+    "millstone": {
+      "input": "minecraft:wheat x1",
+      "output": "kaleidoscopecookery:flour x1",
+      "log_time": "2026-11-20T20:02:48.206Z",
+      "method": "player inserted wheat into Cookery millstone and moved around it; no direct inventory grant"
+    },
+    "dough": {
+      "inputs": {
+        "kaleidoscopecookery:flour": 1,
+        "minecraft:water_bucket": 1
+      },
+      "output": {
+        "id": "kaleidoscopecookery:raw_dough",
+        "count": 1
+      },
+      "inputs_consumed": true,
+      "log_time": "2026-11-20T20:06:32.360Z"
+    },
+    "steamer": {
+      "input": "kaleidoscopecookery:raw_dough x1",
+      "heat": "magma block directly below",
+      "method": "real Cookery steamer, single dough insert, empty-hand sneak lid interaction, heat wait, normal item retrieval",
+      "output": {
+        "id": "kaleidoscopecookery:mantou",
+        "count": 1,
+        "quality": "BASE",
+        "quality_ratio": 1.0,
+        "food_v1": true
+      },
+      "log_time": "2026-11-20T20:38:09.507Z"
+    }
+  },
+  "purchase": {
+    "id": "21a05473-678e-4970-bfa2-d37741a37b6c",
+    "resource": "FOOD",
+    "items": 1,
+    "price": "5.00",
+    "state": "BOUGHT",
+    "seller": "904364cc-bf39-35a0-b688-6cc8a6d846c8",
+    "transfer_and_purchase_settlement": "ac8a34ef-697d-47c1-ad39-523afc7966a5",
+    "settlement": "PAID",
+    "item_removed_from_player_inventory": true,
+    "item_lot": {
+      "item_id": "kaleidoscopecookery:mantou",
+      "quality": "BASE",
+      "quality_ratio": 1.0,
+      "units_per_item": 2
+    }
+  },
+  "shipment": {
+    "id": "cdb9d60c-348d-45c8-8b28-9b5802e23bf0",
+    "origin": "alpha-depot",
+    "target": "morale-front",
+    "path": "morale-road",
+    "risk": 0.0,
+    "carrier": "904364cc-bf39-35a0-b688-6cc8a6d846c8",
+    "reward": "15.00",
+    "state": "DELIVERED",
+    "settlement": "PAID",
+    "duplicate_delivery": "returned existing DELIVERED state and same settlement UUID",
+    "settlement_rows": 1
+  },
+  "frontline_and_war_effect": {
+    "rebound_front": "morale-front",
+    "army_id": "6f318ddf-5e79-4194-b05f-43f1cc99a6bf",
+    "army_soldiers": 10,
+    "army_created_via": "StarCore ArmyService.createArmy; cost 1000.00 paid by Alpha treasury; persisted in StarCore army state and restored on restart",
+    "rebind_command": "/supply rebind-front morale-front 6f318ddf-5e79-4194-b05f-43f1cc99a6bf",
+    "rebind_preserved": "front location, physical item lots, route and delivered shipment records",
+    "first_food_cycle_after_rebind": {
+      "consumption": {
+        "FOOD": "1/1",
+        "other_resources": "0/1 each"
+      },
+      "coverage_percent": 45,
+      "combat_multiplier": 0.94,
+      "morale_delta": -5.5,
+      "effective_morale": 94.5,
+      "observed_at": "2026-11-20T21:23:20Z"
+    },
+    "following_empty_cycle": {
+      "coverage_percent": 0,
+      "combat_multiplier": 0.85,
+      "morale_delta": -10.0,
+      "effective_morale": 90.0
+    },
+    "recovery_property": "StarSupply's morale contribution follows current food coverage and is not a persistent debit: 45% coverage produced -5.5 (effective 94.5 from base 100), and after the single mantou was consumed the contribution returned to -10 (effective 90). This proves a reversible temporary contribution, not full-supply recovery or restoration of previously lost StarCore base morale.",
+    "later_snapshot_after_food_depletion": {
+      "coverage_percent": 0,
+      "combat_multiplier": 0.85,
+      "morale_delta": -10.0,
+      "effective_morale": 90.0,
+      "observed_at": "2026-11-20T21:25:47Z"
+    }
+  },
+  "native_starcore_supply_follow_up": {
+    "finding": "StarCore has an independent persisted supply and morale maintenance path. ArmyService.updateArmy consumes ceil(supplyConsumptionPerHour / 60) every minute; for the stationary rate of 1 point/hour this consumes 1 point/minute. Once native supply is below 20, ArmyUnit.consumeSupply subtracts 5 saved morale points and ArmyService.updateArmy subtracts another 2 during that minute update, for up to 7 points/minute; below 10 it may disband the army.",
+    "runtime_evidence": "The retained loop snapshot records this army at base morale 100 and native supply 72. A later line in the isolated runtime log records the same army disbanded at morale 2; that run predates the maintenance correction. The retained snapshots do not capture an intermediate base-morale value of 86, so that exact transition cannot be attributed from the archived timeline; the StarCore starvation path was the confirmed independent source of persistent erosion, while StarSupply's temporary modifier does not write base morale.",
+    "maintenance_correction": "The current upstream patch accumulates hourly consumption across minute updates, removes the duplicate model-side morale debit, applies one -2 starvation debit below native supply 20, and restores +1 morale per minute once native supply is at least 20. Targeted StarCore tests: 19 passed, 0 failed.",
+    "integration_limit": "StarSupply deliveries and food lots do not replenish StarCore's native 0-100 supply meter. StarCore's public resupplyArmy(UUID) independently charges the treasury and has no request-level idempotency receipt, so it cannot safely be called as a side effect of an already-paid item purchase.",
+    "goal_complete": false
+  },
+  "restart_and_idempotency": {
+    "normal_server_restart_after_purchase_and_delivery": true,
+    "purchase_after_restart": "BOUGHT",
+    "shipment_after_restart": "DELIVERED",
+    "purchase_settlement_rows": 1,
+    "transport_settlement_rows": 1,
+    "army_uuid_restored_by_starcore": true,
+    "runtime_balance_snapshot": {
+      "seller_and_carrier_balance": "20.00",
+      "alpha_treasury_after_purchase_and_transport": "2594.40",
+      "alpha_treasury_after_test_army_creation": "1594.40"
+    }
+  },
+  "build": {
+    "maven_verify": "BUILD SUCCESS",
+    "tests": 74,
+    "failures": 0,
+    "errors": 0,
+    "finished_at": "2026-11-21T06:04:59+08:00",
+    "production_jar_sha256": "79B907A6C1EC3424089E14FAD02B1E256A714ADB8A177A6F71DF771E8F53A76E",
+    "package_review": "PASS"
+  },
+  "evidence_files": {
+    "server_log_snapshot": {
+      "path": "folia-proof/verification-cookery-war-loop-server-20261121.log",
+      "sha256": "1849B0473527DAEFB5DC118E8D6D52BC8DB79B29A80992A4354DE2D4463D5AFF",
+      "bytes": 297860
+    },
+    "proof_log_snapshot": {
+      "path": "folia-proof/verification-cookery-war-loop-proof-20261121.jsonl",
+      "sha256": "630377277FDEC4A85E90ED70D73FB7424C873FF8913E653E394042E144D345A8",
+      "bytes": 501519
+    },
+    "kitchen_log_snapshot": {
+      "path": "folia-proof/verification-cookery-war-loop-kitchen-20261121.jsonl",
+      "sha256": "5773D27440B6DB42804581DC4EAFD1EAD4A1017C601E6B9C7D38EA2F7DADE45D",
+      "bytes": 877632
+    },
+    "buyer_log_snapshot": {
+      "path": "folia-proof/verification-cookery-war-loop-buyer-20261121.jsonl",
+      "sha256": "A20AE435C52C9C18D8F3ECC156472CD03C729EA4863B4689B169B3A3AB7C520C",
+      "bytes": 62898
+    },
+    "army_file_snapshot": {
+      "path": "folia-proof/verification-cookery-war-loop-army-20261121.dat",
+      "sha256": "6B1D65F43DE869796F57AFA5BCB9D3C4D2CE21EC36B908E71BEEEF1E8C9D3522",
+      "bytes": 426
+    },
+    "supply_database_snapshot": {
+      "path": "folia-proof/verification-cookery-war-loop-supply_database-20261121.sqlite",
+      "sha256": "4E5B3DA1B697C73094600CEDF2F4D32026A00E6830D387BA714CE6EF05B0E517",
+      "bytes": 1048576
+    },
+    "starcore_database_snapshot": {
+      "path": "folia-proof/verification-cookery-war-loop-starcore_database-20261121.sqlite",
+      "sha256": "C8C6367967CCCEB6DA3AF9776DEABA5D1E4FD30C80B03691D6122CF2364A910C",
+      "bytes": 1716224
+    },
+    "production_jar": {
+      "path": "C:/Users/Administrator/Documents/starsupply/target/starsupply-0.1.0.jar",
+      "sha256": "79B907A6C1EC3424089E14FAD02B1E256A714ADB8A177A6F71DF771E8F53A76E",
+      "bytes": 14653002
+    },
+    "runtime_proof_jar": {
+      "path": "plugins/StarSupply-0.1.0.jar",
+      "sha256": "32B38257DAC6969278989CD7BD27A94877351F9021C9238642A692B767ECB4B7",
+      "bytes": 14647358
+    },
+    "kitchen_driver": {
+      "path": "folia-proof/kitchen-bot.cjs",
+      "sha256": "9B8533C4C2E6481C2C769FE52F5EB4E7B7FFCFAAD63F378068ABBA97BE4763CA",
+      "bytes": 16277
+    }
+  },
+  "remaining_limits": [
+    "Production plugin.yml still has no folia-supported declaration; this isolated test does not establish complete Folia support for StarSupply, pinned StarCore or every optional-plugin combination.",
+    "This run proves one FOOD item through the production chain, not sustained supply or all six resources; continuous farming/production and additional resources are still needed for full coverage.",
+    "Other trade rejection branches, all restart/interrupt boundaries, world unload and full Folia module coverage remain separate acceptance work."
+  ],
+  "database_snapshot_checks": {
+    "purchase": "BOUGHT; settlement ac8a34ef-697d-47c1-ad39-523afc7966a5; one PURCHASE settlement row PAID 5.00",
+    "shipment": "DELIVERED; carrier 904364cc-bf39-35a0-b688-6cc8a6d846c8; route morale-road; risk 0; one TRANSPORT settlement row PAID 15.00",
+    "front_lot": "kaleidoscopecookery:mantou, BASE, ratio 1.0, 1 item, units/item 2, remaining 0 after consumption, warehouse morale-front",
+    "front_army": "morale-front bound to 6f318ddf-5e79-4194-b05f-43f1cc99a6bf",
+    "food_cycle": "first recorded FOOD consumption 1/1, subsequent recorded cycles 0/1 after the single mantou was consumed"
+  },
+  "final_binary_runtime_check": {
+    "runtime_jar_sha256": "32B38257DAC6969278989CD7BD27A94877351F9021C9238642A692B767ECB4B7",
+    "command": "/supply rebind-front morale-front 6f318ddf-5e79-4194-b05f-43f1cc99a6bf",
+    "result": "authorized same-army rebind succeeded on the final source build; following status remained at zero stock/shortage as expected"
+  }
+}

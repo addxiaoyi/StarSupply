@@ -1,0 +1,77 @@
+{
+  "purpose": "Folia disconnect recovery for physical purchase inventory handoff",
+  "date": "2026-11-22",
+  "runtime": {
+    "server": "Folia 1.21.11-14",
+    "java": "21.0.13.1",
+    "game_address": "127.0.0.1:25729",
+    "rcon_address": "127.0.0.1:25739",
+    "source_starsupply_sha256": "77070BE6D8D25E9325D67DE8A9D04AF7EDC2BBC88AC22EB7F9627FCEA29CF1B3",
+    "isolated_test_jar_sha256": "A1407CD22E5F64B4A89335A50CC22F37A0F610F3ABE3198D367792E38D562129",
+    "isolated_test_descriptor": "The temporary test JAR adds folia-supported: true. The production descriptor and source JAR were not changed."
+  },
+  "player": {
+    "name": "SupplyBuyer",
+    "uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+    "iron_ingots_before": 4,
+    "iron_ingots_after": 4
+  },
+  "purchase": {
+    "id": "443e79ab-0960-4d51-b5f7-273a70f4616b",
+    "resource": "EQUIPMENT",
+    "item_count": 1,
+    "price": "5.00",
+    "state_before": "OPEN",
+    "state_at_disconnect": "RESERVED",
+    "state_after_reconnect": "OPEN"
+  },
+  "prepared_without_receipt_recovery": {
+    "run_id": "folia-inventory-recovery-1795356839643",
+    "first_disconnect_delay_ms": 50,
+    "first_attempt_created_transfer": false,
+    "disconnect_delay_ms": 65,
+    "transfer_id": "63efd0d6-315f-40c3-94fb-9df9853bb29f",
+    "transfer_state_at_disconnect": "PREPARED",
+    "settlements_at_disconnect": 0,
+    "transfer_after_reconnect": "deleted",
+    "purchase_after_reconnect": "OPEN",
+    "settlements_after_reconnect": 0,
+    "iron_ingots_after_reconnect": 4,
+    "outcome": "PREPARED_ABORTED_WITHOUT_DEBIT",
+    "passed": true,
+    "result_file": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122/folia-proof/folia-inventory-recovery-1795356839643.json",
+    "server_log": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122/folia-proof/folia-inventory-recovery-1795356839643-server.log"
+  },
+  "durable_receipt_recovery": {
+    "run_id": "folia-inventory-recovery-1795356435935",
+    "transfer_id": "f2720d42-3548-4c5c-88b9-9e0b1ab9ea65",
+    "transfer_state_at_disconnect": "TAKEN",
+    "settlement_state_at_disconnect": "PENDING",
+    "transfer_state_after_reconnect": "STORED",
+    "settlement_state_after_reconnect": "PAID",
+    "settlement_count_after_reconnect": 1,
+    "purchase_state_after_reconnect": "BOUGHT",
+    "iron_ingots_before": 4,
+    "iron_ingots_after": 3,
+    "outcome": "COMMITTED_EXACTLY_ONCE",
+    "passed": true,
+    "result_file": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122/folia-proof/folia-inventory-recovery-1795356435935.json"
+  },
+  "shutdown_and_restore": {
+    "server_shutdown": "normal",
+    "game_and_rcon_listeners_closed": true,
+    "original_stage_files_restored_and_sha256_verified": 20,
+    "original_starsupply_database_sha256": "5BB589BF5F453C42DA41AA4DB4067C64727BF39CACB244C624CAB7D8B81F1B51",
+    "original_starsupply_jar_sha256": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+    "sqlite_integrity_check": {
+      "plugins/CraftEngine/data.db": "ok",
+      "plugins/StarCore/religion.db": "ok",
+      "plugins/StarCore/starcore-retry-test.db": "ok",
+      "plugins/StarCore/starcore.db": "ok",
+      "plugins/StarSupply/insurance.db": "ok",
+      "plugins/StarSupply/supply.db": "ok",
+      "plugins/StarSupply/tavern.db": "ok"
+    },
+    "original_latest_log_restored_from_archive": "logs/2026-11-22-33.log.gz"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "recorded_on": "2026-11-20",
+  "purpose": "Folia Cookery production-chain evidence for StarSupply FOOD mapping",
+  "result": "partial_real_production_passed_steamer_placement_blocked",
+  "goal_complete": false,
+  "environment": {
+    "server": "Folia 1.21.11-14-529aabc",
+    "runtime_directory": "C:/Users/Administrator/Documents/starsupply-deps/folia-stage1-live",
+    "player": "SupplyCook",
+    "sessions": ["mwoyisyu", "mwp170tp", "mwp1v2a4"],
+    "plugins": ["CraftEngine 26.9.1", "KaleidoscopeCookeryPlugin 1.3.0", "StarCore 1.0.0", "StarSupply 0.1.0"]
+  },
+  "positive_steps": {
+    "millstone": {
+      "input": {"item": "minecraft:wheat", "count": 3},
+      "output": {"item_id": "kaleidoscopecookery:flour", "count": 3, "material": "PAPER", "item_sha256_prefix": "dc9c11d2"},
+      "method": "real player movement manually drove the millstone; no database or PDC injection"
+    },
+    "dough": {
+      "input": {"item_id": "kaleidoscopecookery:flour", "count": 3, "water_buckets": 3},
+      "output": {"item_id": "kaleidoscopecookery:raw_dough", "count": 3, "item_sha256_prefix": "db2dd99e"},
+      "observed_consumption": {"flour": 3, "water_buckets": 3},
+      "recipe": "ordinary 2x2 player recipe"
+    }
+  },
+  "negative_steps": {
+    "automatic_mule": "A real mule spawn egg was consumed and a mule spawned, but no flour output appeared after 90 seconds.",
+    "recovery": "Empty-hand stop/take returned raw wheat; a bounded player orbit driver then produced the flour.",
+    "steamer_placement": {
+      "support": {"block": "minecraft:magma_block", "position": [-30, 129, 71]},
+      "target": [-30, 130, 71],
+      "real_steamer_sha256": "15837e6ee702287953cee8e084ec1bdf2bb045c3c3f6decd38c3a75229c2edf3",
+      "server_reached_actions": ["cookery-steamer-activate-2205", "cookery-steamer-place-fresh-2206"],
+      "standard_block_item_path": "Mineflayer bot.placeBlock sent the top-face interaction; no blockUpdate arrived within 5000 ms.",
+      "verification_action": "cookery-steamer-verify-2207 found air at the target and no new steamer interaction entity.",
+      "inventory_after": {"steamer": 1, "raw_dough": 3},
+      "result": "No item was consumed and no world block was placed. The steamer recipe was not run."
+    }
+  },
+  "unfinished": {
+    "steamer_mantou": "No mantou was produced: fresh block-use interactions reached the Folia server, but the steamer remained in inventory and the target stayed air. Do not claim finished Cookery food or its quality metadata from this record.",
+    "starsupply_purchase": {
+      "food_order": "21a05473-678e-4970-bfa2-d37741a37b6c",
+      "state": "OPEN",
+      "sale_or_transport": "not attempted because no finished food was available"
+    },
+    "evidence_limits": "This record proves upstream ingredient consumption and serialized intermediate custom items only. It does not prove the complete wheat-to-mantou-to-purchase loop."
+  },
+  "raw_evidence": {
+    "kitchen_log": "folia-proof/kitchen-SupplyCook.jsonl",
+    "kitchen_log_sha256": "51B2D79F748560E701A2761813FFF573FE51A2A63B8D41DD0E52DB29E05E4CFC",
+    "actions_sha256": "F701B42DA279AE3CC4FD0340DF2E1755DBE9222F23AB1B31E80D5940A2FB38F9",
+    "bot_sha256": "191B6B667CDAD1C03F8AE6CAE2B17664BA13BA44A59CD2C4D500745441B36E70"
+  }
+}

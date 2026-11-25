@@ -32,6 +32,12 @@ public final class InventoryEscrow {
     private final NamespacedKey receiptKey;
     private final Path playerDataDirectory;
 
+    public record Fingerprints(String canonical, String legacy) {
+        public boolean matches(String value) {
+            return canonical.equals(value) || legacy.equals(value);
+        }
+    }
+
     /** Construct during plugin enable, after the primary world has loaded. */
     public InventoryEscrow(JavaPlugin plugin, ResourceItemRegistry items) {
         this(items, new NamespacedKey(plugin, RECEIPT_NAME), plugin.getServer().getWorlds().getFirst()
@@ -223,6 +229,12 @@ public final class InventoryEscrow {
         return fingerprint(storageCopy(player));
     }
 
+    public Fingerprints fingerprints(Player player) {
+        requireOwningThread(player);
+        ItemStack[] slots = storageCopy(player);
+        return new Fingerprints(fingerprint(slots), legacyFingerprint(slots));
+    }
+
     private static ItemStack[] storageCopy(Player player) {
         ItemStack[] storage = player.getInventory().getStorageContents();
         if (storage.length != STORAGE_SLOTS) throw new IllegalStateException("不受支持的玩家背包布局");
@@ -248,6 +260,14 @@ public final class InventoryEscrow {
     }
 
     private static String fingerprint(ItemStack[] slots) {
+        Object[] serialized = new Object[slots.length];
+        for (int index = 0; index < slots.length; index++) {
+            if (!empty(slots[index])) serialized[index] = slots[index].serialize();
+        }
+        return InventoryFingerprint.hash(serialized);
+    }
+
+    private static String legacyFingerprint(ItemStack[] slots) {
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");

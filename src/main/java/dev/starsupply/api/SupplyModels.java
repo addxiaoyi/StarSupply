@@ -16,7 +16,7 @@ public final class SupplyModels {
     public enum TransferState { PREPARED, TAKEN, REJECTED, RETURNING, RETURNED, STORED, REVIEW }
     public enum FrontAccess { CONNECTED, CONTROL_LOST, ARMY_OUT_OF_RANGE }
     public enum Operation {
-        WAREHOUSE_CREATE, ROUTE_UPDATE, PURCHASE_CREATE, SELL, TRANSPORT_CREATE, ACCEPT, ESCORT, DELIVER, CANCEL, RETURN,
+        WAREHOUSE_CREATE, FRONT_REBIND, ROUTE_UPDATE, PURCHASE_CREATE, SELL, TRANSPORT_CREATE, ACCEPT, ESCORT, DELIVER, CANCEL, RETURN,
         RECONCILE, TAVERN_CREATE, TAVERN_REMOVE, SCOUT, INTELLIGENCE_PUBLISH, INSURE, INSURANCE_CANCEL
     }
 
@@ -68,12 +68,24 @@ public final class SupplyModels {
     public record SupplyStatus(UUID armyId, UUID nationId, String warehouseId, int soldiers,
                                Map<ResourceType, Integer> demand, Map<ResourceType, Long> available,
                                double coverage, double combatMultiplier, long interval, boolean atWar,
-                               CampaignStatus campaign, FrontAccess frontAccess) {
+                               CampaignStatus campaign, FrontAccess frontAccess, double moraleDelta) {
         public SupplyStatus {
             demand = Map.copyOf(demand);
             available = Map.copyOf(available);
             campaign = Objects.requireNonNull(campaign);
             frontAccess = Objects.requireNonNull(frontAccess);
+            if (!Double.isFinite(moraleDelta) || moraleDelta < -10 || moraleDelta > 0 || (!atWar && moraleDelta != 0)) {
+                throw new IllegalArgumentException("Invalid temporary logistics morale contribution");
+            }
+        }
+
+        /** Compatibility constructor for consumers that do not provide a morale contribution. */
+        public SupplyStatus(UUID armyId, UUID nationId, String warehouseId, int soldiers,
+                            Map<ResourceType, Integer> demand, Map<ResourceType, Long> available,
+                            double coverage, double combatMultiplier, long interval, boolean atWar,
+                            CampaignStatus campaign, FrontAccess frontAccess) {
+            this(armyId, nationId, warehouseId, soldiers, demand, available, coverage, combatMultiplier,
+                    interval, atWar, campaign, frontAccess, 0);
         }
 
         public SupplyStatus(UUID armyId, UUID nationId, String warehouseId, int soldiers,
@@ -89,6 +101,21 @@ public final class SupplyModels {
                             double coverage, double combatMultiplier, long interval, boolean atWar) {
             this(armyId, nationId, warehouseId, soldiers, demand, available, coverage, combatMultiplier,
                     interval, atWar, CampaignStatus.NORMAL);
+        }
+    }
+
+    /** Durable FOOD-to-native-supply obligation. APPLIED means StarCore confirmed its own receipt. */
+    public record NativeSupplyCredit(UUID id, UUID armyId, UUID nationId, long interval, long intervalMillis, int points,
+                                     String state, int attempts, String lastError) {
+        public NativeSupplyCredit {
+            Objects.requireNonNull(id);
+            Objects.requireNonNull(armyId);
+            Objects.requireNonNull(nationId);
+            Objects.requireNonNull(lastError);
+            if (intervalMillis < 0 || intervalMillis > 86_400_000L || points < 1 || points > 10 || attempts < 0
+                    || !java.util.Set.of("PENDING", "APPLIED", "REVIEW").contains(state)) {
+                throw new IllegalArgumentException("Invalid native supply obligation");
+            }
         }
     }
 

@@ -69,6 +69,38 @@ class CorePaymentTest {
     }
 
     @Test
+    void insufficientFundsStatusWithSufficientBalanceRetries() {
+        treasury.insufficientNextSpendWhileBalanceSufficient = true;
+        AtomicInteger credits = new AtomicInteger();
+        BiPredicate<UUID, BigDecimal> deposit = (recipient, amount) -> {
+            credits.incrementAndGet();
+            return true;
+        };
+
+        assertEquals(RETRY, payment(deposit).pay(settlement, nation, player, AMOUNT));
+        assertEquals(0, credits.get());
+        assertEquals(0, treasury.debits);
+        assertEquals(PAID, payment(deposit).pay(settlement, nation, player, AMOUNT));
+        assertEquals(1, credits.get());
+        assertEquals(1, treasury.debits);
+        assertEquals(new BigDecimal("15.00"), treasury.balance);
+    }
+
+    @Test
+    void insufficientTreasuryBalanceRejectsWithoutCreditingPlayer() {
+        treasury.balance = new BigDecimal("4.99");
+        AtomicInteger credits = new AtomicInteger();
+
+        assertEquals(REJECTED, payment((recipient, amount) -> {
+            credits.incrementAndGet();
+            return true;
+        }).pay(settlement, nation, player, AMOUNT));
+        assertEquals(0, credits.get());
+        assertEquals(0, treasury.debits);
+        assertEquals(new BigDecimal("4.99"), treasury.balance);
+    }
+
+    @Test
     void knownCreditFailureRefundsUsingSameNationalReceiptEvenAfterLostResponse() {
         treasury.loseNextRefundResponse = true;
         assertEquals(REVIEW, payment((recipient, amount) -> false)
@@ -271,12 +303,17 @@ class CorePaymentTest {
         private int refunds;
         private boolean loseNextSpendResponse;
         private boolean loseNextRefundResponse;
+        private boolean insufficientNextSpendWhileBalanceSufficient;
 
         @Override
         public SpendResult spend(SpendRequest request) {
             assertEquals(NationId.of(nation), request.nationId());
             if (receipts.containsKey(request.transactionId())) {
                 return new SpendResult(SpendingStatus.ALREADY_APPLIED, request.transactionId(), balance);
+            }
+            if (insufficientNextSpendWhileBalanceSufficient) {
+                insufficientNextSpendWhileBalanceSufficient = false;
+                return new SpendResult(SpendingStatus.INSUFFICIENT_FUNDS, request.transactionId(), balance);
             }
             if (balance.compareTo(request.amount()) < 0) {
                 return new SpendResult(SpendingStatus.INSUFFICIENT_FUNDS, request.transactionId(), balance);

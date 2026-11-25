@@ -1,0 +1,22 @@
+name: StarSupply
+version: '0.1.0'
+main: dev.starsupply.bukkit.StarSupplyPlugin
+api-version: '1.21.11'
+folia-supported: true
+depend: [StarCore]
+softdepend: [CraftEngine, KaleidoscopeCookeryPlugin, KaleidoscopeTavernPlugin]
+commands:
+  supply:
+    description: Open the StarSupply logistics panel.
+    aliases: [starsupply]
+    usage: /supply
+    permission: starsupply.use
+permissions:
+  starsupply.use:
+    default: true
+  starsupply.manage:
+    default: true
+    description: Access nation management commands. StarCore nation role is also required.
+  starsupply.admin:
+    default: op
+    description: Resolve externally verified settlements held for manual review.

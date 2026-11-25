@@ -10,6 +10,7 @@ import dev.starsupply.storage.InsuranceStore;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
@@ -127,6 +128,176 @@ class CaravanInsuranceTest {
             Policy active = service.reconcile(id, MoneyLeg.PREMIUM_DEBIT, true, NOW + 2);
             assertEquals(State.ACTIVE, active.state());
             assertEquals(1, money.calls.get(MoneyLeg.PREMIUM_CREDIT));
+        }
+    }
+
+    @Test void premiumDebitWithLostLocalResultIsNotRepeatedBeforeRestart() throws Exception {
+        verifyInterruptedNonreceiptLeg(MoneyLeg.PREMIUM_DEBIT);
+    }
+
+    @Test void premiumCreditWithLostLocalResultIsNotRepeatedBeforeRestart() throws Exception {
+        verifyInterruptedNonreceiptLeg(MoneyLeg.PREMIUM_CREDIT);
+    }
+
+    @Test void premiumRefundWithLostLocalResultIsNotRepeatedBeforeRestart() throws Exception {
+        verifyInterruptedNonreceiptLeg(MoneyLeg.PREMIUM_REFUND);
+    }
+
+    @Test void fatalPremiumFailureDoesNotReplayStartedCallInTheSameProcess() throws Exception {
+        FakeEconomy money = new FakeEconomy();
+        AssertionError failure = new AssertionError("provider aborted after possible balance write");
+        InsuranceEconomy failing = new InsuranceEconomy() {
+            @Override public MoneyResult execute(MoneyOperation operation) {
+                MoneyResult result = money.execute(operation);
+                if (operation.leg() == MoneyLeg.PREMIUM_DEBIT) throw failure;
+                return result;
+            }
+            @Override public MoneyResult reconcile(MoneyOperation operation, boolean applied) {
+                return money.reconcile(operation, applied);
+            }
+        };
+        Shipment shipment = shipment(UUID.randomUUID(), UUID.randomUUID(), TransportState.OPEN, 0.20);
+        try (InsuranceStore store = new InsuranceStore(folder.resolve("fatal-premium.db"))) {
+            CaravanInsurance service = service(store, failing);
+            assertSame(failure, assertThrows(AssertionError.class,
+                    () -> service.buy(shipment, CARRIER, false, 0.20, NOW)));
+            assertEquals(MoneyState.STARTED, service.policy(shipment.id()).orElseThrow().money()
+                    .get(MoneyLeg.PREMIUM_DEBIT));
+
+            service.resume(NOW + 1);
+            Policy held = service.policy(shipment.id()).orElseThrow();
+            assertTrue(held.review());
+            assertEquals(1, money.calls.get(MoneyLeg.PREMIUM_DEBIT));
+            assertFalse(money.calls.containsKey(MoneyLeg.PREMIUM_CREDIT));
+            assertFalse(money.calls.containsKey(MoneyLeg.RELEASE));
+            assertEquals(State.ACTIVE, service.reconcile(held.id(), MoneyLeg.PREMIUM_DEBIT, true, NOW + 2).state());
+            assertEquals(1, money.calls.get(MoneyLeg.PREMIUM_DEBIT));
+        }
+    }
+
+    @Test void interruptedReserveRecoversThroughItsOriginalAuthorityReceipt() throws Exception {
+        verifyInterruptedReceiptLeg(MoneyLeg.RESERVE);
+    }
+
+    @Test void interruptedClaimRecoversThroughItsOriginalAuthorityReceipt() throws Exception {
+        verifyInterruptedReceiptLeg(MoneyLeg.CLAIM);
+    }
+
+    @Test void interruptedReleaseRecoversThroughItsOriginalAuthorityReceipt() throws Exception {
+        verifyInterruptedReceiptLeg(MoneyLeg.RELEASE);
+    }
+
+    private void verifyInterruptedReceiptLeg(MoneyLeg leg) throws Exception {
+        Path file = folder.resolve("receipt-" + leg.name().toLowerCase(java.util.Locale.ROOT) + ".db");
+        FakeEconomy money = new FakeEconomy();
+        var authorityReceipts = new java.util.HashSet<UUID>();
+        var effects = new EnumMap<MoneyLeg, Integer>(MoneyLeg.class);
+        InsuranceEconomy authority = new InsuranceEconomy() {
+            @Override public MoneyResult execute(MoneyOperation operation) {
+                MoneyResult result = money.execute(operation);
+                if (authorityReceipts.add(operation.id())) effects.merge(operation.leg(), 1, Integer::sum);
+                return result;
+            }
+            @Override public MoneyResult reconcile(MoneyOperation operation, boolean applied) {
+                return money.reconcile(operation, applied);
+            }
+        };
+        Shipment shipment = shipment(UUID.randomUUID(), UUID.randomUUID(), TransportState.OPEN, 0.20);
+        State resolved = leg == MoneyLeg.RESERVE ? State.ACTIVE
+                : leg == MoneyLeg.CLAIM ? State.CLAIMED : State.CLOSED;
+        try (InsuranceStore store = new InsuranceStore(file)) {
+            CaravanInsurance service = service(store, authority);
+            if (leg != MoneyLeg.RESERVE) service.buy(shipment, CARRIER, false, 0.20, NOW);
+            failMoneyResult(file, leg);
+            assertThrows(SQLException.class, () -> {
+                if (leg == MoneyLeg.RESERVE) service.buy(shipment, CARRIER, false, 0.20, NOW + 1);
+                else service.complete(withState(shipment,
+                        leg == MoneyLeg.CLAIM ? TransportState.FAILED : TransportState.DELIVERED),
+                        leg == MoneyLeg.CLAIM, NOW + 1);
+            });
+            assertEquals(MoneyState.STARTED, service.policy(shipment.id()).orElseThrow().money().get(leg));
+            assertEquals(1, money.calls.get(leg));
+            allowMoneyResult(file);
+
+            service.resume(NOW + 2);
+            Policy recovered = service.policy(shipment.id()).orElseThrow();
+            assertEquals(resolved, recovered.state());
+            assertFalse(recovered.review());
+            assertEquals(2, money.calls.get(leg), "receipt-backed legs must confirm the original authority call");
+            assertEquals(1, effects.get(leg), "recovery uses the same durable money operation identity");
+        }
+        try (InsuranceStore store = new InsuranceStore(file)) {
+            service(store, authority).resume(NOW + 3);
+            assertEquals(resolved, store.forShipment(shipment.id()).orElseThrow().state());
+            assertEquals(2, money.calls.get(leg));
+            assertEquals(1, effects.get(leg));
+        }
+    }
+
+    private void verifyInterruptedNonreceiptLeg(MoneyLeg leg) throws Exception {
+        Path file = folder.resolve(leg.name().toLowerCase(java.util.Locale.ROOT) + ".db");
+        FakeEconomy money = new FakeEconomy();
+        if (leg == MoneyLeg.PREMIUM_REFUND) money.results.put(MoneyLeg.PREMIUM_CREDIT, MoneyResult.REJECTED);
+        Shipment shipment = shipment(UUID.randomUUID(), UUID.randomUUID(), TransportState.OPEN, 0.20);
+        UUID policyId;
+        State resolved = leg == MoneyLeg.PREMIUM_REFUND ? State.CLOSED : State.ACTIVE;
+        try (InsuranceStore store = new InsuranceStore(file)) {
+            CaravanInsurance service = service(store, money);
+            failMoneyResult(file, leg);
+            assertThrows(SQLException.class, () -> service.buy(shipment, CARRIER, false, 0.20, NOW));
+            Policy interrupted = service.policy(shipment.id()).orElseThrow();
+            policyId = interrupted.id();
+            assertEquals(MoneyState.STARTED, interrupted.money().get(leg));
+            assertEquals(1, money.calls.get(leg));
+
+            allowMoneyResult(file);
+            failMoneyResult(file, leg, MoneyState.REVIEW);
+            assertThrows(SQLException.class, () -> service.resume(NOW + 1));
+            assertEquals(MoneyState.STARTED, service.policy(shipment.id()).orElseThrow().money().get(leg));
+            assertEquals(1, money.calls.get(leg), "failing to persist quarantine still cannot authorize replay");
+            allowMoneyResult(file);
+            service.resume(NOW + 1);
+            assertEquals(1, money.calls.get(leg), "a rolled-back result is not permission to replay the money call");
+            Policy held = service.policy(shipment.id()).orElseThrow();
+            assertTrue(held.review());
+            assertEquals(MoneyState.REVIEW, held.money().get(leg));
+            assertThrows(IllegalArgumentException.class, () -> service.requireCarrier(shipment.id(), CARRIER));
+            assertEquals(policyId, service.buy(shipment, CARRIER, false, 0.20, NOW + 2).id());
+            service.resume(NOW + 3);
+            assertEquals(1, money.calls.get(leg));
+
+            Policy recovered = service.reconcile(policyId, leg, true, NOW + 4);
+            assertEquals(resolved, recovered.state());
+            assertFalse(recovered.review());
+            assertEquals(1, money.calls.get(MoneyLeg.RESERVE));
+            assertEquals(1, money.calls.get(MoneyLeg.PREMIUM_DEBIT));
+            assertEquals(1, money.calls.get(leg));
+        }
+        try (InsuranceStore store = new InsuranceStore(file)) {
+            CaravanInsurance service = service(store, money);
+            service.resume(NOW + 5);
+            assertEquals(resolved, service.policy(shipment.id()).orElseThrow().state());
+            assertEquals(1, money.calls.get(leg));
+        }
+    }
+
+    private static void failMoneyResult(Path file, MoneyLeg leg) throws SQLException {
+        failMoneyResult(file, leg, MoneyState.APPLIED);
+    }
+
+    private static void failMoneyResult(Path file, MoneyLeg leg, MoneyState result) throws SQLException {
+        try (var connection = DriverManager.getConnection("jdbc:sqlite:" + file.toAbsolutePath());
+             var statement = connection.createStatement()) {
+            statement.execute("CREATE TRIGGER fail_money_result BEFORE UPDATE OF state ON insurance_money "
+                    + "WHEN NEW.leg='" + leg.name() + "' AND NEW.state='" + result.name() + "' "
+                    + "BEGIN SELECT RAISE(ABORT, 'injected local result failure'); END");
+        }
+    }
+
+    private static void allowMoneyResult(Path file) throws SQLException {
+        try (var connection = DriverManager.getConnection("jdbc:sqlite:" + file.toAbsolutePath());
+             var statement = connection.createStatement()) {
+            statement.execute("DROP TRIGGER fail_money_result");
         }
     }
 

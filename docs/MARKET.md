@@ -15,6 +15,6 @@ StarSupply 在每个采购仓库为六类物资分别生成本地参考价。它
 
 跨国物资供货另受战时出口管制：`wartime-export-controls` 默认包含 `EQUIPMENT` 和 `STRATEGIC`。卖方国家正在参与 StarCore 允许战斗的战争时，这些资源不能向其他国家出售，包括出口到与卖方没有交战的贸易伙伴。本国国家采购不受此出口规则影响；只有买方参战、卖方和平时，也不会仅因进口国参战而拒绝，但仍须满足有效协定、额度、价格、禁运与双方敌对校验。管制在接收真实物资前重新检查，停止新供货，不借此撤销已经确认的库存或付款。
 
-配置示例为 `wartime-export-controls: [EQUIPMENT, STRATEGIC]`。可选值为六类 `ResourceType` 名称，`[]` 关闭该项规则；修改后重启。未配置时采用默认两类，无效的资源名会阻止插件启动。这项配置读取 StarCore 战争权威状态，没有独立战争存档或自动颁布 StarCore 禁运。该规则的现场验收结果需独立记录。
+配置示例为 `wartime-export-controls: [EQUIPMENT, STRATEGIC]`。可选值为六类 `ResourceType` 名称，`[]` 关闭该项规则；修改后重启。未配置时采用默认两类，无效的资源名会阻止插件启动。这项配置读取 StarCore 战争权威状态，没有独立战争存档或自动颁布 StarCore 禁运。额度耗尽、到期、取消、价格不符与禁运拒绝的 Paper 现场记录见[跨国交易验收](verification/paper-v11-cross-border-trade-rejections-20261123.json)；战时出口管制另见 [Paper 围城与战斗记录](verification/2026-11-20-paper-siege-combat.json)。
 
 基础价示例：FOOD 2.50、MEDICAL 4.00、EQUIPMENT 5.00、MATERIALS 0.50、ENGINEERING 3.00、STRATEGIC 8.00。服务器可以编辑 `plugins/StarSupply/config.yml` 中的 `market-base-prices` 和 `market-buffer-items`，改动重启后生效。所有价格均受 `max-order-payment` 限制；实际创建的订单仍走原有国库和物品事务结算。

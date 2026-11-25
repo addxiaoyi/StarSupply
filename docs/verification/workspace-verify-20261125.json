@@ -1,0 +1,38 @@
+{
+  "recorded_on": "2026-11-25",
+  "result": "passed",
+  "purpose": "Verify the current StarSupply build after fixing unresolved entity callbacks during plugin shutdown and diagnosing the Folia acceptance runtime.",
+  "environment": {"java": "21.0.13.1", "maven": "3.9.16", "working_tree_has_uncommitted_changes": true},
+  "command": ".\\mvnw.cmd -B -ntp verify",
+  "completed_at": "2026-11-25T12:49:04+08:00",
+  "tests": {"run": 105, "failures": 0, "errors": 0, "skipped": 0},
+  "artifact": {
+    "path": "target/starsupply-0.1.0.jar",
+    "bytes": 14675699,
+    "sha256": "6C942A8EC834D27F42726F456F872756A12F16B14358925DC337048FD3CCD142",
+    "main_schema": 11,
+    "folia_supported_descriptor": false
+  },
+  "log": {
+    "path": "target/continue-verify-20261125.log",
+    "sha256": "F696CD77C9876469CC80B890AB22A64EFE3835EC5023C1F4CB924BD098081218"
+  },
+  "regressions": [
+    "Plugin shutdown exceptionally completes queued entity operations so dependent inventory guards are released even when plugin task cancellation does not call the scheduler retirement handler.",
+    "Callbacks already running retain ownership of their completion; late, retired, rejected and cancelled callbacks cannot claim a second execution.",
+    "A 100-iteration scheduler/shutdown race completes every operation exactly once, either successfully or exceptionally.",
+    "StarSupply checks that StarCore is enabled before binding its public API."
+  ],
+  "acceptance_tool_tests": {
+    "command": "node --test tools/acceptance/survival-progression/runtime-health.test.cjs tools/acceptance/survival-progression/memory-preflight.test.cjs tools/acceptance/survival-progression/survival-checkpoint.test.cjs",
+    "run": 15,
+    "failures": 0,
+    "skipped": 0,
+    "scope": "Plugin readiness and failure detection, separate stdout/stderr decoding, Windows console encoding, shutdown errors, native/client memory headroom and rejecting optimistic crafting without a saved survival pickaxe."
+  },
+  "limits": [
+    "Automated lifecycle tests do not establish live world-unload or Folia entity-retirement recovery.",
+    "The production descriptor continues to target Paper. Isolated Folia runs use a descriptor-only test override.",
+    "Earlier runtime records remain associated with their original artifact hashes."
+  ]
+}

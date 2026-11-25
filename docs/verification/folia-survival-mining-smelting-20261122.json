@@ -1,0 +1,144 @@
+{
+  "recorded_on": "2026-11-22",
+  "purpose": "Continue the Folia survival-gameplay acceptance with legitimate tool crafting, iron mining, and smelting",
+  "result": "stone_tool_crafting_iron_mining_and_iron_smelt_passed",
+  "full_goal_complete": false,
+  "environment": {
+    "server": "Folia 1.21.11-14-529aabc",
+    "java": 21,
+    "tick_workers": 2,
+    "game_listener": "127.0.0.1:25729",
+    "rcon_listener": "127.0.0.1:25739",
+    "server_process_id": 3416,
+    "client": "Mineflayer 4.37.1 / Minecraft 1.21.11",
+    "player": "SupplyCook",
+    "plugin_sha256": {
+      "StarSupply-0.1.0.jar": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76"
+    },
+    "runtime_restart_or_jar_deployment": false,
+    "administrator_item_grants_or_teleports": false
+  },
+  "starting_state": {
+    "position": {
+      "x": -8.410379414933379,
+      "y": 75.0,
+      "z": 57.58930147971259
+    },
+    "health": 20,
+    "food": 20,
+    "inventory_counts": {
+      "birch_planks": 3,
+      "cobblestone": 25,
+      "stick": 2,
+      "gravel": 8,
+      "dirt": 27,
+      "coal": 2,
+      "wooden_hoe": 1,
+      "written_book": 1,
+      "wheat_seeds": 8,
+      "bone_meal": 17,
+      "bucket": 2,
+      "birch_sapling": 1
+    },
+    "wooden_pickaxe": "already broken before this continuation"
+  },
+  "crafting": {
+    "workbench": {
+      "position": {
+        "x": -20,
+        "y": 80,
+        "z": 71
+      },
+      "source": "existing in-world crafting table"
+    },
+    "stone_pickaxe": {
+      "crafted": 1,
+      "ingredients": {
+        "cobblestone": 3,
+        "stick": 2
+      },
+      "normal_recipe_api_used": true
+    },
+    "furnace": {
+      "crafted": 1,
+      "ingredients": {
+        "cobblestone": 8
+      },
+      "normal_recipe_api_used": true
+    },
+    "cobblestone_after_crafting": 14
+  },
+  "mining": {
+    "route": "Returned through the opened surface passage and natural cave corridor, then cut a supported stone staircase to the iron level.",
+    "iron_ore_position": {
+      "x": -11,
+      "y": 61,
+      "z": 73
+    },
+    "iron_ore_mined": 1,
+    "raw_iron_picked_up": 1,
+    "stone_blocks_mined_for_staircase_and_pocket": 26,
+    "cobblestone_before_staircase": 14,
+    "cobblestone_after_pickup": 40,
+    "stone_pickaxe_durability_used": 27,
+    "stone_pickaxe_max_durability": 131,
+    "health_after_mining": 20,
+    "food_after_mining": 20
+  },
+  "smelting": {
+    "furnace_position": {
+      "x": -11,
+      "y": 61,
+      "z": 73
+    },
+    "furnace_placement": "Normal survival block placement on the mined ore cell, supported by stone below.",
+    "input": {
+      "raw_iron": 1
+    },
+    "fuel": {
+      "coal": 1
+    },
+    "furnace_output_observed": {
+      "iron_ingot": 1
+    },
+    "output_taken_through_furnace_inventory": true,
+    "coal_remaining_in_player_inventory": 1,
+    "final_raw_iron_in_player_inventory": 0
+  },
+  "ending_state": {
+    "position": {
+      "x": -10.67811306272512,
+      "y": 61.0,
+      "z": 74.44691352904012
+    },
+    "health": 20,
+    "food": 20,
+    "nearby_dropped_items": 0,
+    "inventory_counts": {
+      "birch_planks": 3,
+      "coal": 1,
+      "cobblestone": 40,
+      "gravel": 8,
+      "wooden_hoe": 1,
+      "iron_ingot": 1,
+      "written_book": 1,
+      "wheat_seeds": 8,
+      "bone_meal": 17,
+      "bucket": 2,
+      "birch_sapling": 1,
+      "stone_pickaxe": 1,
+      "dirt": 48
+    },
+    "furnace_remains_placed": true
+  },
+  "observations": [
+    "The iron ore block was air after mining, and its raw_iron pickup was present in the subsequent full inventory snapshot.",
+    "The open furnace window and the separate player inventory reader briefly disagreed during transfer. After taking the output and the furnace window closed, the settled player inventory contained one iron ingot, one coal, and no raw iron.",
+    "The Folia process remained live throughout this run. Its process id, game/RCON listeners, and StarSupply JAR hash were checked after gameplay."
+  ],
+  "remaining": [
+    "Paper v11 payment and recovery acceptance stages not completed in this run.",
+    "Other pending Folia optional-plugin, upstream, business-failure, and client-render checks remain subject to their separate evidence records.",
+    "This record does not claim full project acceptance or production Folia compatibility."
+  ]
+}

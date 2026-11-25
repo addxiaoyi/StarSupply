@@ -254,10 +254,29 @@ public final class SupplyUi implements CommandExecutor, TabCompleter, Listener {
         player.openInventory(menu.inventory);
     }
 
-    /** Actor-scheduler presentation for a physically authorized detached board snapshot. */
+    /** Presents an immutable detached snapshot, hopping to the player's region when needed. */
     public void present(Player player, Section section, List<Entry> entries) {
-        if (!player.hasPermission(USE)) { denied(player); return; }
-        showEntries(player, section, List.copyOf(entries), 0);
+        List<Entry> snapshot = List.copyOf(entries);
+        Runnable display = () -> {
+            if (!player.isOnline()) return;
+            if (!Bukkit.isOwnedByCurrentRegion(player)) {
+                plugin.getLogger().warning("Skipped menu presentation outside the player's region");
+                return;
+            }
+            if (!player.hasPermission(USE)) { denied(player); return; }
+            showEntries(player, section, snapshot, 0);
+        };
+        if (Bukkit.isOwnedByCurrentRegion(player)) {
+            display.run();
+            return;
+        }
+        try {
+            if (player.getScheduler().run(plugin, task -> display.run(), null) == null) {
+                plugin.getLogger().fine("Skipped menu presentation for a retired player");
+            }
+        } catch (RuntimeException failure) {
+            plugin.getLogger().log(Level.WARNING, "Unable to schedule menu presentation", failure);
+        }
     }
 
     private void dispatch(Player player, String name, String[] args) {
@@ -309,6 +328,7 @@ public final class SupplyUi implements CommandExecutor, TabCompleter, Listener {
             new Subcommand("help", "help", 0, 0, null),
             new Subcommand("depot", "depot <仓库ID>", 1, 1, MANAGE),
             new Subcommand("front", "front <前线站ID> <军队ID>", 2, 2, MANAGE),
+            new Subcommand("rebind-front", "rebind-front <前线站ID> <新军队UUID>", 2, 2, MANAGE),
             new Subcommand("route", "route <路线ID> <起点> <终点> <效率> [StarCore供给线ID]", 4, 5, MANAGE),
             new Subcommand("block", "block <路线ID> <true|false>", 2, 2, MANAGE),
             new Subcommand("buy", "buy <仓库ID> <物资类型> <数量> [总价|market]", 3, 4, MANAGE),
@@ -321,6 +341,7 @@ public final class SupplyUi implements CommandExecutor, TabCompleter, Listener {
             new Subcommand("cancel", "cancel <purchase|shipment> <订单ID>", 2, 2, null),
             new Subcommand("recover", "recover [物品交接ID]", 0, 1, null),
             new Subcommand("status", "status [军队ID]", 0, 1, null),
+            new Subcommand("native-credits", "native-credits <军队ID>", 1, 1, MANAGE),
             new Subcommand("tavern", "tavern <集合点ID>", 1, 1, MANAGE),
             new Subcommand("untavern", "untavern <集合点ID>", 1, 1, MANAGE),
             new Subcommand("scout", "scout <道路ID>", 1, 1, null),
@@ -335,7 +356,8 @@ public final class SupplyUi implements CommandExecutor, TabCompleter, Listener {
             new Subcommand("reconcile-insurance", "reconcile-insurance <保单UUID> <经济阶段> <applied|untouched>",
                     3, 3, ADMIN),
             new Subcommand("reconcile-inventory", "reconcile-inventory <玩家库存收据ID> <applied|untouched>",
-                    2, 2, ADMIN));
+                    2, 2, ADMIN),
+            new Subcommand("reconcile-native-supply", "reconcile-native-supply <补给请求UUID>", 1, 1, ADMIN));
 
     private record Subcommand(String name, String usage, int minimum, int maximum, String permission) {}
 

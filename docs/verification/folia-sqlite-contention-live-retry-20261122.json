@@ -1,0 +1,74 @@
+{
+  "recordedOn": "2026-11-22",
+  "purpose": "Trigger and observe a successful StarCore SQLite treasury snapshot retry on Folia",
+  "result": "passed",
+  "scope": "Loopback-only disposable Folia stage using a cloned StarCore SQLite database",
+  "server": {
+    "distribution": "Folia 1.21.11-14-529aabc",
+    "java": "OpenJDK 21.0.13.1+2-LTS",
+    "workerThreads": 2,
+    "gamePort": 25729,
+    "rconPort": 25739,
+    "normalShutdown": true,
+    "gameAndRconListenersClosedAfterRun": true
+  },
+  "artifacts": {
+    "StarCoreSourceJar": {
+      "path": "C:/Users/Administrator/Documents/starsupply-deps/starcore-folia/target/starcore-1.0.0.jar",
+      "sha256": "6BB059707AEDCFE3E7D65BAD768329E891BA7144C6DA6B1B9A1C30790E8A4B0A",
+      "includesSqliteRetryTelemetry": true
+    },
+    "StarCoreFoliaTestJar": {
+      "sha256": "2F38D2F980C6D145E1045F6959B251F7EE4F807557DED88C327CCBBB7D60C773",
+      "change": "Added folia-supported: true to plugin.yml for this isolated runtime copy"
+    },
+    "StarCoreOriginalStageJarRestored": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B",
+    "StarSupply": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+    "FoliaSupplyProof": "E79FD411BDF949D0FD5017B4308EF7AC45C8EB70D48CE8C32FD2AA46F347F8A4"
+  },
+  "sqliteWriter": {
+    "implementation": "Python sqlite3, separate connection to the copied database in WAL mode",
+    "statement": "BEGIN IMMEDIATE; update a dedicated probe row; commit",
+    "holdMilliseconds": 1,
+    "pauseMilliseconds": 20,
+    "probeTable": "starsupply_acceptance_retry_probe",
+    "committedProbeWritesAfterRun": 7352
+  },
+  "publicOperation": {
+    "fixtureCommand": "foliaproof army-create Gamma starsupply-stage1-world 8200 100 8200 10",
+    "authority": "StarCore public ArmyService.createArmy",
+    "created": true,
+    "armyId": "07a4c2a9-86d7-4447-a79d-417bc2fb2edf",
+    "nationId": "5c4732f4-cedd-46ab-8bb9-8c20b7246a75",
+    "treasuryBefore": "59504.00",
+    "treasuryAfter": "58504.00",
+    "chargeCount": 1,
+    "successfulArmySnapshotPersisted": true
+  },
+  "retryObservation": {
+    "log": "SQLITE_BUSY_RETRY namespace=treasury attempt=1 maxRetries=2 elapsedMs=8 retryAllowed=true",
+    "timestamp": "2026-11-22T20:24:24+08:00",
+    "samePublicOperationSucceeded": true
+  },
+  "database": {
+    "originalPath": "plugins/StarCore/starcore.db",
+    "originalSha256BeforeAndAfter": "A558A0592BF2DE9CF0BD01D3AC98F00FB84F48FAF83EF02A0305769CAC11883F",
+    "testCopyPath": "plugins/StarCore/starcore-retry-test.db",
+    "testCopyInitialSha256": "A558A0592BF2DE9CF0BD01D3AC98F00FB84F48FAF83EF02A0305769CAC11883F",
+    "testCopyFinalSha256": "03E1EFAD2555986632BDFB1D56A09BEAD705A85565BF324E323E139A9E92C06B",
+    "testCopyIntegrityCheck": "ok",
+    "testCopyPersistedTreasuryBalance": "58504.00"
+  },
+  "restoredStageFiles": {
+    "StarCoreJar": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B",
+    "StarCoreConfig": "804010771ED5AA0037E5135843D227066750F7EAB93735AC30E0CDE340786F8C",
+    "armiesDat": "DA54CF9BF57AF583F1AE83362A64C565A7A3CB387510848F65D6718B1DBC40CE",
+    "armiesDatBackup": "A4EEA2D22413BC4F9F56F58108D08E2AF56C3F4882268933768329FF37D5A5C0"
+  },
+  "rawEvidence": {
+    "stageResult": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122/folia-proof/sqlite-retry-1795350219839.json",
+    "stageResultSha256": "A929C23E3E63DBD62839163AB81D0FE2FC9FC3DB030469B88C321763ECC5A389",
+    "serverLog": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122/folia-proof/sqlite-retry-1795350219839-server.log",
+    "serverLogSha256": "7A8270EE58734F036839D2B526FB17D701CA4C995133AEE3ED787C9FC23AC97B"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "recorded_on": "2026-11-25",
+  "purpose": "Continue survival iron-pickaxe progression on the isolated Folia stage and diagnose the remaining furnace placement blocker.",
+  "result": "survival_progression_not_passed",
+  "environment": {
+    "server": "Folia 1.21.11-14-529aabc",
+    "java": "21.0.13.1",
+    "player": "SupplyCook",
+    "stage": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122",
+    "game_port": 25729,
+    "rcon_port": 25739,
+    "star_supply_test_jar_sha256": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76"
+  },
+  "runs": [
+    {
+      "started_at_utc": "2026-11-25T02:01:33Z",
+      "failure": "Mineflayer placement at (-7, 66, 51) received no block update within 5 seconds.",
+      "observed_support": {
+        "x": -7,
+        "y": 65,
+        "z": 51
+      },
+      "normal_shutdown": true,
+      "client_log": "folia-proof/survival-progression-2026-11-25T02-01-33-634Z-client.log",
+      "server_log": "folia-proof/survival-progression-2026-11-25T02-01-33-634Z-server.log"
+    },
+    {
+      "started_at_utc": "2026-11-25T03:19:05Z",
+      "failure": "No nearby supported, collision-free position was available for a local furnace.",
+      "normal_shutdown": true,
+      "client_log": "folia-proof/survival-progression-2026-11-25T03-19-05-828Z-client.log",
+      "server_log": "folia-proof/survival-progression-2026-11-25T03-19-05-828Z-server.log"
+    },
+    {
+      "started_at_utc": "2026-11-25T03:35:37Z",
+      "failure": "Mineflayer's built-in 10-second initial chunk wait timed out while 4 surrounding columns remained unloaded.",
+      "server_shutdown": "Folia emitted chunk-load and player-data-save watchdog diagnostics during the slow shutdown.",
+      "normal_shutdown": true,
+      "client_log": "folia-proof/survival-progression-2026-11-25T03-35-37-465Z-client.log",
+      "server_log": "folia-proof/survival-progression-2026-11-25T03-35-37-465Z-server.log"
+    },
+    {
+      "started_at_utc": "2026-11-25T03:46:02Z",
+      "failure": "Initial nearby chunks loaded, but no visible supported, collision-free furnace position was found.",
+      "plugin_startup": "StarCore first exhausted the Java heap and disabled. StarSupply then could not resolve ExtensionPoint even though the class was present in the Core JAR.",
+      "server_shutdown": "One Folia region watchdog delay was recorded during chunk I/O.",
+      "normal_shutdown": true,
+      "game_port_closed": true,
+      "rcon_port_closed": true,
+      "client_log": "folia-proof/survival-progression-2026-11-25T03-46-02-413Z-client.log",
+      "server_log": "folia-proof/survival-progression-2026-11-25T03-46-02-413Z-server.log"
+    }
+  ],
+  "changes_after_observations": [
+    "Placement confirmation now rechecks server block state after Mineflayer placement timeouts.",
+    "Furnace placement searches nearby floor and visible side-face supports, avoids player collision, and can route without digging to the previously verified surface worksite.",
+    "The survival client waits up to 60 seconds for nearby chunk columns instead of using Mineflayer's fixed 10-second, 25-column wait."
+  ],
+  "limits": [
+    "At the time of these four attempts the latest placement changes had not been rerun; later server-confirmed mining, smelting and saved pickaxe completion are recorded in follow_up.",
+    "No iron-pickaxe completion, six-resource survival production, StarSupply Folia compatibility, or client resource-pack rendering is claimed.",
+    "These failures do not invalidate the prior successful mining and smelting evidence dated 2026-11-22."
+  ],
+  "follow_up": {
+    "record": "folia-survival-iron-pickaxe-20261125.json",
+    "result": "saved_survival_iron_pickaxe_passed",
+    "scope": "Later two-plugin acceptance confirmed server crafting and a saved survival pickaxe; full Folia support and six-resource survival production remain incomplete."
+  }
+}

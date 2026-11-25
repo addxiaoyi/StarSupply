@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-25",
+  "change": "Keep inventory cleanup independent of caller cancellation or premature completion of the public result future. Guard remains until the actual inventory pipeline completes.",
+  "reproduction": {
+    "tests": 5,
+    "failures": 2,
+    "errors": 0,
+    "description": "Old whenComplete-dependent result cancellation/manual completion suppresses guard cleanup."
+  },
+  "targeted_after": {
+    "tests": 5,
+    "failures": 0,
+    "errors": 0
+  },
+  "verify": {
+    "command": "mvnw.cmd -B -ntp -DforkCount=0 verify",
+    "java": "21.0.13.1",
+    "maven": "3.9.16",
+    "maven_opts": "-Xms32m -Xmx256m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC",
+    "finished": "2026-11-25T14:38:52+08:00",
+    "tests": 124,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "artifact": {
+    "path": "target/starsupply-0.1.0.jar",
+    "bytes": 14678765,
+    "sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980"
+  },
+  "acceptance_tool_tests": {
+    "tests": 20,
+    "failures": 0,
+    "errors": 0
+  },
+  "runtime_evidence": "folia-region-retirement-20261125.json",
+  "logs": [
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply\\target\\inventory-cancellation-before-20261125.log",
+      "sha256": "5E5BF79712513B2BE8248758FF5A42531FE85A32D807A0F4E52E760BEDB0044C"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply\\target\\inventory-cancellation-after-20261125.log",
+      "sha256": "759928FB0DB09EA4E8A2F732D54E1F350C438C997F717C497510009D106A0AF7"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply\\target\\inventory-cancellation-verify-20261125.log",
+      "sha256": "4E88356EEE886D283BCFF3F10C522872004A73DA08716C22ACDF2865E14DD87A"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply\\target\\region-retirement-tool-tests-20261125.log",
+      "sha256": "D1927CFA10C660EDB0497C944B8C7CEE1F31048B93297158FB60D7453CE5868C"
+    }
+  ],
+  "limits": [
+    "Cancellation behavior has production-helper regression tests; the live fixture verifies actual retirement and region recovery, not public caller cancellation.",
+    "Full optional Folia combination and six-resource survival production are still pending."
+  ]
+}

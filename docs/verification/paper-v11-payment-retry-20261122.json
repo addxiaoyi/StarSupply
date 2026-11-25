@@ -1,0 +1,162 @@
+{
+  "label": "paper-v11-payment-retry-20261122",
+  "workflowStartedAtUtc": "2026-11-21T21:27:39.038Z",
+  "workflowCompletedAtUtc": "2026-11-21T21:31:22.741Z",
+  "environment": {
+    "server": "Paper 1.21.11-132",
+    "java": 21,
+    "stage": "C:\\tmp\\starsupply-v11-paper-optional-stack-20261122",
+    "starSupplySha256": "59F85DF940B3247625342218F2ACC1B9362C44D8268B0100D9D02459528A437D",
+    "starCoreSha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B",
+    "supplySchema": 11,
+    "supplyIntervalSeconds": 30
+  },
+  "preWorkflowDiagnostics": {
+    "atUtc": "2026-11-21T21:20:32.715Z",
+    "failedBalanceProbes": 2,
+    "reason": "Both test players were offline when an early diagnostic probe ran. These failures preceded player login and are excluded from the transaction results."
+  },
+  "inventoryPreparation": {
+    "item": "minecraft:iron_ingot",
+    "countPerPlayer": 1,
+    "itemPayloadSha256": "752158D03116A359731391E78187071E29C262B974487077BAB9B63A8FC4B331",
+    "source": "RCON grant in the isolated acceptance server",
+    "survivalProductionVerified": false
+  },
+  "startingBalances": {
+    "Alpha": {
+      "player": "SupplyBuyer",
+      "playerUuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+      "playerBalance": "5582.77",
+      "treasuryBalance": "484.40"
+    },
+    "Beta": {
+      "player": "SupplyCarrier",
+      "playerUuid": "b1ef34be-1610-379d-b9d3-97068ff1b518",
+      "playerBalance": "5114.07",
+      "treasuryBalance": "9000.00"
+    },
+    "observedAtUtc": "2026-11-21T21:26:32.391Z"
+  },
+  "purchases": [
+    {
+      "nation": "Alpha",
+      "warehouse": "alpha-depot",
+      "orderId": "617eaa05-fa22-4787-b7a1-553cf7b24ed3",
+      "item": "minecraft:iron_ingot",
+      "resource": "EQUIPMENT",
+      "itemCount": 1,
+      "price": "5.00",
+      "seller": "SupplyBuyer",
+      "transferId": "6a545d11-c1cc-4394-ab5f-bbe0fdee80eb",
+      "purchaseState": "BOUGHT",
+      "transferState": "STORED",
+      "settlementId": "6a545d11-c1cc-4394-ab5f-bbe0fdee80eb",
+      "settlementState": "PAID",
+      "settlementEventCount": 1,
+      "settledAtUtc": "2026-11-21T21:29:16.508Z"
+    },
+    {
+      "nation": "Beta",
+      "warehouse": "beta-war-control",
+      "orderId": "fd0ceadd-c00e-4c88-931e-cfd2e384ec91",
+      "item": "minecraft:iron_ingot",
+      "resource": "EQUIPMENT",
+      "itemCount": 1,
+      "price": "5.00",
+      "seller": "SupplyCarrier",
+      "transferId": "85801b62-7e95-4b62-8fce-fa901659bc7e",
+      "purchaseState": "BOUGHT",
+      "transferState": "STORED",
+      "settlementId": "85801b62-7e95-4b62-8fce-fa901659bc7e",
+      "settlementState": "PAID",
+      "settlementEventCount": 1,
+      "settledAtUtc": "2026-11-21T21:29:16.759Z"
+    }
+  ],
+  "commandDispatch": {
+    "command": "/supply sell <orderId>",
+    "elapsedBetweenPlayersMs": 9,
+    "outcomes": ["PAID", "PAID"]
+  },
+  "endingBalances": {
+    "Alpha": {
+      "playerBalance": "5587.77",
+      "treasuryBalance": "479.40"
+    },
+    "Beta": {
+      "playerBalance": "5119.07",
+      "treasuryBalance": "8995.00"
+    },
+    "observedAtUtc": "2026-11-21T21:30:36.240Z"
+  },
+  "duplicateSubmission": {
+    "commands": 2,
+    "response": "采购单已被预订或关闭",
+    "settlementEventCountsAfterRetry": {
+      "6a545d11-c1cc-4394-ab5f-bbe0fdee80eb": 1,
+      "85801b62-7e95-4b62-8fce-fa901659bc7e": 1
+    },
+    "balancesUnchanged": true,
+    "observedAtUtc": "2026-11-21T21:31:22.741Z"
+  },
+  "retryBranch": {
+    "liveRetryObserved": false,
+    "liveNote": "Both near-simultaneous player payments completed once. No StarCore busy retry was observed in this run.",
+    "automatedCoverage": "CorePaymentTest models INSUFFICIENT_FUNDS with balanceAfter still covering the payment and asserts RETRY without canceling the settlement."
+  },
+  "automatedVerification": {
+    "command": "mvnw verify",
+    "finishedAtLocal": "2026-11-22T05:39:45+08:00",
+    "javaVersion": "21.0.13.1",
+    "tests": 96,
+    "corePaymentTests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "build": "SUCCESS",
+    "artifactSha256": "59F85DF940B3247625342218F2ACC1B9362C44D8268B0100D9D02459528A437D",
+    "artifactMatchesPaperRuntime": true
+  },
+  "durability": {
+    "countsBefore": {
+      "purchases": 63,
+      "itemTransfers": 61,
+      "itemLots": 61,
+      "settlements": 114
+    },
+    "countsAfter": {
+      "purchases": 65,
+      "itemTransfers": 63,
+      "itemLots": 63,
+      "settlements": 116
+    },
+    "finalLotPayloads": {
+      "alphaTransferSha256": "752158D03116A359731391E78187071E29C262B974487077BAB9B63A8FC4B331",
+      "betaTransferSha256": "752158D03116A359731391E78187071E29C262B974487077BAB9B63A8FC4B331",
+      "remainingUnitsPerLot": 1
+    },
+    "finalPlayerSaves": {
+      "supplyBuyerReceipt": null,
+      "supplyBuyerIronIngots": 0,
+      "supplyCarrierReceipt": null,
+      "supplyCarrierIronIngots": 0
+    },
+    "integrityCheck": {
+      "supply.db": "ok",
+      "insurance.db": "ok",
+      "tavern.db": "ok",
+      "starcore.db": "ok",
+      "religion.db": "ok"
+    },
+    "finalSnapshot": "C:\\tmp\\starsupply-v11-paper-optional-stack-20261122\\folia-proof\\snapshot-v11-payment-retry-fix-final-20261122.json"
+  },
+  "cleanup": {
+    "clientProcessesExited": true,
+    "serverStoppedNormally": true,
+    "gameAndRconPortsReleased": true,
+    "foliaSupplyProofJarSha256": "E79FD411BDF949D0FD5017B4308EF7AC45C8EB70D48CE8C32FD2AA46F347F8A4",
+    "foliaSupplyProofJarDisabled": true,
+    "actionsAndCursorRestoredFromBackup": true
+  }
+}

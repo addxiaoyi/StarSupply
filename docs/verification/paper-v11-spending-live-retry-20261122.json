@@ -1,0 +1,94 @@
+{
+  "recorded_on": "2026-11-22",
+  "result": "passed",
+  "run_id": "paper-spending-retry-1795360424427",
+  "environment": {
+    "server": "Paper 1.21.11-132",
+    "java": 21,
+    "game_port": 25629,
+    "rcon_port": 25639,
+    "stage": "C:/tmp/starsupply-v11-paper-optional-stack-20261122",
+    "starsupply_sha256": "77070BE6D8D25E9325D67DE8A9D04AF7EDC2BBC88AC22EB7F9627FCEA29CF1B3",
+    "starcore_sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B",
+    "fault_fixture_sha256": "3BA7B52063DC9391B0A4D4A897A7CFAA6D5B7395433A0153B803D92149801231"
+  },
+  "purchase": {
+    "id": "c01b0738-5714-49f4-a0f7-c0f7a025f118",
+    "depot": "alpha-depot",
+    "item": "minecraft:iron_ingot",
+    "quantity": 1,
+    "seller": "SupplyBuyer",
+    "seller_uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+    "nation_uuid": "b361b25b-b7a4-460d-be8d-8237afdf0920",
+    "amount": "5.00",
+    "settlement_id": "83ed38c1-7ad2-4abb-bcfd-e1be3694620d",
+    "starcore_transaction_id": "starsupply:payment:83ed38c1-7ad2-4abb-bcfd-e1be3694620d"
+  },
+  "pending": {
+    "injected_at_utc": "2026-11-22T15:13:49.322376200Z",
+    "injected_spending_status": "INSUFFICIENT_FUNDS",
+    "delegate_called": false,
+    "treasury_before": "469.40",
+    "treasury_after": "469.40",
+    "seller_before": "5597.77",
+    "seller_after": "5597.77",
+    "spending_receipt_present": false,
+    "purchase_state": "SETTLING",
+    "transfer_state": "TAKEN",
+    "settlement_state": "PENDING",
+    "lot_warehouse": null
+  },
+  "completed": {
+    "delegated_at_utc": "2026-11-22T15:13:55.290858600Z",
+    "delegate_called": true,
+    "real_spending_status": "APPLIED",
+    "same_transaction_id": true,
+    "spending_receipt_amount": "5.00",
+    "spending_receipt_refunded": false,
+    "treasury_after": "464.40",
+    "seller_after": "5602.77",
+    "purchase_state": "BOUGHT",
+    "transfer_state": "STORED",
+    "settlement_state": "PAID",
+    "purchase_settlement_count": 1,
+    "lot_warehouse": "alpha-depot",
+    "iron_ingots_before_grant": 1,
+    "iron_ingots_after_settlement": 1
+  },
+  "cleanup": {
+    "server_stopped_normally": true,
+    "process_27544_exited": true,
+    "listeners_released": true,
+    "active_fault_fixture_present": false,
+    "manifest_files_matching": 17,
+    "auxiliary_files_matching": 6,
+    "integrity_check": {
+      "plugins/CraftEngine/data.db": "ok",
+      "plugins/StarCore/religion.db": "ok",
+      "plugins/StarCore/starcore.db": "ok",
+      "plugins/StarSupply/insurance.db": "ok",
+      "plugins/StarSupply/supply.db": "ok",
+      "plugins/StarSupply/tavern.db": "ok"
+    },
+    "restoration_scope": "The manifest covers plugin databases, SQLite sidecars, StarSupply configuration, and the seller's two player-data files. The test also restored the action script, cursor, previous latest.log, remap index, and two remapped plugin JARs. World level and region files were outside the backup."
+  },
+  "evidence": [
+    {
+      "path_in_stage": "folia-proof/payment-retry/paper-spending-retry-1795360424427.json",
+      "sha256": "469C6113C3A7F2C7E3861C06EECE7642EBF3DBA7D907B4197AEF7F5EB1CA61C4"
+    },
+    {
+      "path_in_stage": "logs/spend-retry-paper-server-stdout-20261122.log",
+      "sha256": "2FE9D4FC5D7F5B9D152171C797E31BEABA97CC329BF3769281958A5B08AF6C18"
+    },
+    {
+      "path_in_stage": "plugins/StarSupplyFaultBootstrap/fault-evidence.jsonl",
+      "sha256": "06F536489FE228851B2509850A3A9C4B92AB56DF9969E406017DD9C24E28F978"
+    },
+    {
+      "path_in_stage": "folia-proof/backup-spending-retry-20261122-222930/runtime-state-compressed/manifest.json",
+      "sha256": "E238B6FF90D012E73A01E225578AFD1EFCAECE14130913EF6C1D64860682677D"
+    }
+  ],
+  "scope": "This covers automatic retry of a synthetic insufficient-funds response with sufficient live balance and real successful payment on the same transaction ID. The fixture did not create a real SQLite write conflict. The test iron ingot was provided by the isolation server administrator."
+}

@@ -1,3 +1,108 @@
+diff --git a/docs/api/starcore-api-v1.txt b/docs/api/starcore-api-v1.txt
+index 90739f0..4d9ff67 100644
+--- a/docs/api/starcore-api-v1.txt
++++ b/docs/api/starcore-api-v1.txt
+@@ -381,10 +381,10 @@ METHOD dev.starcore.starcore.foundation.territory.model.TerritoryClaim#hashCode
+ METHOD dev.starcore.starcore.foundation.territory.model.TerritoryClaim#ownerId typeParameters=<> parameters=() returns=java.lang.String modifiers=public
+ METHOD dev.starcore.starcore.foundation.territory.model.TerritoryClaim#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
+ METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#minecraftTicksFor typeParameters=<> parameters=(java.time.LocalTime) returns=long modifiers=public,static
+-METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#restart typeParameters=<> parameters=() returns=void modifiers=public
++METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#restart typeParameters=<> parameters=() returns=void modifiers=public,synchronized
+ METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#running typeParameters=<> parameters=() returns=boolean modifiers=public
+-METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#start typeParameters=<> parameters=() returns=void modifiers=public
+-METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#stop typeParameters=<> parameters=() returns=void modifiers=public
++METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#start typeParameters=<> parameters=() returns=void modifiers=public,synchronized
++METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#stop typeParameters=<> parameters=() returns=void modifiers=public,synchronized
+ METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#summary typeParameters=<> parameters=() returns=java.lang.String modifiers=public
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyAllianceInviteResult#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyAllianceInviteResult#hashCode typeParameters=<> parameters=() returns=int modifiers=public,final
+@@ -1168,51 +1168,51 @@ METHOD dev.starcore.starcore.module.war.WarTerritoryCapture#previousOwner typePa
+ METHOD dev.starcore.starcore.module.war.WarTerritoryCapture#territoryId typeParameters=<> parameters=() returns=java.util.UUID modifiers=public
+ METHOD dev.starcore.starcore.module.war.WarTerritoryCapture#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
+ METHOD dev.starcore.starcore.module.war.WarTerritoryCapture#warId typeParameters=<> parameters=() returns=java.util.UUID modifiers=public
+-METHOD dev.starcore.starcore.war.War#addAlly typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId,boolean) returns=void modifiers=public
+-METHOD dev.starcore.starcore.war.War#addWarScore typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId,int) returns=void modifiers=public
++METHOD dev.starcore.starcore.war.War#addAlly typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId,boolean) returns=void modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#addWarScore typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId,int) returns=void modifiers=public,synchronized
+ METHOD dev.starcore.starcore.war.War#aggressor typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationId modifiers=public
+-METHOD dev.starcore.starcore.war.War#aggressorAllies typeParameters=<> parameters=() returns=java.util.Set<dev.starcore.starcore.module.nation.model.NationId> modifiers=public
+-METHOD dev.starcore.starcore.war.War#aggressorWarScore typeParameters=<> parameters=() returns=int modifiers=public
+-METHOD dev.starcore.starcore.war.War#allParticipants typeParameters=<> parameters=() returns=java.util.Set<dev.starcore.starcore.module.nation.model.NationId> modifiers=public
+-METHOD dev.starcore.starcore.war.War#areSameSide typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId,dev.starcore.starcore.module.nation.model.NationId) returns=boolean modifiers=public
+-METHOD dev.starcore.starcore.war.War#battleOutcomes typeParameters=<> parameters=() returns=java.util.List<dev.starcore.starcore.module.war.WarBattleOutcome> modifiers=public
+-METHOD dev.starcore.starcore.war.War#ceasefire typeParameters=<> parameters=() returns=void modifiers=public
+-METHOD dev.starcore.starcore.war.War#ceasefireRequests typeParameters=<> parameters=() returns=java.util.Set<dev.starcore.starcore.module.nation.model.NationId> modifiers=public
++METHOD dev.starcore.starcore.war.War#aggressorAllies typeParameters=<> parameters=() returns=java.util.Set<dev.starcore.starcore.module.nation.model.NationId> modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#aggressorWarScore typeParameters=<> parameters=() returns=int modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#allParticipants typeParameters=<> parameters=() returns=java.util.Set<dev.starcore.starcore.module.nation.model.NationId> modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#areSameSide typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId,dev.starcore.starcore.module.nation.model.NationId) returns=boolean modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#battleOutcomes typeParameters=<> parameters=() returns=java.util.List<dev.starcore.starcore.module.war.WarBattleOutcome> modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#ceasefire typeParameters=<> parameters=() returns=void modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#ceasefireRequests typeParameters=<> parameters=() returns=java.util.Set<dev.starcore.starcore.module.nation.model.NationId> modifiers=public,synchronized
+ METHOD dev.starcore.starcore.war.War#declare typeParameters=<> parameters=(java.lang.String,dev.starcore.starcore.module.nation.model.NationId,dev.starcore.starcore.module.nation.model.NationId,dev.starcore.starcore.war.WarGoal) returns=dev.starcore.starcore.war.War modifiers=public,static
+ METHOD dev.starcore.starcore.war.War#declaredAt typeParameters=<> parameters=() returns=java.time.Instant modifiers=public
+ METHOD dev.starcore.starcore.war.War#defender typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationId modifiers=public
+-METHOD dev.starcore.starcore.war.War#defenderAllies typeParameters=<> parameters=() returns=java.util.Set<dev.starcore.starcore.module.nation.model.NationId> modifiers=public
+-METHOD dev.starcore.starcore.war.War#defenderWarScore typeParameters=<> parameters=() returns=int modifiers=public
+-METHOD dev.starcore.starcore.war.War#determineWinner typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.war.War$WarWinner> modifiers=public
+-METHOD dev.starcore.starcore.war.War#durationSeconds typeParameters=<> parameters=() returns=long modifiers=public
+-METHOD dev.starcore.starcore.war.War#end typeParameters=<> parameters=() returns=void modifiers=public
+-METHOD dev.starcore.starcore.war.War#endedAt typeParameters=<> parameters=() returns=java.time.Instant modifiers=public
++METHOD dev.starcore.starcore.war.War#defenderAllies typeParameters=<> parameters=() returns=java.util.Set<dev.starcore.starcore.module.nation.model.NationId> modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#defenderWarScore typeParameters=<> parameters=() returns=int modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#determineWinner typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.war.War$WarWinner> modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#durationSeconds typeParameters=<> parameters=() returns=long modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#end typeParameters=<> parameters=() returns=void modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#endedAt typeParameters=<> parameters=() returns=java.time.Instant modifiers=public,synchronized
+ METHOD dev.starcore.starcore.war.War#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public
+ METHOD dev.starcore.starcore.war.War#goal typeParameters=<> parameters=() returns=dev.starcore.starcore.war.WarGoal modifiers=public
+-METHOD dev.starcore.starcore.war.War#hasMutualCeasefireConsent typeParameters=<> parameters=() returns=boolean modifiers=public
+-METHOD dev.starcore.starcore.war.War#hasMutualPeaceConsent typeParameters=<> parameters=() returns=boolean modifiers=public
++METHOD dev.starcore.starcore.war.War#hasMutualCeasefireConsent typeParameters=<> parameters=() returns=boolean modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#hasMutualPeaceConsent typeParameters=<> parameters=() returns=boolean modifiers=public,synchronized
+ METHOD dev.starcore.starcore.war.War#hashCode typeParameters=<> parameters=() returns=int modifiers=public
+ METHOD dev.starcore.starcore.war.War#id typeParameters=<> parameters=() returns=java.util.UUID modifiers=public
+-METHOD dev.starcore.starcore.war.War#isActive typeParameters=<> parameters=() returns=boolean modifiers=public
+-METHOD dev.starcore.starcore.war.War#isAggressorSide typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=boolean modifiers=public
+-METHOD dev.starcore.starcore.war.War#isDefenderSide typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=boolean modifiers=public
+-METHOD dev.starcore.starcore.war.War#isEnded typeParameters=<> parameters=() returns=boolean modifiers=public
+-METHOD dev.starcore.starcore.war.War#isParticipant typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=boolean modifiers=public
+-METHOD dev.starcore.starcore.war.War#lastUpdated typeParameters=<> parameters=() returns=java.time.Instant modifiers=public
++METHOD dev.starcore.starcore.war.War#isActive typeParameters=<> parameters=() returns=boolean modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#isAggressorSide typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=boolean modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#isDefenderSide typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=boolean modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#isEnded typeParameters=<> parameters=() returns=boolean modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#isParticipant typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=boolean modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#lastUpdated typeParameters=<> parameters=() returns=java.time.Instant modifiers=public,synchronized
+ METHOD dev.starcore.starcore.war.War#name typeParameters=<> parameters=() returns=java.lang.String modifiers=public
+-METHOD dev.starcore.starcore.war.War#peaceRequests typeParameters=<> parameters=() returns=java.util.Set<dev.starcore.starcore.module.nation.model.NationId> modifiers=public
+-METHOD dev.starcore.starcore.war.War#recordBattleOutcome typeParameters=<> parameters=(dev.starcore.starcore.module.war.WarBattleOutcome) returns=boolean modifiers=public
+-METHOD dev.starcore.starcore.war.War#recordTerritoryCapture typeParameters=<> parameters=(dev.starcore.starcore.module.war.WarTerritoryCapture) returns=boolean modifiers=public
+-METHOD dev.starcore.starcore.war.War#removeAlly typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=void modifiers=public
+-METHOD dev.starcore.starcore.war.War#requestCeasefire typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=void modifiers=public
+-METHOD dev.starcore.starcore.war.War#requestPeace typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=void modifiers=public
++METHOD dev.starcore.starcore.war.War#peaceRequests typeParameters=<> parameters=() returns=java.util.Set<dev.starcore.starcore.module.nation.model.NationId> modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#recordBattleOutcome typeParameters=<> parameters=(dev.starcore.starcore.module.war.WarBattleOutcome) returns=boolean modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#recordTerritoryCapture typeParameters=<> parameters=(dev.starcore.starcore.module.war.WarTerritoryCapture) returns=boolean modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#removeAlly typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=void modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#requestCeasefire typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=void modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#requestPeace typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=void modifiers=public,synchronized
+ METHOD dev.starcore.starcore.war.War#restoreLegacy typeParameters=<> parameters=(java.lang.String,dev.starcore.starcore.module.nation.model.NationId,dev.starcore.starcore.module.nation.model.NationId,java.time.Instant,dev.starcore.starcore.module.nation.model.NationId) returns=dev.starcore.starcore.war.War modifiers=public,static
+-METHOD dev.starcore.starcore.war.War#resume typeParameters=<> parameters=() returns=void modifiers=public
+-METHOD dev.starcore.starcore.war.War#start typeParameters=<> parameters=() returns=void modifiers=public
+-METHOD dev.starcore.starcore.war.War#startedAt typeParameters=<> parameters=() returns=java.time.Instant modifiers=public
+-METHOD dev.starcore.starcore.war.War#status typeParameters=<> parameters=() returns=dev.starcore.starcore.war.WarStatus modifiers=public
+-METHOD dev.starcore.starcore.war.War#territoryCaptures typeParameters=<> parameters=() returns=java.util.List<dev.starcore.starcore.module.war.WarTerritoryCapture> modifiers=public
+-METHOD dev.starcore.starcore.war.War#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public
++METHOD dev.starcore.starcore.war.War#resume typeParameters=<> parameters=() returns=void modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#start typeParameters=<> parameters=() returns=void modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#startedAt typeParameters=<> parameters=() returns=java.time.Instant modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#status typeParameters=<> parameters=() returns=dev.starcore.starcore.war.WarStatus modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#territoryCaptures typeParameters=<> parameters=() returns=java.util.List<dev.starcore.starcore.module.war.WarTerritoryCapture> modifiers=public,synchronized
++METHOD dev.starcore.starcore.war.War#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,synchronized
+ METHOD dev.starcore.starcore.war.War$Declarer#valueOf typeParameters=<> parameters=(java.lang.String) returns=dev.starcore.starcore.war.War$Declarer modifiers=public,static
+ METHOD dev.starcore.starcore.war.War$Declarer#values typeParameters=<> parameters=() returns=dev.starcore.starcore.war.War$Declarer[] modifiers=public,static
+ METHOD dev.starcore.starcore.war.War$WarWinner#valueOf typeParameters=<> parameters=(java.lang.String) returns=dev.starcore.starcore.war.War$WarWinner modifiers=public,static
 diff --git a/src/main/java/dev/starcore/starcore/StarCorePlugin.java b/src/main/java/dev/starcore/starcore/StarCorePlugin.java
 index 7695d71..d57ec33 100644
 --- a/src/main/java/dev/starcore/starcore/StarCorePlugin.java
@@ -5607,7 +5712,7 @@ index 2d7a4bc..90b84a8 100644
  
    public void setEnabled(boolean enabled) {
 diff --git a/src/main/java/dev/starcore/starcore/module/army/ArmyService.java b/src/main/java/dev/starcore/starcore/module/army/ArmyService.java
-index db95e50..d6d4c00 100644
+index db95e50..3011dee 100644
 --- a/src/main/java/dev/starcore/starcore/module/army/ArmyService.java
 +++ b/src/main/java/dev/starcore/starcore/module/army/ArmyService.java
 @@ -1,6 +1,7 @@
@@ -5618,7 +5723,59 @@ index db95e50..d6d4c00 100644
  import dev.starcore.starcore.foundation.message.MessageService;
  import dev.starcore.starcore.module.army.battle.BattleCalculator;
  import dev.starcore.starcore.module.army.model.*;
-@@ -142,7 +143,7 @@ public final class ArmyService {
+@@ -16,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.CompletionException;
+ import java.util.concurrent.ConcurrentHashMap;
+ import java.util.concurrent.ThreadLocalRandom;
++import java.util.function.ToDoubleFunction;
+ import java.util.stream.Collectors;
+ import net.kyori.adventure.text.Component;
+ import net.kyori.adventure.text.format.NamedTextColor;
+@@ -29,6 +31,7 @@ import org.bukkit.scheduler.BukkitTask;
+ public final class ArmyService {
+   private static final String PERSISTENCE_NAMESPACE = "army";
+   private static final String ARMY_STATE_FILE = "armies.dat";
++  private static final String LOGISTICS_RECEIPT_PREFIX = "logistics-supply:";
+ 
+   private final Plugin plugin;
+   private final NationService nationService;
+@@ -47,6 +50,10 @@ public final class ArmyService {
+   private final ConcurrentHashMap<UUID, Set<UUID>> nationArmies = new ConcurrentHashMap<>();
+   // Keep undecodable records intact so routine snapshots do not destroy operator recovery data.
+   private final Properties unparsedArmyRecords = new Properties();
++  private final Map<UUID, LogisticsSupplyReceipt> logisticsSupplyReceipts = new HashMap<>();
++  private final Set<UUID> unconfirmedLogisticsReceipts = new HashSet<>();
++  private boolean logisticsReceiptLedgerAvailable;
++  private boolean armySnapshotLoaded;
+ 
+   public ArmyService(
+       Plugin plugin,
+@@ -88,6 +95,24 @@ public final class ArmyService {
+     return config;
+   }
+ 
++  /**
++   * Register temporary morale points. The callback must only read detached, current plugin state.
++   */
++  public Runnable registerTemporaryMoraleModifier(
++      String owner, ToDoubleFunction<UUID> contribution) {
++    return battleCalculator.registerTemporaryMoraleModifier(owner, contribution);
++  }
++
++  /**
++   * Authoritative effective morale, including temporary contributions, without changing base
++   * morale.
++   */
++  public synchronized double effectiveMorale(UUID armyId) {
++    ArmyUnit army = armies.get(armyId);
++    if (army == null) throw new IllegalArgumentException("Army not found");
++    return battleCalculator.effectiveMorale(army);
++  }
++
+   /** 创建军队 消耗: 国库资金 */
+   public synchronized ArmyUnit createArmy(
+       UUID nationId, ArmyType type, int soldiers, Location location) {
+@@ -142,7 +167,7 @@ public final class ArmyService {
      }
  
      // 创建军队
@@ -5627,7 +5784,7 @@ index db95e50..d6d4c00 100644
  
      // 注册
      armies.put(army.id(), army);
-@@ -317,13 +318,13 @@ public final class ArmyService {
+@@ -317,13 +342,13 @@ public final class ArmyService {
    }
  
    /** 获取军队 */
@@ -5643,7 +5800,7 @@ index db95e50..d6d4c00 100644
      Set<UUID> armyIds = nationArmies.getOrDefault(nationId, Collections.emptySet());
      return armyIds.stream()
          .map(armies::get)
-@@ -332,6 +333,16 @@ public final class ArmyService {
+@@ -332,6 +357,16 @@ public final class ArmyService {
          .collect(Collectors.toList());
    }
  
@@ -5660,7 +5817,7 @@ index db95e50..d6d4c00 100644
    /** 移动军队 */
    public synchronized void moveArmy(UUID armyId, Location destination) {
      if (armyId == null || destination == null) {
-@@ -362,7 +373,7 @@ public final class ArmyService {
+@@ -362,7 +397,7 @@ public final class ArmyService {
      }
  
      ArmyUnit snapshot = army.copy();
@@ -5669,7 +5826,84 @@ index db95e50..d6d4c00 100644
      persistArmyMutationOrRollback(
          army,
          snapshot,
-@@ -542,7 +553,8 @@ public final class ArmyService {
+@@ -474,6 +509,76 @@ public final class ArmyService {
+     }
+   }
+ 
++  /**
++   * Credit previously consumed physical supplies without charging the treasury. The army effect and
++   * immutable request receipt share one atomic snapshot. Retry uncertain calls with identical
++   * input. A capped (including zero) application still permanently consumes the request ID.
++   */
++  public synchronized LogisticsSupplyReceipt applyLogisticsSupply(
++      UUID requestId, UUID armyId, UUID nationId, int supplyPoints) {
++    Objects.requireNonNull(requestId, "requestId");
++    Objects.requireNonNull(armyId, "armyId");
++    Objects.requireNonNull(nationId, "nationId");
++    if (supplyPoints < 1 || supplyPoints > 100) {
++      throw new IllegalArgumentException("Supply points must be between 1 and 100");
++    }
++    requireLogisticsReceiptLedger();
++    LogisticsSupplyReceipt receipt = logisticsSupplyReceipts.get(requestId);
++    if (receipt != null) {
++      if (!receipt.armyId().equals(armyId)
++          || !receipt.nationId().equals(nationId)
++          || receipt.requestedPoints() != supplyPoints) {
++        throw new IllegalArgumentException(
++            "Logistics supply request ID conflicts with its receipt");
++      }
++      confirmLogisticsReceipt(receipt);
++      return receipt;
++    }
++    ArmyUnit army = armies.get(armyId);
++    if (army == null || !army.isAlive()) {
++      throw new IllegalArgumentException("army.error.not-found");
++    }
++    if (!army.nationId().equals(nationId)) {
++      throw new IllegalArgumentException("Logistics supply nation does not own the army");
++    }
++    int applied = Math.min(supplyPoints, 100 - army.supply());
++    receipt = new LogisticsSupplyReceipt(requestId, armyId, nationId, supplyPoints, applied);
++    // Do not roll back on an ambiguous persistence error: the atomic file may already contain both
++    // the effect and receipt. The next retry confirms this same in-memory effect without applying
++    // it.
++    army.resupply(applied);
++    logisticsSupplyReceipts.put(requestId, receipt);
++    unconfirmedLogisticsReceipts.add(requestId);
++    confirmLogisticsReceipt(receipt);
++    return receipt;
++  }
++
++  /** Read a durable receipt, including after the army was destroyed or disbanded. */
++  public synchronized Optional<LogisticsSupplyReceipt> logisticsSupplyReceipt(UUID requestId) {
++    Objects.requireNonNull(requestId, "requestId");
++    requireLogisticsReceiptLedger();
++    LogisticsSupplyReceipt receipt = logisticsSupplyReceipts.get(requestId);
++    if (receipt != null) confirmLogisticsReceipt(receipt);
++    return Optional.ofNullable(receipt);
++  }
++
++  private void requireLogisticsReceiptLedger() {
++    if (persistenceService == null || !logisticsReceiptLedgerAvailable) {
++      throw new IllegalStateException("army.error.logistics-receipt-ledger-unavailable");
++    }
++  }
++
++  private void confirmLogisticsReceipt(LogisticsSupplyReceipt receipt) {
++    if (!unconfirmedLogisticsReceipts.contains(receipt.requestId())) return;
++    try {
++      saveArmySnapshot(null, "Failed to confirm logistics supply receipt").join();
++      unconfirmedLogisticsReceipts.remove(receipt.requestId());
++    } catch (CompletionException | CancellationException failure) {
++      throw new IllegalStateException(
++          "army.error.logistics-supply-unconfirmed", unwrapPersistenceFailure(failure));
++    }
++  }
++
+   /** 补给军队 消耗: 国库资金 */
+   public synchronized void resupplyArmy(UUID armyId) {
+     if (armyId == null) {
+@@ -542,7 +647,8 @@ public final class ArmyService {
    }
  
    /** 预测战斗结果 */
@@ -5679,7 +5913,7 @@ index db95e50..d6d4c00 100644
      ArmyUnit attacker = armies.get(attackerId);
      ArmyUnit defender = armies.get(defenderId);
  
-@@ -554,7 +566,7 @@ public final class ArmyService {
+@@ -554,7 +660,7 @@ public final class ArmyService {
    }
  
    /** 获取某位置附近的军队 */
@@ -5688,7 +5922,7 @@ index db95e50..d6d4c00 100644
      if (location == null || location.getWorld() == null) {
        return Collections.emptyList();
      }
-@@ -579,33 +591,30 @@ public final class ArmyService {
+@@ -579,45 +685,42 @@ public final class ArmyService {
    private void startPeriodicTasks() {
      // 每分钟执行一次 - 更新状态并持久化
      armyUpdateTask =
@@ -5739,7 +5973,23 @@ index db95e50..d6d4c00 100644
      if (!army.isAlive()) {
        tryDisbandDefeatedArmy(army.id());
        return;
-@@ -666,8 +675,16 @@ public final class ArmyService {
+     }
+ 
+-    // 审计 A-115: 使用 double 计算后再取整，避免 supplyConsumptionPerHour < 60 时为 0
+-    double consumption = army.state().supplyConsumptionPerHour() / 60.0;
+-    army.consumeSupply((int) Math.ceil(consumption));
++    army.consumeHourlySupplyForMinute(army.state().supplyConsumptionPerHour());
+ 
+-    // 补给不足影响士气
++    // 补给不足影响士气；充足补给逐步恢复已由维护造成的损失，避免永久饥饿锁定。
+     if (army.supply() < 20) {
+       army.changeMorale(-2);
++    } else if (army.morale() < 100) {
++      army.changeMorale(1);
+     }
+ 
+     // 士气过低可能溃散
+@@ -666,8 +769,16 @@ public final class ArmyService {
                    .forEach(
                        member -> {
                          Player player = Bukkit.getPlayer(member.playerId());
@@ -5758,6 +6008,197 @@ index db95e50..d6d4c00 100644
                          }
                        });
              });
+@@ -683,9 +794,22 @@ public final class ArmyService {
+ 
+     try {
+       var props = persistenceService.loadProperties(PERSISTENCE_NAMESPACE, ARMY_STATE_FILE);
++      armySnapshotLoaded = true;
++      logisticsReceiptLedgerAvailable = true;
+       boolean removedDestroyedArmy = false;
+       for (String key : props.stringPropertyNames()) {
+         String json = props.getProperty(key);
++        if (key.startsWith(LOGISTICS_RECEIPT_PREFIX)) {
++          try {
++            UUID requestId = UUID.fromString(key.substring(LOGISTICS_RECEIPT_PREFIX.length()));
++            logisticsSupplyReceipts.put(requestId, LogisticsSupplyReceipt.decode(requestId, json));
++          } catch (RuntimeException malformedReceipt) {
++            logisticsReceiptLedgerAvailable = false;
++            unparsedArmyRecords.setProperty(key, json);
++            plugin.getLogger().severe("Invalid logistics supply receipt; credits disabled: " + key);
++          }
++          continue;
++        }
+         try {
+           ArmyUnit army = stateCodec.decode(json);
+           if (!army.isAlive()) {
+@@ -718,6 +842,7 @@ public final class ArmyService {
+       }
+       plugin.getLogger().info("Loaded " + armies.size() + " armies from persistence");
+     } catch (Exception e) {
++      logisticsReceiptLedgerAvailable = false;
+       plugin.getLogger().warning("Failed to load armies: " + e.getMessage());
+     }
+   }
+@@ -756,8 +881,14 @@ public final class ArmyService {
+   private synchronized CompletableFuture<Void> saveArmySnapshot(
+       UUID excludedArmyId, String failureMessage) {
+     try {
++      if (!armySnapshotLoaded) {
++        throw new IllegalStateException("Cannot overwrite an army snapshot that failed to load");
++      }
+       var props = new java.util.Properties();
+       props.putAll(unparsedArmyRecords);
++      for (LogisticsSupplyReceipt receipt : logisticsSupplyReceipts.values()) {
++        props.setProperty(LOGISTICS_RECEIPT_PREFIX + receipt.requestId(), receipt.encode());
++      }
+       for (Map.Entry<UUID, ArmyUnit> entry : armies.entrySet()) {
+         if (entry.getKey().equals(excludedArmyId)) {
+           continue;
+@@ -783,6 +914,7 @@ public final class ArmyService {
+ 
+   /** 保存所有军队（供外部调用，如插件关闭时） */
+   public void shutdown() {
++    battleCalculator.clearTemporaryMoraleModifiers();
+     if (armyUpdateTask != null) {
+       armyUpdateTask.cancel();
+       armyUpdateTask = null;
+diff --git a/src/main/java/dev/starcore/starcore/module/army/battle/BattleCalculator.java b/src/main/java/dev/starcore/starcore/module/army/battle/BattleCalculator.java
+index 18723d1..7c71d54 100644
+--- a/src/main/java/dev/starcore/starcore/module/army/battle/BattleCalculator.java
++++ b/src/main/java/dev/starcore/starcore/module/army/battle/BattleCalculator.java
+@@ -6,6 +6,8 @@ import dev.starcore.starcore.module.army.model.ArmyUnit;
+ import dev.starcore.starcore.module.army.model.BattleResult;
+ import dev.starcore.starcore.module.nation.model.NationId;
+ import dev.starcore.starcore.module.technology.TechnologyService;
++import java.util.UUID;
++import java.util.function.ToDoubleFunction;
+ 
+ /** 战斗计算器 负责计算两支军队之间的战斗结果 */
+ public final class BattleCalculator {
+@@ -13,6 +15,7 @@ public final class BattleCalculator {
+   private static final double MIN_DAMAGE = 1.0; // 最小伤害
+ 
+   private final TechnologyService technologyService;
++  private final TemporaryArmyMorale temporaryMorale = new TemporaryArmyMorale();
+ 
+   public BattleCalculator() {
+     this(null);
+@@ -22,6 +25,20 @@ public final class BattleCalculator {
+     this.technologyService = technologyService;
+   }
+ 
++  /** Pure callbacks are evaluated during authority queries, prediction and actual battle. */
++  public Runnable registerTemporaryMoraleModifier(
++      String owner, ToDoubleFunction<UUID> contribution) {
++    return temporaryMorale.register(owner, contribution);
++  }
++
++  public double effectiveMorale(ArmyUnit army) {
++    return temporaryMorale.effective(army.id(), army.morale());
++  }
++
++  public void clearTemporaryMoraleModifiers() {
++    temporaryMorale.close();
++  }
++
+   /** 计算一次战斗 双方同时造成伤害 */
+   public BattleResult calculateBattle(ArmyUnit attacker, ArmyUnit defender) {
+     if (!attacker.canFight()) {
+@@ -67,6 +84,13 @@ public final class BattleCalculator {
+   private double calculateDamage(ArmyUnit attacker, ArmyUnit defender) {
+     // 基础伤害 = 攻击力 - 防御力 * 0.5
+     double baseDamage = attacker.effectiveAttack() - defender.effectiveDefense() * 0.5;
++    double morale = effectiveMorale(attacker);
++    if (morale != attacker.morale()) {
++      double moraleDamage = attacker.effectiveAttack(morale) - defender.effectiveDefense() * 0.5;
++      double nativeDamage = Math.max(baseDamage, MIN_DAMAGE);
++      // Defense subtraction can amplify a small morale change; bound its independent damage effect.
++      baseDamage = Math.clamp(moraleDamage, nativeDamage * 0.90, nativeDamage * 1.10);
++    }
+ 
+     // 克制加成
+     if (attacker.type().counters(defender.type())) {
+@@ -169,8 +193,10 @@ public final class BattleCalculator {
+ 
+   /** 计算胜率 */
+   private double calculateWinChance(ArmyUnit attacker, ArmyUnit defender) {
+-    double attackerStrength = attacker.combatRating();
+-    double defenderStrength = defender.combatRating();
++    double attackerStrength =
++        attacker.effectiveAttack(effectiveMorale(attacker)) + attacker.effectiveDefense() * 0.5;
++    double defenderStrength =
++        defender.effectiveAttack(effectiveMorale(defender)) + defender.effectiveDefense() * 0.5;
+ 
+     if (attackerStrength + defenderStrength == 0) {
+       return 0.5;
+diff --git a/src/main/java/dev/starcore/starcore/module/army/battle/TemporaryArmyMorale.java b/src/main/java/dev/starcore/starcore/module/army/battle/TemporaryArmyMorale.java
+new file mode 100644
+index 0000000..b6c0724
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/army/battle/TemporaryArmyMorale.java
+@@ -0,0 +1,62 @@
++package dev.starcore.starcore.module.army.battle;
++
++import java.util.Objects;
++import java.util.UUID;
++import java.util.concurrent.ConcurrentHashMap;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.function.ToDoubleFunction;
++
++/** Volatile contributions to effective army morale; never part of an army persistence snapshot. */
++public final class TemporaryArmyMorale {
++  public static final double MAX_DELTA = 10.0;
++  private static final int MAX_CONTRIBUTORS = 64;
++  private final ConcurrentHashMap<String, Registration> registrations = new ConcurrentHashMap<>();
++  private final AtomicBoolean closed = new AtomicBoolean();
++
++  /** Register a pure, nonblocking callback. A duplicate owner is rejected, never added twice. */
++  public synchronized Runnable register(String owner, ToDoubleFunction<UUID> contribution) {
++    if (owner == null || !owner.matches("[a-z0-9_.-]+:[a-z0-9_/.-]+") || owner.length() > 150) {
++      throw new IllegalArgumentException("Invalid temporary morale owner");
++    }
++    Objects.requireNonNull(contribution, "contribution");
++    if (closed.get()) throw new IllegalStateException("Temporary army morale is closed");
++    if (registrations.size() >= MAX_CONTRIBUTORS)
++      throw new IllegalStateException("Too many morale contributors");
++    Registration registration = new Registration(contribution);
++    if (registrations.putIfAbsent(owner, registration) != null) {
++      throw new IllegalArgumentException("Temporary morale owner already registered: " + owner);
++    }
++    return () -> registrations.remove(owner, registration);
++  }
++
++  /**
++   * Ignore failing/non-finite callbacks; aggregate current contributions within ten morale points.
++   */
++  public double effective(UUID armyId, double baseMorale) {
++    Objects.requireNonNull(armyId, "armyId");
++    if (!Double.isFinite(baseMorale) || baseMorale < 0 || baseMorale > 100) {
++      throw new IllegalArgumentException("Invalid base morale");
++    }
++    double delta = 0;
++    for (var entry : registrations.entrySet()) {
++      Registration registration = entry.getValue();
++      if (registrations.get(entry.getKey()) != registration) continue;
++      try {
++        double value = registration.contribution().applyAsDouble(armyId);
++        if (Double.isFinite(value) && registrations.get(entry.getKey()) == registration) {
++          delta += Math.clamp(value, -MAX_DELTA, MAX_DELTA);
++        }
++      } catch (RuntimeException ignored) {
++        // A broken optional contributor must not poison authoritative combat.
++      }
++    }
++    return Math.clamp(baseMorale + Math.clamp(delta, -MAX_DELTA, MAX_DELTA), 0, 100);
++  }
++
++  public synchronized void close() {
++    closed.set(true);
++    registrations.clear();
++  }
++
++  private record Registration(ToDoubleFunction<UUID> contribution) {}
++}
 diff --git a/src/main/java/dev/starcore/starcore/module/army/gui/ArmyMenuListener.java b/src/main/java/dev/starcore/starcore/module/army/gui/ArmyMenuListener.java
 index f236505..bd0d12e 100644
 --- a/src/main/java/dev/starcore/starcore/module/army/gui/ArmyMenuListener.java
@@ -7329,6 +7770,162 @@ index 209da9a..6ddf7b8 100644
    }
  
    // ==================== 内部类 ====================
+diff --git a/src/main/java/dev/starcore/starcore/module/army/model/ArmyUnit.java b/src/main/java/dev/starcore/starcore/module/army/model/ArmyUnit.java
+index aa77008..9182744 100644
+--- a/src/main/java/dev/starcore/starcore/module/army/model/ArmyUnit.java
++++ b/src/main/java/dev/starcore/starcore/module/army/model/ArmyUnit.java
+@@ -19,6 +19,7 @@ public final class ArmyUnit implements Serializable {
+   private Location location; // 当前位置
+   private ArmyState state; // 当前状态
+   private int supply; // 补给 (0-100)
++  private int supplyConsumptionRemainder; // Hourly supply remainder (0-59)
+   private final Instant createdAt;
+   private Instant lastUpdated;
+ 
+@@ -44,7 +45,8 @@ public final class ArmyUnit implements Serializable {
+         state,
+         supply,
+         createdAt,
+-        Instant.now());
++        Instant.now(),
++        0);
+   }
+ 
+   public ArmyUnit(
+@@ -59,6 +61,34 @@ public final class ArmyUnit implements Serializable {
+       int supply,
+       Instant createdAt,
+       Instant lastUpdated) {
++    this(
++        id,
++        nationId,
++        type,
++        soldiers,
++        health,
++        morale,
++        location,
++        state,
++        supply,
++        createdAt,
++        lastUpdated,
++        0);
++  }
++
++  public ArmyUnit(
++      UUID id,
++      UUID nationId,
++      ArmyType type,
++      int soldiers,
++      double health,
++      double morale,
++      Location location,
++      ArmyState state,
++      int supply,
++      Instant createdAt,
++      Instant lastUpdated,
++      int supplyConsumptionRemainder) {
+     this.id = Objects.requireNonNull(id, "id");
+     this.nationId = Objects.requireNonNull(nationId, "nationId");
+     this.type = Objects.requireNonNull(type, "type");
+@@ -68,6 +98,10 @@ public final class ArmyUnit implements Serializable {
+     this.location = Objects.requireNonNull(location, "location");
+     this.state = Objects.requireNonNull(state, "state");
+     this.supply = clamp(supply, 0, 100);
++    if (supplyConsumptionRemainder < 0 || supplyConsumptionRemainder >= 60) {
++      throw new IllegalArgumentException("Hourly supply remainder must be between 0 and 59");
++    }
++    this.supplyConsumptionRemainder = supplyConsumptionRemainder;
+     this.createdAt = Objects.requireNonNull(createdAt, "createdAt");
+     this.lastUpdated = Objects.requireNonNull(lastUpdated, "lastUpdated");
+   }
+@@ -130,6 +164,10 @@ public final class ArmyUnit implements Serializable {
+     return supply;
+   }
+ 
++  public int supplyConsumptionRemainder() {
++    return supplyConsumptionRemainder;
++  }
++
+   public Instant createdAt() {
+     return createdAt;
+   }
+@@ -151,7 +189,8 @@ public final class ArmyUnit implements Serializable {
+         state,
+         supply,
+         createdAt,
+-        lastUpdated);
++        lastUpdated,
++        supplyConsumptionRemainder);
+   }
+ 
+   /** Restores mutable state from a snapshot of this army. */
+@@ -169,6 +208,7 @@ public final class ArmyUnit implements Serializable {
+     location = snapshot.location.clone();
+     state = snapshot.state;
+     supply = snapshot.supply;
++    supplyConsumptionRemainder = snapshot.supplyConsumptionRemainder;
+     lastUpdated = snapshot.lastUpdated;
+   }
+ 
+@@ -225,14 +265,34 @@ public final class ArmyUnit implements Serializable {
+ 
+   /** 消耗补给 */
+   public void consumeSupply(int amount) {
++    if (amount < 0) {
++      throw new IllegalArgumentException("Supply consumption cannot be negative");
++    }
+     this.supply = Math.max(0, supply - amount);
++    if (supply == 0) supplyConsumptionRemainder = 0;
++    this.lastUpdated = Instant.now();
++  }
+ 
+-    // 补给不足影响士气
+-    if (supply < 20) {
+-      this.morale = Math.max(0, morale - 5);
++  /** Applies this minute's share of an hourly rate without rounding it up every minute. */
++  public void consumeHourlySupplyForMinute(int supplyConsumptionPerHour) {
++    if (supplyConsumptionPerHour < 0 || supplyConsumptionPerHour > 100_000) {
++      throw new IllegalArgumentException(
++          "Hourly supply consumption is outside the supported range");
++    }
++    if (supply == 0 || supplyConsumptionPerHour == 0) {
++      if (supply == 0) supplyConsumptionRemainder = 0;
++      lastUpdated = Instant.now();
++      return;
+     }
+ 
+-    this.lastUpdated = Instant.now();
++    int accumulated = supplyConsumptionRemainder + supplyConsumptionPerHour;
++    int wholeUnits = accumulated / 60;
++    supplyConsumptionRemainder = accumulated % 60;
++    if (wholeUnits > 0) {
++      supply = Math.max(0, supply - wholeUnits);
++      if (supply == 0) supplyConsumptionRemainder = 0;
++    }
++    lastUpdated = Instant.now();
+   }
+ 
+   /** 改变士气 */
+@@ -254,10 +314,18 @@ public final class ArmyUnit implements Serializable {
+ 
+   /** 有效攻击力 */
+   public double effectiveAttack() {
++    return effectiveAttack(morale);
++  }
++
++  /** Evaluate an authority-supplied temporary morale view without changing saved base morale. */
++  public double effectiveAttack(double effectiveMorale) {
++    if (!Double.isFinite(effectiveMorale) || effectiveMorale < 0 || effectiveMorale > 100) {
++      throw new IllegalArgumentException("Effective morale must be between 0 and 100");
++    }
+     return type.baseAttack()
+         * soldiers
+         * (health / 100.0)
+-        * (morale / 100.0)
++        * (effectiveMorale / 100.0)
+         * state.combatModifier();
+   }
+ 
 diff --git a/src/main/java/dev/starcore/starcore/module/army/siege/SiegeModule.java b/src/main/java/dev/starcore/starcore/module/army/siege/SiegeModule.java
 index d15c7cf..26a73bd 100644
 --- a/src/main/java/dev/starcore/starcore/module/army/siege/SiegeModule.java
@@ -8374,6 +8971,195 @@ index 4f4869b..c2f7b7a 100644
 +        id, type.key(), currentHealth, maxHealth, level, isUnderSiege);
 +  }
 +}
+diff --git a/src/main/java/dev/starcore/starcore/module/army/storage/ArmyStateCodec.java b/src/main/java/dev/starcore/starcore/module/army/storage/ArmyStateCodec.java
+index f953312..5190c00 100644
+--- a/src/main/java/dev/starcore/starcore/module/army/storage/ArmyStateCodec.java
++++ b/src/main/java/dev/starcore/starcore/module/army/storage/ArmyStateCodec.java
+@@ -26,6 +26,7 @@ public final class ArmyStateCodec {
+     json.addProperty("morale", army.morale());
+     json.addProperty("state", army.state().key());
+     json.addProperty("supply", army.supply());
++    json.addProperty("supplyConsumptionRemainder", army.supplyConsumptionRemainder());
+     json.addProperty("createdAt", army.createdAt().toEpochMilli());
+     json.addProperty("lastUpdated", army.lastUpdated().toEpochMilli());
+ 
+@@ -53,6 +54,10 @@ public final class ArmyStateCodec {
+     double morale = obj.get("morale").getAsDouble();
+     ArmyState state = ArmyState.fromString(obj.get("state").getAsString());
+     int supply = obj.get("supply").getAsInt();
++    int supplyConsumptionRemainder =
++        obj.has("supplyConsumptionRemainder")
++            ? obj.get("supplyConsumptionRemainder").getAsInt()
++            : 0;
+     Instant createdAt = Instant.ofEpochMilli(obj.get("createdAt").getAsLong());
+     Instant lastUpdated =
+         obj.has("lastUpdated")
+@@ -84,6 +89,7 @@ public final class ArmyStateCodec {
+         state,
+         supply,
+         createdAt,
+-        lastUpdated);
++        lastUpdated,
++        supplyConsumptionRemainder);
+   }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/dungeon/DungeonFileDurability.java b/src/main/java/dev/starcore/starcore/module/dungeon/DungeonFileDurability.java
+index 878257c..70e0f76 100644
+--- a/src/main/java/dev/starcore/starcore/module/dungeon/DungeonFileDurability.java
++++ b/src/main/java/dev/starcore/starcore/module/dungeon/DungeonFileDurability.java
+@@ -2,8 +2,10 @@ package dev.starcore.starcore.module.dungeon;
+ 
+ import java.io.IOException;
+ import java.nio.channels.FileChannel;
++import java.nio.file.AccessDeniedException;
+ import java.nio.file.Path;
+ import java.nio.file.StandardOpenOption;
++import java.util.Locale;
+ import java.util.Objects;
+ import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.logging.Logger;
+@@ -30,14 +32,26 @@ final class DungeonFileDurability {
+     try {
+       directorySync.force(directory);
+     } catch (UnsupportedOperationException unsupported) {
+-      if (UNSUPPORTED_WARNING_LOGGED.compareAndSet(false, true)) {
+-        LOGGER.warning("DUNGEON_DIRECTORY_SYNC_UNSUPPORTED path=" + directory);
+-      }
++      warnDirectorySyncUnsupported(directory);
+     } catch (IOException failure) {
++      if (isWindows() && failure instanceof AccessDeniedException) {
++        warnDirectorySyncUnsupported(directory);
++        return;
++      }
+       throw new IllegalStateException("DUNGEON_DIRECTORY_SYNC_FAILED path=" + directory, failure);
+     }
+   }
+ 
++  private static void warnDirectorySyncUnsupported(Path directory) {
++    if (UNSUPPORTED_WARNING_LOGGED.compareAndSet(false, true)) {
++      LOGGER.warning("DUNGEON_DIRECTORY_SYNC_UNSUPPORTED path=" + directory);
++    }
++  }
++
++  private static boolean isWindows() {
++    return System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows");
++  }
++
+   private static void forceDirectory(Path directory) throws IOException {
+     if (directory == null) return;
+     try (FileChannel channel = FileChannel.open(directory, StandardOpenOption.READ)) {
+diff --git a/src/main/java/dev/starcore/starcore/module/dungeon/DungeonWorldFiles.java b/src/main/java/dev/starcore/starcore/module/dungeon/DungeonWorldFiles.java
+index eb5e80e..f86b41a 100644
+--- a/src/main/java/dev/starcore/starcore/module/dungeon/DungeonWorldFiles.java
++++ b/src/main/java/dev/starcore/starcore/module/dungeon/DungeonWorldFiles.java
+@@ -1,20 +1,27 @@
+ package dev.starcore.starcore.module.dungeon;
+ 
+ import java.io.IOException;
++import java.nio.charset.StandardCharsets;
+ import java.nio.file.AtomicMoveNotSupportedException;
++import java.nio.file.FileAlreadyExistsException;
+ import java.nio.file.Files;
+ import java.nio.file.LinkOption;
+ import java.nio.file.Path;
+ import java.nio.file.StandardCopyOption;
++import java.nio.file.StandardOpenOption;
+ import java.nio.file.attribute.BasicFileAttributes;
+ import java.util.Comparator;
+ import java.util.Locale;
+ import java.util.Objects;
++import java.util.UUID;
+ import java.util.stream.Stream;
+ 
+ final class DungeonWorldFiles {
++  private static final String WORLD_CONTAINER_IDENTITY_FILE = ".starcore-world-container-id";
++
+   private final Path worldContainer;
+   private final Object worldContainerFileKey;
++  private final String worldContainerIdentity;
+ 
+   DungeonWorldFiles(Path worldContainer) {
+     Path configuredContainer =
+@@ -26,9 +33,11 @@ final class DungeonWorldFiles {
+         throw new IllegalArgumentException("worldContainer must be a directory: " + worldContainer);
+       }
+       this.worldContainer = realContainer;
+-      this.worldContainerFileKey =
+-          Files.readAttributes(realContainer, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS)
+-              .fileKey();
++      BasicFileAttributes containerAttributes =
++          Files.readAttributes(realContainer, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
++      this.worldContainerFileKey = containerAttributes.fileKey();
++      this.worldContainerIdentity =
++          worldContainerFileKey == null ? loadOrCreateWorldContainerIdentity(realContainer) : null;
+     } catch (IOException exception) {
+       throw new IllegalArgumentException("worldContainer must be an existing directory", exception);
+     }
+@@ -274,11 +283,14 @@ final class DungeonWorldFiles {
+       throw new IOException("DUNGEON_WORLD_PATH_REJECTED: world container is not a real directory");
+     }
+     Path realContainer = worldContainer.toRealPath();
+-    Object currentFileKey =
+-        Files.readAttributes(worldContainer, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS)
+-            .fileKey();
+-    if (!realContainer.equals(worldContainer)
+-        || (worldContainerFileKey != null && !worldContainerFileKey.equals(currentFileKey))) {
++    BasicFileAttributes currentAttributes =
++        Files.readAttributes(worldContainer, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
++    Object currentFileKey = currentAttributes.fileKey();
++    boolean identityChanged =
++        worldContainerFileKey != null
++            ? !worldContainerFileKey.equals(currentFileKey)
++            : !worldContainerIdentity.equals(readWorldContainerIdentity(worldContainer));
++    if (!realContainer.equals(worldContainer) || identityChanged) {
+       throw new IOException(
+           "DUNGEON_WORLD_PATH_REJECTED: world container identity changed or resolves through a"
+               + " symbolic link");
+@@ -286,6 +298,44 @@ final class DungeonWorldFiles {
+     return realContainer;
+   }
+ 
++  private static synchronized String loadOrCreateWorldContainerIdentity(Path worldContainer)
++      throws IOException {
++    Path identityFile = worldContainer.resolve(WORLD_CONTAINER_IDENTITY_FILE);
++    if (!Files.exists(identityFile, LinkOption.NOFOLLOW_LINKS)) {
++      String identity = UUID.randomUUID().toString();
++      try {
++        Files.writeString(
++            identityFile,
++            identity,
++            StandardCharsets.US_ASCII,
++            StandardOpenOption.CREATE_NEW,
++            StandardOpenOption.WRITE);
++      } catch (FileAlreadyExistsException ignored) {
++        // Another process initialized the same world container concurrently.
++      }
++    }
++    return readWorldContainerIdentity(worldContainer);
++  }
++
++  private static String readWorldContainerIdentity(Path worldContainer) throws IOException {
++    Path identityFile = worldContainer.resolve(WORLD_CONTAINER_IDENTITY_FILE);
++    if (Files.isSymbolicLink(identityFile)
++        || !Files.isRegularFile(identityFile, LinkOption.NOFOLLOW_LINKS)) {
++      throw new IOException(
++          "DUNGEON_WORLD_PATH_REJECTED: world container identity changed or identity marker is"
++              + " missing");
++    }
++    String identity = Files.readString(identityFile, StandardCharsets.US_ASCII).trim();
++    try {
++      UUID.fromString(identity);
++    } catch (IllegalArgumentException invalidIdentity) {
++      throw new IOException(
++          "DUNGEON_WORLD_PATH_REJECTED: world container identity marker is invalid",
++          invalidIdentity);
++    }
++    return identity;
++  }
++
+   private void requireSafeTargetParent(Path target) throws IOException {
+     requireTargetParent(target);
+     if (Files.exists(target, LinkOption.NOFOLLOW_LINKS)
 diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationModule.java b/src/main/java/dev/starcore/starcore/module/nation/NationModule.java
 index 047f4bd..1f0df80 100644
 --- a/src/main/java/dev/starcore/starcore/module/nation/NationModule.java
@@ -14804,6 +15590,139 @@ index 4224924..70ee427 100644
      Instant now = Instant.now();
      Duration gracePeriod = Duration.ofDays(loanConfig.gracePeriodDays());
  
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.java b/src/main/java/dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.java
+index 2786262..9208072 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.java
+@@ -12,6 +12,7 @@ import java.util.Locale;
+ import java.util.Optional;
+ import java.util.Properties;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.TimeUnit;
+ import java.util.logging.Logger;
+ import javax.sql.DataSource;
+ 
+@@ -21,6 +22,8 @@ final class SqlTreasuryStateStorage extends AbstractModuleStateStorage
+   private static final String FILE_NAME = "treasury.properties";
+   private static final String TABLE_NAME = "starcore_treasury_state";
+   private static final String REVISION_KEY = "__starcore_revision__";
++  private static final int MAX_SQLITE_BUSY_RETRIES = 2;
++  private static final long SQLITE_BUSY_RETRY_BUDGET_NANOS = TimeUnit.MILLISECONDS.toNanos(100);
+   private long expectedRevision;
+   private boolean revisionRowExists;
+ 
+@@ -190,9 +193,42 @@ final class SqlTreasuryStateStorage extends AbstractModuleStateStorage
+   @Override
+   protected synchronized void writeSnapshot(Connection connection, Properties properties)
+       throws SQLException {
++    long started = System.nanoTime();
++    for (int retry = 0; ; retry++) {
++      try {
++        writeSnapshotAttempt(connection, properties);
++        return;
++      } catch (RolledBackSqliteBusyException retryable) {
++        long elapsedNanos = System.nanoTime() - started;
++        boolean retryAllowed =
++            retry < MAX_SQLITE_BUSY_RETRIES && elapsedNanos < SQLITE_BUSY_RETRY_BUDGET_NANOS;
++        logger.warning(
++            "SQLITE_BUSY_RETRY namespace="
++                + namespace
++                + " attempt="
++                + (retry + 1)
++                + " maxRetries="
++                + MAX_SQLITE_BUSY_RETRIES
++                + " elapsedMs="
++                + TimeUnit.NANOSECONDS.toMillis(elapsedNanos)
++                + " retryAllowed="
++                + retryAllowed);
++        if (!retryAllowed) {
++          throw retryable.original;
++        }
++        // A WAL read snapshot cannot be upgraded after another table's writer commits.
++        // The old transaction was rolled back and JDBC state reset, so take a fresh snapshot.
++        // Recheck the original expectedRevision: never replay a stale treasury snapshot.
++      }
++    }
++  }
++
++  private void writeSnapshotAttempt(Connection connection, Properties properties)
++      throws SQLException {
+     boolean previousAutoCommit = connection.getAutoCommit();
+     boolean commitAttempted = false;
+     boolean committed = false;
++    boolean resetAutoCommit = true;
+     connection.setAutoCommit(false);
+     try {
+       long currentRevision = readRevision(connection);
+@@ -261,27 +297,61 @@ final class SqlTreasuryStateStorage extends AbstractModuleStateStorage
+       expectedRevision = nextRevision;
+       revisionRowExists = true;
+     } catch (Exception exception) {
++      boolean rollbackConfirmed = false;
+       try {
+         connection.rollback();
++        rollbackConfirmed = true;
+       } catch (SQLException rollbackFailure) {
+         exception.addSuppressed(rollbackFailure);
++        // Setting auto-commit true could commit an unresolved transaction. Let close dispose it.
++        resetAutoCommit = false;
+       }
+-      if (commitAttempted) {
++      if (commitAttempted || !rollbackConfirmed) {
+         throw new TreasuryStateReconciliationException(exception);
+       }
++      if (exception instanceof SQLException sqlFailure && isSqliteLockContention(sqlFailure)) {
++        throw new RolledBackSqliteBusyException(sqlFailure);
++      }
+       throw exception;
+     } finally {
+-      try {
+-        connection.setAutoCommit(previousAutoCommit);
+-      } catch (SQLException resetFailure) {
+-        if (committed) {
+-          throw new TreasuryStateReconciliationException(resetFailure);
++      if (resetAutoCommit) {
++        try {
++          connection.setAutoCommit(previousAutoCommit);
++        } catch (SQLException resetFailure) {
++          if (committed) {
++            throw new TreasuryStateReconciliationException(resetFailure);
++          }
++          throw resetFailure;
+         }
+-        throw resetFailure;
+       }
+     }
+   }
+ 
++  private static boolean isSqliteLockContention(SQLException failure) {
++    for (SQLException current = failure; current != null; current = current.getNextException()) {
++      int primaryCode = current.getErrorCode() & 0xff;
++      String message = current.getMessage();
++      if ((primaryCode == 5 || primaryCode == 6) && message != null) {
++        String normalized = message.toLowerCase(Locale.ROOT);
++        if (normalized.contains("sqlite_busy")
++            || normalized.contains("sqlite_locked")
++            || normalized.contains("database is locked")
++            || normalized.contains("database table is locked")) return true;
++      }
++    }
++    return false;
++  }
++
++  /** Internal signal emitted only after rollback; reset failures replace it in finally. */
++  private static final class RolledBackSqliteBusyException extends SQLException {
++    private final SQLException original;
++
++    private RolledBackSqliteBusyException(SQLException original) {
++      super(original.getMessage(), original.getSQLState(), original.getErrorCode(), original);
++      this.original = original;
++    }
++  }
++
+   static boolean isConcurrentWriteConflict(SQLException exception) {
+     for (SQLException current = exception; current != null; current = current.getNextException()) {
+       String message = current.getMessage();
 diff --git a/src/main/java/dev/starcore/starcore/module/treasury/TaxationServiceImpl.java b/src/main/java/dev/starcore/starcore/module/treasury/TaxationServiceImpl.java
 index ee41e2a..dcaded4 100644
 --- a/src/main/java/dev/starcore/starcore/module/treasury/TaxationServiceImpl.java
@@ -19463,14 +20382,72 @@ index 0000000..9a774b3
 +    return world;
 +  }
 +}
+diff --git a/src/test/java/dev/starcore/starcore/module/army/ArmyModuleLifecycleTest.java b/src/test/java/dev/starcore/starcore/module/army/ArmyModuleLifecycleTest.java
+index e102697..4148fc3 100644
+--- a/src/test/java/dev/starcore/starcore/module/army/ArmyModuleLifecycleTest.java
++++ b/src/test/java/dev/starcore/starcore/module/army/ArmyModuleLifecycleTest.java
+@@ -173,6 +173,9 @@ class ArmyModuleLifecycleTest {
+               ArmyService.ArmyConfig.defaults(),
+               persistenceService);
+       ArmyUnitFixture armies = createBattleArmies(armyService, world);
++      MessageService messages = mock(MessageService.class);
++      when(messages.format("army.battle.started")).thenReturn("Battle started");
++      when(messages.format("army.battle.under-attack")).thenReturn("Under attack");
+       WarArmyIntegration warIntegration =
+           new WarArmyIntegration(
+               plugin,
+@@ -180,7 +183,7 @@ class ArmyModuleLifecycleTest {
+               nationService,
+               mock(WarService.class),
+               mock(BattleResultHandler.class),
+-              mock(MessageService.class));
++              messages);
+       assertNotNull(warIntegration.startBattle(armies.attacker().id(), armies.defender().id()));
+       assertEquals(ArmyState.ATTACKING, armies.attacker().state());
+       assertEquals(ArmyState.DEFENDING, armies.defender().state());
 diff --git a/src/test/java/dev/starcore/starcore/module/army/ArmyServiceStatePersistenceTest.java b/src/test/java/dev/starcore/starcore/module/army/ArmyServiceStatePersistenceTest.java
-index 9da5e43..2fe0dff 100644
+index 9da5e43..e755545 100644
 --- a/src/test/java/dev/starcore/starcore/module/army/ArmyServiceStatePersistenceTest.java
 +++ b/src/test/java/dev/starcore/starcore/module/army/ArmyServiceStatePersistenceTest.java
-@@ -35,6 +35,31 @@ import org.mockito.ArgumentCaptor;
+@@ -20,6 +20,7 @@ import dev.starcore.starcore.module.army.model.ArmyUnit;
+ import dev.starcore.starcore.module.nation.NationService;
+ import dev.starcore.starcore.module.nation.model.NationId;
+ import dev.starcore.starcore.module.treasury.TreasuryService;
++import java.lang.reflect.Method;
+ import java.math.BigDecimal;
+ import java.util.Properties;
+ import java.util.UUID;
+@@ -34,6 +35,76 @@ import org.junit.jupiter.api.Test;
+ import org.mockito.ArgumentCaptor;
  
  class ArmyServiceStatePersistenceTest {
- 
++  @Test
++  void
++      publicTemporaryMoraleRegistrationAffectsAuthorityViewAndShutdownDropsItWithoutSavingPenalty() {
++    Fixture fixture = new Fixture();
++    BattleCalculator calculator = new BattleCalculator();
++    ArmyService service = fixture.service(calculator);
++    ArmyUnit army = fixture.createArmy(service);
++    Runnable unregister = service.registerTemporaryMoraleModifier("test:logistics", ignored -> -10);
++    try {
++      assertThat(service.effectiveMorale(army.id())).isEqualTo(90);
++      assertThat(service.getArmySnapshot(army.id()).orElseThrow().morale()).isEqualTo(100);
++      service.persistCurrentArmyState();
++      ArgumentCaptor<Properties> snapshots = ArgumentCaptor.forClass(Properties.class);
++      verify(fixture.persistence, times(2))
++          .savePropertiesAsync(anyString(), anyString(), snapshots.capture());
++      assertThat(snapshots.getAllValues().getLast().getProperty(army.id().toString()))
++          .contains("\"morale\":100.0");
++      unregister.run();
++      assertThat(service.effectiveMorale(army.id())).isEqualTo(100);
++      service.registerTemporaryMoraleModifier("test:logistics", ignored -> -10);
++    } finally {
++      service.shutdown();
++    }
++    assertThat(calculator.effectiveMorale(army)).isEqualTo(100);
++    assertThat(new BattleCalculator().effectiveMorale(army)).isEqualTo(100);
++  }
++
 +  @Test
 +  void detachedSnapshotsDoNotExposeAuthorityLocationsOrMutableState() {
 +    Fixture fixture = new Fixture();
@@ -19496,9 +20473,44 @@ index 9da5e43..2fe0dff 100644
 +    }
 +  }
 +
++  @Test
++  void maintenanceRecoversStarvationMoraleAfterSupplyIsRestored() throws Exception {
++    Fixture fixture = new Fixture();
++    ArmyService service = fixture.service();
++    ArmyUnit army = fixture.createArmy(service);
++    army.consumeSupply(81);
++    army.changeMorale(-20);
++
++    Method update = ArmyService.class.getDeclaredMethod("updateArmy", ArmyUnit.class);
++    update.setAccessible(true);
++    update.invoke(service, army);
++    assertThat(army.morale()).isEqualTo(78);
++
++    army.resupply(81);
++    update.invoke(service, army);
++    assertThat(army.morale()).isEqualTo(79);
++    service.shutdown();
++  }
+ 
    @Test
    void persistsStateBeforeReturning() {
-     Fixture fixture = new Fixture();
+@@ -302,11 +373,15 @@ class ArmyServiceStatePersistenceTest {
+     }
+ 
+     private ArmyService service() {
++      return service(mock(BattleCalculator.class));
++    }
++
++    private ArmyService service(BattleCalculator calculator) {
+       return new ArmyService(
+           plugin,
+           mock(NationService.class),
+           treasury,
+-          mock(BattleCalculator.class),
++          calculator,
+           mock(MessageService.class),
+           ArmyService.ArmyConfig.defaults(),
+           persistence);
 diff --git a/src/test/java/dev/starcore/starcore/module/army/WarArmyIntegrationAuthorityTest.java b/src/test/java/dev/starcore/starcore/module/army/WarArmyIntegrationAuthorityTest.java
 new file mode 100644
 index 0000000..d4d1700
@@ -19605,6 +20617,169 @@ index 3bb57ad..6de86fc 100644
      BattleResultHandler resultHandler = mock(BattleResultHandler.class);
      BattleCalculator battleCalculator = mock(BattleCalculator.class);
      WarService warService = mock(WarService.class);
+diff --git a/src/test/java/dev/starcore/starcore/module/army/battle/BattleTemporaryMoraleTest.java b/src/test/java/dev/starcore/starcore/module/army/battle/BattleTemporaryMoraleTest.java
+new file mode 100644
+index 0000000..c1c4bf7
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/army/battle/BattleTemporaryMoraleTest.java
+@@ -0,0 +1,82 @@
++package dev.starcore.starcore.module.army.battle;
++
++import static org.junit.jupiter.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.extension.ExtensionRegistry;
++import dev.starcore.starcore.module.army.model.ArmyType;
++import dev.starcore.starcore.module.army.model.ArmyUnit;
++import dev.starcore.starcore.module.army.storage.ArmyStateCodec;
++import java.util.UUID;
++import java.util.concurrent.atomic.AtomicBoolean;
++import org.bukkit.Location;
++import org.bukkit.World;
++import org.junit.jupiter.api.Test;
++
++class BattleTemporaryMoraleTest {
++  @Test
++  void authorityPredictionAndRealDamageUseReversibleMoraleWithoutPersistingOrCompoundingIt() {
++    World world = mock(World.class);
++    when(world.getName()).thenReturn("world");
++    ArmyUnit attacker =
++        ArmyUnit.create(UUID.randomUUID(), ArmyType.INFANTRY, 10, new Location(world, 0, 64, 0));
++    ArmyUnit defender =
++        ArmyUnit.create(UUID.randomUUID(), ArmyType.INFANTRY, 10, new Location(world, 2, 64, 0));
++    BattleCalculator calculator = new BattleCalculator();
++    ArmyStateCodec codec = new ArmyStateCodec();
++    try (var extensions = mockStatic(ExtensionRegistry.class)) {
++      var before = calculator.predictBattle(attacker, defender);
++      String savedBefore = codec.encode(attacker);
++      AtomicBoolean shortage = new AtomicBoolean(true);
++      Runnable unregister =
++          calculator.registerTemporaryMoraleModifier(
++              "test:logistics", ignored -> shortage.get() ? -10 : 0);
++      assertEquals(90, calculator.effectiveMorale(attacker));
++      for (int i = 0; i < 1000; i++) {
++        assertEquals(
++            before.estimatedAttackerDamage() * 0.9,
++            calculator.predictBattle(attacker, defender).estimatedAttackerDamage(),
++            0.000001);
++      }
++      assertEquals(savedBefore, codec.encode(attacker));
++      shortage.set(false);
++      assertEquals(before, calculator.predictBattle(attacker, defender));
++      shortage.set(true);
++      var result = calculator.calculateBattle(attacker, defender);
++      assertEquals(27, result.attackerDamage(), 0.000001);
++      assertEquals(973, defender.maxHealth() * defender.health() / 100, 0.000001);
++      assertEquals(100, attacker.morale());
++      assertTrue(codec.encode(attacker).contains("\"morale\":100.0"));
++      unregister.run();
++      assertEquals(100, calculator.effectiveMorale(attacker));
++      assertEquals(
++          new BattleCalculator().predictBattle(attacker, defender),
++          calculator.predictBattle(attacker, defender));
++    }
++  }
++
++  @Test
++  void defenseSubtractionCannotAmplifyMoralePastIndependentDamageBounds() {
++    ArmyUnit attacker =
++        ArmyUnit.create(UUID.randomUUID(), ArmyType.INFANTRY, 10, new Location(null, 0, 0, 0));
++    ArmyUnit defender =
++        ArmyUnit.create(UUID.randomUUID(), ArmyType.INFANTRY, 10, new Location(null, 2, 0, 0));
++    attacker.changeMorale(-75); // Native morale remains above its existing canFight threshold.
++    BattleCalculator calculator = new BattleCalculator();
++    try (var extensions = mockStatic(ExtensionRegistry.class)) {
++      double nativeDamage = calculator.predictBattle(attacker, defender).estimatedAttackerDamage();
++      Runnable unregister = calculator.registerTemporaryMoraleModifier("test:low", ignored -> -10);
++      double penalized = calculator.predictBattle(attacker, defender).estimatedAttackerDamage();
++      assertTrue(penalized >= nativeDamage * 0.9);
++      assertTrue(penalized <= nativeDamage * 1.1);
++      assertTrue(
++          attacker.canFight(),
++          "temporary morale must not introduce another irreversible movement/combat lock");
++      assertEquals(15, calculator.effectiveMorale(attacker));
++      unregister.run();
++      assertEquals(
++          nativeDamage, calculator.predictBattle(attacker, defender).estimatedAttackerDamage());
++      assertEquals(25, attacker.morale());
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/army/battle/TemporaryArmyMoraleTest.java b/src/test/java/dev/starcore/starcore/module/army/battle/TemporaryArmyMoraleTest.java
+new file mode 100644
+index 0000000..904f602
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/army/battle/TemporaryArmyMoraleTest.java
+@@ -0,0 +1,69 @@
++package dev.starcore.starcore.module.army.battle;
++
++import static org.junit.jupiter.api.Assertions.*;
++
++import java.util.UUID;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.Executors;
++import java.util.concurrent.TimeUnit;
++import org.junit.jupiter.api.Test;
++
++class TemporaryArmyMoraleTest {
++  @Test
++  void callbacksAreBoundedNoncompoundingAndInvalidContributorsCannotPoisonCombat() {
++    TemporaryArmyMorale morale = new TemporaryArmyMorale();
++    UUID army = UUID.randomUUID();
++    Runnable first = morale.register("test:shortage", ignored -> -10);
++    Runnable second = morale.register("test:extra", ignored -> -1000);
++    morale.register("test:nan", ignored -> Double.NaN);
++    morale.register(
++        "test:failure",
++        ignored -> {
++          throw new IllegalStateException("unavailable");
++        });
++    for (int i = 0; i < 1000; i++) assertEquals(90, morale.effective(army, 100));
++    assertEquals(0, morale.effective(army, 5));
++    first.run();
++    assertEquals(90, morale.effective(army, 100));
++    second.run();
++    assertEquals(100, morale.effective(army, 100));
++    Runnable replacement = morale.register("test:shortage", ignored -> -5);
++    first.run(); // A stale removal handle cannot remove the later registration with this owner.
++    assertEquals(95, morale.effective(army, 100));
++    replacement.run();
++    morale.close();
++    assertEquals(100, morale.effective(army, 100));
++    assertThrows(IllegalStateException.class, () -> morale.register("test:closed", ignored -> -5));
++    assertEquals(100, new TemporaryArmyMorale().effective(army, 100));
++  }
++
++  @Test
++  void unregisterDuringAnInflightCallbackDiscardsTheRemovedContribution() throws Exception {
++    TemporaryArmyMorale morale = new TemporaryArmyMorale();
++    UUID army = UUID.randomUUID();
++    CountDownLatch entered = new CountDownLatch(1), released = new CountDownLatch(1);
++    Runnable unregister =
++        morale.register(
++            "test:slow",
++            ignored -> {
++              entered.countDown();
++              try {
++                if (!released.await(2, TimeUnit.SECONDS))
++                  throw new IllegalStateException("test timeout");
++              } catch (InterruptedException interruption) {
++                Thread.currentThread().interrupt();
++                throw new IllegalStateException(interruption);
++              }
++              return -10;
++            });
++    try (var executor = Executors.newSingleThreadExecutor()) {
++      var result = executor.submit(() -> morale.effective(army, 100));
++      assertTrue(entered.await(2, TimeUnit.SECONDS));
++      unregister.run();
++      released.countDown();
++      assertEquals(100, result.get(2, TimeUnit.SECONDS));
++    } finally {
++      released.countDown();
++    }
++  }
++}
 diff --git a/src/test/java/dev/starcore/starcore/module/army/siege/SiegeDeploymentLifecycleTest.java b/src/test/java/dev/starcore/starcore/module/army/siege/SiegeDeploymentLifecycleTest.java
 new file mode 100644
 index 0000000..e42f540
@@ -20112,6 +21287,107 @@ index 0000000..d41f5e9
 +    }
 +  }
 +}
+diff --git a/src/test/java/dev/starcore/starcore/module/army/storage/ArmyStateCodecTest.java b/src/test/java/dev/starcore/starcore/module/army/storage/ArmyStateCodecTest.java
+index 017b398..7136ea5 100644
+--- a/src/test/java/dev/starcore/starcore/module/army/storage/ArmyStateCodecTest.java
++++ b/src/test/java/dev/starcore/starcore/module/army/storage/ArmyStateCodecTest.java
+@@ -40,7 +40,8 @@ class ArmyStateCodecTest {
+             ArmyState.MARCHING,
+             38,
+             CREATED_AT,
+-            LAST_UPDATED);
++            LAST_UPDATED,
++            37);
+ 
+     try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
+       bukkit.when(() -> Bukkit.getWorld("world")).thenReturn(world);
+@@ -55,6 +56,7 @@ class ArmyStateCodecTest {
+       assertEquals(original.morale(), decoded.morale());
+       assertEquals(original.state(), decoded.state());
+       assertEquals(original.supply(), decoded.supply());
++      assertEquals(original.supplyConsumptionRemainder(), decoded.supplyConsumptionRemainder());
+       assertEquals(CREATED_AT, decoded.createdAt());
+       assertEquals(LAST_UPDATED, decoded.lastUpdated());
+       assertEquals(original.location().getX(), decoded.location().getX());
+@@ -90,7 +92,36 @@ class ArmyStateCodecTest {
+       ArmyUnit decoded = new ArmyStateCodec().decode(legacyJson.toString());
+ 
+       assertNotNull(decoded.lastUpdated());
++      assertEquals(0, decoded.supplyConsumptionRemainder());
+       assertFalse(decoded.lastUpdated().isBefore(Instant.now().minusSeconds(1)));
+     }
+   }
++
++  @Test
++  void rejectsInvalidHourlySupplyRemainder() {
++    World world = mock(World.class);
++    when(world.getName()).thenReturn("world");
++    ArmyUnit original =
++        new ArmyUnit(
++            UUID.randomUUID(),
++            UUID.randomUUID(),
++            ArmyType.INFANTRY,
++            20,
++            100,
++            100,
++            new Location(world, 0, 64, 0),
++            ArmyState.STATIONARY,
++            100,
++            CREATED_AT,
++            LAST_UPDATED);
++    JsonObject invalid =
++        JsonParser.parseString(new ArmyStateCodec().encode(original)).getAsJsonObject();
++    invalid.addProperty("supplyConsumptionRemainder", 60);
++
++    try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
++      bukkit.when(() -> Bukkit.getWorld("world")).thenReturn(world);
++      org.junit.jupiter.api.Assertions.assertThrows(
++          IllegalArgumentException.class, () -> new ArmyStateCodec().decode(invalid.toString()));
++    }
++  }
+ }
+diff --git a/src/test/java/dev/starcore/starcore/module/dungeon/DungeonFileDurabilityTest.java b/src/test/java/dev/starcore/starcore/module/dungeon/DungeonFileDurabilityTest.java
+index 9dd9456..f157ac9 100644
+--- a/src/test/java/dev/starcore/starcore/module/dungeon/DungeonFileDurabilityTest.java
++++ b/src/test/java/dev/starcore/starcore/module/dungeon/DungeonFileDurabilityTest.java
+@@ -3,11 +3,14 @@ package dev.starcore.starcore.module.dungeon;
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertThrows;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
++import static org.junit.jupiter.api.Assumptions.assumeTrue;
+ 
+ import java.io.IOException;
++import java.nio.file.AccessDeniedException;
+ import java.nio.file.Path;
+ import java.util.ArrayList;
+ import java.util.List;
++import java.util.Locale;
+ import org.junit.jupiter.api.Test;
+ 
+ class DungeonFileDurabilityTest {
+@@ -27,6 +30,22 @@ class DungeonFileDurabilityTest {
+     assertEquals(List.of(directory, directory.getParent()), attempted);
+   }
+ 
++  @Test
++  void windowsAccessDeniedDirectorySyncIsToleratedForTheDirectoryAndItsParent() {
++    assumeTrue(System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows"));
++    Path directory = Path.of("C:/starcore/dungeon/runs");
++    List<Path> attempted = new ArrayList<>();
++
++    DungeonFileDurability.forceDirectoryAndParent(
++        directory,
++        path -> {
++          attempted.add(path);
++          throw new AccessDeniedException(path.toString());
++        });
++
++    assertEquals(List.of(directory, directory.getParent()), attempted);
++  }
++
+   @Test
+   void directorySyncIoFailureIsSurfacedAndParentIsNotCertified() {
+     Path directory = Path.of("/var/lib/starcore/dungeon/runs");
 diff --git a/src/test/java/dev/starcore/starcore/module/nation/resource/NativeNationResourceDistrictLifecycleTest.java b/src/test/java/dev/starcore/starcore/module/nation/resource/NativeNationResourceDistrictLifecycleTest.java
 index 153d9c0..711491d 100644
 --- a/src/test/java/dev/starcore/starcore/module/nation/resource/NativeNationResourceDistrictLifecycleTest.java
@@ -20824,6 +22100,26 @@ index 0000000..a0f1382
 +    }
 +  }
 +}
+diff --git a/src/test/java/dev/starcore/starcore/module/resolution/ResolutionChatListenerContractTest.java b/src/test/java/dev/starcore/starcore/module/resolution/ResolutionChatListenerContractTest.java
+index a2034b4..1d5f4a5 100644
+--- a/src/test/java/dev/starcore/starcore/module/resolution/ResolutionChatListenerContractTest.java
++++ b/src/test/java/dev/starcore/starcore/module/resolution/ResolutionChatListenerContractTest.java
+@@ -69,6 +69,7 @@ class ResolutionChatListenerContractTest {
+     when(server.getScheduler()).thenReturn(scheduler);
+     when(server.getPluginManager()).thenReturn(pluginManager);
+     when(pluginManager.getPlugin("StarCore")).thenReturn(plugin);
++    when(plugin.getServer()).thenReturn(server);
+ 
+     AsyncPlayerChatEvent event = mock(AsyncPlayerChatEvent.class);
+     when(event.getPlayer()).thenReturn(player);
+@@ -103,6 +104,7 @@ class ResolutionChatListenerContractTest {
+     when(server.getScheduler()).thenReturn(scheduler);
+     when(server.getPluginManager()).thenReturn(pluginManager);
+     when(pluginManager.getPlugin("StarCore")).thenReturn(plugin);
++    when(plugin.getServer()).thenReturn(server);
+ 
+     AsyncChatEvent event = mock(AsyncChatEvent.class);
+     when(event.getPlayer()).thenReturn(player);
 diff --git a/src/test/java/dev/starcore/starcore/module/technology/listener/TechnologyNearbyOwnershipTest.java b/src/test/java/dev/starcore/starcore/module/technology/listener/TechnologyNearbyOwnershipTest.java
 new file mode 100644
 index 0000000..6789adf
@@ -20926,6 +22222,299 @@ index 0000000..6789adf
 +      assertEquals(false, near.invoke(listener, self, new Location(world, 255, 64, 0)));
 +      verify(timer).cancel();
 +      verify(ally, times(1)).getLocation();
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/SqlTreasuryBusyRetryTest.java b/src/test/java/dev/starcore/starcore/module/treasury/SqlTreasuryBusyRetryTest.java
+new file mode 100644
+index 0000000..645f0fa
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/treasury/SqlTreasuryBusyRetryTest.java
+@@ -0,0 +1,287 @@
++package dev.starcore.starcore.module.treasury;
++
++import static org.junit.jupiter.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.lang.reflect.InvocationTargetException;
++import java.lang.reflect.Method;
++import java.lang.reflect.Proxy;
++import java.math.BigDecimal;
++import java.nio.file.Path;
++import java.sql.Connection;
++import java.sql.PreparedStatement;
++import java.sql.SQLException;
++import java.util.Map;
++import java.util.Properties;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.atomic.AtomicReference;
++import java.util.logging.Handler;
++import java.util.logging.LogRecord;
++import java.util.logging.Logger;
++import javax.sql.DataSource;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import org.sqlite.SQLiteDataSource;
++
++class SqlTreasuryBusyRetryTest {
++  @TempDir Path directory;
++
++  @Test
++  void restartedWithdrawalSurvivesAnotherTablesWalCommitWithoutDoubleDebit() throws Exception {
++    NationId nation = NationId.random();
++    SQLiteDataSource raw = seed(nation);
++    Probe probe = new Probe(raw, () -> commitClaim(raw));
++    AtomicReference<LogRecord> retryRecord = new AtomicReference<>();
++    Logger logger = Logger.getAnonymousLogger();
++    logger.setUseParentHandlers(false);
++    Handler handler =
++        new Handler() {
++          @Override
++          public void publish(LogRecord record) {
++            if (record.getMessage().startsWith("SQLITE_BUSY_RETRY ")) {
++              retryRecord.set(record);
++            }
++          }
++
++          @Override
++          public void flush() {}
++
++          @Override
++          public void close() {}
++        };
++    logger.addHandler(handler);
++    SqlTreasuryStateStorage storage = storage(probe.source(), logger);
++    try {
++      TreasuryModule module = module(storage);
++      assertTrue(module.withdraw(nation, new BigDecimal("1000.00")));
++      assertEquals(2, probe.updates.get());
++      assertEquals(5, probe.firstFailure.get().getErrorCode() & 0xff);
++      assertEquals(1, probe.commits.get());
++      assertEquals(0, module.balance(nation).compareTo(new BigDecimal("1000.00")));
++      assertNotNull(retryRecord.get());
++      assertTrue(retryRecord.get().getMessage().contains("attempt=1"));
++      assertTrue(retryRecord.get().getMessage().contains("retryAllowed=true"));
++    } finally {
++      storage.shutdown();
++      logger.removeHandler(handler);
++    }
++    SqlTreasuryStateStorage restarted = storage(raw);
++    try {
++      assertEquals(0, module(restarted).balance(nation).compareTo(new BigDecimal("1000.00")));
++      try (var connection = raw.getConnection();
++          var statement = connection.createStatement();
++          var rows = statement.executeQuery("SELECT count(*) FROM unrelated_claim")) {
++        assertTrue(rows.next());
++        assertEquals(1, rows.getInt(1));
++      }
++    } finally {
++      restarted.shutdown();
++    }
++  }
++
++  @Test
++  void retryStillRejectsAnActuallyNewerTreasuryRevision() throws Exception {
++    NationId nation = NationId.random();
++    SQLiteDataSource raw = seed(nation);
++    Probe probe =
++        new Probe(
++            raw,
++            () -> {
++              SqlTreasuryStateStorage other = storage(raw);
++              try {
++                other.load();
++                other.save(state(nation, "1500.00"));
++              } finally {
++                other.shutdown();
++              }
++            });
++    SqlTreasuryStateStorage storage = storage(probe.source());
++    try {
++      TreasuryModule module = module(storage);
++      assertFalse(module.withdraw(nation, new BigDecimal("1000.00")));
++      assertEquals(1, probe.updates.get());
++      assertEquals(5, probe.firstFailure.get().getErrorCode() & 0xff);
++      assertEquals(0, module.balance(nation).compareTo(new BigDecimal("1500.00")));
++      assertEquals(0, probe.commits.get());
++    } finally {
++      storage.shutdown();
++    }
++  }
++
++  @Test
++  void aLostCommitAcknowledgementNeverRetriesTheSnapshot() throws Exception {
++    NationId nation = NationId.random();
++    SQLiteDataSource raw = seed(nation);
++    Probe probe = new Probe(raw, () -> {});
++    probe.loseCommitAcknowledgement = true;
++    SqlTreasuryStateStorage storage = storage(probe.source());
++    try {
++      storage.load();
++      assertThrows(
++          TreasuryStateReconciliationException.class, () -> storage.save(state(nation, "1000.00")));
++      assertEquals(1, probe.updates.get());
++      assertEquals(1, probe.commits.get());
++    } finally {
++      storage.shutdown();
++    }
++    SqlTreasuryStateStorage restarted = storage(raw);
++    try {
++      assertEquals(0, module(restarted).balance(nation).compareTo(new BigDecimal("1000.00")));
++    } finally {
++      restarted.shutdown();
++    }
++  }
++
++  @Test
++  void anUnconfirmedRollbackNeverRetriesOrEnablesAutoCommit() throws Exception {
++    NationId nation = NationId.random();
++    SQLiteDataSource raw = seed(nation);
++    Probe probe = new Probe(raw, () -> commitClaim(raw));
++    probe.failRollback = true;
++    SqlTreasuryStateStorage storage = storage(probe.source());
++    try {
++      storage.load();
++      assertThrows(
++          TreasuryStateReconciliationException.class, () -> storage.save(state(nation, "1000.00")));
++      assertEquals(1, probe.updates.get());
++      assertEquals(0, probe.commits.get());
++      assertEquals(0, probe.autoCommitRestores.get());
++    } finally {
++      storage.shutdown();
++    }
++    SqlTreasuryStateStorage restarted = storage(raw);
++    try {
++      assertEquals(0, module(restarted).balance(nation).compareTo(new BigDecimal("2000.00")));
++    } finally {
++      restarted.shutdown();
++    }
++  }
++
++  private SQLiteDataSource seed(NationId nation) throws Exception {
++    SQLiteDataSource source = new SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + directory.resolve("treasury-contention.db"));
++    try (var connection = source.getConnection();
++        var statement = connection.createStatement()) {
++      statement.execute("PRAGMA journal_mode=WAL");
++      statement.execute("CREATE TABLE unrelated_claim (id INTEGER PRIMARY KEY, owner TEXT)");
++    }
++    SqlTreasuryStateStorage seed = storage(source);
++    try {
++      seed.load();
++      seed.save(state(nation, "2000.00"));
++    } finally {
++      seed.shutdown();
++    }
++    return source;
++  }
++
++  private static Properties state(NationId nation, String balance) {
++    return TreasuryStateCodec.toProperties(Map.of(nation, new BigDecimal(balance)));
++  }
++
++  private static SqlTreasuryStateStorage storage(DataSource source) {
++    return new SqlTreasuryStateStorage(source, new Properties(), Logger.getAnonymousLogger());
++  }
++
++  private static SqlTreasuryStateStorage storage(DataSource source, Logger logger) {
++    return new SqlTreasuryStateStorage(source, new Properties(), logger);
++  }
++
++  private static TreasuryModule module(SqlTreasuryStateStorage storage) throws Exception {
++    TreasuryModule module = new TreasuryModule();
++    var field = TreasuryModule.class.getDeclaredField("stateStorage");
++    field.setAccessible(true);
++    field.set(module, storage);
++    var load = TreasuryModule.class.getDeclaredMethod("loadState");
++    load.setAccessible(true);
++    load.invoke(module);
++    return module;
++  }
++
++  private static void commitClaim(SQLiteDataSource raw) throws SQLException {
++    try (var connection = raw.getConnection();
++        var statement = connection.createStatement()) {
++      statement.executeUpdate("INSERT INTO unrelated_claim (id,owner) VALUES (1,'nation')");
++    }
++  }
++
++  @FunctionalInterface
++  private interface SqlAction {
++    void run() throws SQLException;
++  }
++
++  /** Two real SQLite connections; interception only fixes the transaction interleaving. */
++  private static final class Probe {
++    final SQLiteDataSource raw;
++    final SqlAction conflict;
++    final AtomicBoolean firstUpdate = new AtomicBoolean(true);
++    final AtomicInteger updates = new AtomicInteger(),
++        commits = new AtomicInteger(),
++        autoCommitRestores = new AtomicInteger();
++    final AtomicReference<SQLException> firstFailure = new AtomicReference<>();
++    boolean loseCommitAcknowledgement, failRollback;
++
++    Probe(SQLiteDataSource raw, SqlAction conflict) {
++      this.raw = raw;
++      this.conflict = conflict;
++    }
++
++    DataSource source() throws SQLException {
++      DataSource source = mock(DataSource.class);
++      when(source.getConnection()).thenAnswer(ignored -> wrap(raw.getConnection()));
++      return source;
++    }
++
++    Connection wrap(Connection connection) {
++      return (Connection)
++          Proxy.newProxyInstance(
++              Connection.class.getClassLoader(),
++              new Class<?>[] {Connection.class},
++              (proxy, method, args) -> {
++                if (method.getName().equals("commit")) {
++                  commits.incrementAndGet();
++                  Object result = invoke(connection, method, args);
++                  if (loseCommitAcknowledgement)
++                    throw new SQLException("[SQLITE_BUSY] lost commit acknowledgement", null, 5);
++                  return result;
++                }
++                if (method.getName().equals("rollback") && failRollback)
++                  throw new SQLException("rollback outcome unknown");
++                if (method.getName().equals("setAutoCommit") && Boolean.TRUE.equals(args[0]))
++                  autoCommitRestores.incrementAndGet();
++                Object result = invoke(connection, method, args);
++                if (method.getName().equals("prepareStatement")
++                    && args[0] instanceof String sql
++                    && sql.startsWith("UPDATE starcore_treasury_state SET")) {
++                  PreparedStatement statement = (PreparedStatement) result;
++                  return Proxy.newProxyInstance(
++                      PreparedStatement.class.getClassLoader(),
++                      new Class<?>[] {PreparedStatement.class},
++                      (statementProxy, operation, parameters) -> {
++                        if (operation.getName().equals("executeUpdate")) {
++                          updates.incrementAndGet();
++                          if (firstUpdate.compareAndSet(true, false)) conflict.run();
++                        }
++                        try {
++                          return invoke(statement, operation, parameters);
++                        } catch (SQLException failure) {
++                          firstFailure.compareAndSet(null, failure);
++                          throw failure;
++                        }
++                      });
++                }
++                return result;
++              });
++    }
++
++    private static Object invoke(Object target, Method method, Object[] args) throws Throwable {
++      try {
++        return method.invoke(target, args);
++      } catch (InvocationTargetException wrapped) {
++        throw wrapped.getCause();
++      }
 +    }
 +  }
 +}
@@ -21907,5 +23496,419 @@ index 0000000..2ce4712
 +        && info.getThreadState() == Thread.State.BLOCKED
 +        && info.getLockInfo() != null
 +        && info.getLockInfo().getIdentityHashCode() == System.identityHashCode(war);
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/army/LogisticsSupplyReceipt.java b/src/main/java/dev/starcore/starcore/module/army/LogisticsSupplyReceipt.java
+new file mode 100644
+index 0000000..a0dd65a
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/army/LogisticsSupplyReceipt.java
+@@ -0,0 +1,35 @@
++package dev.starcore.starcore.module.army;
++
++import java.util.Objects;
++import java.util.UUID;
++
++/** Durable receipt for supply already paid for and consumed by an external logistics service. */
++public record LogisticsSupplyReceipt(
++    UUID requestId, UUID armyId, UUID nationId, int requestedPoints, int appliedPoints) {
++  public LogisticsSupplyReceipt {
++    Objects.requireNonNull(requestId, "requestId");
++    Objects.requireNonNull(armyId, "armyId");
++    Objects.requireNonNull(nationId, "nationId");
++    if (requestedPoints < 1
++        || requestedPoints > 100
++        || appliedPoints < 0
++        || appliedPoints > requestedPoints) {
++      throw new IllegalArgumentException("Invalid logistics supply receipt points");
++    }
++  }
++
++  String encode() {
++    return armyId + "|" + nationId + "|" + requestedPoints + "|" + appliedPoints;
++  }
++
++  static LogisticsSupplyReceipt decode(UUID requestId, String encoded) {
++    String[] parts = encoded.split("\\|", -1);
++    if (parts.length != 4) throw new IllegalArgumentException("Invalid logistics supply receipt");
++    return new LogisticsSupplyReceipt(
++        requestId,
++        UUID.fromString(parts[0]),
++        UUID.fromString(parts[1]),
++        Integer.parseInt(parts[2]),
++        Integer.parseInt(parts[3]));
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/army/ArmyLogisticsSupplyTest.java b/src/test/java/dev/starcore/starcore/module/army/ArmyLogisticsSupplyTest.java
+new file mode 100644
+index 0000000..3a37b7b
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/army/ArmyLogisticsSupplyTest.java
+@@ -0,0 +1,268 @@
++package dev.starcore.starcore.module.army;
++
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.junit.jupiter.api.Assertions.assertThrows;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.anyLong;
++import static org.mockito.ArgumentMatchers.anyString;
++import static org.mockito.Mockito.clearInvocations;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.mockStatic;
++import static org.mockito.Mockito.never;
++import static org.mockito.Mockito.verify;
++import static org.mockito.Mockito.when;
++
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.foundation.message.MessageService;
++import dev.starcore.starcore.module.army.battle.BattleCalculator;
++import dev.starcore.starcore.module.army.model.ArmyType;
++import dev.starcore.starcore.module.army.model.ArmyUnit;
++import dev.starcore.starcore.module.nation.NationService;
++import dev.starcore.starcore.module.treasury.TreasuryService;
++import java.math.BigDecimal;
++import java.util.Properties;
++import java.util.UUID;
++import java.util.concurrent.CompletableFuture;
++import java.util.logging.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
++import org.bukkit.Server;
++import org.bukkit.World;
++import org.bukkit.plugin.Plugin;
++import org.bukkit.scheduler.BukkitScheduler;
++import org.junit.jupiter.api.Test;
++import org.mockito.MockedStatic;
++
++class ArmyLogisticsSupplyTest {
++  @Test
++  void creditsOnceWithoutChargingAndRetainsReceiptAfterDisband() {
++    Fixture f = new Fixture();
++    ArmyService service = f.service();
++    ArmyUnit army = f.army(service);
++    UUID request = UUID.randomUUID();
++    clearInvocations(f.treasury);
++    LogisticsSupplyReceipt receipt =
++        service.applyLogisticsSupply(request, army.id(), army.nationId(), 10);
++    assertThat(receipt.appliedPoints()).isEqualTo(10);
++    assertThat(army.supply()).isEqualTo(25);
++    army.consumeSupply(5);
++    assertThat(service.applyLogisticsSupply(request, army.id(), army.nationId(), 10))
++        .isEqualTo(receipt);
++    assertThat(army.supply()).isEqualTo(20);
++    service.disbandArmy(army.id());
++    assertThat(service.logisticsSupplyReceipt(request)).contains(receipt);
++    assertThat(service.applyLogisticsSupply(request, army.id(), army.nationId(), 10))
++        .isEqualTo(receipt);
++    verify(f.treasury, never()).withdraw(any(), any());
++    service.shutdown();
++  }
++
++  @Test
++  void retryConfirmsAmbiguousSaveWithoutApplyingAgain() {
++    Fixture f = new Fixture();
++    ArmyService service = f.service();
++    ArmyUnit army = f.army(service);
++    UUID request = UUID.randomUUID();
++    f.failNextWrite = true;
++    assertThrows(
++        IllegalStateException.class,
++        () -> service.applyLogisticsSupply(request, army.id(), army.nationId(), 10));
++    assertThat(army.supply()).isEqualTo(25);
++    army.consumeSupply(3);
++    assertThat(
++            service.applyLogisticsSupply(request, army.id(), army.nationId(), 10).appliedPoints())
++        .isEqualTo(10);
++    assertThat(army.supply()).isEqualTo(22);
++    assertThat(f.disk.getProperty("logistics-supply:" + request)).isNotNull();
++    service.shutdown();
++  }
++
++  @Test
++  void durableAtomicEffectAndReceiptSurviveRestartAndLostAcknowledgement() {
++    Fixture f = new Fixture();
++    ArmyService original = f.service();
++    ArmyUnit army = f.army(original);
++    UUID request = UUID.randomUUID();
++    f.failNextWrite = true;
++    f.commitBeforeFailure = true;
++    assertThrows(
++        IllegalStateException.class,
++        () -> original.applyLogisticsSupply(request, army.id(), army.nationId(), 10));
++    try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
++      bukkit.when(() -> Bukkit.getWorld("world")).thenReturn(f.world);
++      ArmyService restarted = f.service();
++      assertThat(restarted.getArmySnapshot(army.id()).orElseThrow().supply()).isEqualTo(25);
++      assertThat(
++              restarted
++                  .applyLogisticsSupply(request, army.id(), army.nationId(), 10)
++                  .appliedPoints())
++          .isEqualTo(10);
++      assertThat(restarted.getArmySnapshot(army.id()).orElseThrow().supply()).isEqualTo(25);
++      restarted.shutdown();
++    }
++  }
++
++  @Test
++  void uncommittedFailureCanBeRetriedOnceAfterRestart() {
++    Fixture f = new Fixture();
++    ArmyService original = f.service();
++    ArmyUnit army = f.army(original);
++    UUID request = UUID.randomUUID();
++    f.failNextWrite = true;
++    assertThrows(
++        IllegalStateException.class,
++        () -> original.applyLogisticsSupply(request, army.id(), army.nationId(), 10));
++    try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
++      bukkit.when(() -> Bukkit.getWorld("world")).thenReturn(f.world);
++      ArmyService restarted = f.service();
++      assertThat(restarted.logisticsSupplyReceipt(request)).isEmpty();
++      assertThat(restarted.getArmySnapshot(army.id()).orElseThrow().supply()).isEqualTo(15);
++      restarted.applyLogisticsSupply(request, army.id(), army.nationId(), 10);
++      assertThat(restarted.getArmySnapshot(army.id()).orElseThrow().supply()).isEqualTo(25);
++      restarted.shutdown();
++    }
++  }
++
++  @Test
++  void rejectsConflictingIdentityAndInvalidArmyWithoutCrediting() {
++    Fixture f = new Fixture();
++    ArmyService service = f.service();
++    ArmyUnit army = f.army(service);
++    UUID request = UUID.randomUUID();
++    service.applyLogisticsSupply(request, army.id(), army.nationId(), 10);
++    assertThrows(
++        IllegalArgumentException.class,
++        () -> service.applyLogisticsSupply(request, army.id(), army.nationId(), 11));
++    assertThrows(
++        IllegalArgumentException.class,
++        () -> service.applyLogisticsSupply(request, army.id(), UUID.randomUUID(), 10));
++    assertThrows(
++        IllegalArgumentException.class,
++        () -> service.applyLogisticsSupply(request, UUID.randomUUID(), army.nationId(), 10));
++    UUID absent = UUID.randomUUID();
++    assertThrows(
++        IllegalArgumentException.class,
++        () -> service.applyLogisticsSupply(absent, army.id(), UUID.randomUUID(), 10));
++    assertThat(service.logisticsSupplyReceipt(absent)).isEmpty();
++    assertThat(army.supply()).isEqualTo(25);
++    service.shutdown();
++  }
++
++  @Test
++  void capsSupplyAndPermanentlyRecordsZeroApplicationAtCapacity() {
++    Fixture f = new Fixture();
++    ArmyService service = f.service();
++    ArmyUnit army = f.army(service);
++    assertThat(
++            service
++                .applyLogisticsSupply(UUID.randomUUID(), army.id(), army.nationId(), 100)
++                .appliedPoints())
++        .isEqualTo(85);
++    UUID capped = UUID.randomUUID();
++    assertThat(service.applyLogisticsSupply(capped, army.id(), army.nationId(), 10).appliedPoints())
++        .isZero();
++    army.consumeSupply(50);
++    assertThat(service.applyLogisticsSupply(capped, army.id(), army.nationId(), 10).appliedPoints())
++        .isZero();
++    assertThat(army.supply()).isEqualTo(50);
++    assertThrows(
++        IllegalArgumentException.class,
++        () -> service.applyLogisticsSupply(UUID.randomUUID(), army.id(), army.nationId(), 0));
++    assertThrows(
++        IllegalArgumentException.class,
++        () -> service.applyLogisticsSupply(UUID.randomUUID(), army.id(), army.nationId(), 101));
++    service.shutdown();
++  }
++
++  @Test
++  void malformedReceiptBlocksAllCreditsAndIsPreserved() {
++    Fixture f = new Fixture();
++    UUID request = UUID.randomUUID();
++    f.disk.setProperty("logistics-supply:" + request, "corrupt");
++    ArmyService service = f.service();
++    assertThrows(IllegalStateException.class, () -> service.logisticsSupplyReceipt(request));
++    assertThrows(
++        IllegalStateException.class,
++        () -> service.applyLogisticsSupply(request, UUID.randomUUID(), UUID.randomUUID(), 10));
++    service.shutdown();
++    assertThat(f.disk.getProperty("logistics-supply:" + request)).isEqualTo("corrupt");
++  }
++
++  @Test
++  void failedLoadNeverOverwritesReceiptLedger() {
++    Fixture f = new Fixture();
++    f.disk.setProperty("logistics-supply:" + UUID.randomUUID(), "recovery data");
++    when(f.persistence.loadProperties(anyString(), anyString()))
++        .thenThrow(new IllegalStateException("unreadable"));
++    ArmyService service = f.service();
++    assertThrows(
++        IllegalStateException.class, () -> service.logisticsSupplyReceipt(UUID.randomUUID()));
++    service.shutdown();
++    verify(f.persistence, never())
++        .savePropertiesAsync(anyString(), anyString(), any(Properties.class));
++    assertThat(f.disk).hasSize(1);
++  }
++
++  private static final class Fixture {
++    final Properties disk = new Properties();
++    final PersistenceService persistence = mock(PersistenceService.class);
++    final TreasuryService treasury = mock(TreasuryService.class);
++    final Plugin plugin = mock(Plugin.class);
++    final World world = mock(World.class);
++    boolean failNextWrite;
++    boolean commitBeforeFailure;
++
++    Fixture() {
++      Server server = mock(Server.class);
++      BukkitScheduler scheduler = mock(BukkitScheduler.class);
++      when(plugin.getServer()).thenReturn(server);
++      when(plugin.getLogger()).thenReturn(Logger.getLogger("ArmyLogisticsSupplyTest"));
++      when(server.getScheduler()).thenReturn(scheduler);
++      when(scheduler.runTaskTimer(any(Plugin.class), any(Runnable.class), anyLong(), anyLong()))
++          .thenReturn(null);
++      when(world.getName()).thenReturn("world");
++      when(treasury.balance(any())).thenReturn(BigDecimal.valueOf(100000));
++      when(treasury.withdraw(any(), any())).thenReturn(true);
++      when(persistence.loadProperties(anyString(), anyString()))
++          .thenAnswer(
++              ignored -> {
++                Properties snapshot = new Properties();
++                snapshot.putAll(disk);
++                return snapshot;
++              });
++      when(persistence.savePropertiesAsync(anyString(), anyString(), any(Properties.class)))
++          .thenAnswer(
++              call -> {
++                boolean failed = failNextWrite;
++                failNextWrite = false;
++                if (!failed || commitBeforeFailure) {
++                  disk.clear();
++                  disk.putAll(call.getArgument(2, Properties.class));
++                }
++                return failed
++                    ? CompletableFuture.failedFuture(new IllegalStateException("uncertain save"))
++                    : CompletableFuture.completedFuture(null);
++              });
++    }
++
++    ArmyService service() {
++      return new ArmyService(
++          plugin,
++          mock(NationService.class),
++          treasury,
++          new BattleCalculator(),
++          mock(MessageService.class),
++          ArmyService.ArmyConfig.defaults(),
++          persistence);
++    }
++
++    ArmyUnit army(ArmyService service) {
++      ArmyUnit army =
++          service.createArmy(
++              UUID.randomUUID(), ArmyType.INFANTRY, 30, new Location(world, 0, 64, 0));
++      army.consumeSupply(85);
++      service.persistCurrentArmyState();
++      return army;
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/army/model/ArmyUnitSupplyConsumptionTest.java b/src/test/java/dev/starcore/starcore/module/army/model/ArmyUnitSupplyConsumptionTest.java
+new file mode 100644
+index 0000000..10318c3
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/army/model/ArmyUnitSupplyConsumptionTest.java
+@@ -0,0 +1,93 @@
++package dev.starcore.starcore.module.army.model;
++
++import static org.junit.jupiter.api.Assertions.assertEquals;
++import static org.junit.jupiter.api.Assertions.assertThrows;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++
++import java.time.Instant;
++import java.util.UUID;
++import org.bukkit.Location;
++import org.bukkit.World;
++import org.junit.jupiter.api.Test;
++
++class ArmyUnitSupplyConsumptionTest {
++  @Test
++  void distributesHourlySupplyRateAcrossSixtyMinuteUpdates() {
++    ArmyUnit onePerHour = army(100, 100, 0);
++    ArmyUnit threePerHour = army(100, 100, 0);
++
++    for (int minute = 0; minute < 60; minute++) {
++      onePerHour.consumeHourlySupplyForMinute(1);
++      threePerHour.consumeHourlySupplyForMinute(3);
++    }
++
++    assertEquals(99, onePerHour.supply());
++    assertEquals(0, onePerHour.supplyConsumptionRemainder());
++    assertEquals(97, threePerHour.supply());
++    assertEquals(0, threePerHour.supplyConsumptionRemainder());
++  }
++
++  @Test
++  void preservesFractionalPhaseAcrossCopiesAndDoesNotApplyHiddenMoralePenalty() {
++    ArmyUnit army = army(100, 88, 0);
++    for (int minute = 0; minute < 30; minute++) army.consumeHourlySupplyForMinute(1);
++
++    ArmyUnit snapshot = army.copy();
++    assertEquals(100, snapshot.supply());
++    assertEquals(30, snapshot.supplyConsumptionRemainder());
++    snapshot.consumeHourlySupplyForMinute(1);
++    assertEquals(88, snapshot.morale());
++    assertEquals(30, army.supplyConsumptionRemainder());
++
++    army.restoreFrom(snapshot);
++    for (int minute = 0; minute < 30; minute++) army.consumeHourlySupplyForMinute(1);
++    assertEquals(99, army.supply());
++    assertEquals(1, army.supplyConsumptionRemainder());
++    assertEquals(88, army.morale());
++
++    army.consumeSupply(80);
++    assertEquals(19, army.supply());
++    assertEquals(88, army.morale());
++  }
++
++  @Test
++  void emptySupplyDoesNotAccumulateConsumptionThatImmediatelyChargesAfterResupply() {
++    ArmyUnit army = army(1, 100, 59);
++    army.consumeHourlySupplyForMinute(1);
++    assertEquals(0, army.supply());
++    assertEquals(0, army.supplyConsumptionRemainder());
++
++    for (int minute = 0; minute < 30; minute++) army.consumeHourlySupplyForMinute(1);
++    army.resupply(1);
++    army.consumeHourlySupplyForMinute(1);
++    assertEquals(1, army.supply());
++    assertEquals(1, army.supplyConsumptionRemainder());
++  }
++
++  @Test
++  void rejectsInvalidRatesAndRemainders() {
++    ArmyUnit army = army(100, 100, 0);
++    assertThrows(IllegalArgumentException.class, () -> army.consumeHourlySupplyForMinute(-1));
++    assertThrows(IllegalArgumentException.class, () -> army.consumeHourlySupplyForMinute(100_001));
++    assertThrows(IllegalArgumentException.class, () -> army(100, 100, 60));
++  }
++
++  private static ArmyUnit army(int supply, double morale, int remainder) {
++    World world = mock(World.class);
++    when(world.getName()).thenReturn("world");
++    return new ArmyUnit(
++        UUID.randomUUID(),
++        UUID.randomUUID(),
++        ArmyType.INFANTRY,
++        20,
++        100,
++        morale,
++        new Location(world, 0, 64, 0),
++        ArmyState.STATIONARY,
++        supply,
++        Instant.parse("2026-01-01T00:00:00Z"),
++        Instant.parse("2026-01-01T00:00:00Z"),
++        remainder);
 +  }
 +}

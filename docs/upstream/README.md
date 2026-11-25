@@ -74,3 +74,43 @@ $env:MAVEN_OPTS = '-Xmx512m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC'
 ```
 
 该源码补丁保留生产描述符的保守状态。隔离运行夹具只对测试 JAR 增加 Folia 加载标识，并分别记录修改前后哈希；这允许实际检查线程归属，不构成发布支持声明。Profile 下的可选现代 HUD 和压力测试命令不注册，国家及 StarSupply 常规 GUI 继续提供。Folia 下停用 StarCore 时，其他实体线程上的瞬态科技属性随玩家重登或服务器重启清理；不支持通过热重载验证正式服生命周期。
+
+## SQLite 国库快照并发争用修复
+
+真实 Folia 双区域验收在并发圈地与军队创建时发现国库快照写入 `SQLITE_BUSY`。原调用正确回滚：Gamma 国库在失败前后均为 66500.00，军队数量保持 1；随后一次明确的人工创建才扣除 1000.00，余额变为 65500.00。日志中的 `txId=1` 是持久化失败的诊断计数，不是经济收据 ID。原始堆栈保存在隔离服轮转日志 `logs/2026-11-20-2.log.gz`，公开状态与后续成功创建记录见 [争用修复证据](../verification/folia-sqlite-contention-recovery-20261120.json)。证据所指的手工 `six-loop-before-restart` 归档目录未实际生成，因此该记录引用现存压缩日志的完整哈希。
+
+独立工作树的 `SqlTreasuryStateStorage.writeSnapshot` 现在只重试已确认回滚的 SQL 快照事务，不重放国库扣款、军队创建或外部支付。只有尚未尝试提交、回滚成功、连接状态恢复成功的 SQLite 锁争用才可再尝试；最多额外两次，启动后续尝试时检查累计耗时是否仍小于 100 毫秒。该预算不等同于对已进行中 JDBC 调用的超时。每次重新读取仍核对原有版本 CAS，不能覆盖别处已经提交的新国库状态。提交回执或回滚结果不明时进入待核对状态，不自动重试；回滚不明时也不重新开启 auto-commit，避免意外提交未确认事务。
+
+2026-11-20 18:03:50 的针对性 `package` 重新编译 2234 个生产文件、1031 个测试文件：选中 67 项，**65 项实际执行通过、2 项 MySQL 测试因缺少 `starcore.mysql.it` 跳过，0 失败、0 错误**。新增四项使用真实 SQLite 连接并覆盖 WAL 快照升级争用、陈旧版本拒绝、提交回执不明以及回滚不明。两份改动 Java 文件通过定向 Spotless apply/check；构建前后 110 个改动或新增 `src` 条目的内容及路径集合一致。源 JAR 大小 19,548,109 字节，SHA-256 `BD0B09DDA770E523B6666EF1126EA3ACDDA71DC2F2DC4CE502803D06E87C898A`，未执行 `install`。这 65 项与前述 967 项、34 项分别记录，不能合并描述成同一构建的全量测试。
+
+2026-11-22 在隔离 Folia 副本进行了后续观察。双玩家区域探针由线程 `#0`、`#1` 同时执行，`maxActive=2`。随后 SupplyBuyer 在 `#0` 执行 `/army create infantry 10`，SupplyGamma 在 `#1` 执行 `/sc nation claim`，两者均成功，提交时间相差 79 ms。正常停服、使用相同 JAR 和数据库重启后，Alpha 与 Gamma 的国库、军队数、领土数及六个玩家存档哈希保持一致。详细状态、哈希和快照对照见[现场并发与重启记录](../verification/folia-sqlite-contention-retest-20261122.json)。
+
+现场日志未出现 `SQLITE_BUSY`、`SQLITE_LOCKED` 或国库持久化失败。当时构建没有成功重试日志标记，因此该次运行不能证明 `writeSnapshot` 的重试循环在现场被执行。此后加入的 `SQLITE_BUSY_RETRY` 观测日志已由含真实 SQLite 连接的定向测试触发；最新观测包仍待部署到 Folia 现场，完整运行证据和构建哈希见 [复核记录](../verification/folia-upstream-full-retest-20261122.json)。
+
+## 军队供给维护换算与士气恢复
+
+2026-11-21 对既有 Folia 后勤补丁作了额外修正。`ArmyState.supplyConsumptionPerHour` 现在由 `ArmyUnit` 以 0–59 的整数余量跨分钟累计；驻扎军队的 1 点/小时准确消耗为每 60 次分钟维护 1 点，行军、进攻、攻城和防御使用相同的累积方法。余量写入既有 ArmyState JSON，复制、失败回滚和重启均保留；旧记录缺少该字段时从 0 开始。
+
+`ArmyUnit.consumeSupply` 原先藏有额外 -5 士气，和 `ArmyService.updateArmy` 的 -2 重复作用。上游模型扣减已移除，只保留明确的每分钟 starvation -2；原生补给恢复到 20 或以上时，每分钟恢复 1 点基础士气，使短期断粮损失可逐步恢复。低士气下 StarCore 原有的溃散规则仍保留；这项调整没有把战斗伤亡或已保存的历史士气损失追溯清零。上方 19 项维护测试记录对应的旧补丁快照尚未包含 StarSupply 实物补给结转接口，不能将其作为当前接口的测试记录。
+
+新增 `ArmyUnitSupplyConsumptionTest` 与扩展后的 `ArmyStateCodecTest`、`ArmyServiceStatePersistenceTest` 覆盖 1/3 点每小时的 60 分钟累积、余量跨复制/回滚和存档保留、耗尽后清零、旧 JSON 默认余量、非法余量拒绝、单次饥饿扣士气及补给后的逐分钟恢复。Java 21 定向构建通过 19 项测试，0 失败、0 错误、0 跳过。更新后的补丁先在固定原始提交的新工作树 `git apply --check` 成功，再应用到该干净工作树并重新执行同样的 19 项测试，均通过。
+
+该版本使用 Maven Wrapper 3.9.16 执行 `package -DskipTests`，成功重新编译 2235 个生产和 1034 个测试源文件；因该次 package 明确跳过测试，测试结论仅取自前述单独的 19 项定向测试。StarCore 源包为 19,552,956 字节，SHA-256 `8D28C62313DF04C478B2E0A29CB5F663B61029762D9AC4217E7543AEB762650D`。更新后的完整可移植补丁 SHA-256 为 `B5B04DBBC7619DC417932C143C487AFF9545AE9C3466A5B04E5ACB0AAA810C88`，详细记录见 [维护修正验收数据](../verification/folia-army-supply-maintenance-20261121.json)。此修正版尚未部署到 Folia 隔离服，因此当前证据证明源码测试和构建，不证明运行现场通过。
+
+## StarCore 原生补给耐久回执
+
+当前 Folia 后勤补丁为 `ArmyService` 增加 `applyLogisticsSupply(requestId, armyId, nationId, points)` 与 `logisticsSupplyReceipt(requestId)`。补给变化不调用国库扣款，军队快照与请求回执写入同一份 StarCore 持久快照。以相同 UUID 和输入重试会返回原回执；回执在重启和军队解散后仍可读取。补给已达 100 时 `appliedPoints` 可以为 0，该请求仍永久占用其 UUID。持久层不可用或回执数据损坏时，服务拒绝处理补给请求。
+
+2026-11-21 的 StarCore 专项报告通过 `ArmyLogisticsSupplyTest` 8 项、`ArmyServiceStatePersistenceTest` 12 项和 `ArmyUnitSupplyConsumptionTest` 4 项，共 24 项，0 失败、0 错误、0 跳过。测试覆盖不扣国库、重复请求不重复加点、写入确认不明后的重试、重启后的已提交和未提交请求、请求身份冲突、补给上限、损坏回执与失败加载保护。StarCore 兼容包随后以 `-DskipTests package` 成功构建，重新编译 2236 个生产文件和 1035 个测试文件；该 package 阶段跳过了测试执行。JAR 为 19,556,178 字节，SHA-256 `6D84B645268E9DFCCA7B0766B898C372E32F448CB6B317C919BF65E3B3AE8243`。包含 2026-11-22 API 基线、聊天测试、Windows Dungeon 修复和 SQLite 重试观测日志的完整 Folia 补丁 SHA-256 为 `90340B2BE29EF76D071F618EE65B7F44ED82F4A803FC8BE8CD9A40C812FD5350`；此前运行证据仍关联各自记录时的补丁哈希。
+
+StarSupply v10 对应 JAR 通过 92 项自动化测试，SHA-256 为 `743F3F188186B475403792BCCED45DD3B6DC22EE7F1F5FBC647FE26EDFCA98A3`。StarCore 补丁构建 SHA-256 为 `6D84B645268E9DFCCA7B0766B898C372E32F448CB6B317C919BF65E3B3AE8243`。Folia 隔离运行副本仅在两个 JAR 的 `plugin.yml` 添加 `folia-supported: true`，其余 JAR 条目与上述构建一致。该组合已完成六类采购运输、6 个完整六资源消费周期、原生补给请求唯一回执、重启后重放和基础士气恢复验收；完整哈希、步骤及边界见 [补给回执验证记录](../verification/starcore-native-supply-receipts-20261121.json)。本次物资由管理员发放且可选 Cookery/Tavern 未启用，因此不代表六类生存生产或完整 Folia 插件组合认证。
+
+## 2026-11-22 Folia 补丁测试复核
+
+Windows Java 21 上首次执行完整 `mvnw.cmd -Dspotless.skip=true test`，共运行 7,095 项，21 项跳过，3 项失败、100 项错误。失败包括公共 API 基线未包含 Folia 并发改动增加的 `synchronized` 修饰符，以及两个未修改的 `DungeonWorldFilesTest` 路径/目录替换用例。错误包括 Windows 临时路径短别名被严格路径校验识别为符号链接 69 项、目录同步失败 29 项，以及聊天监听器测试夹具未给模拟插件设置服务器 2 项。随后将现有 `starcore-api-v1.txt` 更新为反射采集到的当前公共方法修饰符，并补全插件服务器 mock；API 基线和 `ResolutionChatListenerContractTest` 共 5 项定向用例通过。首次全量结果发生在这些修正之前，未在修正后再次运行全量套件。
+
+修正后的 Folia/调度/军队/战争/攻城选择器执行 `package`，运行 464 项，0 失败、0 错误、2 项跳过，构建成功。StarCore 包为 19,556,178 字节，SHA-256 `6D84B645268E9DFCCA7B0766B898C372E32F448CB6B317C919BF65E3B3AE8243`，与此前原生补给回执 Folia 验收使用的生产字节相同。设置独立 Windows 临时根目录后，初次 Dungeon 子集发现目录身份 `fileKey()` 为空，以及目录同步返回 `AccessDeniedException`。为这两个 Windows 文件系统行为增加兼容分支后，`*Dungeon*Test` 与 `DungeonFileDurabilityTest` 共 340 项全部通过，0 失败、0 错误、0 跳过。容器缺少原生目录身份时使用 `.starcore-world-container-id` 持久 UUID 标记；Windows 不支持打开目录同步时记为不支持并记录一次告警，其他 I/O 失败继续中止。随后 Windows Java 21 完整测试运行 7,096 项，0 失败、0 错误、21 项跳过。跳过项为未配置的 MySQL/Redis 集成、需真实玩家的叙事测试，以及已废弃的旧战争权威测试。完整验证与最新产物哈希见 [复核记录](../verification/folia-upstream-full-retest-20261122.json)。
+
+同日按格式化后的工作树执行完整 `mvnw.cmd -B -ntp -Dspotless.ratchetFrom=HEAD verify`，Spotless、全量测试、shade 和 verify 均成功。新 JAR 为 19,557,252 字节，SHA-256 `F335AF774F8DF259A263FBF5779E9BEA4CE7A7588EF995CE993ECF292F494D2F`。CycloneDX 创建并校验了 36 个组件的 JSON/XML BOM；部分缓存的可选依赖缺少当前远端 POM 元数据，记录了解析警告，但没有使 verify 失败。
+
+随后为 `SqlTreasuryStateStorage.writeSnapshot` 增加结构化 `SQLITE_BUSY_RETRY` 告警，记录重试次数、预算内累计毫秒和是否继续重试，不输出账户或玩家信息。`SqlTreasuryBusyRetryTest` 在四个真实 SQLite 双连接场景全部通过，并断言首次回滚后重试日志为 `attempt=1` 且 `retryAllowed=true`。含观测日志的完整 `mvnw.cmd -B -ntp -Dspotless.ratchetFrom=HEAD verify` 再次通过：7,096 项，0 失败、0 错误、21 项跳过，Spotless、JaCoCo、shade 与 CycloneDX 均成功。新 JAR 为 19,557,442 字节，SHA-256 `6BB059707AEDCFE3E7D65BAD768329E891BA7144C6DA6B1B9A1C30790E8A4B0A`。随后在 Folia 1.21.11-14 隔离副本通过独立 WAL 写连接与公开 `ArmyService.createArmy` 触发该分支；同一建军请求先记录 `retryAllowed=true` 再成功完成，测试 SQLite 重启关闭后完整性为 `ok`、Gamma 国库余额为 58504.00。测试使用 StarCore 原库的隔离克隆，原始库哈希未变；完整运行哈希、回执及清理结果见 [SQLite 忙锁 Folia 运行记录](../verification/folia-sqlite-contention-live-retry-20261122.json)。

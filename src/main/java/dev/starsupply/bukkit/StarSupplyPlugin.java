@@ -18,6 +18,7 @@ import dev.starsupply.bukkit.item.ResourceItemRegistry;
 import dev.starsupply.bukkit.ui.SupplyUi;
 import dev.starsupply.bukkit.ui.SupplyUi.Entry;
 import dev.starsupply.bukkit.ui.SupplyUi.Section;
+import dev.starsupply.integration.CoreGateway;
 import dev.starsupply.integration.CoreGateway.PaymentResult;
 import dev.starsupply.integration.StarCoreGateway;
 import dev.starsupply.integration.TavernBridge;
@@ -72,6 +73,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     private final AtomicBoolean accepting = new AtomicBoolean();
     private final AtomicBoolean campaignReady = new AtomicBoolean();
     private final AtomicLong lifecycle = new AtomicLong();
+    private final EntityCallbacks entityCallbacks = new EntityCallbacks();
     private volatile Map<UUID, SupplyStatus> armyStatus = Map.of();
     private volatile long armyStatusAt;
     private volatile List<Warehouse> campaignFronts = List.of();
@@ -90,11 +92,14 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     private CaravanInsurance insurance;
     private SupplyUi ui;
     private Runnable unregisterCombat;
+    private Runnable unregisterMorale;
 
     @Override
     public void onEnable() {
         try {
             require(worker == null || worker.isTerminated(), "上一轮数据库操作尚未停止，请等待后重新启用插件");
+            require(entityCallbacks.isIdle() && inventoryBusy.isEmpty(),
+                    "上一轮玩家库存操作尚未停止，请等待后重新启用插件");
             long generation = lifecycle.incrementAndGet();
             campaignReady.set(false);
             saveDefaultConfig();
@@ -104,6 +109,8 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
             require(maxPayment.signum() > 0 && maxPayment.scale() <= 2
                     && maxPayment.compareTo(new BigDecimal("100000000.00")) <= 0, "max-order-payment 无效");
             Map<ResourceType, BigDecimal> marketBasePrices = marketBasePrices();
+            require(getServer().getPluginManager().isPluginEnabled("StarCore"),
+                    "StarCore 未成功启用，请先检查它的启动日志");
             core = new StarCoreGateway(
                     logisticsBonuses("policy-logistics-bonuses", Map.of("war_economy", 0.10), 0.5),
                     logisticsBonuses("policy-combat-bonuses", Map.of("military_drill", 0.08,
@@ -167,6 +174,11 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
                 SupplyStatus status = armyStatus.get(id);
                 return status == null || now() - armyStatusAt > 15_000 ? 1.0 : status.combatMultiplier();
             });
+            unregisterMorale = core.registerTemporaryMoraleModifier(id -> {
+                SupplyStatus status = armyStatus.get(id);
+                return !accepting.get() || status == null || now() - armyStatusAt > 15_000
+                        || !status.atWar() ? 0 : status.moraleDelta();
+            });
             ui = new SupplyUi(this, this);
             var command = Objects.requireNonNull(getCommand("supply"));
             command.setExecutor(ui);
@@ -202,24 +214,32 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
         accepting.set(false);
         lifecycle.incrementAndGet();
         campaignReady.set(false);
-        if (periodic != null) periodic.cancel();
-        if (campaignSampling != null) campaignSampling.cancel();
-        getServer().getServicesManager().unregisterAll(this);
-        if (unregisterCombat != null) unregisterCombat.run();
-        armyStatus = Map.of();
-        campaignFronts = List.of();
-        if (worker != null) {
-            // Drain accepted transactions; terminated() closes SQLite exactly once.
-            worker.shutdown();
-            try {
-                if (!worker.awaitTermination(5, TimeUnit.SECONDS)) {
-                    getLogger().warning("StarSupply 数据库仍在完成已接收的操作，将在后台线程停止后关闭");
-                }
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
+        entityCallbacks.cancelWaiting(new IllegalStateException("StarSupply 已关闭，库存操作将在重连时检查"));
+        try {
+            cleanup("停止后台轮询", periodic == null ? null : periodic::cancel);
+            cleanup("停止战役采样", campaignSampling == null ? null : campaignSampling::cancel);
+            cleanup("注销公开服务", () -> getServer().getServicesManager().unregisterAll(this));
+            cleanup("注销战力修正", unregisterCombat);
+            cleanup("注销士气修正", unregisterMorale);
+        } finally {
+            armyStatus = Map.of();
+            campaignFronts = List.of();
+            if (worker != null) {
+                // Drain accepted transactions without blocking the global/region thread.
+                // Re-enable also waits for running entity callbacks and inventory chains.
+                worker.shutdown();
+            } else {
+                closeStore();
             }
-        } else {
-            closeStore();
+        }
+    }
+
+    private void cleanup(String action, Runnable hook) {
+        if (hook == null) return;
+        try {
+            hook.run();
+        } catch (RuntimeException | LinkageError failure) {
+            getLogger().log(Level.WARNING, "StarSupply 关闭时无法" + action, failure);
         }
     }
 
@@ -354,6 +374,12 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
                         return "已登记 " + (army == null ? "仓库 " : "前线站 ") + warehouse.id();
                     });
                 }
+                case "rebind-front" -> {
+                    permission(player, "starsupply.manage");
+                    UUID army = id(args[1]);
+                    yield rebindFront(player, args[0], army)
+                            .thenApply(front -> "前线站 " + front.id() + " 已重绑定至军队 " + army);
+                }
                 case "route" -> {
                     permission(player, "starsupply.manage");
                     before(player, Operation.ROUTE_UPDATE, null);
@@ -412,6 +438,10 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
                     yield inventoryTask(player, () -> restoreOrRecover(player, transfer));
                 }
                 case "status" -> sql(() -> statusLine(actor, args.length == 0 ? null : args[0]));
+                case "native-credits" -> {
+                    permission(player, "starsupply.manage");
+                    yield sql(() -> nativeCredits(actor, args[0]));
+                }
                 case "tavern" -> registerHub(player, args[0]).thenApply(hub -> "已登记酒馆集合点 " + hub.id()
                         + (hub.tavernVerified() ? " / 森罗酒品已验证" : ""));
                 case "untavern" -> removeHub(player, args[0]).thenApply(ignored -> "已移除酒馆集合点 " + args[0]);
@@ -483,6 +513,12 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
                         return "库存核对已记录，请玩家重进或使用 /supply recover";
                     });
                 }
+                case "reconcile-native-supply" -> {
+                    permission(player, "starsupply.admin");
+                    UUID request = id(args[0]);
+                    before(player, Operation.RECONCILE, request);
+                    yield sql(() -> reconcileNativeSupply(actor, request));
+                }
                 default -> throw new IllegalArgumentException("未知后勤命令");
             };
             action.whenComplete((result, failure) -> {
@@ -497,6 +533,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     @Override
     public CompletionStage<Purchase> createPurchase(Player actor, String depot, ResourceType resource,
                                                     int count, BigDecimal price) {
+        requirePlayerEntity(actor);
         permission(actor, "starsupply.manage");
         before(actor, Operation.PURCHASE_CREATE, null);
         UUID actorId = actor.getUniqueId();
@@ -506,6 +543,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     @Override
     public CompletionStage<Purchase> createMarketPurchase(Player actor, String depot, ResourceType resource,
                                                           int count) {
+        requirePlayerEntity(actor);
         permission(actor, "starsupply.manage");
         before(actor, Operation.PURCHASE_CREATE, null);
         UUID actorId = actor.getUniqueId();
@@ -525,10 +563,24 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
 
     @Override
     public CompletionStage<Shipment> createTransport(Player actor, UUID purchase, String front, BigDecimal reward) {
+        requirePlayerEntity(actor);
         permission(actor, "starsupply.manage");
         before(actor, Operation.TRANSPORT_CREATE, purchase);
         UUID actorId = actor.getUniqueId();
         return sql(() -> logistics.createShipment(actorId, purchase, front, reward, now()));
+    }
+
+    @Override
+    public CompletionStage<Warehouse> rebindFront(Player actor, String frontId, UUID armyId) {
+        requirePlayerEntity(actor);
+        permission(actor, "starsupply.manage");
+        before(actor, Operation.FRONT_REBIND, null);
+        UUID actorId = actor.getUniqueId();
+        return sql(() -> {
+            Warehouse front = logistics.rebindFront(actorId, frontId, armyId);
+            refreshArmies(false);
+            return front;
+        });
     }
 
     @Override
@@ -654,6 +706,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     }
 
     @Override public CompletionStage<TavernModels.Hub> registerHub(Player actor, String hub) {
+        requirePlayerEntity(actor);
         permission(actor, "starsupply.manage");
         before(actor, Operation.TAVERN_CREATE, null);
         UUID actorId = actor.getUniqueId();
@@ -664,6 +717,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     }
 
     @Override public CompletionStage<Void> removeHub(Player actor, String hub) {
+        requirePlayerEntity(actor);
         permission(actor, "starsupply.manage");
         before(actor, Operation.TAVERN_REMOVE, null);
         UUID actorId = actor.getUniqueId();
@@ -693,8 +747,8 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     }
 
     @Override public CompletionStage<List<TavernModels.Hub>> tavernHubs(Player actor) {
+        requirePlayerEntity(actor);
         permission(actor, "starsupply.use");
-        require(Bukkit.isOwnedByCurrentRegion(actor), "请在玩家的实体调度线程调用");
         UUID actorId = actor.getUniqueId();
         return sql(() -> taverns.hubs(actorId));
     }
@@ -828,8 +882,11 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     }
 
     private CompletionStage<String> recoverPending(Player player) {
-        return entity(player, () -> new InventoryObservation(player.getUniqueId(), inventory.receipt(player).orElse(null),
-                inventory.hash(player)))
+        return entity(player, () -> {
+            UUID receipt = inventory.receipt(player).orElse(null);
+            InventoryEscrow.Fingerprints fingerprints = receipt == null ? inventory.fingerprints(player) : null;
+            return new InventoryObservation(player.getUniqueId(), receipt, fingerprints);
+        })
                 .thenCompose(observation -> sql(() -> {
                     if (observation.receipt() != null) {
                         Transfer transfer = store.receiptTransfer(observation.receipt()).orElseThrow(() ->
@@ -843,7 +900,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
                         // The complete storage-slot fingerprint is persisted before SQL prepares a debit.
                         // When it still matches, the player save cannot contain the planned change, so
                         // a crash before the apply step is safely abortable/retryable.
-                        if (item.beforeHash().equals(observation.inventoryHash())) {
+                        if (observation.fingerprints().matches(item.beforeHash())) {
                             if (item.state() == TransferState.PREPARED) {
                                 store.abandonTransfer(item.id());
                                 return null;
@@ -889,15 +946,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     }
 
     private CompletionStage<String> inventoryTask(Player player, Supplier<CompletionStage<String>> start) {
-        UUID id = player.getUniqueId();
-        if (!inventoryBusy.add(id)) return CompletableFuture.failedFuture(
-                new IllegalArgumentException("背包操作正在处理，请稍后重试"));
-        try {
-            return start.get().whenComplete((message, failure) -> inventoryBusy.remove(id));
-        } catch (RuntimeException failure) {
-            inventoryBusy.remove(id);
-            throw failure;
-        }
+        return InventoryTasks.start(inventoryBusy, player.getUniqueId(), start);
     }
 
     private String reconcile(UUID actor, UUID id, boolean paid) throws Exception {
@@ -1077,18 +1126,37 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     private String statusLine(UUID actor, String input) {
         if (input != null) {
             UUID army = resolveOwnArmy(actor, input);
-            return armySupply(army).map(StarSupplyPlugin::statusText).orElse("该军队尚未绑定前线站");
+            return armySupply(army).map(this::statusText).orElse("该军队尚未绑定前线站");
         }
         UUID nation = logistics.nation(actor);
         List<String> status = new ArrayList<>();
         for (var army : core.armies(nation)) {
             String label = army.id().toString();
-            status.add(label + " " + armySupply(army.id()).map(StarSupplyPlugin::statusText).orElse("未绑定"));
+            status.add(label + " " + armySupply(army.id()).map(this::statusText).orElse("未绑定"));
         }
         return status.isEmpty() ? "本国暂无军队" : String.join("\n", status);
     }
 
-    private static String statusText(SupplyStatus status) {
+    private String nativeCredits(UUID actor, String input) throws Exception {
+        UUID army = resolveOwnArmy(actor, input);
+        List<NativeSupplyCredit> credits = store.nativeSupplyCredits(army);
+        if (credits.isEmpty()) return "该军队没有原生补给结转记录";
+        return credits.stream().map(credit -> credit.id() + " / " + credit.state() + " / "
+                + credit.points() + " 点 / 周期 " + credit.intervalMillis() + " ms / 尝试 " + credit.attempts()
+                + (credit.lastError().isBlank() ? "" : " / " + credit.lastError()))
+                .collect(java.util.stream.Collectors.joining("\n"));
+    }
+
+    private String reconcileNativeSupply(UUID actor, UUID request) throws Exception {
+        if (logistics.reconcileNativeSupply(request, now())) {
+            getLogger().warning("确认 StarCore 原生补给回执 " + request + " / 管理员 " + actor);
+            return "StarCore 已有原生补给回执，已标记 APPLIED";
+        }
+        getLogger().warning("StarCore 未记录原生补给请求，已按原 UUID 重新排队 " + request + " / 管理员 " + actor);
+        return "StarCore 尚无该请求回执，已按原 UUID 重新排队";
+    }
+
+    private String statusText(SupplyStatus status) {
         var campaign = status.campaign();
         String conditions = (campaign.winter() ? " / 冬季" : "")
                 + (campaign.underSiege() ? String.format(Locale.ROOT, " / 围城 %d秒，额外需求 %.0f%%",
@@ -1098,6 +1166,8 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
             case CONTROL_LOST -> " / 前线领土失守，补给暂停";
             case ARMY_OUT_OF_RANGE -> " / 军队超出前线服务距离，补给暂停";
         };
+        conditions += String.format(Locale.ROOT, " / 后勤士气 %+.1f，有效士气 %.1f",
+                status.moraleDelta(), core.effectiveMorale(status.armyId()));
         return String.format(Locale.ROOT, "%s / %s / 补给 %.0f%% / 作战 ×%.3f%s", status.warehouseId(),
                 status.atWar() ? "战时" : "和平", status.coverage() * 100, status.combatMultiplier(), conditions);
     }
@@ -1121,6 +1191,9 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
         return sql(() -> store.warehouse(warehouse).isPresent() ? Optional.of(store.stock(warehouse)) : Optional.empty());
     }
     @Override public Optional<SupplyStatus> armySupply(UUID army) { return Optional.ofNullable(armyStatus.get(army)); }
+    @Override public CompletionStage<List<NativeSupplyCredit>> nativeSupplyCredits(UUID army) {
+        return sql(() -> store.nativeSupplyCredits(java.util.Objects.requireNonNull(army)));
+    }
     @Override public CompletionStage<RouteNetwork> routeNetwork(UUID nation) { return sql(() -> logistics.graph(nation)); }
     @Override public CompletionStage<Optional<RoutePlan>> route(UUID nation, String origin, String target) {
         return sql(() -> logistics.route(nation, origin, target));
@@ -1133,11 +1206,15 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
     }
 
     private void before(Player player, Operation operation, UUID order) {
-        require(Bukkit.isOwnedByCurrentRegion(player), "请在玩家的实体调度线程调用");
+        requirePlayerEntity(player);
         permission(player, "starsupply.use");
         SupplyOperationEvent event = new SupplyOperationEvent(player, operation, order);
         getServer().getPluginManager().callEvent(event);
         require(!event.isCancelled(), "操作已取消");
+    }
+
+    private static void requirePlayerEntity(Player player) {
+        require(Bukkit.isOwnedByCurrentRegion(player), "请在玩家的实体调度线程调用");
     }
 
     private static void permission(Player player, String permission) {
@@ -1146,31 +1223,39 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
 
     private <T> CompletableFuture<T> sql(Callable<T> task) {
         var future = new CompletableFuture<T>();
-        if (!accepting.get() || worker == null) {
+        long taskGeneration = lifecycle.get();
+        boolean ready = accepting.get();
+        ThreadPoolExecutor executor = worker;
+        if (!ready || executor == null
+                || !LifecycleGate.accepts(accepting.get(), lifecycle.get(), taskGeneration)) {
             return CompletableFuture.failedFuture(new IllegalStateException("StarSupply 当前不可用"));
         }
         try {
-            worker.execute(() -> {
-                try { future.complete(task.call()); }
-                catch (Exception | LinkageError failure) { future.completeExceptionally(failure); }
-            });
+            // Never redirect a submission already in progress into a later lifecycle's worker.
+            executor.execute(() -> AsyncTasks.complete(future, task));
         } catch (RejectedExecutionException full) {
             future.completeExceptionally(new IllegalArgumentException("后勤服务繁忙，请稍后重试"));
+        } catch (Error failure) {
+            future.completeExceptionally(failure);
+            throw failure;
         }
         return future;
     }
 
     private <T> CompletableFuture<T> entity(Player player, Callable<T> task) {
-        var future = new CompletableFuture<T>();
-        if (!accepting.get()) return CompletableFuture.failedFuture(new IllegalStateException("StarSupply 当前不可用"));
-        Runnable run = () -> {
-            try {
-                require(player.isOnline(), "玩家已断线，库存操作将在重连时检查");
-                future.complete(task.call());
-            } catch (Exception | LinkageError failure) {
-                future.completeExceptionally(failure);
+        long callbackGeneration = lifecycle.get();
+        CompletableFuture<T> future = entityCallbacks.register();
+        if (!LifecycleGate.accepts(accepting.get(), lifecycle.get(), callbackGeneration)) {
+            future.completeExceptionally(new IllegalStateException("StarSupply 当前不可用"));
+            return future;
+        }
+        Runnable run = () -> entityCallbacks.execute(future, () -> {
+            if (!LifecycleGate.accepts(accepting.get(), lifecycle.get(), callbackGeneration)) {
+                throw new IllegalStateException("StarSupply 生命周期已切换，已丢弃过期玩家操作");
             }
-        };
+            require(player.isOnline(), "玩家已断线，库存操作将在重连时检查");
+            return task.call();
+        });
         try {
             if (Bukkit.isOwnedByCurrentRegion(player)) run.run();
             else {
@@ -1178,8 +1263,11 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
                         new IllegalArgumentException("玩家已断线，库存操作将在重连时检查"));
                 if (player.getScheduler().run(this, taskHandle -> run.run(), retired) == null) retired.run();
             }
-        } catch (RuntimeException failure) {
+        } catch (RuntimeException | LinkageError failure) {
             future.completeExceptionally(failure);
+        } catch (Error failure) {
+            future.completeExceptionally(failure);
+            throw failure;
         }
         return future;
     }
@@ -1283,7 +1371,7 @@ public final class StarSupplyPlugin extends JavaPlugin implements Listener, Supp
 
     private static long now() { return System.currentTimeMillis(); }
 
-    private record InventoryObservation(UUID player, UUID receipt, String inventoryHash) {}
+    private record InventoryObservation(UUID player, UUID receipt, InventoryEscrow.Fingerprints fingerprints) {}
     private record Recovery(Transfer transfer, List<EscrowLot> lots) {}
     private record AuthorizedPlan(Logistics.SaleAuthorization authorization, InventoryEscrow.Plan plan) {}
 }

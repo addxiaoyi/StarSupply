@@ -1,0 +1,73 @@
+{
+  "recorded_on": "2026-11-20",
+  "purpose": "Live Folia temporary morale behavior and attempted supply recovery",
+  "result": "shortage_effect_passed_recovery_pending",
+  "goal_complete": false,
+  "environment": {
+    "server": "Folia 1.21.11-14-529aabc",
+    "runtime_directory": "C:/Users/Administrator/Documents/starsupply-deps/folia-stage1-live",
+    "process_id": 13092,
+    "game_port": 25629,
+    "rcon_port": 25639,
+    "runtime_jars": {
+      "StarCore-1.0.0.jar": "CBFCCB3F4DE1CD5E5DD86327FF34870E99C570BCA2B502DA8A77ED07D5A16E1F",
+      "StarSupply-0.1.0.jar": "EFFC9D2F1AE7908DEADB5938CD588814F071FABB9804AF1F97498E5E802A617D",
+      "FoliaSupplyProof-1.0.0.jar": "E8C2FCAC8F94147E86871AEFE0DB99C2F9173179EEBFFFA72CB2FE09464A7812"
+    },
+    "test_descriptor_overrides": true
+  },
+  "army": {
+    "id": "62f6d7a3-2884-4ef4-aa5a-c76473c44224",
+    "nation": "Alpha",
+    "front": "morale-front",
+    "base_morale": 100
+  },
+  "shortage_state": {
+    "command": "/supply status 62f6d7a3",
+    "player_output": "morale-front / 战时 / 补给 0% / 作战 ×0.850 / 后勤士气 -10.0，有效士气 90.0",
+    "front_access": "CONNECTED",
+    "coverage": 0,
+    "morale_delta": -10,
+    "effective_morale": 90,
+    "at_war": true
+  },
+  "combat": {
+    "scenario": "shortage",
+    "actual_attack_damage": 22.95,
+    "neutral_damage": 30,
+    "shortage_morale_only_damage_ratio": 0.9,
+    "actual_battle_persisted": true,
+    "base_morale_unchanged": true,
+    "both_armies_restored_and_persisted": true,
+    "passed": true
+  },
+  "recovery_attempt": {
+    "purchase_order": "21a05473-678e-4970-bfa2-d37741a37b6c",
+    "order": "OPEN",
+    "seller_attempt": "rejected: 背包中可用的对应物资数量不足",
+    "cookery_item": "kaleidoscopecookery:raw_dough",
+    "cookery_item_count": 3,
+    "cookery_item_sha256": "db2dd99e7671d6a22b4bdca7a01287cbef7453ad9d3c09425f093540582a5291",
+    "usable_for_food_order": false,
+    "heat_source_scan": {"area": "starsupply-stage1-world x=-34..-24 y=127..129 z=68..76", "magma_block_matches": 0},
+    "shipment_created": false,
+    "settlement_created": false,
+    "final_effective_morale": 90,
+    "reason": "No finished mapped FOOD item was produced or delivered. The real intermediate dough cannot satisfy the configured mantou mapping. No /give, PDC, database write or fabricated item was used."
+  },
+  "runtime_warning": {
+    "observed_at_local": "2026-11-20 21:10:44 +08:00",
+    "region": "starsupply-stage1-world chunk [-2,4]",
+    "watchdog_unresponsive_seconds": 8.7350059,
+    "thread_state": "Folia Region Scheduler Thread #1 TIMED_WAITING at Unsafe.park",
+    "subsequent_runtime": "The Folia process remained running and later emitted normal StarSupply consumption events; no restart was performed for this probe.",
+    "latest_log_sha256_at_capture": "4BE03E27CF807837A4C48112C898B6D538D2FF4030926F80C08DD5DEC19C2FE2"
+  },
+  "evidence": {
+    "recovery_attempt_json": {"path": "folia-proof/morale-front-recovery-attempt-20261120.json", "sha256": "FDDB6E45213136B1EF87D001F90500551B733E6F85562C330610A186ED3A9603"},
+    "combat_json": {"path": "plugins/FoliaSupplyProof/combat-1795179578076.json", "sha256": "E24F7623B0DBF79FB8D1C094B8FA9E3CD5548262E1281AE71ACD482D527DB051"},
+    "cookery_kitchen_log": {"path": "folia-proof/kitchen-SupplyCook.jsonl", "sha256": "51B2D79F748560E701A2761813FFF573FE51A2A63B8D41DD0E52DB29E05E4CFC"},
+    "buyer_log": {"path": "folia-proof/bot-SupplyBuyer.jsonl", "sha256": "D498184B3F490E90AA421C19A27805E626BBF7621EFF2AC1D1870AF38C9AA94A"},
+    "latest_server_log": {"path": "logs/latest.log", "sha256": "4BE03E27CF807837A4C48112C898B6D538D2FF4030926F80C08DD5DEC19C2FE2"}
+  }
+}

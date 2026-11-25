@@ -1,0 +1,628 @@
+{
+  "purpose": "Actual Folia entity-scheduler retirement, region disappearance/recreation and durable inventory recovery",
+  "date": "2026-11-25",
+  "passed": true,
+  "stage": "C:\\tmp\\starsupply-folia-region-retirement-20261125",
+  "runtime": {
+    "event": "survival_progression_run",
+    "server": "Folia 1.21.11-14-529aabc",
+    "serverHeap": "384M",
+    "memory": {
+      "heapBytes": 402653184,
+      "availableBytes": 1436205056,
+      "requiredBytes": 939524096,
+      "source": "minimum of free physical memory and Windows commit headroom"
+    },
+    "plugins": [
+      {
+        "name": "StarCore-1.0.0.jar",
+        "sha256": "1E9FF4D7876A958A51F811BE6A85E4431B5657196F260D0292342905D66C0E65"
+      },
+      {
+        "name": "StarSupply-0.1.0.jar",
+        "sha256": "759838C6B42312B5B471058B4EE2A820A2AA5B29471E1C76E6D7AE70E7A0C166"
+      },
+      {
+        "name": "SupplyRetirementProof-1.0.0.jar",
+        "sha256": "855DDFFC61EDD9CCC6A0F3A7A85468B94DD3AC61A6224C7E5B4132F0F0AC199E"
+      }
+    ],
+    "startupTimeoutMs": 360000,
+    "runtimeHealth": {
+      "coreReady": true,
+      "supplyReady": true,
+      "serverReady": true,
+      "rconReady": true,
+      "failure": null
+    },
+    "failure": null,
+    "pass": true,
+    "player": "SupplyBuyer",
+    "clientExit": {
+      "code": 0,
+      "signal": null
+    },
+    "serverExit": {
+      "code": 0,
+      "signal": null
+    },
+    "shutdownMethod": "rcon",
+    "normalStopObserved": true,
+    "gamePortClosed": true,
+    "rconPortClosed": true,
+    "serverLog": "folia-proof/survival-progression-2026-11-25T06-39-28-957Z-server.log",
+    "serverErrorLog": "folia-proof/survival-progression-2026-11-25T06-39-28-957Z-server-error.log",
+    "clientLog": "folia-proof/survival-progression-2026-11-25T06-39-28-957Z-client.log"
+  },
+  "artifacts": {
+    "source_stage": "C:\\tmp\\starsupply-folia-sqlite-retry-runtime-20261122",
+    "stage": "C:\\tmp\\starsupply-folia-region-retirement-20261125",
+    "created": "2026-11-25T14:24:22.4444981+08:00",
+    "source_starsupply_sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+    "test_starsupply_sha256": "759838C6B42312B5B471058B4EE2A820A2AA5B29471E1C76E6D7AE70E7A0C166",
+    "fixture_sha256": "855DDFFC61EDD9CCC6A0F3A7A85468B94DD3AC61A6224C7E5B4132F0F0AC199E",
+    "test_descriptor_only": true,
+    "source_stage_unchanged": true,
+    "source_starcore_sha256": "6BB059707AEDCFE3E7D65BAD768329E891BA7144C6DA6B1B9A1C30790E8A4B0A",
+    "test_starcore_sha256": "1E9FF4D7876A958A51F811BE6A85E4431B5657196F260D0292342905D66C0E65"
+  },
+  "descriptor_comparison": {
+    "StarSupply-0.1.0.jar": {
+      "only_changed_entry": "plugin.yml",
+      "identical_entries": 368
+    },
+    "StarCore-1.0.0.jar": {
+      "only_changed_entry": "plugin.yml",
+      "identical_entries": 8259
+    }
+  },
+  "fault_injection": "Test plugin prepares real SQL, optionally saves a real debit receipt, queues production entity/guard callbacks during PlayerQuitEvent using a bounded test-only latch. No player, scheduler, SQLite or economy mock. Internal region observation is read-only and pinned to this Folia version.",
+  "outcomes": [
+    {
+      "mode": "untouched",
+      "recovered": {
+        "type": "snapshot",
+        "at": "2026-11-25T06:40:19.117935500Z",
+        "thread": "StarSupply-SQL",
+        "iron": 3,
+        "chunkUnloaded": true,
+        "transferState": "ABSENT",
+        "transfer": "177836ec-525c-4ece-bc61-78a12b4178a7",
+        "balance": 5567.77,
+        "receipt": "",
+        "chunkReloads": 1,
+        "settlementEvents": 0,
+        "pass": true,
+        "originalRegionId": 3,
+        "inventoryBusy": false,
+        "fingerprint": "956a3469b007365312d11076821f38c68870cd6d91e125d28f4d6972acaa2830",
+        "settlementState": "ABSENT",
+        "mode": "untouched",
+        "regionAbsent": true,
+        "reloadedRegionId": 5,
+        "purchaseState": "OPEN",
+        "purchase": "616de184-e291-4450-9685-86b91ddf3622"
+      },
+      "repeatedRecovery": {
+        "type": "snapshot",
+        "at": "2026-11-25T06:40:21.614414100Z",
+        "thread": "StarSupply-SQL",
+        "iron": 3,
+        "chunkUnloaded": true,
+        "transferState": "ABSENT",
+        "transfer": "177836ec-525c-4ece-bc61-78a12b4178a7",
+        "balance": 5567.77,
+        "receipt": "",
+        "chunkReloads": 1,
+        "settlementEvents": 0,
+        "pass": true,
+        "originalRegionId": 3,
+        "inventoryBusy": false,
+        "fingerprint": "956a3469b007365312d11076821f38c68870cd6d91e125d28f4d6972acaa2830",
+        "settlementState": "ABSENT",
+        "mode": "untouched",
+        "regionAbsent": true,
+        "reloadedRegionId": 5,
+        "purchaseState": "OPEN",
+        "purchase": "616de184-e291-4450-9685-86b91ddf3622"
+      }
+    },
+    {
+      "mode": "receipt",
+      "recovered": {
+        "type": "snapshot",
+        "at": "2026-11-25T06:40:39.445745800Z",
+        "thread": "StarSupply-SQL",
+        "iron": 2,
+        "chunkUnloaded": true,
+        "transferState": "STORED",
+        "transfer": "4b87b0a6-f100-46a2-a261-6ddbdd7aaecd",
+        "balance": 5572.77,
+        "receipt": "",
+        "chunkReloads": 1,
+        "settlementEvents": 1,
+        "pass": true,
+        "originalRegionId": 5,
+        "inventoryBusy": false,
+        "fingerprint": "877f15abce9f2dc4245d9616caefdab83345b59f56fc539baaeda427ea788d30",
+        "settlementState": "PAID",
+        "mode": "receipt",
+        "regionAbsent": true,
+        "reloadedRegionId": 10,
+        "purchaseState": "BOUGHT",
+        "purchase": "1e1c22cb-ccfe-4b0f-8f48-27ad0a9b7239"
+      },
+      "repeatedRecovery": {
+        "type": "snapshot",
+        "at": "2026-11-25T06:40:41.034313900Z",
+        "thread": "StarSupply-SQL",
+        "iron": 2,
+        "chunkUnloaded": true,
+        "transferState": "STORED",
+        "transfer": "4b87b0a6-f100-46a2-a261-6ddbdd7aaecd",
+        "balance": 5572.77,
+        "receipt": "",
+        "chunkReloads": 1,
+        "settlementEvents": 1,
+        "pass": true,
+        "originalRegionId": 5,
+        "inventoryBusy": false,
+        "fingerprint": "877f15abce9f2dc4245d9616caefdab83345b59f56fc539baaeda427ea788d30",
+        "settlementState": "PAID",
+        "mode": "receipt",
+        "regionAbsent": true,
+        "reloadedRegionId": 10,
+        "purchaseState": "BOUGHT",
+        "purchase": "1e1c22cb-ccfe-4b0f-8f48-27ad0a9b7239"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "type": "enabled",
+      "at": "2026-11-25T06:39:59.780370200Z",
+      "thread": "Server thread",
+      "server": "1.21.11-14-529aabc (MC: 1.21.11)",
+      "fixtureOnly": true
+    },
+    {
+      "type": "prepared",
+      "at": "2026-11-25T06:40:05.134533200Z",
+      "thread": "Folia Region Scheduler Thread #0",
+      "purchase": "616de184-e291-4450-9685-86b91ddf3622",
+      "receipt": "",
+      "regionId": 3,
+      "transfer": "177836ec-525c-4ece-bc61-78a12b4178a7",
+      "mode": "untouched",
+      "beforeHash": "956a3469b007365312d11076821f38c68870cd6d91e125d28f4d6972acaa2830",
+      "afterHash": "877f15abce9f2dc4245d9616caefdab83345b59f56fc539baaeda427ea788d30",
+      "chunkZ": 4,
+      "chunkX": -258,
+      "ironBefore": 3,
+      "owned": true,
+      "balanceBefore": 5567.77,
+      "ironNow": 3
+    },
+    {
+      "type": "quit",
+      "at": "2026-11-25T06:40:05.157933900Z",
+      "thread": "Folia Region Scheduler Thread #0",
+      "queued": true,
+      "mode": "untouched"
+    },
+    {
+      "type": "scheduler-retired",
+      "at": "2026-11-25T06:40:05.193280100Z",
+      "thread": "Folia Region Scheduler Thread #0",
+      "mode": "untouched",
+      "player": "5ab1d958-3192-31da-88f6-5860ab3c3a3d"
+    },
+    {
+      "type": "callback-retired",
+      "at": "2026-11-25T06:40:05.194316Z",
+      "thread": "Folia Region Scheduler Thread #0",
+      "mode": "untouched",
+      "retirementStack": [
+        "StarSupply-0.1.0.jar//dev.starsupply.bukkit.StarSupplyPlugin.lambda$entity$132(StarSupplyPlugin.java:1262)",
+        "io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler$EntityScheduledTask.accept(FoliaEntityScheduler.java:170)",
+        "io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler$EntityScheduledTask.accept(FoliaEntityScheduler.java:114)",
+        "io.papermc.paper.threadedregions.EntityScheduler.retire(EntityScheduler.java:151)",
+        "net.minecraft.world.entity.Entity.retireScheduler(Entity.java:6056)",
+        "net.minecraft.server.players.PlayerList.remove(PlayerList.java:565)",
+        "net.minecraft.server.network.ServerGamePacketListenerImpl.removePlayerFromWorld(ServerGamePacketListenerImpl.java:2307)",
+        "net.minecraft.server.network.ServerGamePacketListenerImpl.onDisconnect(ServerGamePacketListenerImpl.java:2283)",
+        "net.minecraft.server.network.ServerCommonPacketListenerImpl.disconnect0(ServerCommonPacketListenerImpl.java:428)",
+        "net.minecraft.server.network.ServerCommonPacketListenerImpl.disconnect(ServerCommonPacketListenerImpl.java:419)",
+        "net.minecraft.server.network.ServerCommonPacketListenerImpl.disconnect(ServerCommonPacketListenerImpl.java:356)",
+        "net.minecraft.server.network.ServerGamePacketListenerImpl.disconnect(ServerGamePacketListenerImpl.java:3878)",
+        "org.bukkit.craftbukkit.entity.CraftPlayer.kick(CraftPlayer.java:693)",
+        "org.bukkit.entity.Player.kick(Player.java:357)",
+        "SupplyRetirementProof-1.0.0.jar//local.test.SupplyRetirementProof.interrupt(SupplyRetirementProof.java:203)",
+        "SupplyRetirementProof-1.0.0.jar//local.test.SupplyRetirementProof.lambda$prepare$6(SupplyRetirementProof.java:180)",
+        "SupplyRetirementProof-1.0.0.jar//local.test.SupplyRetirementProof.lambda$owned$29(SupplyRetirementProof.java:417)",
+        "io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler$EntityScheduledTask.accept(FoliaEntityScheduler.java:167)",
+        "io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler$EntityScheduledTask.accept(FoliaEntityScheduler.java:114)",
+        "io.papermc.paper.threadedregions.EntityScheduler.executeTick(EntityScheduler.java:243)",
+        "net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:1732)",
+        "net.minecraft.server.dedicated.DedicatedServer.tickServer(DedicatedServer.java:429)",
+        "io.papermc.paper.threadedregions.TickRegions$ConcreteRegionTickHandle.tickRegion(TickRegions.java:485)",
+        "io.papermc.paper.threadedregions.TickRegionScheduler$RegionScheduleHandle.runTick(TickRegionScheduler.java:481)",
+        "ca.spottedleaf.concurrentutil.scheduler.EDFSchedulerThreadPool$TickThreadRunner.run(EDFSchedulerThreadPool.java:526)",
+        "java.base/java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "error": "java.lang.IllegalArgumentException: 玩家已断线，库存操作将在重连时检查",
+      "inventoryBusy": false,
+      "executions": 0
+    },
+    {
+      "type": "chunk-unload-event",
+      "at": "2026-11-25T06:40:05.235317Z",
+      "thread": "Folia Region Scheduler Thread #1",
+      "x": -258,
+      "z": 4,
+      "mode": "untouched"
+    },
+    {
+      "type": "drained",
+      "at": "2026-11-25T06:40:06.158207300Z",
+      "thread": "retirement-proof-boundary",
+      "inventoryBusy": false,
+      "retiredSubmissionRejected": true,
+      "mode": "untouched",
+      "callbacksIdle": true
+    },
+    {
+      "type": "unloaded",
+      "at": "2026-11-25T06:40:06.207009200Z",
+      "thread": "Folia Region Scheduler Thread #1",
+      "playerOnline": false,
+      "loaded": false,
+      "mode": "untouched"
+    },
+    {
+      "type": "region-absent",
+      "at": "2026-11-25T06:40:15.908050900Z",
+      "thread": "Folia Region Scheduler Thread #0",
+      "observations": 10,
+      "regionPresent": false,
+      "mode": "untouched",
+      "previousId": 3
+    },
+    {
+      "type": "reloaded",
+      "at": "2026-11-25T06:40:17.061198500Z",
+      "thread": "Folia Region Scheduler Thread #0",
+      "regionId": 5,
+      "newChunk": false,
+      "loads": 1,
+      "mode": "untouched"
+    },
+    {
+      "type": "snapshot",
+      "at": "2026-11-25T06:40:19.117935500Z",
+      "thread": "StarSupply-SQL",
+      "iron": 3,
+      "chunkUnloaded": true,
+      "transferState": "ABSENT",
+      "transfer": "177836ec-525c-4ece-bc61-78a12b4178a7",
+      "balance": 5567.77,
+      "receipt": "",
+      "chunkReloads": 1,
+      "settlementEvents": 0,
+      "pass": true,
+      "originalRegionId": 3,
+      "inventoryBusy": false,
+      "fingerprint": "956a3469b007365312d11076821f38c68870cd6d91e125d28f4d6972acaa2830",
+      "settlementState": "ABSENT",
+      "mode": "untouched",
+      "regionAbsent": true,
+      "reloadedRegionId": 5,
+      "purchaseState": "OPEN",
+      "purchase": "616de184-e291-4450-9685-86b91ddf3622"
+    },
+    {
+      "type": "snapshot",
+      "at": "2026-11-25T06:40:21.614414100Z",
+      "thread": "StarSupply-SQL",
+      "iron": 3,
+      "chunkUnloaded": true,
+      "transferState": "ABSENT",
+      "transfer": "177836ec-525c-4ece-bc61-78a12b4178a7",
+      "balance": 5567.77,
+      "receipt": "",
+      "chunkReloads": 1,
+      "settlementEvents": 0,
+      "pass": true,
+      "originalRegionId": 3,
+      "inventoryBusy": false,
+      "fingerprint": "956a3469b007365312d11076821f38c68870cd6d91e125d28f4d6972acaa2830",
+      "settlementState": "ABSENT",
+      "mode": "untouched",
+      "regionAbsent": true,
+      "reloadedRegionId": 5,
+      "purchaseState": "OPEN",
+      "purchase": "616de184-e291-4450-9685-86b91ddf3622"
+    },
+    {
+      "type": "prepared",
+      "at": "2026-11-25T06:40:22.732481900Z",
+      "thread": "Folia Region Scheduler Thread #0",
+      "purchase": "1e1c22cb-ccfe-4b0f-8f48-27ad0a9b7239",
+      "receipt": "4b87b0a6-f100-46a2-a261-6ddbdd7aaecd",
+      "regionId": 5,
+      "transfer": "4b87b0a6-f100-46a2-a261-6ddbdd7aaecd",
+      "mode": "receipt",
+      "beforeHash": "956a3469b007365312d11076821f38c68870cd6d91e125d28f4d6972acaa2830",
+      "afterHash": "877f15abce9f2dc4245d9616caefdab83345b59f56fc539baaeda427ea788d30",
+      "chunkZ": 4,
+      "chunkX": -258,
+      "ironBefore": 3,
+      "owned": true,
+      "balanceBefore": 5567.77,
+      "ironNow": 2
+    },
+    {
+      "type": "quit",
+      "at": "2026-11-25T06:40:22.734535300Z",
+      "thread": "Folia Region Scheduler Thread #0",
+      "queued": true,
+      "mode": "receipt"
+    },
+    {
+      "type": "callback-retired",
+      "at": "2026-11-25T06:40:22.754753300Z",
+      "thread": "Folia Region Scheduler Thread #0",
+      "mode": "receipt",
+      "retirementStack": [
+        "StarSupply-0.1.0.jar//dev.starsupply.bukkit.StarSupplyPlugin.lambda$entity$132(StarSupplyPlugin.java:1262)",
+        "io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler$EntityScheduledTask.accept(FoliaEntityScheduler.java:170)",
+        "io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler$EntityScheduledTask.accept(FoliaEntityScheduler.java:114)",
+        "io.papermc.paper.threadedregions.EntityScheduler.retire(EntityScheduler.java:151)",
+        "net.minecraft.world.entity.Entity.retireScheduler(Entity.java:6056)",
+        "net.minecraft.server.players.PlayerList.remove(PlayerList.java:565)",
+        "net.minecraft.server.network.ServerGamePacketListenerImpl.removePlayerFromWorld(ServerGamePacketListenerImpl.java:2307)",
+        "net.minecraft.server.network.ServerGamePacketListenerImpl.onDisconnect(ServerGamePacketListenerImpl.java:2283)",
+        "net.minecraft.server.network.ServerCommonPacketListenerImpl.disconnect0(ServerCommonPacketListenerImpl.java:428)",
+        "net.minecraft.server.network.ServerCommonPacketListenerImpl.disconnect(ServerCommonPacketListenerImpl.java:419)",
+        "net.minecraft.server.network.ServerCommonPacketListenerImpl.disconnect(ServerCommonPacketListenerImpl.java:356)",
+        "net.minecraft.server.network.ServerGamePacketListenerImpl.disconnect(ServerGamePacketListenerImpl.java:3878)",
+        "org.bukkit.craftbukkit.entity.CraftPlayer.kick(CraftPlayer.java:693)",
+        "org.bukkit.entity.Player.kick(Player.java:357)",
+        "SupplyRetirementProof-1.0.0.jar//local.test.SupplyRetirementProof.interrupt(SupplyRetirementProof.java:203)",
+        "SupplyRetirementProof-1.0.0.jar//local.test.SupplyRetirementProof.lambda$prepare$6(SupplyRetirementProof.java:180)",
+        "SupplyRetirementProof-1.0.0.jar//local.test.SupplyRetirementProof.lambda$owned$29(SupplyRetirementProof.java:417)",
+        "io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler$EntityScheduledTask.accept(FoliaEntityScheduler.java:167)",
+        "io.papermc.paper.threadedregions.scheduler.FoliaEntityScheduler$EntityScheduledTask.accept(FoliaEntityScheduler.java:114)",
+        "io.papermc.paper.threadedregions.EntityScheduler.executeTick(EntityScheduler.java:243)",
+        "net.minecraft.server.MinecraftServer.tickServer(MinecraftServer.java:1732)",
+        "net.minecraft.server.dedicated.DedicatedServer.tickServer(DedicatedServer.java:429)",
+        "io.papermc.paper.threadedregions.TickRegions$ConcreteRegionTickHandle.tickRegion(TickRegions.java:485)",
+        "io.papermc.paper.threadedregions.TickRegionScheduler$RegionScheduleHandle.runTick(TickRegionScheduler.java:481)",
+        "ca.spottedleaf.concurrentutil.scheduler.EDFSchedulerThreadPool$TickThreadRunner.run(EDFSchedulerThreadPool.java:526)",
+        "java.base/java.lang.Thread.run(Thread.java:1583)"
+      ],
+      "error": "java.lang.IllegalArgumentException: 玩家已断线，库存操作将在重连时检查",
+      "inventoryBusy": false,
+      "executions": 0
+    },
+    {
+      "type": "scheduler-retired",
+      "at": "2026-11-25T06:40:22.756818100Z",
+      "thread": "Folia Region Scheduler Thread #0",
+      "mode": "receipt",
+      "player": "5ab1d958-3192-31da-88f6-5860ab3c3a3d"
+    },
+    {
+      "type": "drained",
+      "at": "2026-11-25T06:40:23.707640100Z",
+      "thread": "retirement-proof-boundary",
+      "inventoryBusy": false,
+      "retiredSubmissionRejected": true,
+      "mode": "receipt",
+      "callbacksIdle": true
+    },
+    {
+      "type": "chunk-unload-event",
+      "at": "2026-11-25T06:40:32.652922Z",
+      "thread": "Folia Region Scheduler Thread #1",
+      "x": -258,
+      "z": 4,
+      "mode": "receipt"
+    },
+    {
+      "type": "unloaded",
+      "at": "2026-11-25T06:40:34.656916500Z",
+      "thread": "Folia Region Scheduler Thread #1",
+      "playerOnline": false,
+      "loaded": false,
+      "mode": "receipt"
+    },
+    {
+      "type": "region-absent",
+      "at": "2026-11-25T06:40:35.707699400Z",
+      "thread": "Folia Region Scheduler Thread #1",
+      "observations": 2,
+      "regionPresent": false,
+      "mode": "receipt",
+      "previousId": 5
+    },
+    {
+      "type": "reloaded",
+      "at": "2026-11-25T06:40:36.138730100Z",
+      "thread": "Folia Region Scheduler Thread #1",
+      "regionId": 10,
+      "newChunk": false,
+      "loads": 1,
+      "mode": "receipt"
+    },
+    {
+      "type": "settled",
+      "at": "2026-11-25T06:40:38.902681100Z",
+      "thread": "StarSupply-SQL",
+      "mode": "receipt",
+      "outcome": "PAID",
+      "id": "4b87b0a6-f100-46a2-a261-6ddbdd7aaecd",
+      "amount": 5.0,
+      "count": 1
+    },
+    {
+      "type": "snapshot",
+      "at": "2026-11-25T06:40:39.445745800Z",
+      "thread": "StarSupply-SQL",
+      "iron": 2,
+      "chunkUnloaded": true,
+      "transferState": "STORED",
+      "transfer": "4b87b0a6-f100-46a2-a261-6ddbdd7aaecd",
+      "balance": 5572.77,
+      "receipt": "",
+      "chunkReloads": 1,
+      "settlementEvents": 1,
+      "pass": true,
+      "originalRegionId": 5,
+      "inventoryBusy": false,
+      "fingerprint": "877f15abce9f2dc4245d9616caefdab83345b59f56fc539baaeda427ea788d30",
+      "settlementState": "PAID",
+      "mode": "receipt",
+      "regionAbsent": true,
+      "reloadedRegionId": 10,
+      "purchaseState": "BOUGHT",
+      "purchase": "1e1c22cb-ccfe-4b0f-8f48-27ad0a9b7239"
+    },
+    {
+      "type": "snapshot",
+      "at": "2026-11-25T06:40:41.034313900Z",
+      "thread": "StarSupply-SQL",
+      "iron": 2,
+      "chunkUnloaded": true,
+      "transferState": "STORED",
+      "transfer": "4b87b0a6-f100-46a2-a261-6ddbdd7aaecd",
+      "balance": 5572.77,
+      "receipt": "",
+      "chunkReloads": 1,
+      "settlementEvents": 1,
+      "pass": true,
+      "originalRegionId": 5,
+      "inventoryBusy": false,
+      "fingerprint": "877f15abce9f2dc4245d9616caefdab83345b59f56fc539baaeda427ea788d30",
+      "settlementState": "PAID",
+      "mode": "receipt",
+      "regionAbsent": true,
+      "reloadedRegionId": 10,
+      "purchaseState": "BOUGHT",
+      "purchase": "1e1c22cb-ccfe-4b0f-8f48-27ad0a9b7239"
+    },
+    {
+      "type": "finished",
+      "at": "2026-11-25T06:40:42.113127Z",
+      "thread": "Folia Region Scheduler Thread #1",
+      "saved": true,
+      "player": "5ab1d958-3192-31da-88f6-5860ab3c3a3d"
+    }
+  ],
+  "saved_database": [
+    {
+      "mode": "untouched",
+      "purchase": {
+        "id": "616de184-e291-4450-9685-86b91ddf3622",
+        "nation": "b361b25b-b7a4-460d-be8d-8237afdf0920",
+        "depot": "alpha-depot",
+        "resource": "EQUIPMENT",
+        "item_count": 1,
+        "price": "5.00",
+        "state": "OPEN",
+        "seller": null,
+        "settlement": null,
+        "created": 1795588805104
+      },
+      "transfer": [],
+      "settlement": []
+    },
+    {
+      "mode": "receipt",
+      "purchase": {
+        "id": "1e1c22cb-ccfe-4b0f-8f48-27ad0a9b7239",
+        "nation": "b361b25b-b7a4-460d-be8d-8237afdf0920",
+        "depot": "alpha-depot",
+        "resource": "EQUIPMENT",
+        "item_count": 1,
+        "price": "5.00",
+        "state": "BOUGHT",
+        "seller": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+        "settlement": "4b87b0a6-f100-46a2-a261-6ddbdd7aaecd",
+        "created": 1795588822658
+      },
+      "transfer": [
+        {
+          "id": "4b87b0a6-f100-46a2-a261-6ddbdd7aaecd",
+          "state": "STORED",
+          "player": "5ab1d958-3192-31da-88f6-5860ab3c3a3d"
+        }
+      ],
+      "settlement": [
+        {
+          "id": "4b87b0a6-f100-46a2-a261-6ddbdd7aaecd",
+          "order_id": "1e1c22cb-ccfe-4b0f-8f48-27ad0a9b7239",
+          "nation": "b361b25b-b7a4-460d-be8d-8237afdf0920",
+          "player": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+          "kind": "PURCHASE",
+          "amount": "5.00",
+          "state": "PAID",
+          "updated": 1795588838893
+        }
+      ]
+    }
+  ],
+  "saved_player": {
+    "player": "SupplyBuyer",
+    "gameMode": "survival",
+    "ironIngots": 2,
+    "receipt": null,
+    "position": [
+      -21.5,
+      86,
+      68.5
+    ],
+    "sha256": "DCD4E8FD0CFE82B12DF79D5D5364FE4897108F1BE45E1CA49E2AF3DC313F14E4",
+    "path": "C:\\tmp\\starsupply-folia-region-retirement-20261125\\starsupply-stage1-world\\playerdata\\5ab1d958-3192-31da-88f6-5860ab3c3a3d.dat"
+  },
+  "sqlite_integrity": {
+    "plugins/StarCore/religion.db": "ok",
+    "plugins/StarCore/starcore-retry-test.db": "ok",
+    "plugins/StarCore/starcore.db": "ok",
+    "plugins/StarSupply/insurance.db": "ok",
+    "plugins/StarSupply/supply.db": "ok",
+    "plugins/StarSupply/tavern.db": "ok"
+  },
+  "raw_evidence": [
+    {
+      "path": "C:\\tmp\\starsupply-folia-region-retirement-20261125\\folia-proof\\survival-progression-2026-11-25T06-39-28-957Z-result.json",
+      "sha256": "86877193A8C4D362D4C25DA84872F9F0E5BD7CE61BB85D0E8184BF078BE8620C"
+    },
+    {
+      "path": "C:\\tmp\\starsupply-folia-region-retirement-20261125\\folia-proof\\survival-progression-2026-11-25T06-39-28-957Z-server.log",
+      "sha256": "64416C879DE8D4375AE2E16274F8F36D2EBC1E23C99654188231AC81E3007770"
+    },
+    {
+      "path": "C:\\tmp\\starsupply-folia-region-retirement-20261125\\folia-proof\\survival-progression-2026-11-25T06-39-28-957Z-server-error.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "C:\\tmp\\starsupply-folia-region-retirement-20261125\\folia-proof\\survival-progression-2026-11-25T06-39-28-957Z-client.log",
+      "sha256": "07F646E45604CFFCD2B28F9568301757B1C6B7AB52D12269D67ED52964FA1780"
+    },
+    {
+      "path": "C:\\tmp\\starsupply-folia-region-retirement-20261125\\plugins\\SupplyRetirementProof\\evidence.jsonl",
+      "sha256": "B8426474BF9015459AF61DE2C80D0630A7C6D670989CE6FA0B049B19A2D1F470"
+    },
+    {
+      "path": "C:\\tmp\\starsupply-folia-region-retirement-20261125\\folia-proof\\saved-player-current.json",
+      "sha256": "E8A349EB64CD3CC268AC55E0A04ABE91009F0299F80AED51A0D49978B1FBDEBB"
+    }
+  ],
+  "boundaries": [
+    "Isolated copied world and database; original survival stage untouched.",
+    "Only StarCore logistics profile, StarSupply and acceptance fixture loaded.",
+    "Fixture teleports/freezes/kicks the test player; not survival acquisition evidence.",
+    "No production Folia support declaration or graphical resource-pack certification."
+  ]
+}

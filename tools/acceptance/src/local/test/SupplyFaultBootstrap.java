@@ -2,8 +2,10 @@ package local.test;
 
 import dev.starcore.starcore.api.StarCoreApi;
 import dev.starcore.starcore.core.module.ModuleDescriptor;
+import dev.starcore.starcore.foundation.economy.EconomyService;
 import dev.starcore.starcore.module.nation.model.NationId;
 import dev.starcore.starcore.module.treasury.TaxationService;
+import dev.starcore.starcore.module.treasury.NationSpendingService;
 import dev.starcore.starcore.module.treasury.TreasuryService;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,15 +34,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /** ISOLATED TEST SERVER ONLY. Delegates public authorities; no production plugin hooks or DB writes. */
 public final class SupplyFaultBootstrap extends JavaPlugin {
-    private enum Mode { TAX_BEFORE, TAX_AFTER, PREMIUM_BEFORE, PREMIUM_AFTER }
+    private enum Mode { TAX_BEFORE, TAX_AFTER, PREMIUM_BEFORE, PREMIUM_AFTER, SPEND_RETRY }
     private record Armed(Mode mode, UUID nation, BigDecimal amount) {}
+    private record SpendingFollowup(String transactionId, UUID nation, BigDecimal amount) {}
 
     private final AtomicReference<Armed> armed = new AtomicReference<>();
+    private final AtomicReference<SpendingFollowup> spendingFollowup = new AtomicReference<>();
     private StarCoreApi original;
     private TreasuryService treasury;
     private TaxationService taxation;
+    private NationSpendingService spending;
+    private EconomyService economy;
     private TaxationService taxProxy;
     private TreasuryService treasuryProxy;
+    private NationSpendingService spendingProxy;
     private Path evidence;
 
     @Override public void onEnable() {
@@ -51,21 +58,28 @@ public final class SupplyFaultBootstrap extends JavaPlugin {
                     "StarCoreApi must exist before test bootstrap");
             treasury = original.service(TreasuryService.class).orElseThrow();
             taxation = original.service(TaxationService.class).orElseThrow();
+            spending = original.service(NationSpendingService.class).orElseThrow();
+            economy = original.service(EconomyService.class).orElseThrow();
             taxProxy = (TaxationService) Proxy.newProxyInstance(TaxationService.class.getClassLoader(),
                     new Class<?>[]{TaxationService.class}, (proxy, method, args) -> taxCall(method, args));
             treasuryProxy = (TreasuryService) Proxy.newProxyInstance(TreasuryService.class.getClassLoader(),
                     new Class<?>[]{TreasuryService.class}, (proxy, method, args) -> treasuryCall(method, args));
+            spendingProxy = (NationSpendingService) Proxy.newProxyInstance(
+                    NationSpendingService.class.getClassLoader(), new Class<?>[]{NationSpendingService.class},
+                    (proxy, method, args) -> spendingCall(method, args));
             StarCoreApi wrapped = new StarCoreApi() {
                 @Override public String version() { return original.version(); }
                 @Override public Collection<ModuleDescriptor> modules() { return original.modules(); }
                 @Override public <T> Optional<T> service(Class<T> type) {
                     if (type == TaxationService.class) return Optional.of(type.cast(taxProxy));
                     if (type == TreasuryService.class) return Optional.of(type.cast(treasuryProxy));
+                    if (type == NationSpendingService.class) return Optional.of(type.cast(spendingProxy));
                     return original.service(type);
                 }
             };
             getServer().getServicesManager().register(StarCoreApi.class, wrapped, this, ServicePriority.Highest);
-            record(Map.of("event", "bootstrap_enabled", "wrapped", "TaxationService,TreasuryService",
+            record(Map.of("event", "bootstrap_enabled",
+                    "wrapped", "TaxationService,TreasuryService,NationSpendingService",
                     "note", "isolated acceptance harness; faults disarmed after restart"));
             getLogger().warning("ISOLATED TEST HARNESS ACTIVE; remove before any production deployment");
         } catch (Exception failure) {
@@ -110,11 +124,96 @@ public final class SupplyFaultBootstrap extends JavaPlugin {
         return faultCall(treasury, method, args, fault, facts, nation);
     }
 
+    private Object spendingCall(Method method, Object[] args) throws Throwable {
+        if (!method.getName().equals("spend") || args == null || args.length != 1
+                || !(args[0] instanceof NationSpendingService.SpendRequest request)) {
+            return invoke(spending, method, args);
+        }
+        Armed fault = takeSpending(request);
+        if (fault == null) return observeSpendingRetry(method, args, request);
+
+        BigDecimal balanceBefore = treasury.balance(request.nationId());
+        Map<String, String> facts = new LinkedHashMap<>();
+        facts.put("event", "spending_result_injected");
+        facts.put("method", "NationSpendingService.spend");
+        facts.put("mode", fault.mode().name());
+        facts.put("transaction_id", request.transactionId());
+        facts.put("nation", request.nationId().value().toString());
+        facts.put("amount", request.amount().toPlainString());
+        facts.put("category", request.category().name());
+        facts.put("before_balance", balanceBefore.toPlainString());
+        facts.put("after_balance", balanceBefore.toPlainString());
+        facts.put("delegate_called", "false");
+        if (balanceBefore.compareTo(request.amount()) < 0) {
+            facts.put("event", "fault_rejected_insufficient_live_balance");
+            record(facts);
+            return invoke(spending, method, args);
+        }
+        facts.put("returned_status", NationSpendingService.SpendingStatus.INSUFFICIENT_FUNDS.name());
+        facts.put("returned_balance_after", balanceBefore.toPlainString());
+        record(facts);
+        spendingFollowup.set(new SpendingFollowup(request.transactionId(), request.nationId().value(),
+                request.amount()));
+        return new NationSpendingService.SpendResult(NationSpendingService.SpendingStatus.INSUFFICIENT_FUNDS,
+                request.transactionId(), balanceBefore);
+    }
+
+    private Object observeSpendingRetry(Method method, Object[] args,
+                                        NationSpendingService.SpendRequest request) throws Throwable {
+        SpendingFollowup pending = spendingFollowup.get();
+        if (pending == null || !pending.transactionId().equals(request.transactionId())
+                || !pending.nation().equals(request.nationId().value())
+                || pending.amount().compareTo(request.amount()) != 0) return invoke(spending, method, args);
+        BigDecimal balanceBefore = treasury.balance(request.nationId());
+        try {
+            NationSpendingService.SpendResult result = (NationSpendingService.SpendResult) invoke(spending, method, args);
+            Map<String, String> facts = new LinkedHashMap<>();
+            facts.put("event", "spending_retry_delegate_result");
+            facts.put("method", "NationSpendingService.spend");
+            facts.put("transaction_id", request.transactionId());
+            facts.put("nation", request.nationId().value().toString());
+            facts.put("amount", request.amount().toPlainString());
+            facts.put("balance_before", balanceBefore.toPlainString());
+            facts.put("balance_after", treasury.balance(request.nationId()).toPlainString());
+            facts.put("delegate_called", "true");
+            facts.put("delegate_status", result.status().name());
+            facts.put("delegate_transaction_id", result.transactionId());
+            facts.put("delegate_balance_after", String.valueOf(result.balanceAfter()));
+            record(facts);
+            spendingFollowup.compareAndSet(pending, null);
+            return result;
+        } catch (Throwable failure) {
+            Map<String, String> facts = new LinkedHashMap<>();
+            facts.put("event", "spending_retry_delegate_failed");
+            facts.put("method", "NationSpendingService.spend");
+            facts.put("transaction_id", request.transactionId());
+            facts.put("nation", request.nationId().value().toString());
+            facts.put("amount", request.amount().toPlainString());
+            facts.put("balance_before", balanceBefore.toPlainString());
+            facts.put("balance_after", treasury.balance(request.nationId()).toPlainString());
+            facts.put("delegate_called", "true");
+            facts.put("error_type", failure.getClass().getName());
+            record(facts);
+            throw failure;
+        }
+    }
+
     private Armed take(boolean tax, UUID nation, BigDecimal amount) {
         Armed fault = armed.get();
-        if (fault == null || tax != (fault.mode() == Mode.TAX_BEFORE || fault.mode() == Mode.TAX_AFTER)
+        boolean taxMode = fault != null && (fault.mode() == Mode.TAX_BEFORE || fault.mode() == Mode.TAX_AFTER);
+        boolean premiumMode = fault != null
+                && (fault.mode() == Mode.PREMIUM_BEFORE || fault.mode() == Mode.PREMIUM_AFTER);
+        if (fault == null || (tax ? !taxMode : !premiumMode)
                 || fault.nation() != null && !fault.nation().equals(nation)
                 || fault.amount() != null && fault.amount().compareTo(amount) != 0) return null;
+        return armed.compareAndSet(fault, null) ? fault : null;
+    }
+
+    private Armed takeSpending(NationSpendingService.SpendRequest request) {
+        Armed fault = armed.get();
+        if (fault == null || fault.mode() != Mode.SPEND_RETRY
+                || !fault.nation().equals(request.nationId().value())
+                || fault.amount().compareTo(request.amount()) != 0) return null;
         return armed.compareAndSet(fault, null) ? fault : null;
     }
 
@@ -175,13 +274,30 @@ public final class SupplyFaultBootstrap extends JavaPlugin {
                 sender.sendMessage("SUPPLYFAULT OFF");
                 return true;
             }
+            if (args[0].equalsIgnoreCase("balances") && args.length == 3) {
+                NationId nation = NationId.of(UUID.fromString(args[1]));
+                UUID player = UUID.fromString(args[2]);
+                sender.sendMessage("SUPPLYFAULT BALANCES nation=" + nation.value()
+                        + " treasury=" + treasury.balance(nation).toPlainString()
+                        + " player=" + player + " playerBalance=" + economy.getBalance(player).toPlainString());
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("receipt") && args.length == 2) {
+                NationSpendingService.SpendingReceipt receipt = spending.spendingReceipt(args[1]).orElse(null);
+                sender.sendMessage("SUPPLYFAULT RECEIPT " + (receipt == null ? "ABSENT"
+                        : receipt.transactionId() + " nation=" + receipt.nationId().value()
+                        + " amount=" + receipt.amount().toPlainString() + " refunded=" + receipt.refunded()));
+                return true;
+            }
             Mode mode = Mode.valueOf(args[0].toUpperCase(java.util.Locale.ROOT).replace('-', '_'));
             UUID nation = args.length >= 2 ? UUID.fromString(args[1]) : null;
             BigDecimal amount = args.length >= 3 ? new BigDecimal(args[2]).setScale(2,
                     java.math.RoundingMode.UNNECESSARY) : null;
+            boolean exactFilterRequired = mode == Mode.PREMIUM_BEFORE || mode == Mode.PREMIUM_AFTER
+                    || mode == Mode.SPEND_RETRY;
             if (args.length > 3 || (amount != null && amount.signum() <= 0)
-                    || (mode == Mode.PREMIUM_BEFORE || mode == Mode.PREMIUM_AFTER) && (nation == null || amount == null)) {
-                throw new IllegalArgumentException("Premium faults require exact nation UUID and positive amount");
+                    || exactFilterRequired && (nation == null || amount == null)) {
+                throw new IllegalArgumentException("Premium and spending faults require exact nation UUID and positive amount");
             }
             Armed next = new Armed(mode, nation, amount);
             if (!armed.compareAndSet(null, next)) throw new IllegalArgumentException("A fault is already armed; off first");
@@ -191,7 +307,9 @@ public final class SupplyFaultBootstrap extends JavaPlugin {
         } catch (Exception failure) {
             sender.sendMessage("SUPPLYFAULT ERROR " + failure.getMessage()
                     + " | usage: supplyfault tax-before|tax-after [nationUUID] [taxAmount]"
-                    + " OR premium-before|premium-after <nationUUID> <premiumAmount> OR off|status");
+                    + " OR premium-before|premium-after <nationUUID> <premiumAmount>"
+                    + " OR spend-retry <nationUUID> <amount>"
+                    + " OR balances <nationUUID> <playerUUID> OR receipt <transactionId> OR off|status");
         }
         return true;
     }

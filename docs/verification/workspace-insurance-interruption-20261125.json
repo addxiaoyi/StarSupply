@@ -1,0 +1,179 @@
+{
+  "recorded_on": "2026-11-25",
+  "recorded_at": "2026-11-25T14:09:07.3720722+08:00",
+  "result": "passed",
+  "purpose": "Prevent automatic replay of interrupted nonreceipt insurance money calls in the same process after local SQLite result-write failure.",
+  "environment": {
+    "java": "21.0.13.1",
+    "maven": "3.9.16",
+    "working_tree_has_uncommitted_changes": true,
+    "git_base": "c6bf8847428f22fdfce295c13775625f81513736"
+  },
+  "command": ".\\mvnw.cmd -B -ntp verify",
+  "completed_at": "2026-11-25T14:07:08+08:00",
+  "tests": {
+    "run": 119,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 20
+  },
+  "suites": [
+    {
+      "name": "dev.starsupply.bukkit.AsyncTasksTest",
+      "tests": 3,
+      "sha256": "246464B69B15DD1BF62F47D88180ABA051ABB74F9AC37FE4A2EE2C5D51F7D8B6"
+    },
+    {
+      "name": "dev.starsupply.bukkit.EntityCallbacksTest",
+      "tests": 9,
+      "sha256": "D7CDF23EA56F6EE2D27C49702087C4B3B225C996E28B52D352DC9D8253C49C6F"
+    },
+    {
+      "name": "dev.starsupply.bukkit.item.InventoryFingerprintTest",
+      "tests": 1,
+      "sha256": "0926246DAEB7A5428E4008624F0553E928DD719A2B4A264149220F5AF5A35361"
+    },
+    {
+      "name": "dev.starsupply.bukkit.item.PlayerDataReceiptTest",
+      "tests": 2,
+      "sha256": "BB290B77197ED18D719568B4FEEB3E3C42544494392992730F9E25C1D137AC96"
+    },
+    {
+      "name": "dev.starsupply.bukkit.item.ResourceMappingConfigTest",
+      "tests": 1,
+      "sha256": "FEF9C10385A054677366FAC398A5B91F9C7AF209450B1F1CAF7425F3619B6A82"
+    },
+    {
+      "name": "dev.starsupply.bukkit.LifecycleGateTest",
+      "tests": 1,
+      "sha256": "2FFF8ED0B4887BC294631EAA2698E51436D5A52E2D18C9A10F9533967FA5CEFF"
+    },
+    {
+      "name": "dev.starsupply.integration.CampaignSiegeTargetTest",
+      "tests": 1,
+      "sha256": "743C3A1B620EDC585E761DA5B5A61FDF5DC8E7EC1A44FBCB71360482E2CFD9FB"
+    },
+    {
+      "name": "dev.starsupply.integration.CoreInsurancePaymentTest",
+      "tests": 2,
+      "sha256": "19A83557D1C47999DC023591249EF8686D385454FDBEB5C1252B6DEA91B0479A"
+    },
+    {
+      "name": "dev.starsupply.integration.CorePaymentTest",
+      "tests": 13,
+      "sha256": "360626955F77DAB06C2106C44A4A298B4F5229E9455B15F5C367A5748E420B25"
+    },
+    {
+      "name": "dev.starsupply.integration.NativeSupplyBridgeTest",
+      "tests": 3,
+      "sha256": "010938636CF8DD8ECCE22AE8E79EE9351E47EDE5D49C10D40E439EB1208F05D0"
+    },
+    {
+      "name": "dev.starsupply.integration.TemporaryMoraleBridgeTest",
+      "tests": 3,
+      "sha256": "08889DF807F562F65003D3DCC50C665A53EAA190278DFB78C48AA932833AD007"
+    },
+    {
+      "name": "dev.starsupply.route.RoutePlannerTest",
+      "tests": 5,
+      "sha256": "149835D236BA4A93FEA83F604D8F451BD4B31B3012F6B0444D0241AD05B99705"
+    },
+    {
+      "name": "dev.starsupply.service.ArmySupplyRulesTest",
+      "tests": 3,
+      "sha256": "881BDF78DE96EF6815CB6AA23C0513BA361C9D6F9E032B76727570ECE42663BE"
+    },
+    {
+      "name": "dev.starsupply.service.CampaignRulesTest",
+      "tests": 2,
+      "sha256": "295F790FBC03F292B024C789A238ECC9E205F16E0BC95738655441EB1AF20117"
+    },
+    {
+      "name": "dev.starsupply.service.CaravanInsuranceTest",
+      "tests": 19,
+      "sha256": "DEF00723800F18BF1E286590D3F7C385C1A5178664635B4449A7ECF2D4A508C1"
+    },
+    {
+      "name": "dev.starsupply.service.MarketRulesTest",
+      "tests": 2,
+      "sha256": "B72E78C2E982B712BC83ABFBAD8278C114DAF423AF30567552D874F9B06CF923"
+    },
+    {
+      "name": "dev.starsupply.service.TavernServiceTest",
+      "tests": 5,
+      "sha256": "6E4513680B39E525B75AB22824E1AC54C6662A2EBCA6AB75CBC2267758A45F23"
+    },
+    {
+      "name": "dev.starsupply.storage.CampaignPersistenceTest",
+      "tests": 1,
+      "sha256": "0EB5AEB5CFC49B6ED7EC5F7D6A65CDEE09FDDE234F8C19AD048601EC9D24BA9E"
+    },
+    {
+      "name": "dev.starsupply.storage.SqlTransactionsTest",
+      "tests": 10,
+      "sha256": "1EADAB90BB09C279D9EBA26D61354D7525CDD89B1BEB42FF0845AF129CEE4343"
+    },
+    {
+      "name": "dev.starsupply.storage.SupplyLifecycleTest",
+      "tests": 33,
+      "sha256": "C2639ABB4AFE95C345BFA46F4DDA68725101F38FE4A7D260C7E7BD62BA1784DD"
+    }
+  ],
+  "artifact": {
+    "path": "target/starsupply-0.1.0.jar",
+    "bytes": 14677566,
+    "sha256": "C9B5E6B2713F3BE7151253AC2BC1607D3D39806AF92BC1263917F699A045B28F",
+    "main_schema": 11,
+    "insurance_schema": 2,
+    "folia_supported_descriptor": false
+  },
+  "logs": [
+    {
+      "path": "target/insurance-interruption-before-20261125.log",
+      "sha256": "8D1C2A3EAA593CFD166D9B9F4B41CAA65311DAE2E7C6E5094E590F680FA60AE2"
+    },
+    {
+      "path": "target/insurance-interruption-after-20261125.log",
+      "sha256": "E5B65D292FE773E32E57A16349B6CCCD9C8DC3F66F0F2E40A70CD336BA3B0F5A"
+    },
+    {
+      "path": "target/insurance-interruption-verify-20261125.log",
+      "sha256": "BF9EE3B84DCE24669C759CFE4E0B47F3FC2117D93AA9E6A037B80692B873DFEF"
+    }
+  ],
+  "changed_code": [
+    {
+      "path": "src/main/java/dev/starsupply/service/CaravanInsurance.java",
+      "sha256": "BBB7C85F9D5439C10AB23BFEE1EF07229117F677C0714E3E831DF9817597196D"
+    },
+    {
+      "path": "src/test/java/dev/starsupply/service/CaravanInsuranceTest.java",
+      "sha256": "EC307DF0116A428270449846EB555D6BC6E739FB9DA624EF36CC93BBC6ABC8CF"
+    }
+  ],
+  "reproduction": {
+    "command": ".\\mvnw.cmd -B -ntp '-Dtest=CaravanInsuranceTest#premium*WithLostLocalResultIsNotRepeatedBeforeRestart' test",
+    "tests": 3,
+    "expected_failures_before_fix": 3,
+    "observed_before_fix": "Each PREMIUM_DEBIT, PREMIUM_CREDIT and PREMIUM_REFUND path invoked the fake external economy boundary twice after an injected SQLite result-write rollback in the same process.",
+    "fault": "A real SQLite BEFORE UPDATE trigger uses RAISE(ABORT) to reject recording APPLIED after the fake economy has returned success."
+  },
+  "regressions": [
+    "Interrupted PREMIUM_DEBIT, PREMIUM_CREDIT and PREMIUM_REFUND remain frozen until independently reconciled; polling and duplicate commands do not repeat execute.",
+    "Failure to persist REVIEW also does not authorize replay; STARTED remains on disk until quarantine can be written.",
+    "An AssertionError after the fake premium call leaves STARTED; same-process maintenance quarantines it without replay.",
+    "RESERVE, CLAIM and RELEASE still replay the original stable operation ID through a fake receipt authority; each modeled money effect occurs once.",
+    "Independent reconciliation advances the original policy and database reopening does not repeat a confirmed premium operation."
+  ],
+  "added_test_methods": 7,
+  "insurance_test_methods": 19,
+  "limits": [
+    "SQLite storage and trigger-induced rollback are real; the external economy and receipt authority are test doubles. The tests prove coordinator call counts, state transitions and stable request identities, not live StarCore balance changes.",
+    "Existing CorePayment and CoreInsurancePayment integration test suites also passed in the complete 119-test Maven build.",
+    "This change has no new Paper/Folia live-server evidence. Earlier runtime records continue to apply to their recorded JAR hashes.",
+    "The existing 15 acceptance-tool tests were unchanged and were not rerun in this iteration.",
+    "Live region unload/entity retirement, six-resource survival production, complete Folia support and resource-pack rendering remain unverified.",
+    "Schema versions and public API signatures are unchanged."
+  ]
+}

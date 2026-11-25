@@ -27,4 +27,6 @@ tavern:
 
 登记集合点时手持真实 Tavern 酒桶配方产出的酒品。适配器读取公开的 `CraftEngineItems.getCustomItemId`、Tavern `catalog().barrel()` 输出及 `brewLevel(ItemStack)`，检查物品身份和最低熟成等级，不扣除或改写酒品。API 不可用时验证失败。关闭该选项可在没有森罗酒馆时使用基础集合点玩法；界面会区分是否经过酒品验证。当前没有自动发现 Tavern 家具或把酒品当作情报货币。
 
+开启 `require-authentic-beverage` 后，空手、非 Tavern 物品、无法读取的酒品身份及低于最低熟成等级的物品都会被拒绝；认证失败不会创建集合点。
+
 观测半径可配置为 1–32 格，集合点交互半径 1–16 格，报告有效期 1–15 分钟。`TavernApi` 暴露与命令相同的登记、侦察、发布和读板操作；变更操作经过玩家实体调度线程上的可取消事件，随后由同一 SQL 工作线程持久化。详见 [公开 API](API.md)。

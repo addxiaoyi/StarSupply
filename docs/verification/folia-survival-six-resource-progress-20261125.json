@@ -1,0 +1,587 @@
+{
+  "recorded_on": "2026-11-25",
+  "result": "survival_ore_checkpoint_passed_six_resource_phases_incomplete",
+  "full_goal_complete": false,
+  "production_artifact": {
+    "path": "target/starsupply-0.1.0.jar",
+    "sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+    "bytes": 14678765,
+    "java_tests": 124,
+    "folia_supported_descriptor": false
+  },
+  "environment": {
+    "stage": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122",
+    "player": "SupplyCook",
+    "profile": "vanilla: compatible Core logistics profile and StarSupply; optional JARs temporarily removed",
+    "heap": "384M",
+    "client_heap_MiB": 256,
+    "admin_item_grants_or_teleports": false
+  },
+  "changes": [
+    "Bounded tunnel navigation clears headroom before feet and walks to actual item drops.",
+    "Six phase entry points implemented; stopped-player output requirements gate pass results.",
+    "Server digging confirmation installed after Mineflayer spawn; packet confirmation and timeout cleanup have six unit tests. The successful ore-acquisition run predates this final wrapper placement and does not certify that wrapper in a live server.",
+    "Interrupted launch restoration validates all hashes before copying, preserves independent edits, and rejects a running server.",
+    "Launch records retain helper script hashes and authoritative saved checkpoints after normal shutdown, including failed phases."
+  ],
+  "tool_tests": {
+    "node": {
+      "tests": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": "target/six-resource-tool-tests-20261125.log",
+      "sha256": "0871636957D7B12298963E7AF738E574364FFF0B490C79BECD14F9AD074AA2FD"
+    },
+    "powershell": {
+      "checks": 7,
+      "passed": 7,
+      "compatible_shells": [
+        "PowerShell 7",
+        "Windows PowerShell 5.1"
+      ],
+      "log": "target/six-resource-restoration-tests-20261125.log",
+      "sha256": "E984363406DBD7187109C1F66281B91D53F4E2529E4823B1DA34205CA9E2CC88"
+    }
+  },
+  "durable_checkpoint": {
+    "gameMode": "survival",
+    "inventory": {
+      "birch_planks": 2,
+      "iron_pickaxe": 1,
+      "stone_pickaxe": 1,
+      "andesite": 16,
+      "written_book": 1,
+      "wheat_seeds": 8,
+      "wooden_hoe": 1,
+      "bone_meal": 13,
+      "wildflowers": 4,
+      "dirt": 74,
+      "stick": 3,
+      "bucket": 2,
+      "gravel": 9,
+      "cobblestone": 146,
+      "birch_button": 1,
+      "torch": 4,
+      "birch_sapling": 1,
+      "coal": 6,
+      "crafting_table": 1,
+      "raw_iron": 6
+    },
+    "position": [
+      5.499105686866461,
+      49,
+      58.4309376655394
+    ],
+    "health": 20,
+    "food": 20,
+    "playerId": "904364cc-bf39-35a0-b688-6cc8a6d846c8",
+    "path": "starsupply-stage1-world/playerdata/904364cc-bf39-35a0-b688-6cc8a6d846c8.dat",
+    "sha256": "747194DCF7BBF6FAA52996FA9DA2A59939227354612FC69A0F05AC92D0BD24D0"
+  },
+  "database_integrity": [
+    {
+      "path": "plugins/CraftEngine/data.db",
+      "integrity_check": [
+        "ok"
+      ]
+    },
+    {
+      "path": "plugins/StarCore/religion.db",
+      "integrity_check": [
+        "ok"
+      ]
+    },
+    {
+      "path": "plugins/StarCore/starcore-retry-test.db",
+      "integrity_check": [
+        "ok"
+      ]
+    },
+    {
+      "path": "plugins/StarCore/starcore.db",
+      "integrity_check": [
+        "ok"
+      ]
+    },
+    {
+      "path": "plugins/StarSupply/insurance.db",
+      "integrity_check": [
+        "ok"
+      ]
+    },
+    {
+      "path": "plugins/StarSupply/supply.db",
+      "integrity_check": [
+        "ok"
+      ]
+    },
+    {
+      "path": "plugins/StarSupply/tavern.db",
+      "integrity_check": [
+        "ok"
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "event": "survival_progression_run",
+      "server": "Folia 1.21.11-14-529aabc",
+      "serverHeap": "384M",
+      "clientNodeHeapMiB": 256,
+      "memory": {
+        "heapBytes": 402653184,
+        "availableBytes": 1457160192,
+        "requiredBytes": 939524096,
+        "source": "minimum of free physical memory and Windows commit headroom"
+      },
+      "plugins": [
+        {
+          "name": "StarCore-1.0.0.jar",
+          "sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B"
+        },
+        {
+          "name": "StarSupply-0.1.0.jar",
+          "sha256": "A15D8F3CC761AE1F39B8EF9041AA086738292CE81644B04F755F4144096E6645"
+        }
+      ],
+      "startupTimeoutMs": 360000,
+      "runtimeHealth": {
+        "coreReady": true,
+        "supplyReady": true,
+        "serverReady": true,
+        "rconReady": true,
+        "failure": null
+      },
+      "failure": null,
+      "pass": false,
+      "player": "SupplyCook",
+      "clientExit": {
+        "code": 1,
+        "signal": null
+      },
+      "serverExit": {
+        "code": 0,
+        "signal": null
+      },
+      "shutdownMethod": "rcon",
+      "normalStopObserved": true,
+      "gamePortClosed": true,
+      "rconPortClosed": true,
+      "serverLog": "folia-proof/survival-progression-2026-11-25T06-57-33-983Z-server.log",
+      "serverErrorLog": "folia-proof/survival-progression-2026-11-25T06-57-33-983Z-server-error.log",
+      "clientLog": "folia-proof/survival-progression-2026-11-25T06-57-33-983Z-client.log",
+      "raw_log_sha256": {
+        "folia-proof/survival-progression-2026-11-25T06-57-33-983Z-server.log": "0AD149FC67D793A0C79E19258F9ADAA2D1AF75E94DF5BFBA7D4E46D7CABB9241",
+        "folia-proof/survival-progression-2026-11-25T06-57-33-983Z-server-error.log": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+        "folia-proof/survival-progression-2026-11-25T06-57-33-983Z-client.log": "EDC1A27F2C0F2C9D12A9899F8B2F757168E8C3328A3005E83E08AE3D4A5EE970"
+      }
+    },
+    {
+      "event": "survival_progression_run",
+      "server": "Folia 1.21.11-14-529aabc",
+      "serverHeap": "384M",
+      "clientNodeHeapMiB": 256,
+      "memory": {
+        "heapBytes": 402653184,
+        "availableBytes": 1320116224,
+        "requiredBytes": 939524096,
+        "source": "minimum of free physical memory and Windows commit headroom"
+      },
+      "plugins": [
+        {
+          "name": "StarCore-1.0.0.jar",
+          "sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B"
+        },
+        {
+          "name": "StarSupply-0.1.0.jar",
+          "sha256": "0B5CDF5C77A61A5E4CC27F0DD9F149A36A79D3DEDA213B9BE8282EC5E20EECD1"
+        }
+      ],
+      "startupTimeoutMs": 360000,
+      "runtimeHealth": {
+        "coreReady": true,
+        "supplyReady": true,
+        "serverReady": true,
+        "rconReady": true,
+        "failure": null
+      },
+      "failure": null,
+      "pass": false,
+      "player": "SupplyCook",
+      "clientExit": {
+        "code": 1,
+        "signal": null
+      },
+      "serverExit": {
+        "code": 0,
+        "signal": null
+      },
+      "shutdownMethod": "rcon",
+      "normalStopObserved": true,
+      "gamePortClosed": true,
+      "rconPortClosed": true,
+      "serverLog": "folia-proof/survival-progression-2026-11-25T07-42-45-946Z-server.log",
+      "serverErrorLog": "folia-proof/survival-progression-2026-11-25T07-42-45-946Z-server-error.log",
+      "clientLog": "folia-proof/survival-progression-2026-11-25T07-42-45-946Z-client.log",
+      "raw_log_sha256": {
+        "folia-proof/survival-progression-2026-11-25T07-42-45-946Z-server.log": "3F1CF2306005357FCA22E1467086E1505A6835C04074D440466E51319F0E6716",
+        "folia-proof/survival-progression-2026-11-25T07-42-45-946Z-server-error.log": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+        "folia-proof/survival-progression-2026-11-25T07-42-45-946Z-client.log": "6BD00C7A5FA406DE1FF4A78BAB6365A00D8C309E56E9AD251E0C9E337602FF5B"
+      }
+    },
+    {
+      "event": "survival_progression_run",
+      "server": "Folia 1.21.11-14-529aabc",
+      "serverHeap": "384M",
+      "clientNodeHeapMiB": 256,
+      "memory": {
+        "heapBytes": 402653184,
+        "availableBytes": 1255022592,
+        "requiredBytes": 939524096,
+        "source": "minimum of free physical memory and Windows commit headroom"
+      },
+      "plugins": [
+        {
+          "name": "StarCore-1.0.0.jar",
+          "sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B"
+        },
+        {
+          "name": "StarSupply-0.1.0.jar",
+          "sha256": "F14616D66EBCB4A5672F902CDB6927D713A078A777419BC2B397731B9C87A3E8"
+        }
+      ],
+      "startupTimeoutMs": 360000,
+      "runtimeHealth": {
+        "coreReady": false,
+        "supplyReady": false,
+        "serverReady": false,
+        "rconReady": false,
+        "failure": "Folia runtime failed: # There is insufficient memory for the Java Runtime Environment to continue."
+      },
+      "failure": "Folia runtime failed: # There is insufficient memory for the Java Runtime Environment to continue.",
+      "pass": false,
+      "player": "SupplyCook",
+      "serverExit": {
+        "code": 1,
+        "signal": null
+      },
+      "normalStopObserved": false,
+      "gamePortClosed": true,
+      "rconPortClosed": true,
+      "serverLog": "folia-proof/survival-progression-2026-11-25T07-47-23-260Z-server.log",
+      "serverErrorLog": "folia-proof/survival-progression-2026-11-25T07-47-23-260Z-server-error.log",
+      "clientLog": "folia-proof/survival-progression-2026-11-25T07-47-23-260Z-client.log",
+      "raw_log_sha256": {
+        "folia-proof/survival-progression-2026-11-25T07-47-23-260Z-server.log": "A074D1B7F15E0D1226EAC857D0C98FE43B688591A111D80F4D844E404985B775",
+        "folia-proof/survival-progression-2026-11-25T07-47-23-260Z-server-error.log": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+        "folia-proof/survival-progression-2026-11-25T07-47-23-260Z-client.log": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      }
+    },
+    {
+      "event": "survival_progression_run",
+      "server": "Folia 1.21.11-14-529aabc",
+      "serverHeap": "384M",
+      "clientNodeHeapMiB": 256,
+      "memory": {
+        "heapBytes": 402653184,
+        "availableBytes": 1209049088,
+        "requiredBytes": 939524096,
+        "source": "minimum of free physical memory and Windows commit headroom"
+      },
+      "plugins": [
+        {
+          "name": "StarCore-1.0.0.jar",
+          "sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B"
+        },
+        {
+          "name": "StarSupply-0.1.0.jar",
+          "sha256": "F14991EE73B9CC13DEC944C681CA49DE4BA2CFCC52FA4FE228556D18482BB717"
+        }
+      ],
+      "clientSources": [
+        {
+          "file": "six-resources.cjs",
+          "sha256": "11614996B0D33C6F97ABBEC4E443C676AFC0C7F88AA3AB515B5290311A9D93D4"
+        },
+        {
+          "file": "cave-exit.cjs",
+          "sha256": "554783E6185BB2361C1DD36A0EF5EB5EC965F45ECD620B85A109D335A56B3710"
+        },
+        {
+          "file": "inspect-world.cjs",
+          "sha256": "F85F637645DA69BA572F830E3BBF2A28DA6D7AECB060067129171D848860991B"
+        },
+        {
+          "file": "iron-pickaxe.cjs",
+          "sha256": "361BF52035F14B2E441D4F4D6FAA8EA1945E7936FD848A222EA11BDE7F7B2DB0"
+        },
+        {
+          "file": "memory-preflight.cjs",
+          "sha256": "E5E11EA12D784C9D46F2684B44AC29A6EB0C7A182F285DC79A703F1DBE55914B"
+        },
+        {
+          "file": "rcon-stop.cjs",
+          "sha256": "0A7B0DA53C0E2AF00C901CF92BE0FC9FC5984AB75013A9BE2857540710933C8D"
+        },
+        {
+          "file": "route-probe.cjs",
+          "sha256": "A7920CB9084B7B4D7AEB206B14395F57FAFBAA4C047397B7BA489F9B61B3E842"
+        },
+        {
+          "file": "run.cjs",
+          "sha256": "2865C3467515D5167B66C68224F1AC1C60617C8AB40E4BEBEA5F00F90A1C0B67"
+        },
+        {
+          "file": "runtime-health.cjs",
+          "sha256": "756B53739A3BB929A32E3B3F645F9BC5ABF4CBD90AF5F00C25A858E960CFAB8D"
+        },
+        {
+          "file": "server-dig.cjs",
+          "sha256": "4FE731B5467E6CF20336017E3E617E7DBB7F42ECB85DB1A3EDB62AD655CED2F1"
+        },
+        {
+          "file": "survival-checkpoint.cjs",
+          "sha256": "1BCA7E5912DC12FD5E527796FC5756DAF96951D1049EEAF633D33E55F77CC02F"
+        }
+      ],
+      "savedCheckpoint": {
+        "gameMode": "survival",
+        "inventory": {
+          "birch_planks": 2,
+          "iron_pickaxe": 1,
+          "stone_pickaxe": 1,
+          "andesite": 16,
+          "written_book": 1,
+          "wheat_seeds": 8,
+          "wooden_hoe": 1,
+          "bone_meal": 13,
+          "wildflowers": 4,
+          "dirt": 74,
+          "stick": 3,
+          "bucket": 2,
+          "gravel": 9,
+          "cobblestone": 146,
+          "birch_button": 1,
+          "torch": 4,
+          "birch_sapling": 1,
+          "coal": 6,
+          "crafting_table": 1,
+          "raw_iron": 6
+        },
+        "position": [
+          5.499105686866461,
+          49,
+          58.4309376655394
+        ],
+        "health": 20,
+        "food": 20,
+        "playerId": "904364cc-bf39-35a0-b688-6cc8a6d846c8",
+        "path": "starsupply-stage1-world/playerdata/904364cc-bf39-35a0-b688-6cc8a6d846c8.dat",
+        "sha256": "747194DCF7BBF6FAA52996FA9DA2A59939227354612FC69A0F05AC92D0BD24D0"
+      },
+      "startupTimeoutMs": 360000,
+      "runtimeHealth": {
+        "coreReady": true,
+        "supplyReady": true,
+        "serverReady": true,
+        "rconReady": true,
+        "failure": null
+      },
+      "failure": null,
+      "pass": false,
+      "player": "SupplyCook",
+      "clientExit": {
+        "code": 134,
+        "signal": null
+      },
+      "serverExit": {
+        "code": 0,
+        "signal": null
+      },
+      "shutdownMethod": "rcon",
+      "normalStopObserved": true,
+      "gamePortClosed": true,
+      "rconPortClosed": true,
+      "serverLog": "folia-proof/survival-progression-2026-11-25T07-52-02-144Z-server.log",
+      "serverErrorLog": "folia-proof/survival-progression-2026-11-25T07-52-02-144Z-server-error.log",
+      "clientLog": "folia-proof/survival-progression-2026-11-25T07-52-02-144Z-client.log",
+      "raw_log_sha256": {
+        "folia-proof/survival-progression-2026-11-25T07-52-02-144Z-server.log": "8D982ACD3CCF92A58083B5223A523DDA5B059628B5E3557692448A0975445D27",
+        "folia-proof/survival-progression-2026-11-25T07-52-02-144Z-server-error.log": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+        "folia-proof/survival-progression-2026-11-25T07-52-02-144Z-client.log": "C5F407C320909A79693331E663BA9B756E3AB74C4293617E0486B11E23C90125"
+      }
+    }
+  ],
+  "restoration_manifests": [
+    {
+      "profile": "vanilla",
+      "heap": "384M",
+      "stage": "C:\\tmp\\starsupply-folia-sqlite-retry-runtime-20261122",
+      "player": "SupplyCook",
+      "original_starsupply_sha256": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+      "source_jar_sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+      "temporarily_removed_plugins": [
+        {
+          "sha256": "021260C87E3546730D321F4360B1744E6E33CAA1D68E98AE30DCDBBDC347AE0F",
+          "name": "craftengine-26.9.1.jar"
+        },
+        {
+          "sha256": "E79FD411BDF949D0FD5017B4308EF7AC45C8EB70D48CE8C32FD2AA46F347F8A4",
+          "name": "FoliaSupplyProof-1.0.0.jar"
+        },
+        {
+          "sha256": "8F6A56831674AB0EC739F8EFB270FC775314A6160AE994B0A3B8473FB8110616",
+          "name": "KaleidoscopeCookeryPlugin-1.3.0.jar"
+        },
+        {
+          "sha256": "9A355A00ED2E5F19F241F0FA0ED2CBECB49700EBC847804855DD41A3E6690CA2",
+          "name": "KaleidoscopeTavern-0.1.0-dev.jar"
+        }
+      ],
+      "restoration": "all_plugin_hashes_restored",
+      "test_jar_sha256": "A15D8F3CC761AE1F39B8EF9041AA086738292CE81644B04F755F4144096E6645"
+    },
+    {
+      "profile": "vanilla",
+      "heap": "384M",
+      "stage": "C:\\tmp\\starsupply-folia-sqlite-retry-runtime-20261122",
+      "player": "SupplyCook",
+      "original_starsupply_sha256": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+      "source_jar_sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+      "temporarily_removed_plugins": [
+        {
+          "name": "craftengine-26.9.1.jar",
+          "sha256": "021260C87E3546730D321F4360B1744E6E33CAA1D68E98AE30DCDBBDC347AE0F"
+        },
+        {
+          "name": "FoliaSupplyProof-1.0.0.jar",
+          "sha256": "E79FD411BDF949D0FD5017B4308EF7AC45C8EB70D48CE8C32FD2AA46F347F8A4"
+        },
+        {
+          "name": "KaleidoscopeCookeryPlugin-1.3.0.jar",
+          "sha256": "8F6A56831674AB0EC739F8EFB270FC775314A6160AE994B0A3B8473FB8110616"
+        },
+        {
+          "name": "KaleidoscopeTavern-0.1.0-dev.jar",
+          "sha256": "9A355A00ED2E5F19F241F0FA0ED2CBECB49700EBC847804855DD41A3E6690CA2"
+        }
+      ],
+      "restoration": "all_plugin_hashes_restored",
+      "test_jar_sha256": "A85BA1BA6A9D1815277F8614CE9FD37D71F3668337B714E4EFB1D675BCA932D8",
+      "interruption": "Run processes disappeared before normal-stop/result evidence; manually restored after verifying no Folia process and closed listeners."
+    },
+    {
+      "profile": "vanilla",
+      "heap": "384M",
+      "stage": "C:\\tmp\\starsupply-folia-sqlite-retry-runtime-20261122",
+      "player": "SupplyCook",
+      "original_starsupply_sha256": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+      "source_jar_sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+      "temporarily_removed_plugins": [
+        {
+          "name": "craftengine-26.9.1.jar",
+          "sha256": "021260C87E3546730D321F4360B1744E6E33CAA1D68E98AE30DCDBBDC347AE0F"
+        },
+        {
+          "name": "FoliaSupplyProof-1.0.0.jar",
+          "sha256": "E79FD411BDF949D0FD5017B4308EF7AC45C8EB70D48CE8C32FD2AA46F347F8A4"
+        },
+        {
+          "name": "KaleidoscopeCookeryPlugin-1.3.0.jar",
+          "sha256": "8F6A56831674AB0EC739F8EFB270FC775314A6160AE994B0A3B8473FB8110616"
+        },
+        {
+          "name": "KaleidoscopeTavern-0.1.0-dev.jar",
+          "sha256": "9A355A00ED2E5F19F241F0FA0ED2CBECB49700EBC847804855DD41A3E6690CA2"
+        }
+      ],
+      "restoration": "all_plugin_hashes_restored",
+      "test_jar_sha256": "0B5CDF5C77A61A5E4CC27F0DD9F149A36A79D3DEDA213B9BE8282EC5E20EECD1",
+      "launcher_managed_bytes_before_collection": 28793712,
+      "launcher_managed_bytes_after_collection": 13937584
+    },
+    {
+      "profile": "vanilla",
+      "heap": "384M",
+      "stage": "C:\\tmp\\starsupply-folia-sqlite-retry-runtime-20261122",
+      "player": "SupplyCook",
+      "original_starsupply_sha256": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+      "source_jar_sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+      "temporarily_removed_plugins": [
+        {
+          "name": "craftengine-26.9.1.jar",
+          "sha256": "021260C87E3546730D321F4360B1744E6E33CAA1D68E98AE30DCDBBDC347AE0F"
+        },
+        {
+          "name": "FoliaSupplyProof-1.0.0.jar",
+          "sha256": "E79FD411BDF949D0FD5017B4308EF7AC45C8EB70D48CE8C32FD2AA46F347F8A4"
+        },
+        {
+          "name": "KaleidoscopeCookeryPlugin-1.3.0.jar",
+          "sha256": "8F6A56831674AB0EC739F8EFB270FC775314A6160AE994B0A3B8473FB8110616"
+        },
+        {
+          "name": "KaleidoscopeTavern-0.1.0-dev.jar",
+          "sha256": "9A355A00ED2E5F19F241F0FA0ED2CBECB49700EBC847804855DD41A3E6690CA2"
+        }
+      ],
+      "restoration": "all_plugin_hashes_restored",
+      "test_jar_sha256": "F14616D66EBCB4A5672F902CDB6927D713A078A777419BC2B397731B9C87A3E8",
+      "launcher_managed_bytes_before_collection": 29608096,
+      "launcher_managed_bytes_after_collection": 14396336
+    },
+    {
+      "profile": "vanilla",
+      "heap": "384M",
+      "stage": "C:\\tmp\\starsupply-folia-sqlite-retry-runtime-20261122",
+      "player": "SupplyCook",
+      "original_starsupply_sha256": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+      "source_jar_sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+      "temporarily_removed_plugins": [
+        {
+          "sha256": "021260C87E3546730D321F4360B1744E6E33CAA1D68E98AE30DCDBBDC347AE0F",
+          "name": "craftengine-26.9.1.jar"
+        },
+        {
+          "sha256": "E79FD411BDF949D0FD5017B4308EF7AC45C8EB70D48CE8C32FD2AA46F347F8A4",
+          "name": "FoliaSupplyProof-1.0.0.jar"
+        },
+        {
+          "sha256": "8F6A56831674AB0EC739F8EFB270FC775314A6160AE994B0A3B8473FB8110616",
+          "name": "KaleidoscopeCookeryPlugin-1.3.0.jar"
+        },
+        {
+          "sha256": "9A355A00ED2E5F19F241F0FA0ED2CBECB49700EBC847804855DD41A3E6690CA2",
+          "name": "KaleidoscopeTavern-0.1.0-dev.jar"
+        }
+      ],
+      "restoration": "all_plugin_hashes_restored",
+      "test_jar_sha256": "F14991EE73B9CC13DEC944C681CA49DE4BA2CFCC52FA4FE228556D18482BB717",
+      "launcher_managed_bytes_before_collection": 29325848,
+      "launcher_managed_bytes_after_collection": 14418344
+    }
+  ],
+  "interrupted_run": {
+    "timestamp": "2026-11-25T07-05-02-018Z",
+    "normal_shutdown": false,
+    "result_file": false,
+    "accepted": false,
+    "reason": "Process and listener checks found the run absent after a session interruption; plugins restored from exact backups. Its predicted inventory is not completion evidence."
+  },
+  "remaining": [
+    "Mining phase still needs six smelted ingots and three glass bottles. Saved raw iron is not an accepted replacement.",
+    "Surface, farming, honey, scaffolding and fireworks flows require actual gameplay acceptance.",
+    "All six survival-produced resources still need purchase, transport and sustained-consumption evidence.",
+    "Full optional plugin stack with current artifacts, production Folia certification and graphical resource-pack rendering remain incomplete."
+  ],
+  "final_handoff_run": {
+    "timestamp": "2026-11-25T07-52-02-144Z",
+    "phase_passed": false,
+    "reason": "Mineflayer/V8 allocation failure before gameplay; exit 134",
+    "normal_server_stop": true,
+    "ports_closed": true,
+    "player_checkpoint_unchanged": true,
+    "plugins_restored": true
+  }
+}

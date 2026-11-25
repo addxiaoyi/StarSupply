@@ -1,0 +1,87 @@
+{
+  "recorded_on": "2026-11-23",
+  "purpose": "Continue isolated Paper survival acquisition after confirming StarCore territory protection behavior.",
+  "result": "birch_log_broken_collected_and_persisted_after_restart",
+  "full_goal_complete": false,
+  "environment": {
+    "server": "Paper 1.21.11-132",
+    "java": 21,
+    "client": "Mineflayer 4.37.1 / Minecraft 1.21.11",
+    "pathfinder": "mineflayer-pathfinder 2.4.5",
+    "stage": "C:/tmp/starsupply-v11-paper-survival-acquisition-20261122",
+    "game_port": 25829,
+    "rcon_port": 25839,
+    "player": "SupplyCarrier",
+    "player_uuid": "b1ef34be-1610-379d-b9d3-97068ff1b518",
+    "game_mode": "survival",
+    "star_supply_sha256": "77070BE6D8D25E9325D67DE8A9D04AF7EDC2BBC88AC22EB7F9627FCEA29CF1B3"
+  },
+  "preservation": {
+    "backup": "C:/tmp/starsupply-v11-paper-survival-acquisition-20261122/acceptance-proof/backup-before-survival-log-20261123",
+    "world_file_count": 60,
+    "world_sha256_files_match": true,
+    "plugin_file_count": 11015,
+    "plugin_source_bytes": 279523998,
+    "plugin_backup_bytes": 279523998,
+    "server_properties_match": true
+  },
+  "territory": {
+    "protection_enabled": true,
+    "protected_builds": true,
+    "initial_claimed_candidates_were_skipped_after_server_confirmation": true,
+    "successful_target": {
+      "world": "starsupply-stage1-world",
+      "block": "birch_log",
+      "position": { "x": -159, "y": 71, "z": 90 },
+      "chunk": { "x": -10, "z": 5 },
+      "claimed_in_pretest_snapshot": false
+    }
+  },
+  "survival_break": {
+    "at": "2026-11-22T19:13:02Z",
+    "player_start": { "x": -156.30204162544854, "y": 74, "z": 79.89832074422786 },
+    "health": 20,
+    "food": 20,
+    "held_item": null,
+    "dig_time_ms_including_server_tick_margin": 3750,
+    "server_block_query_before": "match",
+    "server_block_query_after": "other",
+    "drop": {
+      "at": "2026-11-22T19:13:06Z",
+      "item": "birch_log",
+      "minecraft_data_item_id": 136,
+      "entity_id": 322,
+      "count": 1,
+      "position": { "x": -158.30888384580612, "y": 71.58573949337006, "z": 90.2741848025471 }
+    }
+  },
+  "collection_and_restart": {
+    "pickup_at": "2026-11-22T19:20:03Z",
+    "pickup_player": "SupplyCarrier",
+    "pickup_item": "birch_log",
+    "pickup_entity_id": 138,
+    "paper_normal_stop_at": "2026-11-22T19:20:40Z",
+    "restart_at": "2026-11-22T19:25:01Z",
+    "inventory_after_restart": [
+      { "name": "written_book", "count": 1 },
+      { "name": "birch_log", "count": 1 }
+    ],
+    "recovery_event": "survival_log_acquisition_resumed",
+    "recovery_at": "2026-11-22T19:25:04Z",
+    "paper_normal_stop_after_recovery_at": "2026-11-22T19:25:10Z",
+    "game_port_closed": true,
+    "rcon_port_closed": true
+  },
+  "evidence": {
+    "runner_log": "C:/tmp/starsupply-v11-paper-survival-acquisition-20261122/acceptance-proof/survival-acquisition.jsonl",
+    "playerdata": "C:/tmp/starsupply-v11-paper-survival-acquisition-20261122/starsupply-stage1-world/playerdata/b1ef34be-1610-379d-b9d3-97068ff1b518.dat",
+    "playerdata_sha256_after_restart": "6FB8DA4D44AD60A9DF06B48DA8965323358CE9938FBDF077EA88226577741C",
+    "normal_survival_break_and_item_pickup_observed": true,
+    "administrative_item_grant_or_teleport": false
+  },
+  "remaining": [
+    "Iron-pickaxe survival progression is not yet complete.",
+    "Six-resource survival production still needs its own evidence.",
+    "This Paper result does not establish production Folia compatibility."
+  ]
+}

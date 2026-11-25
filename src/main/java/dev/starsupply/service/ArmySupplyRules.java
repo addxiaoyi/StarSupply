@@ -8,6 +8,7 @@ import java.util.Map;
 public final class ArmySupplyRules {
     public static final double MIN_MULTIPLIER = 0.85;
     public static final double MAX_MULTIPLIER = 1.05;
+    public static final double MAX_MORALE_PENALTY = 10.0;
 
     private ArmySupplyRules() {}
 
@@ -37,24 +38,34 @@ public final class ArmySupplyRules {
     public static double coverage(Map<ResourceType, Integer> demand, Map<ResourceType, Long> available,
                                   Map<ResourceType, Consumption> consumption) {
         if (demand.isEmpty()) return 1.0;
-        double coverage = 0;
+        int weightedCoverage = 0;
         for (var entry : demand.entrySet()) {
             ResourceType type = entry.getKey();
             long supply = available.getOrDefault(type, 0L)
                     + (consumption.containsKey(type) ? consumption.get(type).units() : 0);
-            double weight = switch (type) {
-                case FOOD -> 0.45;
-                case MEDICAL -> 0.12;
-                case EQUIPMENT -> 0.13;
-                case MATERIALS, ENGINEERING, STRATEGIC -> 0.10;
+            int weight = switch (type) {
+                case FOOD -> 45;
+                case MEDICAL -> 12;
+                case EQUIPMENT -> 13;
+                case MATERIALS, ENGINEERING, STRATEGIC -> 10;
             };
-            coverage += weight * Math.max(0, Math.min(1, (double) supply / entry.getValue()));
+            double coverage = Math.max(0, Math.min(1, (double) supply / entry.getValue()));
+            weightedCoverage += weight * (int) Math.round(coverage * 1_000_000);
         }
-        return Math.min(1, coverage);
+        return Math.min(1, weightedCoverage / 100_000_000.0);
     }
 
     public static double multiplier(boolean atWar, double coverage) {
         return multiplier(atWar, coverage, 0);
+    }
+
+    /** Current shortage contributes morale points once per query; it is never a persisted debit. */
+    public static double moraleDelta(boolean atWar, double coverage) {
+        if (!Double.isFinite(coverage) || coverage < 0 || coverage > 1) {
+            throw new IllegalArgumentException("Supply coverage must be between 0 and 1");
+        }
+        if (!atWar || coverage == 1.0) return 0.0;
+        return -MAX_MORALE_PENALTY * (1 - coverage);
     }
 
     public static double multiplier(boolean atWar, double coverage, double policyReadiness) {

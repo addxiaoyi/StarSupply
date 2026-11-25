@@ -1,0 +1,144 @@
+{
+  "recorded_on": "2026-11-23",
+  "result": "passed",
+  "run_id": "paper-trade-rejections-1795363203896",
+  "started_at_utc": "2026-11-22T16:00:03.896Z",
+  "environment": {
+    "server": "Paper 1.21.11-132",
+    "java": 21,
+    "game_port": 25629,
+    "rcon_port": 25639,
+    "stage": "C:/tmp/starsupply-v11-paper-optional-stack-20261122",
+    "starsupply_sha256": "77070BE6D8D25E9325D67DE8A9D04AF7EDC2BBC88AC22EB7F9627FCEA29CF1B3",
+    "starcore_sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B",
+    "trade_fixture_sha256": "5595964471E5F6B8270CEB7F0FB1668119EA110D2C3B077B64AADF4B02C0D25B"
+  },
+  "players": {
+    "buyer": {
+      "name": "SupplyBuyer",
+      "uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+      "nation": "b361b25b-b7a4-460d-be8d-8237afdf0920"
+    },
+    "seller": {
+      "name": "SupplyCarrier",
+      "uuid": "b1ef34be-1610-379d-b9d3-97068ff1b518",
+      "nation": "b655b96f-d3c2-42e2-a126-e01484129db5"
+    }
+  },
+  "accepted_trade": {
+    "agreement_id": "b775bf46-c9bf-4e5d-b9a8-f96c247a38c3",
+    "agreement_limit_units": 1,
+    "purchase_id": "ce66e05e-c89f-4b3f-b932-41630aa9a9b2",
+    "settlement_id": "9d5038fc-d8b3-4b65-acc8-11334efc9669",
+    "payment_receipt": "starsupply:payment:9d5038fc-d8b3-4b65-acc8-11334efc9669",
+    "physical_item": "minecraft:bread",
+    "physical_units": 1,
+    "amount": "2.50",
+    "purchase_state": "BOUGHT",
+    "transfer_state": "STORED",
+    "settlement_state": "PAID",
+    "settlement_count": 1,
+    "receipt_refunded": false,
+    "bread_before_admin_grant": 5,
+    "bread_after_storage": 5
+  },
+  "rejections": [
+    {
+      "case": "agreement quota exhausted",
+      "agreement_id": "b775bf46-c9bf-4e5d-b9a8-f96c247a38c3",
+      "purchase_id": "37810b1e-2168-40dd-a7f1-fd768e3abfdd",
+      "server_reply": "StarCore 出口协定剩余额度不足"
+    },
+    {
+      "case": "agreement expired",
+      "agreement_id": "ddd1437f-52d0-427b-9e01-61ee952abc05",
+      "duration_seconds": 3,
+      "purchase_id": "aef99e12-eef5-4776-80ef-838aa9e28669",
+      "expired_status_observed_through_public_service": true,
+      "server_reply": "没有有效的 StarCore 国家贸易协定"
+    },
+    {
+      "case": "agreement cancelled",
+      "agreement_id": "f93e091a-41a5-4769-ab73-e714dfb4ec3c",
+      "purchase_id": "d7f69a45-6af3-4b91-aea7-b3ccfabe8b8d",
+      "server_reply": "没有有效的 StarCore 国家贸易协定"
+    },
+    {
+      "case": "agreement price mismatch",
+      "agreement_id": "096b00cf-5d7b-462a-8e3c-9c768025ee6b",
+      "agreement_unit_price": "3.00",
+      "purchase_id": "a80af145-061c-413f-8fd9-cf06e5ecad50",
+      "server_reply": "跨国采购总价须符合 StarCore 协定单价与实际物资单位数"
+    },
+    {
+      "case": "resource embargo active",
+      "agreement_id": "ce1a133d-2806-4b94-95fc-8aaea05fdc98",
+      "embargo_id": "0c4dff4f-79c9-497a-9c28-58d0f2385808",
+      "purchase_id": "05994b35-a7f9-466d-a8bd-5c59ad384a13",
+      "embargo_lifted_after_test": true,
+      "server_reply": "该战略物资正在受 StarCore 禁运"
+    }
+  ],
+  "rejection_invariants": {
+    "all_rejected_purchases_remained_open": true,
+    "all_rejected_orders_had_zero_transfers": true,
+    "all_rejected_orders_had_zero_settlements": true,
+    "seller_bread_count_unchanged_during_each_rejection": true,
+    "balances_before_any_test": {
+      "alpha_treasury": "474.40",
+      "beta_treasury": "8995.00",
+      "seller": "5119.07"
+    },
+    "balances_after_accepted_trade": {
+      "alpha_treasury": "472.15",
+      "beta_treasury": "8995.00",
+      "seller": "5121.32"
+    },
+    "balances_after_all_rejections_unchanged": true
+  },
+  "cleanup": {
+    "server_stopped_normally": true,
+    "process_exit_code": 0,
+    "listeners_released": true,
+    "temporary_core_agreements_and_embargo_discarded_by_database_restore": true,
+    "manifest_files_restored_and_hash_verified": 17,
+    "auxiliary_files_restored_and_hash_verified": 6,
+    "sqlite_integrity": {
+      "CraftEngine/data.db": "ok",
+      "StarCore/religion.db": "ok",
+      "StarCore/starcore.db": "ok",
+      "StarSupply/insurance.db": "ok",
+      "StarSupply/supply.db": "ok",
+      "StarSupply/tavern.db": "ok"
+    },
+    "buyer_playerdata_files": "Restored and verified from the run backup manifest.",
+    "seller_playerdata_files": {
+      "restored_after_run_from": [
+        "C:/tmp/starsupply-v11-paper-fingerprint-retest-20261122/starsupply-stage1-world/playerdata",
+        "C:/tmp/starsupply-v11-paper-survival-acquisition-20261122/starsupply-stage1-world/playerdata"
+      ],
+      "independent_copies_had_matching_hashes": true,
+      "dat_sha256": "003DF769DFF94637F03D25CEF3ED24A36B3E2DB923FD3165AEDF52B48369D0B4",
+      "dat_old_sha256": "D024D5F153AA0112A04FF961A59FA820DBA3FF746B97C6BAC32FEB3A0E7D25F5",
+      "verified_position": [-151.5, 79, 69.5],
+      "verified_inventory": {"minecraft:written_book": 1}
+    },
+    "world_region_files_restored": false,
+    "world_interaction_scope": "Players were teleported within the existing world. No blocks or containers were changed."
+  },
+  "evidence": [
+    {
+      "path_in_stage": "folia-proof/trade-rejections/paper-trade-rejections-1795363203896.json",
+      "sha256": "978BEFEC6EA8DF873096613F44E40F4BA2F62A19C018B360070303FCB33952DC"
+    },
+    {
+      "path_in_stage": "logs/paper-trade-rejections-1795363203896-stdout.log",
+      "sha256": "BD1E73726EFCCE2680ED20FB29500C84E5F118B7D0D78F08BC9CB14EADD7C551"
+    },
+    {
+      "path_in_stage": "folia-proof/trade-rejections/paper-trade-rejections-1795363203896-trace.jsonl",
+      "sha256": "D432C72BD8268955A171AE3AEC4C33F5D81FCACB0BBEA5005E733D6F02129DBB"
+    }
+  ],
+  "scope": "One trade consumed the one-unit agreement quota successfully. The next trade and separate expired, cancelled, mispriced, and embargoed trades were rejected before any physical transfer or payment. Paper was tested with administrator-granted bread. The production JAR was unchanged and the test-only helper was disabled after normal shutdown."
+}

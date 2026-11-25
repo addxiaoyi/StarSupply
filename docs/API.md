@@ -1,5 +1,7 @@
 # StarSupply 公开 API
 
+`SupplyStatus.moraleDelta()` 是该次军需快照的临时后勤士气贡献，范围 -10–0 个士气点；它不是已扣除的军队存档士气。StarSupply 通过附带 StarCore 兼容补丁的公开 `ArmyService.registerTemporaryMoraleModifier(String, ToDoubleFunction<UUID>)` 注册贡献，调用 `ArmyService.effectiveMorale(UUID)` 查询实际有效值。预测和真实伤害均由 StarCore 使用该值，注销后恢复无后勤贡献；回调读取当前军需缓存，不持久化累加。`combatMultiplier` 仍是独立后勤战力因子，不能当作包含临时士气的最终总伤害倍率。详见 [公平限制](CAMPAIGNS.md)。
+
 调用插件在 `plugin.yml` 中依赖 StarSupply，并将其 JAR 加到编译时类路径。通过 Bukkit 服务管理器获取接口。
 
 ```java
@@ -15,10 +17,12 @@ if (supply != null) {
 | --- | --- |
 | `purchase(id)`、`shipment(id)`、`taxAssessment(settlementId)` | 读取持久化订单、运输及跨境关税报价快照。 |
 | `stock(warehouseId)`、`armySupply(armyId)` | 读取实物库存的补给单位和最新的军队需求、覆盖率及战力系数。 |
+| `nativeSupplyCredits(armyId)` | 读取该军队最近 128 条实物 FOOD 到 StarCore 原生补给的持久结转记录。 |
 | `SupplyStatus.campaign()` | 当前冬季、围城持续时间、额外需求与采样时间；已消费周期仍沿用 SQL 固定需求。 |
 | `SupplyStatus.frontAccess()` | `CONNECTED`、`CONTROL_LOST` 或 `ARMY_OUT_OF_RANGE`。前线失守、跨世界或距离超过配置服务半径时覆盖率为 0，并暂停实际消耗。 |
 | `marketQuote(depotId, resource)`、`createMarketPurchase(...)` | 读取仓库区域市场参考价，或按该报价快照创建采购单。后续市场变化不改动已创建合同金额。 |
 | `routeNetwork(nationId)`、`route(nationId, origin, target)` | 获取地图节点与道路状态，或取得计算后的最低成本路径。 |
+| `rebindFront(actor, frontId, armyId)` / `/supply rebind-front <前线站ID> <军队UUID>` | 由本国军需管理者将受控前线绑定到未绑定其他前线的本国 StarCore 军队；保留站点位置、实物批次、库存、道路及运输记录。触发可取消的 `FRONT_REBIND` 操作事件。 |
 | `mapVanilla(...)`、`mapCustom(...)` | 注册在当前会话生效的物品映射。持久映射使用配置文件。 |
 | `createPurchase(...)`、`createMarketPurchase(...)`、`sell(...)`、`createTransport(...)`、`acceptTransport(...)`、`joinEscort(...)`、`deliverTransport(...)`、`cancelOrder(...)` | 使用与游戏命令相同的权限、状态及位置检查。 |
 
@@ -26,9 +30,13 @@ if (supply != null) {
 
 带 Player 的方法必须在该实体所属线程调用。查询和结算返回的 CompletionStage 可能在后台线程完成。调用插件执行世界或界面操作前应重新进入对应的实体或区域线程。提交出售或交付后，可用订单 UUID 轮询最终状态。
 
-`SupplyOperationEvent` 在玩家线程发布，可以取消。创建的订单尚无 UUID 时该字段可为空。`SupplySettlementEvent` 在 SQL 提交后异步发布，携带唯一结算 UUID、订单、国家、玩家、类型、毛额与结果。监听器可以用结算 UUID 去重并通过查询接口补读结果。地图接口返回不可变的观察数据，渲染器可按自己的刷新策略取样。
+`sell` 返回值只表示对已受理库存流程的观察。调用方取消、设置超时或提前完成 `toCompletableFuture()` 不会撤销物理扣物，也不会提前释放库存操作锁。锁在内部流程实际结束后清理；通过采购 UUID 查询状态，必要时由玩家执行 `/supply recover` 处理持久回执。取消观察不能作为未扣物或未付款的证据。
 
-`SupplyConsumptionEvent` 是军事周期消耗提交后的异步通知，`getConsumption()` 返回不可变 `SupplyConsumption`，包含唯一 `settlementId`、军队、国家、前线、周期、需求和实际消耗。ID 由军队 UUID 与周期确定；同一周期重复刷新不会再扣库存或再次正常发布。事件不提供跨进程可靠投递保证：提交后、通知前的崩溃可能丢失通知，监听器不能通过重放事件自行扣物资。读取 `armySupply` 等权威状态后再更新界面，世界操作应回到所属调度线程。
+`SupplyOperationEvent` 在玩家线程发布，可以取消。创建的订单尚无 UUID 时该字段可为空；前线重绑定使用 `FRONT_REBIND`。`SupplySettlementEvent` 在 SQL 提交后异步发布，携带唯一结算 UUID、订单、国家、玩家、类型、毛额与结果。监听器可以用结算 UUID 去重并通过查询接口补读结果。地图接口返回不可变的观察数据，渲染器可按自己的刷新策略取样。
+
+`SupplyConsumptionEvent` 是军事周期消耗提交后的异步通知，`getConsumption()` 返回不可变 `SupplyConsumption`，包含唯一 `settlementId`、军队、国家、前线、周期、需求和实际消耗。ID 由军队 UUID、周期 slot 与周期长度确定；同一周期重复刷新不会再扣库存或再次正常发布。事件不提供跨进程可靠投递保证：提交后、通知前的崩溃可能丢失通知，监听器不能通过重放事件自行扣物资。读取 `armySupply` 等权威状态后再更新界面，世界操作应回到所属调度线程。
+
+`nativeSupplyCredits(armyId)` 返回的记录状态为 `PENDING`、`APPLIED` 或 `REVIEW`。StarSupply 只为已提交且实际消耗了 FOOD 的周期创建记录，使用稳定请求 UUID 调用带持久回执的 StarCore 公开接口；它不调用会额外扣国库的 `resupplyArmy(UUID)`。军需管理者可以用 `/supply native-credits <军队UUID或前缀>` 查看本国军队记录。管理员仅对 `REVIEW` 请求执行 `/supply reconcile-native-supply <请求UUID>`，命令会先查询 StarCore 回执，匹配后确认 `APPLIED`；确认回执不存在时以原 UUID 重新排队。上游查询失败或回执不匹配时，记录继续待核验。
 
 同一个 Bukkit 服务管理器还注册以下独立接口。带 `Player` 的方法同样必须在该玩家实体调度线程调用；结果是不可变快照，可能在后台线程完成。
 

@@ -1,0 +1,16 @@
+# Isolated native supply acceptance
+
+Build with Java 21 and the compatible StarCore JAR exposing `ArmyService.applyLogisticsSupply` and `LogisticsSupplyReceipt`. Pass `-StarCoreJar`, `-StarSupplyJar`, and `-JavaHome` to `build.ps1`. Install the generated `build/SupplyNativeProof-1.0.0.jar` only in a stopped disposable test server, then start normally. This fixture is not a production dependency. Its loading descriptor permits Folia only for the fixture itself.
+
+All commands accept only console/RCON senders, queue on the global scheduler, and append forced UTF-8 records to `plugins/SupplyNativeProof/evidence.jsonl`. A `QUEUED` response does not prove completion; require the corresponding successful evidence record. SQLite is inspected independently and read-only. The fixture never edits SQL or private fields.
+
+On a shared Windows host, check available physical memory before starting Folia and keep the acceptance JVM bounded. A previous run with `-Xms512M -Xmx1536M` failed a native allocation, so use a smaller test heap such as `-Xms256M -Xmx1024M -XX:ActiveProcessorCount=2 -XX:+UseSerialGC` and do not run multiple acceptance servers at once. Heap size does not include JVM native memory.
+
+1. Create a fresh test army through StarCore public authority and bind its controlled front using the normal StarSupply commands. Record the actual deployed JAR hashes and current balances.
+2. `supplynativeproof prepare <armyUUID> 10 60` prepares a detached public army snapshot and persists it through `restoreArmyStates`. This deliberately sets low native supply and base morale for the test and is explicitly labeled as preparation, not gameplay supply.
+3. `supplynativeproof watch <armyUUID> 180` observes native supply, base/effective morale and StarSupply status once per second. Use normal physical purchase/transport/delivery to supply the front. Keep the consumption event ID and the durable outbox request; require the native meter to rise through the 20-point recovery threshold with a matching Core receipt. Confirm the original physical inventory was consumed once.
+4. `supplynativeproof receipt <requestUUID>` reads the durable Core receipt. `supplynativeproof retry <requestUUID>` reissues identical input, requires the original immutable receipt, unchanged native supply/treasury, and rejection of a conflicting amount. Only retry requests already backed by physical consumption.
+5. Stop normally and restart the same server, reread the same outbox request/receipt and retry it again. Physical consumption, player payments and treasury effects must remain unchanged. New supply intervals may advance independently; compare rows by their original request and interval, not whole-table counts.
+6. Observe at least one real minute maintenance tick after native supply is at least 20. Base morale must recover according to Core rules, while temporary StarSupply morale follows current physical coverage. The preparation command itself is not evidence of that recovery.
+
+Remove the fixture and restart after acceptance. Keep historical evidence tied to its original binary hashes; a new boot does not retrospectively certify older bundles or every optional Folia combination.

@@ -1,0 +1,9 @@
+name: SupplyNativeProof
+version: '1.0.0'
+main: local.test.SupplyNativeProof
+api-version: '1.21.11'
+folia-supported: true
+depend: [StarCore, StarSupply]
+commands:
+  supplynativeproof:
+    description: Isolated native supply receipt acceptance; console only

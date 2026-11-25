@@ -1,6 +1,6 @@
 # StarCore 对接与故障恢复
 
-StarSupply 对接 StarCore 1.0.0 的提交 `f769e62799e769a18fe51305b545869a17f80cd1`。安装 Java 21、Paper 1.21.11 和该版本的 StarCore，启用国家、财政、军队与战争模块。StarCore 的 `economy.provider` 应设为 `internal`。外部 Vault 提供方的入账线程和持久化行为由各自实现决定，StarSupply 会在启动时拒绝启用该结算路径。
+StarSupply 对接 StarCore 1.0.0 的提交 `f769e62799e769a18fe51305b545869a17f80cd1`。编译仍使用该固定公开 API；当前完整运行版本还必须应用 [兼容补丁](upstream/README.md)，其中增加公开临时士气注册和查询接口。未打补丁的旧 Core 缺少真实后勤士气能力，StarSupply 会明确拒绝启用，先前 D2BFC503 等历史包的验证不代表当前新版。安装 Java 21，启用国家、财政、军队与战争模块。StarCore 的 `economy.provider` 应设为 `internal`。外部 Vault 提供方的入账线程和持久化行为由各自实现决定，StarSupply 会在启动时拒绝启用该结算路径。
 
 | 用途 | StarCore 服务与入口 |
 | --- | --- |
@@ -17,7 +17,13 @@ StarSupply 对接 StarCore 1.0.0 的提交 `f769e62799e769a18fe51305b545869a17f8
 | 冬季与围城 | `SeasonService.getSeason(World)`、`isEnabled()`，以及 `SiegeService.getNationSieges`、`getWall`。在服务线程把可变对象复制为不可变条件，再计算有上限的临时需求 |
 | 承运收入保险 | `NationSpendingService` 预留/释放赔款，`InternalEconomyService.withdraw` 支付保费，`TreasuryService.tryDeposit` 接收保费，`TransactionFabric` 保存各笔操作身份和开始证据。实际赔付继续使用原准备金编号 |
 
-原生补给线在 StarCore 中创建、截断和修复。StarSupply 路径计算读取 `SupplyLine`，库存与货物批次保存在 StarSupply 自己的 SQL 数据库。进入路线时使用国家领地查询判断敌对控制，补给效果只匹配活跃战争的敌对双方。原生军队现有的补给值和数值衰减仍由 StarCore 管理。StarSupply 战略补给应用有限的战斗伤害倍率，不写入永久士气状态。`ArmyCombatExtensionPoint` 采用最高贡献值，同一服务器其他战斗贡献者可能覆盖 StarSupply 的减益。
+原生补给线在 StarCore 中创建、截断和修复。StarSupply 路径计算读取 `SupplyLine`，库存与货物批次保存在 StarSupply 自己的 SQL 数据库。进入路线时使用国家领地查询判断敌对控制，补给效果只匹配活跃战争的敌对双方。StarSupply 战略补给应用有限的战斗伤害倍率和可撤销的临时士气贡献，不写入永久士气状态。公开 `registerTemporaryMoraleModifier` 返回注销句柄，`effectiveMorale` 是 StarCore 权威查询；反射桥仅查找公开方法，不访问私有状态或另建军队。`ArmyCombatExtensionPoint` 采用最高贡献值，同一服务器其他战斗贡献者可能覆盖原后勤倍率；士气部分在原生战斗计算中独立应用，单独限制在 ±10% 伤害变化。
+
+StarSupply 的实物批次账本与 StarCore 的 0–100 原生军队补给仍然独立。已提交的军队周期实际消耗 FOOD 后，StarSupply 按消耗占需求比例生成最多 10 点的结转请求，并以周期稳定 UUID 调用兼容补丁新增的 `ArmyService.applyLogisticsSupply(requestId, armyId, nationId, points)`。该接口不扣国库，将原生补给变更和回执一同持久化；重复请求返回原回执而不重复加点，达到 100 上限时 `appliedPoints` 可以为 0，但请求仍会被记录。StarSupply 不使用会额外扣款且不具备请求幂等性的 `resupplyArmy(UUID)`。
+
+当前 Folia 兼容补丁修正了原生维护换算：每分钟维护累加小时消耗余量，驻扎军队的 1 点/小时会在 60 次更新中消耗 1 点。`ArmyUnit.consumeSupply` 不再隐藏扣士气，原生补给低于 20 时 `ArmyService.updateArmy` 每分钟扣 2 点；补给恢复到 20 或以上后，每分钟恢复 1 点基础士气。士气低于 10 时仍存在随机解散机会，历史基础士气损失也不会追溯补回。补丁另外提供带耐久 UUID 回执的实物后勤补给接口，回执与军队快照一同存于 StarCore 的 army 持久化文件；回执目录不可用或损坏时接口拒绝变更。补丁的后勤补给测试覆盖幂等重放、回执持久化失败与重启恢复，结果见 [上游补丁说明](upstream/README.md)。
+
+StarSupply 在 SQLite 中持久保存每次 FOOD 结转请求。`PENDING` 会以同一 UUID 重试，确认回执后变为 `APPLIED`；发生输入拒绝等确定错误时转为 `REVIEW` 并停止自动调用。管理员执行 `/supply reconcile-native-supply <请求UUID>` 时，插件先查询 StarCore 的耐久回执，仅匹配请求、军队、国家和请求点数后标记完成。StarCore 明确确认无回执时才会按原 UUID 重新排队；查询异常或字段不匹配会保留 `REVIEW`。军需管理者可用 `/supply native-credits <军队UUID或前缀>` 查看最近结转记录。
 
 ## StarCore 国家贸易协定
 

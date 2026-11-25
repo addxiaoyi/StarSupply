@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-20",
+  "purpose": "Positive live Folia acceptance for the optional SenLuo Tavern beverage bridge and persistent intelligence board",
+  "result": "positive_authentication_registration_scout_publish_and_board_passed",
+  "goal_complete": false,
+  "environment": {
+    "server": "Folia 1.21.11-14-529aabc",
+    "java": 21,
+    "runtime_directory": "C:/Users/Administrator/Documents/starsupply-deps/folia-stage1-live",
+    "runtime_plugins": {
+      "StarSupply-0.1.0.jar": "EFFC9D2F1AE7908DEADB5938CD588814F071FABB9804AF1F97498E5E802A617D",
+      "StarCore-1.0.0.jar": "CBFCCB3F4DE1CD5E5DD86327FF34870E99C570BCA2B502DA8A77ED07D5A16E1F",
+      "KaleidoscopeTavern-0.1.0-dev.jar": "9A355A00ED2E5F19F241F0FA0ED2CBECB49700EBC847804855DD41A3E6690CA2",
+      "craftengine-26.9.1.jar": "021260C87E3546730D321F4360B1744E6E33CAA1D68E98AE30DCDBBDC347AE0F"
+    },
+    "descriptor_override_test_builds": true,
+    "server_restarted_for_this_test": false
+  },
+  "configuration": {
+    "require_authentic_beverage": false,
+    "minimum_brew_level": 1,
+    "strict_rejection_path_tested": false,
+    "strict_rejection_note": "The live shared Folia instance was left running; enabling this setting requires a StarSupply restart. Paper strict-rejection tests are recorded separately in 2026-11-20-paper-faults-tavern.json."
+  },
+  "actor": {
+    "name": "SupplyBuyer",
+    "uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+    "nation": "Alpha",
+    "start_position": {
+      "world": "starsupply-stage1-world",
+      "x": -21.5,
+      "y": 86.0,
+      "z": 68.5
+    }
+  },
+  "beverage": {
+    "custom_item_id": "kaleidoscope_tavern:brandy",
+    "display_name": "白兰地",
+    "brew_level": 2,
+    "count_before": 1,
+    "count_after": 1,
+    "mineflayer_item_sha256_before": "5302e672cf463ffe3f7e182bde34fe7b194b274939ac87b111284237eb80b440",
+    "mineflayer_item_sha256_after": "5302e672cf463ffe3f7e182bde34fe7b194b274939ac87b111284237eb80b440",
+    "consumed_or_modified": false,
+    "registration_response": "已登记酒馆集合点 folia-proof-inn / 森罗酒品已验证"
+  },
+  "intelligence": {
+    "hub_id": "folia-proof-inn",
+    "hub_tavern_verified": true,
+    "route_id": "morale-road",
+    "route_origin": "alpha-depot",
+    "route_target": "morale-front",
+    "report_id": "cfc9dfde-9650-448a-bb59-705683e13a1f",
+    "report_status_at_observation": "open",
+    "road_efficiency": 1.5,
+    "hostile_risk": 0,
+    "published_to_hub": "folia-proof-inn",
+    "report_not_extended_on_publish": true,
+    "gui": {
+      "title": "酒馆与情报 · 1 / 1",
+      "size": "9x6",
+      "read_back_report": true,
+      "read_back_open_national_purchase_and_transport_contracts": true
+    }
+  },
+  "cleanup": {
+    "temporary_player_disconnected": true,
+    "remaining_online_player": "SupplyCook",
+    "folia_process_id_still_running": 13092
+  },
+  "evidence": {
+    "bot_log": "C:/Users/Administrator/Documents/starsupply-deps/folia-stage1-live/folia-proof/kitchen-SupplyBuyer.jsonl",
+    "bot_log_sha256": "9D3F5AB943B4C9C54C4326296B68445B044414145511CA1254BC6B4EA363F8AE",
+    "runtime_server_log": "C:/Users/Administrator/Documents/starsupply-deps/folia-stage1-live/logs/latest.log",
+    "runtime_server_log_lines": [
+      "KaleidoscopeTavernPlugin v0.1.0-dev enabled",
+      "StarSupply v0.1.0 enabled"
+    ]
+  },
+  "remaining_boundary": "This record proves the authentic Tavern output positive path and the persisted StarSupply intelligence flow on the experimental Folia test build. It does not claim the production artifacts support Folia or that require-authentic-beverage=true rejection was exercised on Folia."
+}

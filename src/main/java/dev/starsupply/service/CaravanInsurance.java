@@ -196,6 +196,13 @@ public final class CaravanInsurance {
         if (current == MoneyState.APPLIED) return MoneyResult.APPLIED;
         if (current == MoneyState.REJECTED) return MoneyResult.REJECTED;
         if (current == MoneyState.REVIEW) return MoneyResult.REVIEW;
+        if (current == MoneyState.STARTED && (leg == MoneyLeg.PREMIUM_DEBIT
+                || leg == MoneyLeg.PREMIUM_CREDIT || leg == MoneyLeg.PREMIUM_REFUND)) {
+            // The external call may have succeeded before the local result write rolled back.
+            // This can happen without a process restart; only receipt-backed legs are replayable.
+            store.money(policy.id(), leg, MoneyState.REVIEW, now);
+            return MoneyResult.REVIEW;
+        }
         store.money(policy.id(), leg, MoneyState.STARTED, now);
         MoneyResult result;
         try { result = economy.execute(store.operation(policy, leg)); }

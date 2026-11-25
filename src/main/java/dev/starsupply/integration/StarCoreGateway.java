@@ -57,6 +57,8 @@ public final class StarCoreGateway implements CoreGateway {
     private final NationService nations;
     private final Optional<OfficerService> officers;
     private final ArmyService armies;
+    private final TemporaryMoraleBridge morale;
+    private final NativeSupplyBridge nativeSupply;
     private final WarService wars;
     private final BattlefieldService battlefields;
     private final Optional<ResourceTradeService> resourceTrades;
@@ -112,6 +114,8 @@ public final class StarCoreGateway implements CoreGateway {
         nations = require(api, NationService.class);
         officers = api.service(OfficerService.class);
         armies = require(api, ArmyService.class);
+        morale = TemporaryMoraleBridge.bind(armies);
+        nativeSupply = NativeSupplyBridge.bind(armies);
         wars = require(api, WarService.class);
         battlefields = require(api, BattlefieldService.class);
         resourceTrades = api.service(ResourceTradeService.class);
@@ -171,6 +175,16 @@ public final class StarCoreGateway implements CoreGateway {
         synchronized (armies) {
             return armies.getArmy(armyId).map(StarCoreGateway::snapshot);
         }
+    }
+
+    @Override
+    public boolean replenishArmy(UUID requestId, UUID armyId, UUID nationId, int supplyPoints) {
+        return nativeSupply.replenish(requestId, armyId, nationId, supplyPoints);
+    }
+
+    @Override
+    public Optional<NativeSupplyReceipt> nativeSupplyReceipt(UUID requestId) {
+        return nativeSupply.receipt(requestId);
     }
 
     @Override
@@ -420,6 +434,22 @@ public final class StarCoreGateway implements CoreGateway {
     /** Only call after checking both the local review and independent evidence for the player credit. */
     public PaymentResult reconcilePayment(UUID settlementId, boolean playerActuallyCredited) {
         return payments.reconcile(settlementId, playerActuallyCredited);
+    }
+
+    /** Adds a bounded modifier to StarCore's native army damage calculation. */
+    public Runnable registerTemporaryMoraleModifier(ToDoubleFunction<UUID> contribution) {
+        Objects.requireNonNull(contribution, "contribution");
+        return morale.register(COMBAT_CONTRIBUTOR, armyId -> {
+            var army = army(armyId);
+            if (army.isEmpty() || !isAtWar(army.get().nationId())) return 0;
+            double value = contribution.applyAsDouble(armyId);
+            return Double.isFinite(value) ? Math.clamp(value, -10, 0) : 0;
+        });
+    }
+
+    /** The authority's effective view, never the saved base morale or a locally invented army. */
+    public double effectiveMorale(UUID armyId) {
+        return morale.effective(armyId);
     }
 
     /** Adds a bounded modifier to StarCore's native army damage calculation. */

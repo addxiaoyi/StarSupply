@@ -1,0 +1,178 @@
+{
+  "recorded_on": "2026-11-25",
+  "recorded_at": "2026-11-25T13:50:13.5931120+08:00",
+  "result": "passed",
+  "purpose": "Harden code-level lifecycle isolation and asynchronous failure completion while preserving the existing StarSupply worktree.",
+  "environment": {
+    "java": "21.0.13.1",
+    "maven": "3.9.16",
+    "working_tree_has_uncommitted_changes": true,
+    "git_base": "c6bf8847428f22fdfce295c13775625f81513736"
+  },
+  "command": ".\\mvnw.cmd -B -ntp verify",
+  "completed_at": "2026-11-25T13:49:18+08:00",
+  "prior_clean_verify_passed": true,
+  "tests": {
+    "run": 112,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 20
+  },
+  "suites": [
+    {
+      "name": "dev.starsupply.bukkit.AsyncTasksTest",
+      "tests": 3,
+      "sha256": "B17035D14B1A542B1C11B957A5B47ABAF92A117770D7A56EA6ECF07D5F5F664B"
+    },
+    {
+      "name": "dev.starsupply.bukkit.EntityCallbacksTest",
+      "tests": 9,
+      "sha256": "B841D259C20BEE0C04646D8650FAF2CFFF7849FC66F787B03B98790C380AC069"
+    },
+    {
+      "name": "dev.starsupply.bukkit.item.InventoryFingerprintTest",
+      "tests": 1,
+      "sha256": "FB8ECA54AAA14614A7F1CAAACC1448F9BEFFBFF22A8AB6889DF7B18C40BDBE05"
+    },
+    {
+      "name": "dev.starsupply.bukkit.item.PlayerDataReceiptTest",
+      "tests": 2,
+      "sha256": "C86A4D30538D78F8076713F0847D19DA4803D3B73AE24E23B47AC7059E436C60"
+    },
+    {
+      "name": "dev.starsupply.bukkit.item.ResourceMappingConfigTest",
+      "tests": 1,
+      "sha256": "A6B3EF06D8E123777CF2733249BF690A85582E7A8DBCD1A1A6B5F27407166D46"
+    },
+    {
+      "name": "dev.starsupply.bukkit.LifecycleGateTest",
+      "tests": 1,
+      "sha256": "62757B6C0A506422D9AA742BCF9044C666990B0D3CB7271757358BED06D0889E"
+    },
+    {
+      "name": "dev.starsupply.integration.CampaignSiegeTargetTest",
+      "tests": 1,
+      "sha256": "246A2761456AF76612D069EFD674908A71DE0D28C0A4A9E323A9A2148EC86BE7"
+    },
+    {
+      "name": "dev.starsupply.integration.CoreInsurancePaymentTest",
+      "tests": 2,
+      "sha256": "244075F1CE9152561BE1E17CE54E57C82A766011CC000EEA0939D2AE6C48BE03"
+    },
+    {
+      "name": "dev.starsupply.integration.CorePaymentTest",
+      "tests": 13,
+      "sha256": "2B27F379A25F92D4278DD3EBF8ADAD7C28160F4F8E532E13F88A7DCF4705215A"
+    },
+    {
+      "name": "dev.starsupply.integration.NativeSupplyBridgeTest",
+      "tests": 3,
+      "sha256": "86304A579C4CAEA491CC9C4B6C7064F974361D3ED22B4594E8624B6E5A31C316"
+    },
+    {
+      "name": "dev.starsupply.integration.TemporaryMoraleBridgeTest",
+      "tests": 3,
+      "sha256": "8E46653BEF98DF627A7D46E191BAB48B2354E60BD48023AE122B873BF3FE8727"
+    },
+    {
+      "name": "dev.starsupply.route.RoutePlannerTest",
+      "tests": 5,
+      "sha256": "2D5A2547640F553B8A5921C96CC08DC689D63DD238E042421CDDCA0133DC2C4F"
+    },
+    {
+      "name": "dev.starsupply.service.ArmySupplyRulesTest",
+      "tests": 3,
+      "sha256": "662C016A27EB3A0BD6C4AEB2F9DDCC9ADC0A40C31488AE26A5006663B84B634B"
+    },
+    {
+      "name": "dev.starsupply.service.CampaignRulesTest",
+      "tests": 2,
+      "sha256": "47B9FF7BEB28E9C27CAEFF88E198BD8F40A5BBB74F710C2FD847810000F8E738"
+    },
+    {
+      "name": "dev.starsupply.service.CaravanInsuranceTest",
+      "tests": 12,
+      "sha256": "23C488F2118BACE4273795BE05504E496014BFF8BE3A4CB82D0936CF9ED435BA"
+    },
+    {
+      "name": "dev.starsupply.service.MarketRulesTest",
+      "tests": 2,
+      "sha256": "BD4AE181EE6403CBD98928D4F030DF67AE979A6D46F137357600F055FE2487EE"
+    },
+    {
+      "name": "dev.starsupply.service.TavernServiceTest",
+      "tests": 5,
+      "sha256": "1DBB77D801FD114C3E209155DA5706068EE338E506B5E2869001C3B83A0B79B6"
+    },
+    {
+      "name": "dev.starsupply.storage.CampaignPersistenceTest",
+      "tests": 1,
+      "sha256": "A1B5DA1AD57AE21015D5B5A7A23424E9347404224A5F72649DC90785C777EE82"
+    },
+    {
+      "name": "dev.starsupply.storage.SqlTransactionsTest",
+      "tests": 10,
+      "sha256": "E6FC86F37E1435287C5D1103801B656CA78DCB4BBD981D1FF910108994B06A23"
+    },
+    {
+      "name": "dev.starsupply.storage.SupplyLifecycleTest",
+      "tests": 33,
+      "sha256": "8BECCE52AD5093E459346BD54920ADECA28F1EB8FC380B80EAC02EC059D646B6"
+    }
+  ],
+  "artifact": {
+    "path": "target/starsupply-0.1.0.jar",
+    "bytes": 14677523,
+    "sha256": "053EAA19FA2C54200C72208581631C81B2C8C9819B4D5E47BC963306B66703E2",
+    "main_schema": 11,
+    "folia_supported_descriptor": false
+  },
+  "log": {
+    "path": "target/lifecycle-verify-20261125.log",
+    "sha256": "02C63AE6AD5D34745A8951624376D056F211F18BFAA8364988DC4BB345F71043"
+  },
+  "changed_code": [
+    {
+      "path": "src/main/java/dev/starsupply/bukkit/AsyncTasks.java",
+      "sha256": "9458B724C0B12FE4CE8F1C1F4EA5C4697BBA278C47AE20B022C33E2209BC4CA9"
+    },
+    {
+      "path": "src/main/java/dev/starsupply/bukkit/EntityCallbacks.java",
+      "sha256": "E7C6C98D7EFF1951E73725792F52A0683C41F450D84A32092D71210A65A4DCF8"
+    },
+    {
+      "path": "src/main/java/dev/starsupply/bukkit/StarSupplyPlugin.java",
+      "sha256": "45C81C9E5265D928D01CE79BE5F042344A304C390E65DE7094A465AF52757451"
+    },
+    {
+      "path": "src/test/java/dev/starsupply/bukkit/AsyncTasksTest.java",
+      "sha256": "9F5F4E40F75CBEE980E10A81598C27BBFBD055EE3A77DB40A08D96D11613FF35"
+    },
+    {
+      "path": "src/test/java/dev/starsupply/bukkit/EntityCallbacksTest.java",
+      "sha256": "D3A35B3337C217CEABB259F0C4E8C01CF931AF4CFDC4C82CD7B0348889EDE7C0"
+    }
+  ],
+  "regressions": [
+    "Running entity callbacks remain registered until their call and inline completion chain return, even if their future has already completed or was cancelled.",
+    "Re-enable requires the prior SQL worker, entity callbacks and inventory pipelines to finish.",
+    "Fatal errors complete the asynchronous result and release dependent guards before propagating to the worker/server error handler.",
+    "A worker failing with AssertionError still drains the next already-accepted transaction during shutdown.",
+    "SQL submission captures one generation and one executor; it cannot switch to a later lifecycle worker after its admission check.",
+    "Inventory pipeline startup releases its per-player guard for synchronous Error as well as RuntimeException.",
+    "Ordinary shutdown-hook and linkage failures are logged independently; a finally block still drains the SQL worker."
+  ],
+  "acceptance_tool_tests": {
+    "command": "node --test tools/acceptance/survival-progression/*.test.cjs",
+    "run": 15,
+    "failures": 0,
+    "skipped": 0
+  },
+  "limits": [
+    "This change has unit/concurrency regression and full Maven build evidence; no new Paper or Folia live-server run was performed.",
+    "Live region unload/entity retirement, six-resource survival production, complete Folia support and client resource-pack rendering remain unverified.",
+    "Prior runtime records apply to their original JAR hashes, including the earlier 105-test build.",
+    "The seven newly added JUnit test methods cover task results, exception propagation, worker recovery and callback lifecycle ownership. Shutdown-hook isolation and API admission are code-level changes covered by compilation and the complete regression suite, without a new Bukkit-host integration test."
+  ]
+}

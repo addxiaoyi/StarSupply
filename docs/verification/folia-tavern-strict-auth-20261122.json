@@ -1,0 +1,144 @@
+{
+  "recorded_on": "2026-11-22",
+  "purpose": "Exercise strict authentic-beverage rejection and acceptance on an isolated Folia runtime.",
+  "scope": "Runtime evidence for the Tavern registration setting only. This does not certify the complete Folia plugin stack or production Folia support.",
+  "build_artifact": {
+    "production_path": "target/starsupply-0.1.0.jar",
+    "production_bytes": 14667707,
+    "production_sha256": "43216A42FCC8345D12BEC7FCF548C2A87EFF2F2292BBC3487F8349269EBCF110",
+    "automated_verify": {
+      "tests": 94,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "recorded_at": "2026-11-22T04:12:56+08:00"
+    },
+    "folia_test_copy": {
+      "path": "plugins/StarSupply-0.1.0.jar",
+      "bytes": 14664148,
+      "sha256": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+      "descriptor_change": "Added folia-supported: true to plugin.yml in the isolated test copy only.",
+      "production_non_descriptor_entries": 362,
+      "non_descriptor_entries_identical": true
+    }
+  },
+  "runtime": {
+    "path": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122",
+    "server": "Folia 1.21.11-14-ver/1.21.11@529aabc",
+    "java": "OpenJDK 21.0.13.1+2-LTS",
+    "game_listener": "127.0.0.1:25729",
+    "rcon_listener": "127.0.0.1:25739",
+    "plugins_initialized": [
+      "CraftEngine 26.9.1",
+      "FoliaSupplyProof 1.0.0 test fixture",
+      "KaleidoscopeCookeryPlugin 1.3.0",
+      "KaleidoscopeTavernPlugin 0.1.0-dev",
+      "StarCore 1.0.0",
+      "StarSupply 0.1.0"
+    ],
+    "plugin_sha256": {
+      "StarCore-1.0.0.jar": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B",
+      "StarSupply-0.1.0.jar": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+      "FoliaSupplyProof-1.0.0.jar": "E79FD411BDF949D0FD5017B4308EF7AC45C8EB70D48CE8C32FD2AA46F347F8A4",
+      "folia.jar": "F52C408490A0225611E67907A3CA19F7E6DA2C6BC899E715D5F46844E7103C39"
+    }
+  },
+  "configuration": {
+    "tavern.require-authentic-beverage": true,
+    "tavern.minimum-brew-level": 1,
+    "test_configuration_restored_after_run": true,
+    "original_configuration_sha256": "1CE7769FA123AAFE4AE5B628C66A514722408CD7B0E69A2560F62C4D1338B0C0"
+  },
+  "actor": {
+    "name": "SupplyBuyer",
+    "uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+    "game_mode": "SURVIVAL",
+    "op": true,
+    "position": {
+      "world": "starsupply-stage1-world",
+      "x": -21.5,
+      "y": 86.0,
+      "z": 68.5
+    },
+    "owned_region_check": true
+  },
+  "rejection_case": {
+    "at": "2026-11-21T20:25:10Z",
+    "held_item": "minecraft:iron_ingot",
+    "count": 4,
+    "command": "/supply tavern folia-strict-negative-rerun",
+    "response": "[StarSupply] 请手持森罗酒馆真实酒品登记集合点",
+    "registration_rejected": true
+  },
+  "acceptance_case": {
+    "at": "2026-11-21T20:25:12Z",
+    "held_item_id": "kaleidoscope_tavern:brandy",
+    "display_name": "白兰地",
+    "brew_level": 2,
+    "count": 1,
+    "command": "/supply tavern folia-strict-positive-rerun",
+    "response": "[StarSupply] 已登记酒馆集合点 folia-strict-positive-rerun / 森罗酒品已验证",
+    "registration_accepted_and_verified": true,
+    "cleanup_command": "/supply untavern folia-strict-positive-rerun",
+    "cleanup_response": "[StarSupply] 已移除酒馆集合点 folia-strict-positive-rerun",
+    "temporary_hub_removed": true
+  },
+  "inventory_comparison": {
+    "before_at": "2026-11-21T20:24:49Z",
+    "after_at": "2026-11-21T20:25:36Z",
+    "before_and_after_same_client_session": true,
+    "owned_region_checks_before_and_after": true,
+    "unchanged_items": [
+      {
+        "slot": 0,
+        "type": "PAPER",
+        "count": 1,
+        "serialized_sha256": "8B746E850331FB101006B5D4B072B1D1E4A4C87A2E35F2D7E1230366F37ADB55"
+      },
+      {
+        "slot": 1,
+        "type": "WRITTEN_BOOK",
+        "count": 1,
+        "serialized_sha256": "774FB542F8877A4955768CEB3C9D961323BD6E6D1134F3983A4496EA91F86D0C"
+      },
+      {
+        "slot": 2,
+        "type": "IRON_INGOT",
+        "count": 4,
+        "serialized_sha256": "56CCA8026A3EE0BC6DF60066B38CD7D78E11B18576B7B6CEF82E8965316E2D21"
+      }
+    ],
+    "all_serialized_items_unchanged": true
+  },
+  "evidence": {
+    "proof_log": {
+      "path": "plugins/FoliaSupplyProof/evidence.jsonl",
+      "bytes_at_normal_test_shutdown": 114224,
+      "sha256_prefix": "B928C5B78686E6300522B324C7D681640B181D50F36056DF92B533A3AFF59863"
+    },
+    "buyer_bot_log": {
+      "path": "folia-proof/bot-SupplyBuyer.jsonl",
+      "bytes_at_test_shutdown": 216174,
+      "sha256_prefix_at_test_shutdown": "38EBDC3D06685DCC15526376C5D8795DFB4CE640D0630D1959480EA644DB0DE6",
+      "later_appended_by_optional_plugin_test": true
+    },
+    "server_stdout": {
+      "path": "folia-proof/tavern-strict-server-stdout-20261122.log",
+      "bytes": 322566,
+      "sha256": "D993C302A597193F9946C30E9F27549AB6AE55814B400E05FDFA763044B4A863"
+    },
+    "server_stderr": {
+      "path": "folia-proof/tavern-strict-server-stderr-20261122.log",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  },
+  "acceptance": {
+    "strict_mode_rejects_non_tavern_item": true,
+    "strict_mode_accepts_authentic_beverage_at_minimum_level": true,
+    "beverage_and_inventory_not_consumed_or_modified": true,
+    "temporary_test_hub_removed": true,
+    "full_folia_stack_accepted": false,
+    "overall_goal_complete": false
+  }
+}

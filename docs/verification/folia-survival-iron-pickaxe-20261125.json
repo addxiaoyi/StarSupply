@@ -1,0 +1,205 @@
+{
+  "recorded_on": "2026-11-25",
+  "result": "saved_survival_iron_pickaxe_passed",
+  "full_goal_complete": false,
+  "purpose": "Complete the existing survival mining/smelting checkpoint with authoritative crafting and a durable saved pickaxe.",
+  "environment": {
+    "stage": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122",
+    "server": "Folia 1.21.11-14-529aabc",
+    "java": "21.0.13.1",
+    "profile": "vanilla; StarCore logistics profile and StarSupply only",
+    "heap": "384M",
+    "game_port": 25729,
+    "rcon_port": 25739,
+    "player": "SupplyCook",
+    "existing_operator_profile": true,
+    "administrator_item_grants_or_teleports_during_runs": false
+  },
+  "production_artifact": {
+    "sha256": "6C942A8EC834D27F42726F456F872756A12F16B14358925DC337048FD3CCD142",
+    "bytes": 14675699,
+    "folia_supported_descriptor": false
+  },
+  "runtime": {
+    "event": "survival_progression_run",
+    "server": "Folia 1.21.11-14-529aabc",
+    "serverHeap": "384M",
+    "memory": {
+      "heapBytes": 402653184,
+      "availableBytes": 999198720,
+      "requiredBytes": 939524096,
+      "source": "minimum of free physical memory and Windows commit headroom"
+    },
+    "plugins": [
+      {
+        "name": "StarCore-1.0.0.jar",
+        "sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B"
+      },
+      {
+        "name": "StarSupply-0.1.0.jar",
+        "sha256": "EF83A736F2262458227BAD53BDA278DED51282D155F42C559EF2B4A930984731"
+      }
+    ],
+    "savedPlayer": {
+      "gameMode": "survival",
+      "ironPickaxeCount": 1,
+      "position": [
+        -6.681976761309694,
+        64,
+        52.5
+      ],
+      "playerId": "904364cc-bf39-35a0-b688-6cc8a6d846c8",
+      "path": "starsupply-stage1-world/playerdata/904364cc-bf39-35a0-b688-6cc8a6d846c8.dat",
+      "sha256": "980DF08506CA9626E9DBF9041CEBC1F2F16BE5A19CC8E9B294A44014E925A3F4"
+    },
+    "startupTimeoutMs": 360000,
+    "runtimeHealth": {
+      "coreReady": true,
+      "supplyReady": true,
+      "serverReady": true,
+      "rconReady": true,
+      "failure": null
+    },
+    "failure": null,
+    "pass": true,
+    "player": "SupplyCook",
+    "clientExit": {
+      "code": 0,
+      "signal": null
+    },
+    "serverExit": {
+      "code": 0,
+      "signal": null
+    },
+    "normalStopObserved": true,
+    "gamePortClosed": true,
+    "rconPortClosed": true,
+    "serverLog": "folia-proof/survival-progression-2026-11-25T05-07-07-462Z-server.log",
+    "serverErrorLog": "folia-proof/survival-progression-2026-11-25T05-07-07-462Z-server-error.log",
+    "clientLog": "folia-proof/survival-progression-2026-11-25T05-07-07-462Z-client.log"
+  },
+  "descriptor_override_comparison": {
+    "entry_names_equal": true,
+    "changed_entries": [
+      "plugin.yml"
+    ],
+    "only_in_source": [],
+    "only_in_test": []
+  },
+  "core_companion": {
+    "production_sha256": "6BB059707AEDCFE3E7D65BAD768329E891BA7144C6DA6B1B9A1C30790E8A4B0A",
+    "runtime_sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B",
+    "entry_comparison": {
+      "entry_names_equal": true,
+      "changed_entries": [
+        "dev/starcore/starcore/module/army/ArmyService$ArmyConfig.class",
+        "dev/starcore/starcore/module/army/ArmyService.class",
+        "dev/starcore/starcore/module/army/LogisticsSupplyReceipt.class",
+        "dev/starcore/starcore/module/dungeon/DungeonFileDurability.class",
+        "dev/starcore/starcore/module/dungeon/DungeonWorldFiles.class",
+        "dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage$DatabaseSnapshot.class",
+        "dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage$RolledBackSqliteBusyException.class",
+        "dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.class",
+        "plugin.yml"
+      ],
+      "only_in_source": [],
+      "only_in_test": []
+    }
+  },
+  "historical_diagnosis": [
+    "03:46 UTC: StarCore exhausted its heap and disabled before StarSupply reported ExtensionPoint linkage failure. The class was present in the JAR.",
+    "04:50 UTC: the six-plugin retry exhausted host/native memory and never launched the gameplay client.",
+    "04:53 UTC: the two-plugin startup succeeded but Windows console encoding hid the readiness marker. Shutdown was normal.",
+    "04:57 UTC: Mineflayer predicted stone removal without sending player_loaded; the server reverted the blocks.",
+    "05:01 UTC: two server-confirmed stone breaks, placement of an existing furnace and smelting of two saved raw iron with two birch planks succeeded. The predicted pickaxe was absent from the save. The raw pass=true is superseded by that NBT inspection; the saved three iron ingots and five sticks became the next checkpoint."
+  ],
+  "completion": {
+    "starting_checkpoint": {
+      "iron_ingots": 3,
+      "sticks": 5
+    },
+    "recipe": {
+      "iron_ingots": 3,
+      "sticks": 2
+    },
+    "server_recipe_confirmed": true,
+    "server_inventory_confirmed": true,
+    "advancement_observed": true,
+    "saved_player": {
+      "gameMode": "survival",
+      "ironPickaxeCount": 1,
+      "position": [
+        -6.681976761309694,
+        64,
+        52.5
+      ],
+      "playerId": "904364cc-bf39-35a0-b688-6cc8a6d846c8",
+      "path": "starsupply-stage1-world/playerdata/904364cc-bf39-35a0-b688-6cc8a6d846c8.dat",
+      "sha256": "980DF08506CA9626E9DBF9041CEBC1F2F16BE5A19CC8E9B294A44014E925A3F4"
+    },
+    "no_fresh_iron_ore_mining_claimed": true
+  },
+  "cleanup": {
+    "all_original_plugin_hashes_restored": true,
+    "server_exit_code": 0,
+    "game_port_closed": true,
+    "rcon_port_closed": true,
+    "database_checks": {
+      "StarCore/starcore.db": {
+        "integrity_check": "ok",
+        "sha256": "5E7D4615C647D3795EEA669A2C04E43791B10645FAD8A730889FA2158793405B"
+      },
+      "StarSupply/supply.db": {
+        "integrity_check": "ok",
+        "sha256": "F5D32B690C8205E92DB4BAB244E3BA885DA77098225F51778A0597FB6F82177E"
+      },
+      "StarSupply/tavern.db": {
+        "integrity_check": "ok",
+        "sha256": "C72F91DC27CA6BFDC0446DC0884679A2A22290CAD0A42520F42BD8FC2C0666B6"
+      },
+      "StarSupply/insurance.db": {
+        "integrity_check": "ok",
+        "sha256": "84838BCAE4D9C6DCFAE135450EECCD48486D5DB1111B9B6FF5CEBD86C5B1E3E1"
+      }
+    }
+  },
+  "evidence": [
+    {
+      "path": "folia-proof/survival-progression-2026-11-25T05-07-07-462Z-result.json",
+      "sha256": "A3A8555A51BF99087EAA6A1FA210F89358BF484E9374CE6EB6B6B22C1D3EA643"
+    },
+    {
+      "path": "folia-proof/survival-progression-2026-11-25T05-07-07-462Z-server.log",
+      "sha256": "14217E4002CBD0C923745D140A796F5A505415831E0D6BDE044D8EEFD978E2D6"
+    },
+    {
+      "path": "folia-proof/survival-progression-2026-11-25T05-07-07-462Z-server-error.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "folia-proof/survival-progression-2026-11-25T05-07-07-462Z-client.log",
+      "sha256": "E1C6D35F0E0BBBED86B3808E714DDF1E53CEDB37B93F283CE143E8DB10740197"
+    },
+    {
+      "path": "folia-proof/current-build-efc5b7bf733a4f2889f389960d0b62fa/manifest.json",
+      "sha256": "59AFF5581211D71BD301638CADF5BBE0560E37672047222B046EBECF2EA53C4E"
+    },
+    {
+      "path": "folia-proof/current-build-efc5b7bf733a4f2889f389960d0b62fa/StarSupply-test.jar",
+      "sha256": "EF83A736F2262458227BAD53BDA278DED51282D155F42C559EF2B4A930984731"
+    }
+  ],
+  "limits": [
+    "This completes an existing survival checkpoint, not a fresh six-resource production chain.",
+    "CraftEngine, Cookery and Tavern were temporarily removed. The complete optional plugin combination and graphical resource-pack rendering remain unverified.",
+    "The production descriptor is unchanged and does not declare Folia support.",
+    "Entity-callback shutdown has automated race coverage; live world-unload and scheduler-retirement recovery still need independent acceptance.",
+    "The 05:01 client event labelled a pre-existing furnace as newly crafted. Its starting inventory and saved smelting checkpoint define the actual scope."
+  ],
+  "full_stack_preflight": {
+    "result": "rejected_before_startup",
+    "heap_mib": 1024,
+    "required_available_mib": 1536,
+    "observed_available_mib": 976
+  }
+}

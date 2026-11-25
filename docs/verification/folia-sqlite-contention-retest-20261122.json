@@ -1,0 +1,205 @@
+{
+  "recorded_on": "2026-11-22",
+  "purpose": "Isolated Folia observation of the SQLite treasury busy-retry fix and post-restart persistence",
+  "scope": "Acceptance evidence for the SQLite persistence patch only; full Folia release acceptance remains incomplete",
+  "source": {
+    "checkout": "C:/Users/Administrator/Documents/starsupply-deps/starcore-folia",
+    "storage_path": "src/main/java/dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.java",
+    "storage_sha256": "7C2038CFAE26F1286623A368DC45386FD9A827901FDAA98F09D65DDF055CF723",
+    "test_path": "src/test/java/dev/starcore/starcore/module/treasury/SqlTreasuryBusyRetryTest.java",
+    "test_sha256": "82A80F93E97E329922DE0B0C939947A9C5C81ADD650F0E98823BF10B441194B3",
+    "targeted_test_suite": {
+      "name": "SqlTreasuryBusyRetryTest",
+      "executed": 4,
+      "passed": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "runtime": {
+    "stage": "C:/tmp/starsupply-folia-sqlite-retry-runtime-20261122",
+    "server": "Folia 1.21.11-14-ver/1.21.11@529aabc",
+    "java": "OpenJDK 21.0.13.1+2-LTS",
+    "threaded_region_threads": 2,
+    "game_listener": "127.0.0.1:25729",
+    "rcon_listener": "127.0.0.1:25739",
+    "plugin_sha256": {
+      "StarCore-1.0.0.jar": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B",
+      "StarSupply-0.1.0.jar": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+      "FoliaSupplyProof-1.0.0.jar": "E79FD411BDF949D0FD5017B4308EF7AC45C8EB70D48CE8C32FD2AA46F347F8A4"
+    },
+    "runtime_bytecode_inspection": {
+      "class": "dev.starcore.starcore.module.treasury.SqlTreasuryStateStorage",
+      "max_additional_busy_retries": 2,
+      "retry_start_budget_ms": 100,
+      "rollback_guard_exception_present": true
+    }
+  },
+  "region_probe": {
+    "at": "2026-11-21T19:50:23.804076400Z",
+    "both_players_owned_by_current_region": true,
+    "overlap": true,
+    "max_active": 2,
+    "players": [
+      {
+        "name": "SupplyGamma",
+        "uuid": "588fc4ea-740a-3717-b2e9-c72c52ec1ad3",
+        "thread": "Folia Region Scheduler Thread #0"
+      },
+      {
+        "name": "SupplyBuyer",
+        "uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+        "thread": "Folia Region Scheduler Thread #1"
+      }
+    ]
+  },
+  "paired_gameplay_observation": {
+    "army_command": {
+      "at": "2026-11-21T19:50:46.655Z",
+      "player": "SupplyBuyer",
+      "thread": "Folia Region Scheduler Thread #0",
+      "command": "/army create infantry 10",
+      "result": "Army created; treasury debit was 1000.00"
+    },
+    "claim_command": {
+      "at": "2026-11-21T19:50:46.734Z",
+      "player": "SupplyGamma",
+      "thread": "Folia Region Scheduler Thread #1",
+      "command": "/sc nation claim",
+      "result": "Claim succeeded at chunk 400:401 for 171.53"
+    },
+    "submission_spacing_ms": 79,
+    "business_transaction_overlap_proven": false,
+    "interpretation": "The commands used distinct Folia region threads and both succeeded. Their submission spacing and response order do not prove that the two treasury transactions overlapped."
+  },
+  "live_contention_result": {
+    "sqlite_busy_seen_in_logs": false,
+    "sqlite_locked_seen_in_logs": false,
+    "treasury_persistence_failure_seen": false,
+    "retry_loop_entry_observed": false,
+    "reason": "Successful writeSnapshot retries have no runtime log marker, and this workload produced no surfaced SQLite lock failure."
+  },
+  "authority_state": {
+    "before_final_pair_at": "2026-11-21T19:50:02.704657400Z",
+    "before_final_pair": {
+      "Alpha": {
+        "treasury": "1504.40",
+        "army_count": 2,
+        "claim_count": 8
+      },
+      "Gamma": {
+        "treasury": "61504.00",
+        "army_count": 3,
+        "claim_count": 7
+      }
+    },
+    "after_final_pair_before_restart_at": "2026-11-21T19:52:59.405323200Z",
+    "after_final_pair_before_restart": {
+      "Alpha": {
+        "treasury": "504.40",
+        "army_count": 3,
+        "claim_count": 8
+      },
+      "Gamma": {
+        "treasury": "61504.00",
+        "army_count": 3,
+        "claim_count": 8
+      }
+    },
+    "after_restart_at": "2026-11-21T19:56:28.606696700Z",
+    "after_restart": {
+      "Alpha": {
+        "treasury": "504.40",
+        "army_count": 3,
+        "claim_count": 8
+      },
+      "Gamma": {
+        "treasury": "61504.00",
+        "army_count": 3,
+        "claim_count": 8
+      }
+    },
+    "online_player_balances_after_restart_at": "2026-11-21T19:57:29.096115900Z",
+    "player_balances_after_restart": {
+      "SupplyBuyer": {
+        "uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+        "balance": "5562.77"
+      },
+      "SupplyGamma": {
+        "uuid": "588fc4ea-740a-3717-b2e9-c72c52ec1ad3",
+        "balance": "3379.19"
+      }
+    }
+  },
+  "restart_verification": {
+    "stop": "RCON stop; Folia saved all worlds and player data",
+    "restart_java_command": "java -Xms1G -Xmx2G -XX:ActiveProcessorCount=4 -XX:+UseG1GC -jar folia.jar nogui",
+    "same_plugin_hashes_after_restart": true,
+    "same_player_uuids_after_reconnect": true,
+    "gameplay_actions_replayed_on_reconnect": false,
+    "stopped_snapshot": {
+      "path": "folia-proof/snapshot-sqlite-contention-stopped-before-restart.json",
+      "sha256": "AFF47E1E2DC2E4AC671F4F5DEE8F3342B5640AA9AF5D40EC2C0F443A43FF71C0"
+    },
+    "after_restart_snapshot": {
+      "path": "folia-proof/snapshot-sqlite-contention-after-restart.json",
+      "sha256": "8EA8C1D81A64EC051BD944633AC5162143A66D23E801B37BFD2CE9D41BEC47A3"
+    },
+    "snapshot_comparison": {
+      "saved_player_files": 6,
+      "player_file_hashes_unchanged": true,
+      "supply_schema_before_and_after": 11,
+      "purchase_rows_before_and_after": 61,
+      "shipment_rows_before_and_after": 56,
+      "stable_table_counts": {
+        "item_lot": 59,
+        "item_transfer": 59,
+        "road": 5,
+        "settlement": 112,
+        "settlement_tax": 4,
+        "warehouse": 7
+      },
+      "consumption_rows_before": 10836,
+      "consumption_rows_after": 10848,
+      "new_valid_consumption_slots_for_existing_army": [
+        59843031,
+        59843032
+      ],
+      "duplicate_army_slot_resource_keys": 0,
+      "plugin_jar_hashes_unchanged": true
+    }
+  },
+  "fixture_note": "Two post-restart balance reads initially failed because the players were offline. The same players reconnected with the same UUIDs; subsequent public balance reads succeeded with the values recorded above. No gameplay state changed during the failed reads.",
+  "evidence_prefixes": {
+    "plugins/FoliaSupplyProof/evidence.jsonl": {
+      "bytes": 78873,
+      "sha256": "ECB6CF323CF694C8BE99CF9ED71B3FE473B089B898DDC7EBCA6D690DB3B39819"
+    },
+    "folia-proof/bot-SupplyBuyer.jsonl": {
+      "bytes": 195833,
+      "sha256": "E431D4C4091D52C117A6903857541B739971E44CF4FCEE12DC52A378166AF962"
+    },
+    "folia-proof/bot-SupplyGamma.jsonl": {
+      "bytes": 6210,
+      "sha256": "70766A694953169ACF578B8CDFBD98F2B029F863C3C13E6E0DF5194AF6F462C4"
+    }
+  },
+  "acceptance": {
+    "unit_retry_cases_passed": true,
+    "post_fix_cross_region_observation_complete": true,
+    "post_restart_authority_and_snapshot_checks_passed": true,
+    "live_sqlite_busy_retry_branch_proven": false,
+    "full_folia_stack_accepted": false,
+    "overall_goal_complete": false
+  },
+  "subsequentRuntimeRetryEvidence": {
+    "record": "folia-sqlite-contention-live-retry-20261122.json",
+    "liveSqliteBusyRetryBranchProven": true,
+    "testDatabaseWasCloned": true,
+    "originalStarCoreDatabaseSha256Unchanged": "A558A0592BF2DE9CF0BD01D3AC98F00FB84F48FAF83EF02A0305769CAC11883F",
+    "originalStarCoreJarRestored": true,
+    "originalArmySnapshotsRestored": true,
+    "runtimeStageStopped": true
+  }
+}

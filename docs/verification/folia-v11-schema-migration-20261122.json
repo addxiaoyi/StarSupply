@@ -1,0 +1,103 @@
+{
+  "recorded_on": "2026-11-22",
+  "purpose": "Verify the StarSupply v10-to-v11 SQLite migration and normal restart recovery on an isolated Folia server.",
+  "result": "passed_migration_startup_and_restart",
+  "build_artifact": {
+    "path": "target/starsupply-0.1.0.jar",
+    "version": "v11",
+    "bytes": 14667707,
+    "sha256": "43216A42FCC8345D12BEC7FCF548C2A87EFF2F2292BBC3487F8349269EBCF110",
+    "automated_verify": {
+      "tests": 94,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "source_runtime": {
+    "path": "C:/tmp/starsupply-v10-optional-stack-20261121",
+    "star_supply_test_jar_sha256": "E6ECD5084DF799125C8008F35B2F969FC37B071A83A259F1BD1D0E0F55876538",
+    "database_user_version": 10,
+    "rows_before": {
+      "purchase": 61,
+      "shipment": 56,
+      "settlement": 112,
+      "consumption": 10470
+    }
+  },
+  "runtime": {
+    "path": "C:/tmp/starsupply-v11-folia-acceptance-20261122",
+    "server": "Folia 1.21.11-14-ver/1.21.11@529aabc",
+    "java": "21.0.13.1+2-LTS",
+    "loopback_ports": [
+      25629,
+      25639
+    ],
+    "star_supply_test_jar_sha256": "0EC1E4E4396649350F368EE822BCE441EE54C8B99C0DE8C7C4EA57A860B38B76",
+    "starcore_jar_sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B",
+    "folia_jar_sha256": "F52C408490A0225611E67907A3CA19F7E6DA2C6BC899E715D5F46844E7103C39",
+    "isolated_descriptor_change": "Added folia-supported: true to the StarSupply test copy only.",
+    "non_descriptor_jar_entries_verified_identical": 362,
+    "plugins_initialized": [
+      "CraftEngine 26.9.1",
+      "FoliaSupplyProof 1.0.0 test fixture",
+      "KaleidoscopeCookeryPlugin 1.3.0",
+      "KaleidoscopeTavernPlugin 0.1.0-dev",
+      "StarCore 1.0.0",
+      "StarSupply 0.1.0"
+    ],
+    "starts": [
+      {
+        "at": "2026-11-22T02:13:22+08:00",
+        "ready_at": "2026-11-22T02:14:08+08:00",
+        "ready": true
+      },
+      {
+        "at": "2026-11-22T02:19:43+08:00",
+        "ready_at": "2026-11-22T02:20:25+08:00",
+        "ready": true
+      }
+    ],
+    "normal_shutdowns": [
+      "2026-11-22T02:17:55+08:00",
+      "2026-11-22T02:21:55+08:00"
+    ],
+    "process_running_after_final_shutdown": false,
+    "loopback_ports_listening_after_final_shutdown": false,
+    "logs": [
+      "logs/latest.log",
+      "logs/v11-restart-stdout.log",
+      "logs/v11-restart-stderr.log"
+    ]
+  },
+  "migration_verification": {
+    "source_user_version": 10,
+    "target_user_version_after_first_start": 11,
+    "target_user_version_after_restart": 11,
+    "legacy_consumption_rows_before": 10470,
+    "legacy_rows_preserved_with_interval_ms_zero": 10470,
+    "new_consumption_rows_with_interval_ms_positive_after_first_start": 36,
+    "new_consumption_rows_with_interval_ms_positive_after_restart": 60,
+    "rows_after_restart": {
+      "purchase": 61,
+      "shipment": 56,
+      "settlement": 112,
+      "native_supply_credit": 0
+    },
+    "integrity_check_after_shutdown": {
+      "supply.db": "ok",
+      "insurance.db": "ok",
+      "tavern.db": "ok"
+    }
+  },
+  "startup_warnings": [
+    "CraftEngine reported 785 unknown Deco interaction behaviors and 725 unknown doll interaction behaviors in bundled content.",
+    "StarCore did not find ProtocolLib and selected its fallback nation menu provider."
+  ],
+  "not_covered": [
+    "No player connected during this migration and lifecycle run.",
+    "This does not verify v11 player transactions, six-resource survival production, receipt replay, or any remaining business failure branch.",
+    "The test descriptor change does not establish that the production StarSupply JAR declares Folia support.",
+    "The run does not certify all StarCore modules or the complete optional plugin combination."
+  ]
+}

@@ -156,6 +156,7 @@ public final class TavernStore implements AutoCloseable {
     }
 
     private PreparedStatement statement(String sql, Object... args) throws SQLException {
+        SqlTransactions.requireUsable(connection);
         PreparedStatement statement = connection.prepareStatement(sql);
         try {
             for (int i = 0; i < args.length; i++) {
@@ -184,17 +185,7 @@ public final class TavernStore implements AutoCloseable {
     }
 
     private <T> T tx(Transaction<T> work) throws SQLException {
-        connection.setAutoCommit(false);
-        try {
-            T result = work.run();
-            connection.commit();
-            return result;
-        } catch (SQLException | RuntimeException failure) {
-            connection.rollback();
-            throw failure;
-        } finally {
-            connection.setAutoCommit(true);
-        }
+        return SqlTransactions.run(connection, work::run);
     }
 
     @Override public synchronized void close() throws SQLException {

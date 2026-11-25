@@ -10,7 +10,7 @@ import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Objects;
 
-/** Temporary campaign pressure only changes current supply demand; it never mutates army morale. */
+/** Campaign pressure changes current demand; resulting shortages use reversible morale contributions. */
 public final class CampaignRules {
     private CampaignRules() {}
 

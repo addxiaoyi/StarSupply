@@ -43,6 +43,8 @@ class SupplyLifecycleTest {
     private static final UUID NATION = UUID.fromString("bf30669d-f3df-4d12-9ea2-f9bf459a0827");
     private static final UUID OFFICER = UUID.fromString("076e0abd-038c-48dc-b352-aeef4056da80");
     private static final UUID ARMY = UUID.fromString("30ecbbfe-3a3c-4bb6-aa90-7a90f3b5684e");
+    private static final UUID FORWARD_ARMY = UUID.fromString("7e55961d-4191-4cb6-8181-736b7a66c8b0");
+    private static final UUID FOREIGN_ARMY = UUID.fromString("f1a0cf72-9ecb-4cc3-9580-620b0cff9900");
     private static final UUID SELLER = UUID.fromString("069a2914-938f-40aa-94bb-024463bac5f5");
     private static final UUID COURIER = UUID.fromString("8c01833d-e0af-4bcf-ba0e-acef508be253");
     private static final UUID ENEMY = UUID.fromString("753c5f54-6571-48fa-b493-ae5940117af7");
@@ -75,10 +77,17 @@ class SupplyLifecycleTest {
             assertEquals(TransferState.REVIEW, store.pendingInventory(SELLER).orElseThrow().state());
         }
 
-        // Recreate the original release schema to exercise the full on-disk v1 -> v8 upgrade.
+        // Recreate the original release schema to exercise the full on-disk v1 -> v11 upgrade.
         try (var connection = java.sql.DriverManager.getConnection("jdbc:sqlite:" + database)) {
             try (var statement = connection.createStatement()) {
                 statement.execute("DROP TABLE campaign_siege");
+                statement.execute("DROP TABLE native_supply_credit");
+                statement.execute("DROP TABLE consumption");
+                statement.execute("CREATE TABLE consumption (army TEXT NOT NULL, slot INTEGER NOT NULL, "
+                        + "resource TEXT NOT NULL, demand INTEGER NOT NULL, units INTEGER NOT NULL, "
+                        + "PRIMARY KEY(army,slot,resource))");
+                statement.execute("CREATE INDEX consumption_expiry ON consumption(slot)");
+                statement.execute("INSERT INTO consumption VALUES('" + ARMY + "',42,'FOOD',3,2)");
                 statement.execute("ALTER TABLE shipment DROP COLUMN failure_reason");
                 statement.execute("ALTER TABLE shipment DROP COLUMN failed_at");
                 statement.execute("DROP TABLE IF EXISTS settlement_tax");
@@ -100,7 +109,13 @@ class SupplyLifecycleTest {
             }
         }
         try (SupplyStore migrated = new SupplyStore(database)) {
-            assertEquals(8, migratedSchemaVersion(database));
+            assertEquals(11, migratedSchemaVersion(database));
+            assertEquals(new SupplyStore.Consumption(3, 2), migrated.consumption(ARMY, 42, INTERVAL).get(FOOD),
+                    "legacy cycle rows remain available when their original interval is unknown");
+            var front = migrated.warehouse("front").orElseThrow();
+            assertEquals(new SupplyStore.Consumption(3, 2),
+                    migrated.consume(front, 42, Map.of(FOOD, 1), INTERVAL).get(FOOD),
+                    "an unknown-period legacy row must block another physical debit in its slot");
             assertEquals(transfer, migrated.pendingInventory(SELLER).orElseThrow().id());
             assertThrows(IllegalArgumentException.class, () -> prepare(migrated,
                     UUID.randomUUID(), purchase, SELLER));
@@ -116,6 +131,227 @@ class SupplyLifecycleTest {
              var statement = connection.createStatement();
              var result = statement.executeQuery("PRAGMA user_version")) {
             return result.next() ? result.getInt(1) : -1;
+        }
+    }
+
+    @Test
+    void nativeSupplySurvivesLostResponseRestartPruningAndRebindingWithoutRepeatingFood() throws Exception {
+        Path database = directory.resolve("native-supply-recovery.sqlite");
+        long tick;
+        UUID request;
+        long remaining;
+        BigDecimal treasury;
+        try (SupplyStore store = new SupplyStore(database)) {
+            Logistics logistics = configured(store);
+            Purchase order = bought(store, logistics);
+            Shipment shipment = logistics.createShipment(OFFICER, order.id(), "front", REWARD, NOW);
+            Shipment moving = logistics.accept(COURIER, DEPOT, shipment.id(), NOW);
+            logistics.deliver(COURIER, FRONT, moving.id(), moving.readyAt());
+            settle(store, moving.id(), moving.readyAt());
+            tick = (Math.floorDiv(moving.readyAt(), INTERVAL) + 1) * INTERVAL;
+            core.loseNativeResponse = true;
+            treasury = core.treasury;
+            logistics.computeArmySupply(tick, true);
+            var credit = store.nativeSupplyCredits(ARMY).getFirst();
+            request = credit.id();
+            assertEquals("PENDING", credit.state());
+            assertEquals(10, credit.points());
+            assertEquals(10, core.nativePoints);
+            assertEquals(1, core.nativeCalls);
+            remaining = store.stock("front").available().get(FOOD);
+            logistics.computeArmySupply(tick + 1, true);
+            assertEquals(remaining, store.stock("front").available().get(FOOD));
+            assertEquals(1, core.nativeCalls, "retry backoff must be durable");
+            logistics.rebindFront(OFFICER, "front", FORWARD_ARMY);
+            store.pruneConsumption(Long.MAX_VALUE);
+        }
+        core.atWar = false;
+        try (SupplyStore store = new SupplyStore(database)) {
+            Logistics logistics = logistics(store);
+            logistics.computeArmySupply(tick + 5_001, false);
+            assertEquals(1, core.nativeCalls, "status reads must not submit pending obligations");
+            logistics.computeArmySupply(tick + 5_001, true);
+            var credit = store.nativeSupplyCredits(ARMY).getFirst();
+            assertEquals(request, credit.id());
+            assertEquals("APPLIED", credit.state());
+            assertEquals(2, core.nativeCalls);
+            assertEquals(10, core.nativePoints, "lost response must not double replenishment");
+            assertEquals(remaining, store.stock("front").available().get(FOOD));
+            assertEquals(treasury, core.treasury, "physical supply never charges StarCore again");
+            logistics.computeArmySupply(tick + INTERVAL * 50, true);
+            assertEquals(2, core.nativeCalls, "confirmed requests must stay confirmed");
+        }
+    }
+
+    @Test
+    void nativeCreditUsesOnlyActuallyConsumedFoodAndEmptyOrLegacyCyclesNeverCreateCredit() throws Exception {
+        try (SupplyStore store = new SupplyStore(directory.resolve("native-supply-accounting.sqlite"))) {
+            Logistics logistics = configured(store);
+            Purchase order = bought(store, logistics);
+            Shipment shipment = logistics.createShipment(OFFICER, order.id(), "front", REWARD, NOW);
+            Shipment moving = logistics.accept(COURIER, DEPOT, shipment.id(), NOW);
+            logistics.deliver(COURIER, FRONT, moving.id(), moving.readyAt());
+            settle(store, moving.id(), moving.readyAt());
+            var front = store.warehouse("front").orElseThrow();
+            Map<dev.starsupply.api.ResourceType, Integer> invalid = new java.util.EnumMap<>(dev.starsupply.api.ResourceType.class);
+            invalid.put(FOOD, 100);
+            invalid.put(dev.starsupply.api.ResourceType.MEDICAL, 0);
+            assertThrows(IllegalArgumentException.class, () -> store.consume(front, 1, invalid));
+            assertEquals(16L, store.stock("front").available().get(FOOD));
+            assertTrue(store.consumption(ARMY, 1).isEmpty());
+            assertTrue(store.nativeSupplyCredits(ARMY).isEmpty());
+            store.consume(front, 1, Map.of(FOOD, 100));
+            assertEquals(2, store.nativeSupplyCredits(ARMY).getFirst().points(), "16/100 FOOD gives ceil(1.6) points");
+            store.consume(front, 1, Map.of(FOOD, 1));
+            assertEquals(1, store.nativeSupplyCredits(ARMY).size(), "same cycle cannot rewrite its points");
+            store.consume(front, 2, Map.of(FOOD, 1));
+            store.consume(front, 3, Map.of(dev.starsupply.api.ResourceType.MEDICAL, 1));
+            assertEquals(1, store.nativeSupplyCredits(ARMY).size(), "zero FOOD and nonfood do not replenish");
+        }
+    }
+
+    @Test
+    void migratesV10ConsumptionRowsWithoutChangingTheirIdempotency() throws Exception {
+        Path database = directory.resolve("migration-v10.sqlite");
+        try (SupplyStore ignored = new SupplyStore(database)) {
+            // A fresh store supplies the complete schema before this fixture restores v10 consumption.
+        }
+        try (var connection = java.sql.DriverManager.getConnection("jdbc:sqlite:" + database);
+             var statement = connection.createStatement()) {
+            statement.execute("DROP INDEX consumption_expiry");
+            statement.execute("DROP TABLE consumption");
+            statement.execute("CREATE TABLE consumption (army TEXT NOT NULL, slot INTEGER NOT NULL, "
+                    + "resource TEXT NOT NULL, demand INTEGER NOT NULL, units INTEGER NOT NULL, "
+                    + "PRIMARY KEY(army,slot,resource))");
+            statement.execute("CREATE INDEX consumption_expiry ON consumption(slot)");
+            statement.execute("INSERT INTO consumption VALUES('" + ARMY + "',20778,'FOOD',1,1)");
+            statement.execute("PRAGMA user_version=10");
+        }
+
+        try (SupplyStore migrated = new SupplyStore(database)) {
+            assertEquals(11, migratedSchemaVersion(database));
+            assertEquals(new SupplyStore.Consumption(1, 1),
+                    migrated.consumption(ARMY, 20_778, 86_400_000L).get(FOOD));
+            assertEquals(1, migrated.consumption(ARMY, 20_778, 86_399_999L).get(FOOD).units(),
+                    "v10 rows have unknown cycle length and guard any matching legacy time bucket");
+        }
+    }
+
+    @Test
+    void consumptionSeparatesDifferentCycleLengthsThatShareTheSameSlot() throws Exception {
+        try (SupplyStore store = new SupplyStore(directory.resolve("consumption-period-collision.sqlite"))) {
+            Logistics logistics = configured(store);
+            Purchase purchase = bought(store, logistics);
+            Shipment shipment = logistics.createShipment(OFFICER, purchase.id(), "front", REWARD, NOW);
+            Shipment moving = logistics.accept(COURIER, DEPOT, shipment.id(), NOW);
+            logistics.deliver(COURIER, FRONT, moving.id(), moving.readyAt());
+            settle(store, moving.id(), moving.readyAt());
+            var front = store.warehouse("front").orElseThrow();
+            long timestamp = 1_795_252_394_135L;
+            long slot = Math.floorDiv(timestamp, 86_400_000L);
+            assertEquals(slot, Math.floorDiv(timestamp, 86_399_999L));
+
+            store.consume(front, slot, Map.of(FOOD, 1), 86_400_000L);
+            store.consume(front, slot, Map.of(FOOD, 1), 86_399_999L);
+            assertEquals(1, store.consumption(ARMY, slot, 86_400_000L).get(FOOD).units());
+            assertEquals(1, store.consumption(ARMY, slot, 86_399_999L).get(FOOD).units());
+            assertEquals(12, store.stock("front").available().get(FOOD));
+
+            store.consume(front, slot, Map.of(FOOD, 1), 86_400_000L);
+            assertEquals(12, store.stock("front").available().get(FOOD),
+                    "retrying one cycle must not consume another physical item");
+
+            store.pruneConsumption(1_795_219_185_000L);
+            assertTrue(store.consumption(ARMY, slot, 86_400_000L).containsKey(FOOD));
+            assertTrue(store.consumption(ARMY, slot, 86_399_999L).isEmpty(),
+                    "pruning must compare cycle timestamps, not slots with different units");
+            assertEquals(12, store.stock("front").available().get(FOOD),
+                    "retrying one cycle must not consume another physical item");
+        }
+    }
+
+    @Test
+    void nativeCreditKeepsCycleLengthInItsStableIdentityAfterConsumptionPruning() throws Exception {
+        Path database = directory.resolve("native-supply-period.sqlite");
+        try (SupplyStore store = new SupplyStore(database)) {
+            Logistics logistics = configured(store);
+            Purchase first = bought(store, logistics);
+            Shipment firstShipment = logistics.createShipment(OFFICER, first.id(), "front", REWARD, NOW);
+            Shipment firstMoving = logistics.accept(COURIER, DEPOT, firstShipment.id(), NOW);
+            logistics.deliver(COURIER, FRONT, firstMoving.id(), firstMoving.readyAt());
+            settle(store, firstMoving.id(), firstMoving.readyAt());
+            var front = store.warehouse("front").orElseThrow();
+            store.consume(front, 7, Map.of(FOOD, 1), 300_000);
+            UUID firstRequest = store.nativeSupplyCredits(ARMY).getFirst().id();
+
+            store.pruneConsumption(Long.MAX_VALUE);
+            assertTrue(store.consumption(ARMY, 7).isEmpty());
+            var secondConsumption = store.consume(front, 7, Map.of(FOOD, 1), 600_000);
+            assertEquals(1, secondConsumption.get(FOOD).units());
+
+            var credits = store.nativeSupplyCredits(ARMY);
+            assertEquals(2, credits.size());
+            var requestsByPeriod = credits.stream().collect(java.util.stream.Collectors.toMap(
+                    credit -> credit.intervalMillis(), credit -> credit.id()));
+            assertEquals(firstRequest, requestsByPeriod.get(300_000L));
+            assertNotEquals(firstRequest, requestsByPeriod.get(600_000L));
+        }
+    }
+
+    @Test
+    void invalidNativeRecipientIsHeldForReviewAndDoesNotBlockPhysicalStatus() throws Exception {
+        try (SupplyStore store = new SupplyStore(directory.resolve("native-supply-review.sqlite"))) {
+            Logistics logistics = configured(store);
+            Purchase order = bought(store, logistics);
+            Shipment shipment = logistics.createShipment(OFFICER, order.id(), "front", REWARD, NOW);
+            Shipment moving = logistics.accept(COURIER, DEPOT, shipment.id(), NOW);
+            logistics.deliver(COURIER, FRONT, moving.id(), moving.readyAt());
+            settle(store, moving.id(), moving.readyAt());
+            long tick = (Math.floorDiv(moving.readyAt(), INTERVAL) + 1) * INTERVAL;
+            core.rejectNativeRecipient = true;
+            assertTrue(logistics.computeArmySupply(tick, true).containsKey(ARMY));
+            var credit = store.nativeSupplyCredits(ARMY).getFirst();
+            assertEquals("REVIEW", credit.state());
+            logistics.computeArmySupply(tick + 10_000, true);
+            assertEquals(1, core.nativeCalls);
+            assertEquals(0, core.nativePoints);
+            assertFalse(logistics.reconcileNativeSupply(credit.id(), tick + 20_000));
+            assertEquals("PENDING", store.nativeSupplyCredit(credit.id()).orElseThrow().state());
+            core.rejectNativeRecipient = false;
+            logistics.computeArmySupply(tick + 20_000, true);
+            assertEquals("APPLIED", store.nativeSupplyCredits(ARMY).getFirst().state());
+            assertEquals(2, core.nativeCalls);
+            assertEquals(10, core.nativePoints);
+        }
+    }
+
+    @Test
+    void nativeSupplyReconciliationRequiresMatchingReceiptAndNeverReappliesIt() throws Exception {
+        try (SupplyStore store = new SupplyStore(directory.resolve("native-supply-reconcile.sqlite"))) {
+            Logistics logistics = configured(store);
+            Purchase order = bought(store, logistics);
+            Shipment shipment = logistics.createShipment(OFFICER, order.id(), "front", REWARD, NOW);
+            Shipment moving = logistics.accept(COURIER, DEPOT, shipment.id(), NOW);
+            logistics.deliver(COURIER, FRONT, moving.id(), moving.readyAt());
+            settle(store, moving.id(), moving.readyAt());
+            long tick = (Math.floorDiv(moving.readyAt(), INTERVAL) + 1) * INTERVAL;
+            core.loseNativeResponse = true;
+            logistics.computeArmySupply(tick, true);
+            var credit = store.nativeSupplyCredits(ARMY).getFirst();
+            assertEquals("PENDING", credit.state());
+            assertEquals(10, core.nativePoints);
+            store.deferNativeSupply(credit, tick + 5_000, true, "simulated lost confirmation");
+            core.nativeSupplyReceiptOverride = new CoreGateway.NativeSupplyReceipt(credit.id(), FORWARD_ARMY,
+                    NATION, credit.points(), credit.points());
+            assertThrows(IllegalArgumentException.class,
+                    () -> logistics.reconcileNativeSupply(credit.id(), tick + 10_000));
+            assertEquals("REVIEW", store.nativeSupplyCredit(credit.id()).orElseThrow().state());
+
+            core.nativeSupplyReceiptOverride = null;
+            assertTrue(logistics.reconcileNativeSupply(credit.id(), tick + 11_000));
+            assertEquals("APPLIED", store.nativeSupplyCredit(credit.id()).orElseThrow().state());
+            assertEquals(1, core.nativeCalls, "receipt reconciliation must not replay native supply");
+            assertEquals(10, core.nativePoints);
         }
     }
 
@@ -259,6 +495,53 @@ class SupplyLifecycleTest {
     }
 
     @Test
+    void rebindExistingFrontPreservesDeliveredLotsAndRejectsForeignOrDuplicateArmyBindings() throws Exception {
+        try (SupplyStore store = new SupplyStore(directory.resolve("front-rebind.sqlite"))) {
+            Logistics logistics = configured(store);
+            Purchase openedOrder = purchase(logistics);
+            UUID purchaseTransfer = UUID.randomUUID();
+            prepare(store, purchaseTransfer, openedOrder.id(), SELLER);
+            store.confirmTaken(purchaseTransfer, NOW);
+            settle(store, purchaseTransfer, NOW);
+            Purchase order = store.purchase(openedOrder.id()).orElseThrow();
+            Shipment opened = logistics.createShipment(OFFICER, order.id(), "front", REWARD, NOW);
+            Shipment accepted = logistics.accept(COURIER, DEPOT, opened.id(), NOW);
+            logistics.deliver(COURIER, FRONT, opened.id(), accepted.readyAt());
+            settle(store, opened.id(), accepted.readyAt());
+            assertEquals(TransportState.DELIVERED, logistics.getShipment(opened.id()).state());
+            assertEquals(16L, store.stock("front").available().get(FOOD));
+
+            assertThrows(IllegalArgumentException.class,
+                    () -> logistics.rebindFront(OFFICER, "depot", FORWARD_ARMY));
+            assertThrows(IllegalArgumentException.class,
+                    () -> logistics.rebindFront(OFFICER, "front", FOREIGN_ARMY));
+            assertThrows(IllegalArgumentException.class,
+                    () -> logistics.rebindFront(ENEMY_PLAYER, "front", FORWARD_ARMY));
+            assertThrows(IllegalArgumentException.class,
+                    () -> logistics.rebindFront(OFFICER, "front", UUID.randomUUID()));
+            assertThrows(IllegalArgumentException.class,
+                    () -> logistics.rebindFront(OFFICER, "front", null));
+            assertEquals(ARMY, store.warehouse("front").orElseThrow().armyId());
+
+            var rebound = logistics.rebindFront(OFFICER, "front", FORWARD_ARMY);
+            assertEquals(FORWARD_ARMY, rebound.armyId());
+            assertEquals(FRONT, rebound.position());
+            assertEquals(16L, store.stock("front").available().get(FOOD));
+            assertEquals(TransportState.DELIVERED, logistics.getShipment(opened.id()).state());
+            var recoveredStatus = logistics.computeArmySupply(accepted.readyAt() + INTERVAL, false)
+                    .get(FORWARD_ARMY);
+            assertEquals(0.94, recoveredStatus.combatMultiplier(), 0.000001);
+            assertEquals(-5.5, recoveredStatus.moraleDelta(), 0.000001);
+
+            logistics.createWarehouse(OFFICER, "second-front", FRONT, ARMY);
+            assertThrows(IllegalArgumentException.class,
+                    () -> logistics.rebindFront(OFFICER, "front", ARMY));
+            assertEquals(FORWARD_ARMY, store.warehouse("front").orElseThrow().armyId());
+            assertEquals(16L, store.stock("front").available().get(FOOD));
+        }
+    }
+
+    @Test
     void restartsAtInventoryAndPaymentBoundariesThenDeliversAndConsumesExactlyOnce() throws Exception {
         Path database = directory.resolve("transactions.sqlite");
         UUID transferId = UUID.randomUUID();
@@ -268,6 +551,7 @@ class SupplyLifecycleTest {
             Purchase order = purchase(logistics);
             purchaseId = order.id();
             assertEquals(0.85, logistics.computeArmySupply(NOW, false).get(ARMY).combatMultiplier());
+            assertEquals(-10, logistics.computeArmySupply(NOW, false).get(ARMY).moraleDelta());
             prepare(store, transferId, order.id(), SELLER);
             assertEquals(RESERVED, store.purchase(order.id()).orElseThrow().state());
             assertTrue(store.pendingSettlements(NOW).isEmpty());
@@ -340,6 +624,7 @@ class SupplyLifecycleTest {
             assertEquals(1, first.demand().get(FOOD));
             assertEquals(14L, first.available().get(FOOD));
             assertEquals(0.94, first.combatMultiplier(), 0.000001);
+            assertEquals(-5.5, first.moraleDelta(), 0.000001);
             assertEquals(first, logistics.computeArmySupply(readyAt + 1, true).get(ARMY));
         }
 
@@ -351,6 +636,7 @@ class SupplyLifecycleTest {
             var peace = logistics.computeArmySupply(readyAt + INTERVAL * 2, true).get(ARMY);
             assertEquals(12L, peace.available().get(FOOD));
             assertEquals(1.0, peace.combatMultiplier());
+            assertEquals(0, peace.moraleDelta());
         }
     }
 
@@ -489,6 +775,35 @@ class SupplyLifecycleTest {
                     List.of(new Lot("kaleidoscopecookery:mantou", "BASE", 1.0, 8, 16, PAYLOAD))));
             assertThrows(IllegalArgumentException.class, () -> logistics.validateSaleUnits(authorization,
                     List.of(new Lot("kaleidoscopecookery:mantou", "BASE", 1.0, 8, 200, PAYLOAD))));
+        }
+    }
+
+    @Test
+    void crossNationSalesRejectMissingOrInsufficientAgreementTermsWithoutReservingInventory() throws Exception {
+        try (SupplyStore store = new SupplyStore(directory.resolve("agreement-rejections.sqlite"))) {
+            Logistics logistics = configured(store);
+            Purchase order = purchase(logistics);
+            core.hostility = false;
+            core.tradePermitAvailable = false;
+
+            assertThrows(IllegalArgumentException.class,
+                    () -> logistics.openSale(ENEMY_PLAYER, DEPOT, order.id()));
+
+            core.tradePermitAvailable = true;
+            core.tradeMaximumUnits = 8;
+            var insufficient = logistics.openSale(ENEMY_PLAYER, DEPOT, order.id());
+            List<Lot> goods = List.of(new Lot("minecraft:bread", "BASE", 1.0, 8, 16, PAYLOAD));
+            assertThrows(IllegalArgumentException.class, () -> logistics.validateSaleUnits(insufficient, goods));
+
+            core.tradeMaximumUnits = 100;
+            core.tradeUnitPrice = new BigDecimal("3.00");
+            var mispriced = logistics.openSale(ENEMY_PLAYER, DEPOT, order.id());
+            assertThrows(IllegalArgumentException.class, () -> logistics.validateSaleUnits(mispriced, goods));
+
+            assertEquals(OPEN, store.purchase(order.id()).orElseThrow().state());
+            assertTrue(store.lots(order.id()).isEmpty());
+            assertTrue(store.pendingInventory(ENEMY_PLAYER).isEmpty());
+            assertTrue(store.stock("depot").available().isEmpty());
         }
     }
 
@@ -948,11 +1263,43 @@ class SupplyLifecycleTest {
         private boolean hostility = true;
         private Set<UUID> wartimeNations = Set.of(NATION, ENEMY);
         private boolean embargoed;
+        private boolean tradePermitAvailable = true;
+        private long tradeMaximumUnits = 100;
+        private BigDecimal tradeUnitPrice = new BigDecimal("2.50");
         private boolean enemyRoadChunk;
         private Set<Integer> enemyRoadChunks = Set.of();
         private Position armyPosition = FRONT;
         private LogisticsModifiers logisticsModifiers = LogisticsModifiers.NONE;
         private CampaignConditions campaign = CampaignConditions.NORMAL;
+        private final Map<UUID, NativeReceipt> nativeReceipts = new HashMap<>();
+        private int nativeCalls;
+        private int nativePoints;
+        private boolean loseNativeResponse;
+        private boolean rejectNativeRecipient;
+        private CoreGateway.NativeSupplyReceipt nativeSupplyReceiptOverride;
+
+        @Override public boolean replenishArmy(UUID request, UUID army, UUID nation, int points) {
+            nativeCalls++;
+            if (rejectNativeRecipient) throw new IllegalArgumentException("Army no longer exists");
+            NativeReceipt receipt = new NativeReceipt(army, nation, points);
+            NativeReceipt existing = nativeReceipts.putIfAbsent(request, receipt);
+            if (existing != null && !existing.equals(receipt)) throw new IllegalArgumentException("Request mismatch");
+            if (existing == null) nativePoints += points;
+            if (loseNativeResponse) {
+                loseNativeResponse = false;
+                throw new IllegalStateException("lost authority response after durable application");
+            }
+            return true;
+        }
+
+        @Override public Optional<CoreGateway.NativeSupplyReceipt> nativeSupplyReceipt(UUID request) {
+            if (nativeSupplyReceiptOverride != null) return Optional.of(nativeSupplyReceiptOverride);
+            NativeReceipt receipt = nativeReceipts.get(request);
+            return receipt == null ? Optional.empty() : Optional.of(new CoreGateway.NativeSupplyReceipt(request,
+                    receipt.army(), receipt.nation(), receipt.points(), receipt.points()));
+        }
+
+        private record NativeReceipt(UUID army, UUID nation, int points) {}
 
         @Override public Optional<UUID> nationOf(UUID player) {
             if (player.equals(OFFICER) || player.equals(ESCORT_PLAYER)) return Optional.of(NATION);
@@ -968,13 +1315,20 @@ class SupplyLifecycleTest {
         }
 
         @Override public Optional<Army> army(UUID id) {
-            return ARMY.equals(id) ? Optional.of(new Army(ARMY, NATION, 10, 100, armyPosition.world(),
-                    (int) armyPosition.x(), (int) armyPosition.y(), (int) armyPosition.z()))
-                    : Optional.empty();
+            if (ARMY.equals(id) || FORWARD_ARMY.equals(id)) {
+                return Optional.of(new Army(id, NATION, 10, 100, armyPosition.world(),
+                        (int) armyPosition.x(), (int) armyPosition.y(), (int) armyPosition.z()));
+            }
+            if (FOREIGN_ARMY.equals(id)) {
+                return Optional.of(new Army(id, ENEMY, 10, 100, armyPosition.world(),
+                        (int) armyPosition.x(), (int) armyPosition.y(), (int) armyPosition.z()));
+            }
+            return Optional.empty();
         }
 
         @Override public List<Army> armies(UUID nation) {
-            return NATION.equals(nation) ? List.of(army(ARMY).orElseThrow()) : List.of();
+            return NATION.equals(nation)
+                    ? List.of(army(ARMY).orElseThrow(), army(FORWARD_ARMY).orElseThrow()) : List.of();
         }
 
         @Override public boolean isAtWar(UUID nation) {
@@ -1001,10 +1355,10 @@ class SupplyLifecycleTest {
 
         @Override public Optional<TradePermit> tradePermit(UUID exporter, UUID importer,
                                                            dev.starsupply.api.ResourceType resource) {
-            return exporter.equals(ENEMY) && importer.equals(NATION)
+            return tradePermitAvailable && exporter.equals(ENEMY) && importer.equals(NATION)
                     && resource == dev.starsupply.api.ResourceType.FOOD && !embargoed
                     ? Optional.of(new TradePermit(UUID.fromString("1c937a5c-5b38-4d50-b1cd-121123548f17"),
-                            100, new BigDecimal("2.50"))) : Optional.empty();
+                            tradeMaximumUnits, tradeUnitPrice)) : Optional.empty();
         }
 
         @Override public Optional<UUID> territoryOwner(String world, int chunkX, int chunkZ) {

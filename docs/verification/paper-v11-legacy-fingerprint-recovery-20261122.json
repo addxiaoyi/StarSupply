@@ -1,0 +1,125 @@
+{
+  "purpose": "Verify v11 legacy inventory fingerprint recovery and the vanilla-item control on an isolated Paper server.",
+  "date": "2026-11-22",
+  "runtime": {
+    "server": "Paper 1.21.11-132",
+    "java": "21.0.13.1",
+    "path": "C:/tmp/starsupply-v11-paper-optional-stack-20261122",
+    "process_id": 17964,
+    "game_port": 25629,
+    "rcon_port": 25639,
+    "starsupply_sha256": "77070BE6D8D25E9325D67DE8A9D04AF7EDC2BBC88AC22EB7F9627FCEA29CF1B3",
+    "starcore_sha256": "D031CDB0356B4768508274A0ADBFAD77E7BCEFAB5CC95A75B4A1689995A4C92B"
+  },
+  "player": {
+    "name": "SupplyBuyer",
+    "uuid": "5ab1d958-3192-31da-88f6-5860ab3c3a3d",
+    "iron_ingots_before_recovery": 4
+  },
+  "source_fix": {
+    "description": "New fingerprints recursively sort Bukkit serialized map keys. Recovery also computes the former serializeAsBytes fingerprint for pending legacy records.",
+    "workspace_artifact": "target/starsupply-0.1.0.jar",
+    "workspace_artifact_sha256": "77070BE6D8D25E9325D67DE8A9D04AF7EDC2BBC88AC22EB7F9627FCEA29CF1B3",
+    "runtime_artifact_matches_workspace": true,
+    "automated_verification": {
+      "command": "mvnw verify",
+      "tests": 99,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "build": "SUCCESS"
+    }
+  },
+  "review_case": {
+    "purchase_id": "c94ba123-2bac-497c-9c29-3016aac4ab00",
+    "transfer_id": "102bd313-9bbb-4cbf-8bac-07172e2ab76a",
+    "purchase_state": "REVIEW",
+    "transfer_state": "REVIEW",
+    "review_reason": "missing durable player receipt after interruption",
+    "inventory_evidence": "The target iron stack remained unchanged. Unrelated Cookery brandy paper and StarCore guide book component maps changed entry order across player save and reload, so the legacy whole-inventory fingerprint did not match.",
+    "iron_ingots_after_reconnect": 4,
+    "receipt_after_reconnect": null,
+    "snapshot": "C:/tmp/starsupply-v11-legacy-fingerprint-review-20261122"
+  },
+  "manual_reconciliation_case": {
+    "purchase_id": "81532c1d-d4f8-4664-8fa0-99f529fa7974",
+    "transfer_id": "28df824b-8629-4f6b-ad75-b1fb820403aa",
+    "command": "/supply reconcile-inventory 28df824b-8629-4f6b-ad75-b1fb820403aa untouched",
+    "evidence": "The saved player inventory retained the iron ingot and had no StarSupply receipt. No settlement existed for this transfer.",
+    "purchase_state_after_reconciliation": "OPEN",
+    "transfer_state": "RETURNED",
+    "transfer_note": "no inventory debit",
+    "remaining_lot_units": 0,
+    "settlement_rows_for_transfer": 0,
+    "final_iron_ingots": 4,
+    "final_receipt": null,
+    "snapshot": "C:/tmp/starsupply-v11-legacy-fingerprint-reconciled-20261122"
+  },
+  "vanilla_control": {
+    "purchase_id": "8940ccf5-e058-492b-954a-b9f0521922d6",
+    "legacy_transfer_id": "1c6e5525-5c6a-4c24-9bae-604dbeda96ab",
+    "recovery_result": "The stale transfer row was automatically removed.",
+    "purchase_state": "OPEN",
+    "settlement_rows": 0,
+    "player_kept_the_iron_ingot": true
+  },
+  "harness_side_effect": {
+    "description": "A test monitor matched the same purchase's earlier RETURNED row and allowed a separate control sale to complete. This was isolated to the disposable Paper copy.",
+    "transfer_id": "108b88ca-3c03-4131-a8e9-d52ea981063a",
+    "purchase_id": "81532c1d-d4f8-4664-8fa0-99f529fa7974",
+    "transfer_state": "STORED",
+    "settlement_state": "PAID",
+    "settlement_amount": "5.00"
+  },
+  "storage": {
+    "schema": 11,
+    "counts_before_test": {
+      "purchase": 65,
+      "item_transfer": 63,
+      "item_lot": 63,
+      "settlement": 116
+    },
+    "counts_after_reconciliation_snapshot": {
+      "purchase": 66,
+      "item_transfer": 64,
+      "item_lot": 64,
+      "settlement": 116
+    },
+    "counts_after_all_paper_controls": {
+      "purchase": 67,
+      "item_transfer": 65,
+      "item_lot": 65,
+      "settlement": 117
+    },
+    "final_integrity_check": {
+      "supply.db": "ok",
+      "insurance.db": "ok",
+      "tavern.db": "ok",
+      "starcore.db": "ok",
+      "religion.db": "ok"
+    },
+    "backup_snapshot": "C:/tmp/starsupply-v11-legacy-fingerprint-backup-20261122"
+  },
+  "cleanup": {
+    "paper_server_running_after_test": false,
+    "paper_game_and_rcon_ports_listening_after_test": false,
+    "paper_server_stopped_normally": true,
+    "legacy_probe_jar_disabled": true,
+    "legacy_probe_source_removed_from_workspace": true,
+    "folia_process_at_initial_check": {
+      "process_id": 3416,
+      "running": true,
+      "ports": [
+        25729,
+        25739
+      ]
+    },
+    "folia_process_at_final_check": {
+      "process_id": 3416,
+      "running": false,
+      "ports_listening": false
+    },
+    "folia_stop_or_restart_requested_by_this_test": false,
+    "folia_deployment_performed": false
+  }
+}
