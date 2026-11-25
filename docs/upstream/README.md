@@ -1,6 +1,6 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-当前最新兼容包按顺序应用八份补丁：后勤、玩家资金回执、税款回执、公共反馈、HUD 设置、[Clan 闭环](CLAN-CLOSURE.md)、[Religion 闭环](RELIGION-CLOSURE.md)、[国家 Faith 闭环](FAITH-CLOSURE.md)。第八份补丁完成国家信仰的原子保存、权限与实际加成接线，并加入实验后勤 profile。629 项 Core 定向回归与实际最终 Core JAR 下 StarSupply 177 项通过；当前范围与剩余工作见 [Faith 说明](FAITH-CLOSURE.md)和[代码闭环清单](../CODE-CLOSURE.md)。
+当前最新兼容包按顺序应用九份补丁：后勤、玩家资金回执、税款回执、公共反馈、HUD 设置、[Clan 闭环](CLAN-CLOSURE.md)、[Religion 闭环](RELIGION-CLOSURE.md)、[国家 Faith 闭环](FAITH-CLOSURE.md)、[海军可靠性修复](NAVY-RELIABILITY.md)。第九份修复海军权限、直接国库付款恢复、分钟补给、海战保存与启停，尚未完成真实运兵/港口接线，也未加入 Folia profile。718 项 Core 定向回归通过；预算服务的跨保存中断重复扣款已单独复现并保留待修，见[代码闭环清单](../CODE-CLOSURE.md)。
 
 此前 HUD 兼容包按顺序应用五份补丁，在下述四份补丁后追加 [starcore-hud-settings.patch](starcore-hud-settings.patch)。个人设置持久化、真实重载、呼吸动画和彩色主题等 HUD 缺口已补齐；配置、命令、构建与验收范围见 [HUD-SETTINGS](HUD-SETTINGS.md)。
 
