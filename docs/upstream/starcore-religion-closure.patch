@@ -1,0 +1,3343 @@
+diff --git a/src/main/java/dev/starcore/starcore/StarCorePlugin.java b/src/main/java/dev/starcore/starcore/StarCorePlugin.java
+index d26624d..07796e5 100644
+--- a/src/main/java/dev/starcore/starcore/StarCorePlugin.java
++++ b/src/main/java/dev/starcore/starcore/StarCorePlugin.java
+@@ -195,7 +195,7 @@ public final class StarCorePlugin extends JavaPlugin {
+           .warning(
+               "Using explicit logistics profile: nation, economy, government, resolution, treasury"
+                   + " (loan/budget/bankruptcy), diplomacy, resource, technology, policy, officer,"
+-                  + " army, war, siege, taxation, event and clan. Other modules and religion"
++                  + " army, war, siege, taxation, event, clan and religion. Other modules"
+                   + " are excluded. Entity-owned feedback and the modern HUD are enabled.");
+     }
+ 
+@@ -297,13 +297,11 @@ public final class StarCorePlugin extends JavaPlugin {
+     }
+     getLogger().info("Season system initialized.");
+ 
+-    if (!logisticsProfile) {
+-      // 初始化宗教系统
+-      this.religionService = new ReligionService(this);
+-      context.serviceRegistry().register(ReligionService.class, religionService);
+-      religionService.initialize();
+-      getLogger().info("Religion system initialized.");
+-    }
++    // Publish only after authoritative Religion data has loaded successfully.
++    this.religionService = new ReligionService(this);
++    religionService.initialize();
++    context.serviceRegistry().register(ReligionService.class, religionService);
++    getLogger().info("Religion system initialized.");
+ 
+     // 初始化死亡消息系统
+     this.deathMessageService = new DeathMessageService(this);
+@@ -332,6 +330,7 @@ public final class StarCorePlugin extends JavaPlugin {
+     getServer().getPluginManager().registerEvents(moveDispatcher, this);
+     context.serviceRegistry().register(OptimizedMoveListener.class, moveDispatcher);
+     this.moveDispatcher = moveDispatcher;
++    religionService.subscribe(moveDispatcher);
+     getLogger()
+         .info(
+             "Optimized move dispatcher registered; modules should subscribe via ServiceRegistry.");
+diff --git a/src/main/java/dev/starcore/starcore/mechanics/HolyPlace.java b/src/main/java/dev/starcore/starcore/mechanics/HolyPlace.java
+index c3ea864..a66d786 100644
+--- a/src/main/java/dev/starcore/starcore/mechanics/HolyPlace.java
++++ b/src/main/java/dev/starcore/starcore/mechanics/HolyPlace.java
+@@ -1,126 +1,211 @@
+ package dev.starcore.starcore.mechanics;
+ 
+-import org.bukkit.Location;
+-
++import java.util.Objects;
+ import java.util.UUID;
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
+ 
+-/**
+- * 圣地
+- * 宗教的神圣场所
+- */
++/** A shrine keeps its world name even while that world is unloaded. */
+ public class HolyPlace {
+-
+-    private final UUID id;
+-    private final ReligionType religion;
+-    private final Location location;
+-    private final String name;
+-    private final int radius;
+-    private int holyPower; // 圣力值
+-    private long lastBlessing; // 上次祝福时间
+-
+-    public HolyPlace(UUID id, ReligionType religion, Location location, String name, int radius) {
+-        this.id = id;
+-        this.religion = religion;
+-        this.location = location;
+-        this.name = name;
+-        this.radius = radius;
+-        this.holyPower = 100;
+-        this.lastBlessing = System.currentTimeMillis();
+-    }
+-
+-    /**
+-     * 检查位置是否在圣地范围内
+-     */
+-    public boolean isInRange(Location loc) {
+-        if (!loc.getWorld().equals(location.getWorld())) {
+-            return false;
+-        }
+-        return loc.distanceSquared(location) <= radius * radius;
+-    }
+-
+-    /**
+-     * 增加圣力
+-     */
+-    public void addHolyPower(int amount) {
+-        this.holyPower = Math.min(1000, this.holyPower + amount);
+-    }
+-
+-    /**
+-     * 消耗圣力
+-     */
+-    public boolean consumeHolyPower(int amount) {
+-        if (holyPower >= amount) {
+-            this.holyPower -= amount;
+-            return true;
+-        }
+-        return false;
+-    }
+-
+-    /**
+-     * 执行祝福
+-     */
+-    public void performBlessing() {
+-        this.lastBlessing = System.currentTimeMillis();
+-        consumeHolyPower(10);
+-    }
+-
+-    /**
+-     * 检查是否可以进行祝福
+-     */
+-    public boolean canBless() {
+-        long timeSinceBlessing = System.currentTimeMillis() - lastBlessing;
+-        return timeSinceBlessing >= 60000 && holyPower >= 10; // 1分钟冷却
+-    }
+-
+-    /**
+-     * 获取圣地描述
+-     */
+-    public String getDescription() {
+-        return String.format(
+-            "%s%s\n§7类型: %s\n§7圣力: §f%d/1000\n§7范围: §f%d格",
+-            religion.getColorCode(),
+-            name,
+-            religion.getColoredName(),
+-            holyPower,
+-            radius
+-        );
+-    }
+-
+-    // Getters and Setters
+-
+-    public UUID getId() {
+-        return id;
+-    }
+-
+-    public ReligionType getReligion() {
+-        return religion;
+-    }
+-
+-    public Location getLocation() {
+-        return location.clone();
+-    }
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public int getRadius() {
+-        return radius;
+-    }
+-
+-    public int getHolyPower() {
+-        return holyPower;
+-    }
+-
+-    public void setHolyPower(int holyPower) {
+-        this.holyPower = Math.max(0, Math.min(1000, holyPower));
+-    }
+-
+-    public long getLastBlessing() {
+-        return lastBlessing;
+-    }
+-
+-    public void setLastBlessing(long lastBlessing) {
+-        this.lastBlessing = lastBlessing;
+-    }
++  private final UUID id;
++  private final ReligionType religion;
++  private final String worldName;
++  private final double x, y, z;
++  private final String name;
++  private final int radius;
++  private int holyPower = 100;
++  private long lastBlessing = System.currentTimeMillis();
++  private long revision;
++  private long savedRevision;
++  private boolean frozen;
++  private Runnable onChange = () -> {};
++
++  public HolyPlace(UUID id, ReligionType religion, Location location, String name, int radius) {
++    this(
++        id,
++        religion,
++        Objects.requireNonNull(location.getWorld(), "world").getName(),
++        location.getX(),
++        location.getY(),
++        location.getZ(),
++        name,
++        radius);
++  }
++
++  HolyPlace(
++      UUID id,
++      ReligionType religion,
++      String worldName,
++      double x,
++      double y,
++      double z,
++      String name,
++      int radius) {
++    this.id = Objects.requireNonNull(id);
++    this.religion = Objects.requireNonNull(religion);
++    if (worldName == null || worldName.isBlank() || worldName.length() > 256)
++      throw new IllegalArgumentException("world");
++    if (name == null
++        || name.isBlank()
++        || name.length() > 64
++        || name.chars().anyMatch(Character::isISOControl))
++      throw new IllegalArgumentException("name");
++    if (radius < 1 || radius > 100) throw new IllegalArgumentException("radius must be 1..100");
++    if (!Double.isFinite(x)
++        || !Double.isFinite(y)
++        || !Double.isFinite(z)
++        || Math.abs(x) > 30_000_000
++        || Math.abs(z) > 30_000_000) throw new IllegalArgumentException("coordinates");
++    this.worldName = worldName;
++    this.x = x;
++    this.y = y;
++    this.z = z;
++    this.name = name;
++    this.radius = radius;
++  }
++
++  public boolean isInRange(Location location) {
++    if (location == null
++        || location.getWorld() == null
++        || !worldName.equals(location.getWorld().getName())) return false;
++    double dx = location.getX() - x, dy = location.getY() - y, dz = location.getZ() - z;
++    return dx * dx + dy * dy + dz * dz <= (double) radius * radius;
++  }
++
++  public synchronized void addHolyPower(int amount) {
++    requireMutable();
++    if (amount < 0) throw new IllegalArgumentException("amount");
++    holyPower = (int) Math.min(1000L, (long) holyPower + amount);
++    changed();
++  }
++
++  public synchronized boolean consumeHolyPower(int amount) {
++    requireMutable();
++    if (amount < 0) throw new IllegalArgumentException("amount");
++    if (holyPower < amount) return false;
++    holyPower -= amount;
++    changed();
++    return true;
++  }
++
++  /** Low-level power consumption; callers can check canBless for the cooldown. */
++  public synchronized void performBlessing() {
++    requireMutable();
++    if (holyPower < 10) return;
++    holyPower -= 10;
++    lastBlessing = System.currentTimeMillis();
++    changed();
++  }
++
++  public synchronized boolean canBless() {
++    return System.currentTimeMillis() - lastBlessing >= 60_000 && holyPower >= 10;
++  }
++
++  public synchronized String getDescription() {
++    return String.format(
++        "%s%s\n§7类型: %s\n§7圣力: §f%d/1000\n§7范围: §f%d格",
++        religion.getColorCode(), name, religion.getColoredName(), holyPower, radius);
++  }
++
++  public UUID getId() {
++    return id;
++  }
++
++  public ReligionType getReligion() {
++    return religion;
++  }
++
++  /** Resolve the world only on the caller's server thread; persistence uses snapshot(). */
++  public Location getLocation() {
++    return new Location(Bukkit.getWorld(worldName), x, y, z);
++  }
++
++  public String getWorldName() {
++    return worldName;
++  }
++
++  public double getX() {
++    return x;
++  }
++
++  public double getY() {
++    return y;
++  }
++
++  public double getZ() {
++    return z;
++  }
++
++  public String getName() {
++    return name;
++  }
++
++  public int getRadius() {
++    return radius;
++  }
++
++  public synchronized int getHolyPower() {
++    return holyPower;
++  }
++
++  public synchronized void setHolyPower(int power) {
++    requireMutable();
++    holyPower = Math.max(0, Math.min(1000, power));
++    changed();
++  }
++
++  public synchronized long getLastBlessing() {
++    return lastBlessing;
++  }
++
++  public synchronized void setLastBlessing(long time) {
++    requireMutable();
++    if (time < 0) throw new IllegalArgumentException("lastBlessing");
++    lastBlessing = time;
++    changed();
++  }
++
++  record Snapshot(
++      UUID id,
++      ReligionType religion,
++      String name,
++      String world,
++      double x,
++      double y,
++      double z,
++      int radius,
++      int holyPower,
++      long lastBlessing,
++      long revision) {}
++
++  synchronized Snapshot snapshot() {
++    return new Snapshot(
++        id, religion, name, worldName, x, y, z, radius, holyPower, lastBlessing, revision);
++  }
++
++  synchronized void onChange(Runnable callback) {
++    onChange = callback;
++  }
++
++  synchronized boolean isDirty() {
++    return revision != savedRevision;
++  }
++
++  synchronized void markSaved(long writtenRevision) {
++    savedRevision = writtenRevision;
++  }
++
++  synchronized void freeze() {
++    frozen = true;
++    onChange = () -> {};
++  }
++
++  private void requireMutable() {
++    if (frozen) throw new IllegalStateException("Shrine is no longer active");
++  }
++
++  private void changed() {
++    revision++;
++    onChange.run();
++  }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/mechanics/Religion.java b/src/main/java/dev/starcore/starcore/mechanics/Religion.java
+index f179bf6..dd8b0b2 100644
+--- a/src/main/java/dev/starcore/starcore/mechanics/Religion.java
++++ b/src/main/java/dev/starcore/starcore/mechanics/Religion.java
+@@ -1,147 +1,237 @@
+ package dev.starcore.starcore.mechanics;
+ 
+ import dev.starcore.starcore.util.MessageUtil;
+-
++import java.util.Objects;
+ import java.util.UUID;
+ 
+-/**
+- * 宗教信仰
+- * 玩家的宗教信仰数据
+- */
++/** 宗教信仰 玩家的宗教信仰数据 */
+ public class Religion {
+ 
+-    private final UUID playerId;
+-    private ReligionType type;
+-    private int faith; // 信仰值 (0-1000)
+-    private long joinTime;
+-    private int contributions; // 贡献值
+-    private boolean blessed; // 是否受到祝福
+-
+-    public Religion(UUID playerId, ReligionType type) {
+-        this.playerId = playerId;
+-        this.type = type;
+-        this.faith = 0;
+-        this.joinTime = System.currentTimeMillis();
+-        this.contributions = 0;
+-        this.blessed = false;
+-    }
+-
+-    /**
+-     * 增加信仰值
+-     */
+-    public void addFaith(int amount) {
+-        this.faith = Math.min(1000, this.faith + amount);
+-    }
+-
+-    /**
+-     * 减少信仰值
+-     */
+-    public void reduceFaith(int amount) {
+-        this.faith = Math.max(0, this.faith - amount);
+-    }
+-
+-    /**
+-     * 增加贡献值
+-     */
+-    public void addContribution(int amount) {
+-        this.contributions += amount;
+-        // 贡献也会增加信仰值
+-        addFaith(amount / 10);
+-    }
+-
+-    /**
+-     * 改变信仰
+-     */
+-    public void changeFaith(ReligionType newType) {
+-        this.type = newType;
+-        this.faith = 0; // 重置信仰值
+-        this.joinTime = System.currentTimeMillis();
+-        this.blessed = false;
+-    }
+-
+-    /**
+-     * 获取信仰等级
+-     */
+-    public String getFaithLevel() {
+-        if (faith >= 800) return MessageUtil.GOLD + "虔诚信徒";
+-        if (faith >= 600) return MessageUtil.YELLOW + "狂热者";
+-        if (faith >= 400) return MessageUtil.GREEN + "信徒";
+-        if (faith >= 200) return MessageUtil.WHITE + "追随者";
+-        if (faith >= 100) return MessageUtil.GRAY + "初学者";
+-        return MessageUtil.DARK_GRAY + "新手";
+-    }
+-
+-    /**
+-     * 获取信仰描述
+-     */
+-    public String getDescription() {
+-        StringBuilder sb = new StringBuilder();
+-        sb.append(MessageUtil.GOLD).append(MessageUtil.BOLD).append("宗教信息\n");
+-        sb.append(MessageUtil.YELLOW).append("信仰: ").append(type.getColoredName()).append("\n");
+-        sb.append(MessageUtil.YELLOW).append("等级: ").append(getFaithLevel()).append("\n");
+-        sb.append(MessageUtil.YELLOW).append("信仰值: ").append(MessageUtil.WHITE).append(faith).append("/1000\n");
+-        sb.append(MessageUtil.YELLOW).append("贡献值: ").append(MessageUtil.WHITE).append(contributions).append("\n");
+-
+-        long days = (System.currentTimeMillis() - joinTime) / (1000 * 60 * 60 * 24);
+-        sb.append(MessageUtil.YELLOW).append("信仰时长: ").append(MessageUtil.WHITE).append(days).append(" 天\n");
+-
+-        sb.append("\n").append(MessageUtil.YELLOW).append("教义: ").append(MessageUtil.GRAY).append(type.getDescription()).append("\n");
+-        sb.append(MessageUtil.YELLOW).append("祝福效果: ").append(MessageUtil.GREEN).append(type.getBlessingEffect()).append("\n");
+-        sb.append(MessageUtil.YELLOW).append("禁忌: ").append(MessageUtil.RED).append(type.getTaboo()).append("\n");
+-
+-        if (blessed) {
+-            sb.append("\n").append(MessageUtil.GREEN).append(MessageUtil.BOLD).append("当前受到神的祝福！");
+-        }
+-
+-        return sb.toString();
+-    }
+-
+-    /**
+-     * 检查是否可以接受祝福
+-     */
+-    public boolean canReceiveBlessing() {
+-        return faith >= 100 && !blessed;
+-    }
+-
+-    // Getters and Setters
+-
+-    public UUID getPlayerId() {
+-        return playerId;
+-    }
+-
+-    public ReligionType getType() {
+-        return type;
+-    }
+-
+-    public int getFaith() {
+-        return faith;
+-    }
+-
+-    public void setFaith(int faith) {
+-        this.faith = Math.max(0, Math.min(1000, faith));
+-    }
+-
+-    public long getJoinTime() {
+-        return joinTime;
+-    }
+-
+-    public void setJoinTime(long joinTime) {
+-        this.joinTime = joinTime;
+-    }
+-
+-    public int getContributions() {
+-        return contributions;
+-    }
+-
+-    public void setContributions(int contributions) {
+-        this.contributions = contributions;
+-    }
+-
+-    public boolean isBlessed() {
+-        return blessed;
+-    }
+-
+-    public void setBlessed(boolean blessed) {
+-        this.blessed = blessed;
+-    }
++  private final UUID playerId;
++  private ReligionType type;
++  private int faith; // 信仰值 (0-1000)
++  private long joinTime;
++  private int contributions; // 贡献值
++  private long revision;
++  private long savedRevision;
++  private boolean frozen;
++  private Runnable onChange = () -> {};
++  private boolean blessed; // 是否受到祝福
++
++  public Religion(UUID playerId, ReligionType type) {
++    this.playerId = Objects.requireNonNull(playerId);
++    this.type = Objects.requireNonNull(type);
++    this.faith = 0;
++    this.joinTime = System.currentTimeMillis();
++    this.contributions = 0;
++    this.blessed = false;
++  }
++
++  /** 增加信仰值 */
++  public synchronized void addFaith(int amount) {
++    requireMutable();
++    requireAmount(amount);
++    this.faith = (int) Math.min(1000L, (long) this.faith + amount);
++    changed();
++  }
++
++  /** 减少信仰值 */
++  public synchronized void reduceFaith(int amount) {
++    requireMutable();
++    requireAmount(amount);
++    this.faith = Math.max(0, this.faith - amount);
++    changed();
++  }
++
++  /** 增加贡献值 */
++  public synchronized void addContribution(int amount) {
++    requireMutable();
++    requireAmount(amount);
++    this.contributions = (int) Math.min(Integer.MAX_VALUE, (long) this.contributions + amount);
++    // 贡献也会增加信仰值
++    addFaith(amount / 10);
++  }
++
++  /** 改变信仰 */
++  public synchronized void changeFaith(ReligionType newType) {
++    requireMutable();
++    this.type = Objects.requireNonNull(newType);
++    this.faith = 0; // 重置信仰值
++    this.joinTime = System.currentTimeMillis();
++    this.blessed = false;
++    changed();
++  }
++
++  /** 获取信仰等级 */
++  public synchronized String getFaithLevel() {
++    if (faith >= 800) return MessageUtil.GOLD + "虔诚信徒";
++    if (faith >= 600) return MessageUtil.YELLOW + "狂热者";
++    if (faith >= 400) return MessageUtil.GREEN + "信徒";
++    if (faith >= 200) return MessageUtil.WHITE + "追随者";
++    if (faith >= 100) return MessageUtil.GRAY + "初学者";
++    return MessageUtil.DARK_GRAY + "新手";
++  }
++
++  /** 获取信仰描述 */
++  public synchronized String getDescription() {
++    StringBuilder sb = new StringBuilder();
++    sb.append(MessageUtil.GOLD).append(MessageUtil.BOLD).append("宗教信息\n");
++    sb.append(MessageUtil.YELLOW).append("信仰: ").append(type.getColoredName()).append("\n");
++    sb.append(MessageUtil.YELLOW).append("等级: ").append(getFaithLevel()).append("\n");
++    sb.append(MessageUtil.YELLOW)
++        .append("信仰值: ")
++        .append(MessageUtil.WHITE)
++        .append(faith)
++        .append("/1000\n");
++    sb.append(MessageUtil.YELLOW)
++        .append("贡献值: ")
++        .append(MessageUtil.WHITE)
++        .append(contributions)
++        .append("\n");
++
++    long days = (System.currentTimeMillis() - joinTime) / (1000 * 60 * 60 * 24);
++    sb.append(MessageUtil.YELLOW)
++        .append("信仰时长: ")
++        .append(MessageUtil.WHITE)
++        .append(days)
++        .append(" 天\n");
++
++    sb.append("\n")
++        .append(MessageUtil.YELLOW)
++        .append("教义: ")
++        .append(MessageUtil.GRAY)
++        .append(type.getDescription())
++        .append("\n");
++    sb.append(MessageUtil.YELLOW)
++        .append("祝福效果: ")
++        .append(MessageUtil.GREEN)
++        .append(type.getBlessingEffect())
++        .append("\n");
++    sb.append(MessageUtil.YELLOW)
++        .append("禁忌: ")
++        .append(MessageUtil.RED)
++        .append(type.getTaboo())
++        .append("\n");
++
++    if (blessed) {
++      sb.append("\n").append(MessageUtil.GREEN).append(MessageUtil.BOLD).append("当前受到神的祝福！");
++    }
++
++    return sb.toString();
++  }
++
++  /** 检查是否可以接受祝福 */
++  public synchronized boolean canReceiveBlessing() {
++    return faith >= 100 && !blessed;
++  }
++
++  // Getters and Setters
++
++  public UUID getPlayerId() {
++    return playerId;
++  }
++
++  public synchronized ReligionType getType() {
++    return type;
++  }
++
++  public synchronized int getFaith() {
++    return faith;
++  }
++
++  public synchronized void setFaith(int faith) {
++    requireMutable();
++    this.faith = Math.max(0, Math.min(1000, faith));
++    changed();
++  }
++
++  public synchronized long getJoinTime() {
++    return joinTime;
++  }
++
++  public synchronized void setJoinTime(long joinTime) {
++    requireMutable();
++    if (joinTime < 0) throw new IllegalArgumentException("joinTime");
++    this.joinTime = joinTime;
++    changed();
++  }
++
++  public synchronized int getContributions() {
++    return contributions;
++  }
++
++  public synchronized void setContributions(int contributions) {
++    requireMutable();
++    this.contributions = Math.max(0, contributions);
++    changed();
++  }
++
++  public synchronized boolean isBlessed() {
++    return blessed;
++  }
++
++  public synchronized void setBlessed(boolean blessed) {
++    requireMutable();
++    this.blessed = blessed;
++    changed();
++  }
++
++  record Snapshot(
++      UUID playerId,
++      ReligionType type,
++      int faith,
++      long joinTime,
++      int contributions,
++      boolean blessed,
++      long revision) {}
++
++  synchronized Snapshot snapshot() {
++    return new Snapshot(playerId, type, faith, joinTime, contributions, blessed, revision);
++  }
++
++  synchronized Religion copy() {
++    Religion result = new Religion(playerId, type);
++    result.adopt(snapshot());
++    return result;
++  }
++
++  synchronized void adopt(Snapshot state) {
++    requireMutable();
++    type = state.type();
++    faith = state.faith();
++    joinTime = state.joinTime();
++    contributions = state.contributions();
++    blessed = state.blessed();
++    savedRevision = ++revision;
++  }
++
++  synchronized void onChange(Runnable callback) {
++    onChange = callback;
++  }
++
++  synchronized boolean isDirty() {
++    return revision != savedRevision;
++  }
++
++  synchronized void markSaved(long writtenRevision) {
++    savedRevision = writtenRevision;
++  }
++
++  synchronized void freeze() {
++    frozen = true;
++    onChange = () -> {};
++  }
++
++  private void requireMutable() {
++    if (frozen) throw new IllegalStateException("Religion service stopped");
++  }
++
++  private static void requireAmount(int amount) {
++    if (amount < 0) throw new IllegalArgumentException("amount must not be negative");
++  }
++
++  private void changed() {
++    revision++;
++    onChange.run();
++  }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/mechanics/ReligionCommand.java b/src/main/java/dev/starcore/starcore/mechanics/ReligionCommand.java
+index 64c09f6..db97c9c 100644
+--- a/src/main/java/dev/starcore/starcore/mechanics/ReligionCommand.java
++++ b/src/main/java/dev/starcore/starcore/mechanics/ReligionCommand.java
+@@ -1,5 +1,8 @@
+ package dev.starcore.starcore.mechanics;
+ 
++import java.util.Locale;
++import java.util.concurrent.CompletableFuture;
++import java.util.function.Consumer;
+ import org.bukkit.ChatColor;
+ import org.bukkit.Location;
+ import org.bukkit.command.Command;
+@@ -11,12 +14,9 @@ import org.jetbrains.annotations.NotNull;
+ 
+ public class ReligionCommand implements CommandExecutor {
+ 
+-  private final JavaPlugin plugin;
+   private ReligionService religionService;
+ 
+-  public ReligionCommand(JavaPlugin plugin) {
+-    this.plugin = plugin;
+-  }
++  public ReligionCommand(JavaPlugin plugin) {}
+ 
+   public void setReligionService(ReligionService service) {
+     this.religionService = service;
+@@ -37,7 +37,7 @@ public class ReligionCommand implements CommandExecutor {
+       return true;
+     }
+ 
+-    String sub = args[0].toLowerCase();
++    String sub = args[0].toLowerCase(Locale.ROOT);
+     switch (sub) {
+       case "info" -> {
+         if (sender instanceof Player player) {
+@@ -66,6 +66,7 @@ public class ReligionCommand implements CommandExecutor {
+       return;
+     }
+ 
++    if (!available(player)) return;
+     Religion religion = religionService.getReligion(player.getUniqueId());
+     if (religion == null) {
+       player.sendMessage(ChatColor.YELLOW + "你暂未信仰任何宗教");
+@@ -94,7 +95,8 @@ public class ReligionCommand implements CommandExecutor {
+       return;
+     }
+ 
+-    if (!sender.hasPermission("starcore.religion.admin")) {
++    if (!sender.hasPermission("starcore.religion.admin")
++        && !sender.hasPermission("starcore.religion.create")) {
+       sender.sendMessage(ChatColor.RED + "你没有权限使用此命令");
+       return;
+     }
+@@ -105,37 +107,55 @@ public class ReligionCommand implements CommandExecutor {
+       return;
+     }
+ 
+-    try {
+-      ReligionType type = ReligionType.valueOf(args[1].toUpperCase());
+-      int radius =
+-          args.length > 3
+-              ? Math.max(5, Math.min(Integer.parseInt(args[args.length - 1]), 100))
+-              : 50;
+-      String name = args.length > 3 ? args[2] : args[1];
+-
+-      Location loc = player.getLocation().getBlock().getLocation().add(0.5, 0.5, 0.5);
+-      HolyPlace shrine = religionService.createHolyPlace(type, loc, name, radius);
+-
+-      if (shrine != null) {
+-        player.sendMessage(ChatColor.GOLD + "已创建圣地: " + ChatColor.LIGHT_PURPLE + shrine.getName());
+-        player.sendMessage(
+-            ChatColor.WHITE
+-                + "位置: "
+-                + ChatColor.AQUA
+-                + loc.getWorld().getName()
+-                + " "
+-                + ((int) loc.getX())
+-                + ", "
+-                + ((int) loc.getY())
+-                + ", "
+-                + ((int) loc.getZ()));
+-        player.sendMessage(ChatColor.WHITE + "半径: " + ChatColor.YELLOW + radius);
+-      } else {
+-        player.sendMessage(ChatColor.RED + "圣地创建失败");
++    if (!available(sender)) return;
++    ReligionType type = parseType(sender, args[1]);
++    if (type == null) return;
++    int radius = 50;
++    if (args.length > 4) {
++      sender.sendMessage(ChatColor.RED + "用法: /religion createshrine <信仰类型> <名称> [半径]");
++      return;
++    }
++    if (args.length == 4) {
++      try {
++        radius = Integer.parseInt(args[3]);
++      } catch (NumberFormatException failure) {
++        sender.sendMessage(ChatColor.RED + "半径必须是 5 到 100 的整数");
++        return;
++      }
++      if (radius < 5 || radius > 100) {
++        sender.sendMessage(ChatColor.RED + "半径必须是 5 到 100 的整数");
++        return;
+       }
+-    } catch (IllegalArgumentException e) {
+-      sender.sendMessage(ChatColor.RED + "无效的信仰类型: " + args[1]);
+-      sender.sendMessage(ChatColor.GRAY + "可用类型: " + formatReligionTypes());
++    }
++    Location position = player.getLocation();
++    Location center =
++        new Location(
++            position.getWorld(),
++            position.getBlockX() + 0.5,
++            position.getBlockY() + 0.5,
++            position.getBlockZ() + 0.5);
++    try {
++      complete(
++          player,
++          religionService.createHolyPlaceAsync(type, center, args[2], radius),
++          shrine -> {
++            player.sendMessage(
++                ChatColor.GOLD + "已创建圣地: " + ChatColor.LIGHT_PURPLE + shrine.getName());
++            player.sendMessage(
++                ChatColor.WHITE
++                    + "位置: "
++                    + ChatColor.AQUA
++                    + shrine.getWorldName()
++                    + " "
++                    + (int) Math.floor(shrine.getX())
++                    + ", "
++                    + (int) Math.floor(shrine.getY())
++                    + ", "
++                    + (int) Math.floor(shrine.getZ()));
++            player.sendMessage(ChatColor.WHITE + "半径: " + ChatColor.YELLOW + shrine.getRadius());
++          });
++    } catch (IllegalArgumentException failure) {
++      sender.sendMessage(ChatColor.RED + "圣地名称或位置无效（名称限 1–64 字符）");
+     }
+   }
+ 
+@@ -145,21 +165,27 @@ public class ReligionCommand implements CommandExecutor {
+       return;
+     }
+ 
++    if (!sender.hasPermission("starcore.religion.set")) {
++      sender.sendMessage(ChatColor.RED + "你没有权限选择信仰");
++      return;
++    }
++
+     if (args.length < 2) {
+       sender.sendMessage(ChatColor.RED + "用法: /religion set <信仰类型>");
+       sender.sendMessage(ChatColor.GRAY + "可用类型: " + formatReligionTypes());
+       return;
+     }
+ 
+-    try {
+-      ReligionType type = ReligionType.valueOf(args[1].toUpperCase());
+-      religionService.setReligion(player.getUniqueId(), type);
+-      player.sendMessage(ChatColor.GOLD + "已选择信仰: " + type.getDisplayName());
+-      player.sendMessage(ChatColor.YELLOW + "输入 /religion info 查看您的信仰信息");
+-    } catch (IllegalArgumentException e) {
+-      sender.sendMessage(ChatColor.RED + "无效的信仰类型: " + args[1]);
+-      sender.sendMessage(ChatColor.GRAY + "可用类型: " + formatReligionTypes());
+-    }
++    if (!available(sender)) return;
++    ReligionType type = parseType(sender, args[1]);
++    if (type == null) return;
++    complete(
++        player,
++        religionService.setReligionAsync(player.getUniqueId(), type),
++        religion -> {
++          player.sendMessage(ChatColor.GOLD + "已选择信仰: " + type.getDisplayName());
++          player.sendMessage(ChatColor.YELLOW + "输入 /religion info 查看您的信仰信息");
++        });
+   }
+ 
+   private void handleBlessing(CommandSender sender, String[] args) {
+@@ -173,6 +199,7 @@ public class ReligionCommand implements CommandExecutor {
+       return;
+     }
+ 
++    if (!available(player)) return;
+     Religion religion = religionService.getReligion(player.getUniqueId());
+     if (religion == null) {
+       player.sendMessage(ChatColor.RED + "你尚未选择信仰");
+@@ -185,9 +212,17 @@ public class ReligionCommand implements CommandExecutor {
+       return;
+     }
+ 
+-    religion.setBlessed(true);
+-    player.sendMessage(ChatColor.GOLD + "§l你获得了神的祝福！");
+-    player.sendMessage(ChatColor.YELLOW + "你将在下一节祝福循环中获得额外效果");
++    complete(
++        player,
++        religionService.blessAsync(player.getUniqueId()),
++        granted -> {
++          if (!granted) {
++            player.sendMessage(ChatColor.RED + "信仰状态已变化，当前无法领取祝福");
++            return;
++          }
++          player.sendMessage(ChatColor.GOLD + "§l你获得了神的祝福！");
++          player.sendMessage(ChatColor.YELLOW + "你将在下一节祝福循环中获得额外效果");
++        });
+   }
+ 
+   private void showLeaderboard(CommandSender sender) {
+@@ -196,8 +231,25 @@ public class ReligionCommand implements CommandExecutor {
+       return;
+     }
+ 
++    if (!available(sender)) return;
+     sender.sendMessage(ChatColor.GOLD + "§l=== 信仰榜单 ===");
+-    sender.sendMessage(ChatColor.GRAY + "信仰榜单功能待完善");
++    var entries = religionService.leaderboard(10);
++    if (entries.isEmpty()) sender.sendMessage(ChatColor.GRAY + "暂无信仰记录");
++    for (int i = 0; i < entries.size(); i++) {
++      var entry = entries.get(i);
++      sender.sendMessage(
++          ChatColor.YELLOW
++              + Integer.toString(i + 1)
++              + ". "
++              + ChatColor.WHITE
++              + entry.playerId()
++              + " §7| "
++              + entry.type().getDisplayName()
++              + " §a信仰 "
++              + entry.faith()
++              + " §b贡献 "
++              + entry.contributions());
++    }
+   }
+ 
+   private void showAllReligions(CommandSender sender) {
+@@ -218,11 +270,45 @@ public class ReligionCommand implements CommandExecutor {
+     sender.sendMessage(ChatColor.YELLOW + "/religion help §7- 显示此帮助");
+   }
+ 
++  private boolean available(CommandSender sender) {
++    if (religionService == null) {
++      sender.sendMessage(ChatColor.RED + "宗教服务未初始化");
++      return false;
++    }
++    if (!religionService.isEnabled()) {
++      sender.sendMessage(ChatColor.RED + "宗教服务当前不可用");
++      return false;
++    }
++    return true;
++  }
++
++  private ReligionType parseType(CommandSender sender, String value) {
++    try {
++      return ReligionType.valueOf(value.toUpperCase(Locale.ROOT));
++    } catch (IllegalArgumentException failure) {
++      sender.sendMessage(ChatColor.RED + "无效的信仰类型: " + value);
++      sender.sendMessage(ChatColor.GRAY + "可用类型: " + formatReligionTypes());
++      return null;
++    }
++  }
++
++  private <T> void complete(Player player, CompletableFuture<T> operation, Consumer<T> success) {
++    ReligionService owner = religionService;
++    operation.whenComplete(
++        (result, failure) ->
++            owner.feedback(
++                player,
++                () -> {
++                  if (failure != null) player.sendMessage(ChatColor.RED + "保存失败，操作未确认；请稍后查询信仰状态");
++                  else success.accept(result);
++                }));
++  }
++
+   private String formatReligionTypes() {
+     StringBuilder sb = new StringBuilder();
+     for (ReligionType type : ReligionType.values()) {
+       if (sb.length() > 0) sb.append(", ");
+-      sb.append(ChatColor.WHITE).append(type.name().toLowerCase());
++      sb.append(ChatColor.WHITE).append(type.name().toLowerCase(Locale.ROOT));
+     }
+     return sb.toString();
+   }
+diff --git a/src/main/java/dev/starcore/starcore/mechanics/ReligionService.java b/src/main/java/dev/starcore/starcore/mechanics/ReligionService.java
+index c798c77..0ba3a40 100644
+--- a/src/main/java/dev/starcore/starcore/mechanics/ReligionService.java
++++ b/src/main/java/dev/starcore/starcore/mechanics/ReligionService.java
+@@ -1,665 +1,729 @@
+ package dev.starcore.starcore.mechanics;
+ 
++import dev.starcore.starcore.core.scheduler.CompatScheduler;
+ import dev.starcore.starcore.performance.OptimizedMoveListener;
++import java.nio.file.Files;
+ import java.sql.*;
+ import java.util.*;
+-import java.util.concurrent.ConcurrentHashMap;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.AtomicBoolean;
+ import org.bukkit.Bukkit;
+ import org.bukkit.Location;
+ import org.bukkit.entity.Player;
+-import org.bukkit.event.EventHandler;
++import org.bukkit.event.HandlerList;
+ import org.bukkit.event.Listener;
+-import org.bukkit.event.player.PlayerJoinEvent;
+ import org.bukkit.plugin.java.JavaPlugin;
+ import org.bukkit.potion.PotionEffect;
+ import org.bukkit.potion.PotionEffectType;
+ import org.bukkit.scheduler.BukkitTask;
+ 
+-/** 宗教服务 管理宗教信仰和圣地系统 */
++/** Serialized SQLite authority; player feedback always returns to the entity owner. */
+ public class ReligionService implements Listener {
++  private enum State {
++    NEW,
++    RUNNING,
++    STOPPING,
++    STOPPED,
++    FAILED
++  }
+ 
+   private final JavaPlugin plugin;
+-  private final Map<UUID, Religion> religionCache;
+-  private final Map<UUID, HolyPlace> holyPlaces;
+-
+-  /**
+-   * 圣地空间索引：按 (world, chunkX, chunkZ) 索引圣地集合。 关键优化：onBlockMove 中只迭代与 from/to chunk 相关的圣地，避免遍历所有圣地。
+-   */
+-  private final Map<Long, Set<HolyPlace>> holyPlacesByChunk = new ConcurrentHashMap<>();
+-
++  private final Object lifecycle = new Object();
++  private final Map<UUID, Religion> religionCache = new ConcurrentHashMap<>();
++  private final Map<UUID, HolyPlace> holyPlaces = new ConcurrentHashMap<>();
++
++  private record ChunkKey(String world, int x, int z) {}
++
++  private final Map<ChunkKey, Set<HolyPlace>> holyPlacesByChunk = new ConcurrentHashMap<>();
++  private final Set<OwnerCall> callbacks = ConcurrentHashMap.newKeySet();
++  private final AtomicBoolean saveQueued = new AtomicBoolean();
++  private volatile State state = State.NEW;
++  private volatile boolean enabled = true;
++  private volatile boolean storageFailed;
++  private volatile Thread workerThread;
++  private ExecutorService worker;
+   private Connection connection;
+-
+-  private boolean enabled = true;
+-  private volatile Object subscription;
+-  private BukkitTask saveTask;
+-  private BukkitTask blessingTask;
+-  private BukkitTask holyPowerTask;
++  private OptimizedMoveListener dispatcher;
++  private Object subscription;
++  private BukkitTask saveTask, blessingTask, holyPowerTask;
++  private CompletableFuture<Void> stopped;
+ 
+   public ReligionService(JavaPlugin plugin) {
+-    this.plugin = plugin;
+-    this.religionCache = new ConcurrentHashMap<>(); // Bug修复 #5: 线程安全
+-    this.holyPlaces = new ConcurrentHashMap<>(); // Bug修复 #5: 线程安全
++    this.plugin = Objects.requireNonNull(plugin);
+   }
+ 
+-  /** 初始化服务 */
++  /** Loads all rows before publishing the service, including offline leaderboard members. */
+   public void initialize() {
+-    initializeDatabase();
+-    plugin.getServer().getPluginManager().registerEvents(this, plugin);
+-
+-    // 加载所有在线玩家的宗教信息
+-    for (Player player : Bukkit.getOnlinePlayers()) {
+-      loadReligion(player.getUniqueId());
++    synchronized (lifecycle) {
++      if (state != State.NEW) throw new IllegalStateException("Religion already initialized");
++      try {
++        Files.createDirectories(plugin.getDataFolder().toPath());
++        connection = openConnection();
++        try (Statement sql = connection.createStatement()) {
++          sql.execute("PRAGMA busy_timeout=5000");
++          sql.execute("PRAGMA synchronous=FULL");
++          sql.executeUpdate(
++              "CREATE TABLE IF NOT EXISTS player_religion (player_id TEXT PRIMARY KEY,religion_type"
++                  + " TEXT NOT NULL, faith INTEGER DEFAULT 0, join_time BIGINT DEFAULT"
++                  + " 0,contributions INTEGER DEFAULT 0, blessed INTEGER DEFAULT 0)");
++          sql.executeUpdate(
++              "CREATE TABLE IF NOT EXISTS holy_places (id TEXT PRIMARY KEY,"
++                  + "religion_type TEXT NOT NULL, name TEXT NOT NULL, world TEXT NOT NULL,"
++                  + "x DOUBLE, y DOUBLE, z DOUBLE, radius INTEGER DEFAULT 50,"
++                  + "holy_power INTEGER DEFAULT 100, last_blessing BIGINT DEFAULT 0)");
++        }
++        loadData();
++        worker =
++            Executors.newSingleThreadExecutor(
++                task -> {
++                  Thread thread = new Thread(task, "starcore-religion-storage");
++                  thread.setDaemon(true);
++                  workerThread = thread;
++                  return thread;
++                });
++        saveTask = CompatScheduler.asyncTimer(plugin, this::requestSave, 600L, 600L);
++        blessingTask = CompatScheduler.globalTimer(plugin, this::applyBlessings, 200L, 200L);
++        holyPowerTask = CompatScheduler.asyncTimer(plugin, this::regenerateHolyPower, 1200L, 1200L);
++        state = State.RUNNING;
++        plugin
++            .getLogger()
++            .info("宗教系统已启用；已加载 " + religionCache.size() + " 位信徒和 " + holyPlaces.size() + " 个圣地");
++      } catch (Exception failure) {
++        state = State.FAILED;
++        cancelTimers();
++        if (worker != null) worker.shutdown();
++        closeConnection();
++        religionCache.clear();
++        holyPlaces.clear();
++        holyPlacesByChunk.clear();
++        throw new IllegalStateException("宗教数据初始化失败，服务未启用", failure);
++      }
+     }
++  }
+ 
+-    // 加载所有圣地
+-    loadAllHolyPlaces();
+-
+-    // 定时保存数据
+-    saveTask =
+-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::saveAllData, 6000L, 6000L);
+-
+-    // 定时应用祝福效果
+-    blessingTask = Bukkit.getScheduler().runTaskTimer(plugin, this::applyBlessings, 200L, 200L);
+-
+-    // 定时增加圣地圣力
+-    holyPowerTask =
+-        Bukkit.getScheduler().runTaskTimer(plugin, this::regenerateHolyPower, 1200L, 1200L);
+-
+-    plugin.getLogger().info("宗教系统已启用");
++  protected Connection openConnection() throws SQLException {
++    return DriverManager.getConnection(
++        "jdbc:sqlite:" + plugin.getDataFolder().toPath().resolve("religion.db"));
++  }
++
++  private void loadData() throws SQLException {
++    Map<UUID, Religion> religions = new HashMap<>();
++    List<HolyPlace> places = new ArrayList<>();
++    try (Statement sql = connection.createStatement();
++        ResultSet rows = sql.executeQuery("SELECT * FROM player_religion")) {
++      while (rows.next()) {
++        UUID id = UUID.fromString(rows.getString("player_id"));
++        int faith = bounded(rows, "faith", 1000),
++            contributions = bounded(rows, "contributions", Integer.MAX_VALUE);
++        int blessed = bounded(rows, "blessed", 1);
++        long joined = timestamp(rows, "join_time");
++        Religion religion = new Religion(id, ReligionType.valueOf(rows.getString("religion_type")));
++        religion.adopt(
++            new Religion.Snapshot(
++                id, religion.getType(), faith, joined, contributions, blessed == 1, 0));
++        religions.put(id, religion);
++      }
++    }
++    try (Statement sql = connection.createStatement();
++        ResultSet rows = sql.executeQuery("SELECT * FROM holy_places")) {
++      while (rows.next()) {
++        HolyPlace place =
++            new HolyPlace(
++                UUID.fromString(rows.getString("id")),
++                ReligionType.valueOf(rows.getString("religion_type")),
++                rows.getString("world"),
++                coordinate(rows, "x"),
++                coordinate(rows, "y"),
++                coordinate(rows, "z"),
++                rows.getString("name"),
++                bounded(rows, "radius", 100));
++        place.setHolyPower(bounded(rows, "holy_power", 1000));
++        place.setLastBlessing(timestamp(rows, "last_blessing"));
++        place.markSaved(place.snapshot().revision());
++        places.add(place);
++      }
++    }
++    religions.values().forEach(religion -> religion.onChange(this::requestSave));
++    religionCache.putAll(religions);
++    places.forEach(
++        place -> {
++          place.onChange(this::requestSave);
++          holyPlaces.put(place.getId(), place);
++          index(place, true);
++        });
++  }
++
++  private static int bounded(ResultSet rows, String field, int maximum) throws SQLException {
++    Object stored = rows.getObject(field);
++    if (!(stored instanceof Integer || stored instanceof Long))
++      throw new SQLException("Invalid integer " + field);
++    long value = ((Number) stored).longValue();
++    if (value < 0 || value > maximum) throw new SQLException("Invalid " + field);
++    return (int) value;
++  }
++
++  private static long timestamp(ResultSet rows, String field) throws SQLException {
++    Object stored = rows.getObject(field);
++    if (!(stored instanceof Integer || stored instanceof Long))
++      throw new SQLException("Invalid timestamp " + field);
++    long value = ((Number) stored).longValue();
++    if (value < 0) throw new SQLException("Invalid " + field);
++    return value;
++  }
++
++  private static double coordinate(ResultSet rows, String field) throws SQLException {
++    Object stored = rows.getObject(field);
++    if (!(stored instanceof Number)) throw new SQLException("Invalid coordinate " + field);
++    double value = ((Number) stored).doubleValue();
++    if (!Double.isFinite(value)) throw new SQLException("Invalid " + field);
++    return value;
++  }
++
++  @FunctionalInterface
++  private interface Work<T> {
++    T run() throws Exception;
++  }
++
++  private <T> CompletableFuture<T> submit(Work<T> work, boolean requireEnabled) {
++    CompletableFuture<T> result = new CompletableFuture<>();
++    synchronized (lifecycle) {
++      if (state != State.RUNNING || storageFailed || (requireEnabled && !enabled))
++        return CompletableFuture.failedFuture(new IllegalStateException("宗教服务当前不可用"));
++      worker.execute(
++          () -> {
++            try {
++              if (storageFailed) throw new IllegalStateException("宗教存储需重启复核");
++              // Cancellation of the caller's future does not cancel admitted database work.
++              result.complete(work.run());
++            } catch (Throwable failure) {
++              result.completeExceptionally(failure);
++            }
++          });
++    }
++    return result;
+   }
+ 
+-  /** 初始化数据库 */
+-  private void initializeDatabase() {
++  private void transaction(Work<Void> work) throws Exception {
++    connection.setAutoCommit(false);
++    boolean committing = false;
+     try {
+-      String dbPath = plugin.getDataFolder().getAbsolutePath() + "/religion.db";
+-      connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+-
+-      try (Statement stmt = connection.createStatement()) {
+-        // 玩家宗教表
+-        stmt.executeUpdate(
+-            "CREATE TABLE IF NOT EXISTS player_religion ("
+-                + "player_id TEXT PRIMARY KEY,"
+-                + "religion_type TEXT NOT NULL,"
+-                + "faith INTEGER DEFAULT 0,"
+-                + "join_time BIGINT DEFAULT 0,"
+-                + "contributions INTEGER DEFAULT 0,"
+-                + "blessed INTEGER DEFAULT 0"
+-                + ")");
+-
+-        // 圣地表
+-        stmt.executeUpdate(
+-            "CREATE TABLE IF NOT EXISTS holy_places ("
+-                + "id TEXT PRIMARY KEY,"
+-                + "religion_type TEXT NOT NULL,"
+-                + "name TEXT NOT NULL,"
+-                + "world TEXT NOT NULL,"
+-                + "x DOUBLE,"
+-                + "y DOUBLE,"
+-                + "z DOUBLE,"
+-                + "radius INTEGER DEFAULT 50,"
+-                + "holy_power INTEGER DEFAULT 100,"
+-                + "last_blessing BIGINT DEFAULT 0"
+-                + ")");
++      work.run();
++      committing = true;
++      connection.commit();
++    } catch (Exception failure) {
++      // A lost commit response is uncertain: freeze writes until authoritative reload.
++      if (committing) storageFailed = true;
++      try {
++        connection.rollback();
++      } catch (SQLException rollback) {
++        storageFailed = true;
++        failure.addSuppressed(rollback);
++      }
++      throw failure;
++    } finally {
++      try {
++        connection.setAutoCommit(true);
++      } catch (SQLException restore) {
++        storageFailed = true;
++        throw restore;
+       }
+-
+-      plugin.getLogger().info("宗教数据库初始化完成");
+-    } catch (Exception e) {
+-      plugin.getLogger().severe("宗教数据库初始化失败: " + e.getMessage());
+     }
+   }
+ 
+-  /** 玩家加入时加载宗教信息 */
+-  @EventHandler
+-  public void onPlayerJoin(PlayerJoinEvent event) {
+-    loadReligion(event.getPlayer().getUniqueId());
++  private void writeReligion(Religion.Snapshot row) throws SQLException {
++    try (PreparedStatement sql =
++        connection.prepareStatement(
++            "INSERT OR REPLACE INTO player_religion"
++                + " (player_id,religion_type,faith,join_time,contributions,blessed) VALUES"
++                + " (?,?,?,?,?,?)")) {
++      sql.setString(1, row.playerId().toString());
++      sql.setString(2, row.type().name());
++      sql.setInt(3, row.faith());
++      sql.setLong(4, row.joinTime());
++      sql.setInt(5, row.contributions());
++      sql.setInt(6, row.blessed() ? 1 : 0);
++      sql.executeUpdate();
++    }
+   }
+ 
+-  /** Subscribe to the central move dispatcher. Idempotent. */
+-  public void subscribe(OptimizedMoveListener dispatcher) {
+-    if (dispatcher == null || subscription != null) return;
+-    subscription = dispatcher.registerBlock(this::onBlockMove);
++  private void writeHolyPlace(HolyPlace.Snapshot row) throws SQLException {
++    try (PreparedStatement sql =
++        connection.prepareStatement(
++            "INSERT OR REPLACE INTO holy_places"
++                + " (id,religion_type,name,world,x,y,z,radius,holy_power,last_blessing) VALUES"
++                + " (?,?,?,?,?,?,?,?,?,?)")) {
++      sql.setString(1, row.id().toString());
++      sql.setString(2, row.religion().name());
++      sql.setString(3, row.name());
++      sql.setString(4, row.world());
++      sql.setDouble(5, row.x());
++      sql.setDouble(6, row.y());
++      sql.setDouble(7, row.z());
++      sql.setInt(8, row.radius());
++      sql.setInt(9, row.holyPower());
++      sql.setLong(10, row.lastBlessing());
++      sql.executeUpdate();
++    }
+   }
+ 
+-  /** Unsubscribe from the move dispatcher. Idempotent. */
+-  public void unsubscribe(OptimizedMoveListener dispatcher) {
+-    if (dispatcher == null || subscription == null) return;
+-    dispatcher.unregister(subscription);
+-    subscription = null;
++  private void saveDirty() throws Exception {
++    if (storageFailed) throw new IllegalStateException("宗教存储状态不确定，需重启复核");
++    Map<Religion, Religion.Snapshot> religions = new LinkedHashMap<>();
++    Map<HolyPlace, HolyPlace.Snapshot> places = new LinkedHashMap<>();
++    religionCache
++        .values()
++        .forEach(
++            value -> {
++              synchronized (value) {
++                if (value.isDirty()) religions.put(value, value.snapshot());
++              }
++            });
++    holyPlaces
++        .values()
++        .forEach(
++            value -> {
++              synchronized (value) {
++                if (value.isDirty()) places.put(value, value.snapshot());
++              }
++            });
++    if (religions.isEmpty() && places.isEmpty()) return;
++    transaction(
++        () -> {
++          for (var row : religions.values()) writeReligion(row);
++          for (var row : places.values()) writeHolyPlace(row);
++          return null;
++        });
++    religions.forEach((value, row) -> value.markSaved(row.revision()));
++    places.forEach((value, row) -> value.markSaved(row.revision()));
++  }
++
++  private void requestSave() {
++    if (state != State.RUNNING || storageFailed || !saveQueued.compareAndSet(false, true)) return;
++    submit(
++            () -> {
++              saveQueued.set(false);
++              saveDirty();
++              return null;
++            },
++            false)
++        .whenComplete(
++            (ignored, failure) -> {
++              if (failure != null)
++                plugin.getLogger().warning("宗教保存失败，保留待重试数据: " + failure.getMessage());
++            });
+   }
+ 
+-  /**
+-   * 玩家移动时检查是否进入圣地 关键优化：使用圣地块索引 (holyPlacesByChunk) 只迭代与 from/to chunk 相关的圣地， 而非遍历所有圣地；然后再通过
+-   * HolyPlace.isInRange (内部已用 distanceSquared) 做距离判断。
+-   */
+-  public void onBlockMove(Player player, Location from, Location to) {
+-    if (!enabled) return;
+-
+-    if (to == null) {
+-      return;
+-    }
++  public CompletableFuture<Void> flush() {
++    return submit(
++        () -> {
++          saveDirty();
++          return null;
++        },
++        false);
++  }
+ 
+-    Religion religion = getReligion(player.getUniqueId());
++  public Religion getReligion(UUID playerId) {
++    return religionCache.get(playerId);
++  }
+ 
+-    if (religion == null) return;
++  public CompletableFuture<Religion> setReligionAsync(UUID playerId, ReligionType type) {
++    Objects.requireNonNull(playerId);
++    Objects.requireNonNull(type);
++    return submit(
++        () -> {
++          Religion original = religionCache.get(playerId);
++          if (original == null) {
++            Religion created = new Religion(playerId, type);
++            var row = created.snapshot();
++            transaction(
++                () -> {
++                  writeReligion(row);
++                  return null;
++                });
++            created.markSaved(row.revision());
++            created.onChange(this::requestSave);
++            religionCache.put(playerId, created);
++            return created;
++          }
++          synchronized (original) {
++            Religion changed = original.copy();
++            changed.changeFaith(type);
++            var row = changed.snapshot();
++            transaction(
++                () -> {
++                  writeReligion(row);
++                  return null;
++                });
++            original.adopt(row);
++            return original;
++          }
++        },
++        true);
++  }
++
++  /** Compatibility API with synchronous durable completion; commands use setReligionAsync. */
++  public void setReligion(UUID playerId, ReligionType type) {
++    requireNotWorker();
++    setReligionAsync(playerId, type).join();
++  }
++
++  public CompletableFuture<Boolean> blessAsync(UUID playerId) {
++    Objects.requireNonNull(playerId);
++    return submit(
++        () -> {
++          Religion religion = religionCache.get(playerId);
++          if (religion == null) return false;
++          synchronized (religion) {
++            if (!religion.canReceiveBlessing()) return false;
++            Religion blessed = religion.copy();
++            blessed.setBlessed(true);
++            var row = blessed.snapshot();
++            transaction(
++                () -> {
++                  writeReligion(row);
++                  return null;
++                });
++            religion.adopt(row);
++            return true;
++          }
++        },
++        true);
++  }
++
++  public CompletableFuture<HolyPlace> createHolyPlaceAsync(
++      ReligionType type, Location location, String name, int radius) {
++    // Capture the location on the caller's owner thread, never in the storage worker.
++    HolyPlace place = new HolyPlace(UUID.randomUUID(), type, location, name, radius);
++    return submit(
++        () -> {
++          var row = place.snapshot();
++          transaction(
++              () -> {
++                writeHolyPlace(row);
++                return null;
++              });
++          place.markSaved(row.revision());
++          place.onChange(this::requestSave);
++          holyPlaces.put(place.getId(), place);
++          index(place, true);
++          return place;
++        },
++        true);
++  }
+ 
+-    // 计算本次移动涉及的所有 chunk key（合并 from 和 to）
+-    java.util.Set<Long> chunkKeys = new java.util.HashSet<>();
+-    if (from != null && from.getWorld() != null) {
+-      collectChunkKeys(from, chunkKeys);
+-    }
+-    if (to.getWorld() != null) {
+-      collectChunkKeys(to, chunkKeys);
+-    }
++  public HolyPlace createHolyPlace(ReligionType type, Location location, String name, int radius) {
++    requireNotWorker();
++    return createHolyPlaceAsync(type, location, name, radius).join();
++  }
++
++  public CompletableFuture<Boolean> removeHolyPlaceAsync(UUID id) {
++    Objects.requireNonNull(id);
++    return submit(
++        () -> {
++          HolyPlace place = holyPlaces.get(id);
++          if (place == null) return false;
++          synchronized (place) {
++            transaction(
++                () -> {
++                  try (PreparedStatement sql =
++                      connection.prepareStatement("DELETE FROM holy_places WHERE id=?")) {
++                    sql.setString(1, id.toString());
++                    sql.executeUpdate();
++                  }
++                  return null;
++                });
++            place.freeze();
++            holyPlaces.remove(id);
++            index(place, false);
++          }
++          return true;
++        },
++        true);
++  }
+ 
+-    // 仅遍历涉及的 chunk
+-    java.util.Set<HolyPlace> candidateSet = new java.util.HashSet<>();
+-    for (Long key : chunkKeys) {
+-      Set<HolyPlace> places = holyPlacesByChunk.get(key);
+-      if (places != null) {
+-        candidateSet.addAll(places);
+-      }
+-    }
++  public void removeHolyPlace(UUID id) {
++    requireNotWorker();
++    removeHolyPlaceAsync(id).join();
++  }
+ 
+-    for (HolyPlace holyPlace : candidateSet) {
+-      boolean wasInRange = holyPlace.isInRange(from);
+-      boolean isInRange = holyPlace.isInRange(to);
++  public Collection<HolyPlace> getHolyPlaces() {
++    return List.copyOf(holyPlaces.values());
++  }
+ 
+-      // 刚进入圣地
+-      if (!wasInRange && isInRange) {
+-        onEnterHolyPlace(player, holyPlace);
+-      }
+-      // 刚离开圣地
+-      else if (wasInRange && !isInRange) {
+-        onLeaveHolyPlace(player, holyPlace);
+-      }
++  public record LeaderboardEntry(UUID playerId, ReligionType type, int faith, int contributions) {}
++
++  public List<LeaderboardEntry> leaderboard(int limit) {
++    if (limit < 1 || limit > 100) throw new IllegalArgumentException("limit must be 1..100");
++    return religionCache.values().stream()
++        .map(Religion::snapshot)
++        .map(
++            row ->
++                new LeaderboardEntry(row.playerId(), row.type(), row.faith(), row.contributions()))
++        .sorted(
++            Comparator.comparingInt(LeaderboardEntry::faith)
++                .reversed()
++                .thenComparing(Comparator.comparingInt(LeaderboardEntry::contributions).reversed())
++                .thenComparing(row -> row.playerId().toString()))
++        .limit(limit)
++        .toList();
++  }
++
++  public void subscribe(OptimizedMoveListener target) {
++    synchronized (lifecycle) {
++      if (target == null || state != State.RUNNING || subscription != null) return;
++      dispatcher = target;
++      subscription = target.registerBlock(this::onBlockMove);
+     }
+   }
+ 
+-  /** 收集位置所在 chunk 及其周围 8 个 chunk 的 key（相邻 chunk 内可能有大型圣地跨越边界）。 */
+-  private void collectChunkKeys(Location loc, java.util.Set<Long> out) {
+-    int cx = loc.getBlockX() >> 4;
+-    int cz = loc.getBlockZ() >> 4;
+-    String worldName = loc.getWorld().getName();
+-    int worldHash = worldName.hashCode();
+-    for (int dx = -1; dx <= 1; dx++) {
+-      for (int dz = -1; dz <= 1; dz++) {
+-        out.add(chunkKey(worldHash, cx + dx, cz + dz));
+-      }
++  public void unsubscribe(OptimizedMoveListener target) {
++    synchronized (lifecycle) {
++      if (dispatcher == null || dispatcher != target) return;
++      dispatcher.unregister(subscription);
++      dispatcher = null;
++      subscription = null;
+     }
+   }
+ 
+-  /** 计算 chunk 键：将 (world, chunkX, chunkZ) 编码为 long。 */
+-  private static long chunkKey(int worldHash, int chunkX, int chunkZ) {
+-    // 使用 ((world * 31 + cx) * 31 + cz) 风格但通过 long 编码避免哈希碰撞
+-    return ((long) worldHash * 31L + chunkX) * 31L + chunkZ;
+-  }
+-
+-  /** 将圣地加入 chunk 索引。 */
+-  private void addToChunkIndex(HolyPlace holyPlace) {
+-    Location loc = holyPlace.getLocation();
+-    if (loc.getWorld() == null) return;
+-    int worldHash = loc.getWorld().getName().hashCode();
+-    int cx = loc.getBlockX() >> 4;
+-    int cz = loc.getBlockZ() >> 4;
+-    long key = chunkKey(worldHash, cx, cz);
+-    holyPlacesByChunk.computeIfAbsent(key, k -> ConcurrentHashMap.newKeySet()).add(holyPlace);
+-  }
+-
+-  /** 从 chunk 索引中移除圣地。 */
+-  private void removeFromChunkIndex(HolyPlace holyPlace) {
+-    Location loc = holyPlace.getLocation();
+-    if (loc.getWorld() == null) return;
+-    int worldHash = loc.getWorld().getName().hashCode();
+-    int cx = loc.getBlockX() >> 4;
+-    int cz = loc.getBlockZ() >> 4;
+-    long key = chunkKey(worldHash, cx, cz);
+-    Set<HolyPlace> places = holyPlacesByChunk.get(key);
+-    if (places != null) {
+-      places.remove(holyPlace);
+-      if (places.isEmpty()) {
+-        holyPlacesByChunk.remove(key, places);
++  private void index(HolyPlace place, boolean add) {
++    int minX = (int) Math.floor((place.getX() - place.getRadius()) / 16);
++    int maxX = (int) Math.floor((place.getX() + place.getRadius()) / 16);
++    int minZ = (int) Math.floor((place.getZ() - place.getRadius()) / 16);
++    int maxZ = (int) Math.floor((place.getZ() + place.getRadius()) / 16);
++    for (int x = minX; x <= maxX; x++)
++      for (int z = minZ; z <= maxZ; z++) {
++        ChunkKey key = new ChunkKey(place.getWorldName(), x, z);
++        if (add)
++          holyPlacesByChunk
++              .computeIfAbsent(key, ignored -> ConcurrentHashMap.newKeySet())
++              .add(place);
++        else
++          holyPlacesByChunk.computeIfPresent(
++              key,
++              (ignored, places) -> {
++                places.remove(place);
++                return places.isEmpty() ? null : places;
++              });
+       }
+-    }
+   }
+ 
+-  /** 进入圣地 */
+-  private void onEnterHolyPlace(Player player, HolyPlace holyPlace) {
+-    Religion religion = getReligion(player.getUniqueId());
+-
+-    if (religion != null && religion.getType() == holyPlace.getReligion()) {
+-      player.sendMessage("§a§l你进入了圣地: " + holyPlace.getName());
+-      player.sendMessage("§e你感受到了 " + holyPlace.getReligion().getDisplayName() + " 的神圣力量");
+-
+-      // 增加信仰值
+-      religion.addFaith(1);
+-    } else {
+-      player.sendMessage("§7你进入了一片神圣的区域...");
++  private void candidates(Location location, Set<HolyPlace> result) {
++    if (location != null && location.getWorld() != null) {
++      Set<HolyPlace> found =
++          holyPlacesByChunk.get(
++              new ChunkKey(
++                  location.getWorld().getName(),
++                  location.getBlockX() >> 4,
++                  location.getBlockZ() >> 4));
++      if (found != null) result.addAll(found);
+     }
+   }
+ 
+-  /** 离开圣地 */
+-  private void onLeaveHolyPlace(Player player, HolyPlace holyPlace) {
++  /** Invoked by the move dispatcher on the player's entity owner. */
++  public void onBlockMove(Player player, Location from, Location to) {
++    if (!isEnabled() || to == null) return;
+     Religion religion = getReligion(player.getUniqueId());
+-
+-    if (religion != null && religion.getType() == holyPlace.getReligion()) {
+-      player.sendMessage("§7你离开了圣地: " + holyPlace.getName());
++    if (religion == null) return;
++    Set<HolyPlace> places = new HashSet<>();
++    candidates(from, places);
++    candidates(to, places);
++    for (HolyPlace place : places) {
++      if (holyPlaces.get(place.getId()) != place) continue;
++      boolean before = place.isInRange(from), after = place.isInRange(to);
++      if (!before && after) {
++        synchronized (religion) {
++          if (!isEnabled()) return;
++          if (religion.getType() == place.getReligion()) {
++            religion.addFaith(1);
++            player.sendMessage("§a§l你进入了圣地: " + place.getName());
++            player.sendMessage("§e你感受到了 " + place.getReligion().getDisplayName() + " 的神圣力量");
++          } else player.sendMessage("§7你进入了一片神圣的区域...");
++        }
++      } else if (before && !after && religion.getType() == place.getReligion()) {
++        player.sendMessage("§7你离开了圣地: " + place.getName());
++      }
+     }
+   }
+ 
+-  /** 应用宗教祝福效果 */
+-  private void applyBlessings() {
+-    if (!enabled) return;
+-
+-    for (Player player : Bukkit.getOnlinePlayers()) {
+-      Religion religion = getReligion(player.getUniqueId());
+-      if (religion == null || !religion.isBlessed()) continue;
+-
+-      // 根据宗教类型应用不同的祝福效果
+-      switch (religion.getType()) {
+-        case NATURE:
+-          applyIfMissing(player, PotionEffectType.REGENERATION, 600, 0);
+-          break;
+-        case SUN:
+-          applyIfMissing(player, PotionEffectType.STRENGTH, 600, 0);
+-          break;
+-        case MOON:
+-          applyIfMissing(player, PotionEffectType.LUCK, 600, 0);
+-          break;
+-        case WAR:
+-          applyIfMissing(player, PotionEffectType.RESISTANCE, 600, 0);
+-          applyIfMissing(player, PotionEffectType.STRENGTH, 600, 0);
+-          break;
+-        case PEACE:
+-          applyIfMissing(player, PotionEffectType.SATURATION, 600, 0);
+-          break;
+-        case DEATH:
+-          applyIfMissing(player, PotionEffectType.RESISTANCE, 600, 1);
+-          break;
+-        case OCEAN:
+-          applyIfMissing(player, PotionEffectType.WATER_BREATHING, 600, 0);
+-          applyIfMissing(player, PotionEffectType.DOLPHINS_GRACE, 600, 0);
+-          break;
+-        case MOUNTAIN:
+-          applyIfMissing(player, PotionEffectType.SLOW_FALLING, 600, 0);
+-          break;
+-      }
+-    }
++  void applyBlessings() {
++    if (!isEnabled()) return;
++    for (Player player : Bukkit.getOnlinePlayers())
++      feedback(
++          player,
++          () -> {
++            Religion religion = getReligion(player.getUniqueId());
++            if (religion == null) return;
++            var row = religion.snapshot();
++            if (!row.blessed()) return;
++            switch (row.type()) {
++              case NATURE -> applyIfMissing(player, PotionEffectType.REGENERATION, 600, 0);
++              case SUN -> applyIfMissing(player, PotionEffectType.STRENGTH, 600, 0);
++              case MOON -> applyIfMissing(player, PotionEffectType.LUCK, 600, 0);
++              case WAR -> {
++                applyIfMissing(player, PotionEffectType.RESISTANCE, 600, 0);
++                applyIfMissing(player, PotionEffectType.STRENGTH, 600, 0);
++              }
++              case PEACE -> applyIfMissing(player, PotionEffectType.SATURATION, 600, 0);
++              case DEATH -> applyIfMissing(player, PotionEffectType.RESISTANCE, 600, 1);
++              case OCEAN -> {
++                applyIfMissing(player, PotionEffectType.WATER_BREATHING, 600, 0);
++                applyIfMissing(player, PotionEffectType.DOLPHINS_GRACE, 600, 0);
++              }
++              case MOUNTAIN -> applyIfMissing(player, PotionEffectType.SLOW_FALLING, 600, 0);
++            }
++          });
+   }
+ 
+-  /**
+-   * Apply a potion effect only when the player does not already have a compatible effect with
+-   * sufficient remaining duration. This avoids re-sending the effect packet every 10 seconds for
+-   * every online player.
+-   */
+   private void applyIfMissing(Player player, PotionEffectType type, int duration, int amplifier) {
+-    if (player == null || type == null) {
+-      return;
+-    }
+     PotionEffect existing = player.getPotionEffect(type);
+-    if (existing != null
+-        && existing.getAmplifier() == amplifier
+-        && existing.getDuration() > duration / 2) {
+-      return;
+-    }
++    if (!shouldRefresh(existing, duration, amplifier)) return;
+     player.addPotionEffect(new PotionEffect(type, duration, amplifier, true, false));
+   }
+ 
+-  /** 圣地圣力恢复 */
+-  private void regenerateHolyPower() {
+-    for (HolyPlace holyPlace : holyPlaces.values()) {
+-      holyPlace.addHolyPower(5); // 每分钟恢复5点圣力
+-    }
+-  }
+-
+-  /** 加载玩家宗教信息（异步） */
+-  private void loadReligion(UUID playerId) {
+-    String playerIdStr = playerId.toString();
+-
+-    Bukkit.getScheduler()
+-        .runTaskAsynchronously(
+-            plugin,
+-            () -> {
+-              try {
+-                String sql = "SELECT * FROM player_religion WHERE player_id = ?";
+-                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+-                  stmt.setString(1, playerIdStr);
+-                  ResultSet rs = stmt.executeQuery();
+-
+-                  Religion religion = null;
+-                  if (rs.next()) {
+-                    ReligionType type = ReligionType.valueOf(rs.getString("religion_type"));
+-                    religion = new Religion(playerId, type);
+-                    religion.setFaith(rs.getInt("faith"));
+-                    religion.setJoinTime(rs.getLong("join_time"));
+-                    religion.setContributions(rs.getInt("contributions"));
+-                    religion.setBlessed(rs.getInt("blessed") == 1);
+-                  }
+-
+-                  // 在主线程更新缓存
+-                  final Religion finalReligion = religion;
+-                  Bukkit.getScheduler()
+-                      .runTask(
+-                          plugin,
+-                          () -> {
+-                            if (finalReligion != null) {
+-                              religionCache.put(playerId, finalReligion);
+-                            }
+-                          });
+-                }
+-              } catch (Exception e) {
+-                plugin.getLogger().severe("加载宗教信息失败: " + e.getMessage());
+-              }
+-            });
++  static boolean shouldRefresh(PotionEffect existing, int duration, int amplifier) {
++    return existing == null
++        || (existing.getAmplifier() < amplifier)
++        || (existing.getAmplifier() == amplifier
++            && !existing.isInfinite()
++            && existing.getDuration() <= duration / 2);
+   }
+ 
+-  /** 加载所有圣地（异步） */
+-  private void loadAllHolyPlaces() {
+-    Bukkit.getScheduler()
+-        .runTaskAsynchronously(
+-            plugin,
++  private void regenerateHolyPower() {
++    if (!isEnabled()) return;
++    // The storage worker serializes this with deletion and shutdown.
++    submit(
+             () -> {
+-              try {
+-                String sql = "SELECT * FROM holy_places";
+-                List<HolyPlace> loadedPlaces = new ArrayList<>();
+-                try (Statement stmt = connection.createStatement();
+-                    ResultSet rs = stmt.executeQuery(sql)) {
+-
+-                  while (rs.next()) {
+-                    UUID id = UUID.fromString(rs.getString("id"));
+-                    ReligionType type = ReligionType.valueOf(rs.getString("religion_type"));
+-                    String name = rs.getString("name");
+-
+-                    Location location =
+-                        new Location(
+-                            Bukkit.getWorld(rs.getString("world")),
+-                            rs.getDouble("x"),
+-                            rs.getDouble("y"),
+-                            rs.getDouble("z"));
+-
+-                    int radius = rs.getInt("radius");
+-                    HolyPlace holyPlace = new HolyPlace(id, type, location, name, radius);
+-                    holyPlace.setHolyPower(rs.getInt("holy_power"));
+-                    holyPlace.setLastBlessing(rs.getLong("last_blessing"));
+-
+-                    loadedPlaces.add(holyPlace);
+-                  }
+-                }
+-
+-                // 在主线程更新缓存
+-                Bukkit.getScheduler()
+-                    .runTask(
+-                        plugin,
+-                        () -> {
+-                          for (HolyPlace hp : loadedPlaces) {
+-                            holyPlaces.put(hp.getId(), hp);
+-                            addToChunkIndex(hp);
+-                          }
+-                          plugin.getLogger().info("已加载 " + loadedPlaces.size() + " 个圣地");
+-                        });
+-              } catch (Exception e) {
+-                plugin.getLogger().severe("加载圣地失败: " + e.getMessage());
+-              }
++              for (HolyPlace place : holyPlaces.values()) place.addHolyPower(5);
++              saveDirty();
++              return null;
++            },
++            true)
++        .whenComplete(
++            (ignored, failure) -> {
++              if (failure != null) plugin.getLogger().warning("圣力恢复保存失败: " + failure.getMessage());
+             });
+   }
+ 
+-  /** 保存所有数据 */
+-  private void saveAllData() {
+-    saveAllReligions();
+-    saveAllHolyPlaces();
+-  }
+-
+-  /** 保存所有玩家宗教信息 */
+-  private void saveAllReligions() {
+-    for (Map.Entry<UUID, Religion> entry : religionCache.entrySet()) {
++  public void feedback(Player player, Runnable action) {
++    synchronized (lifecycle) {
++      if (state != State.RUNNING || !enabled) return;
++      OwnerCall call = new OwnerCall(player, action);
++      callbacks.add(call);
+       try {
+-        writeReligion(entry.getKey(), entry.getValue());
+-      } catch (Exception e) {
+-        plugin.getLogger().severe("保存宗教信息失败: " + e.getMessage());
++        call.bind(CompatScheduler.entityLater(plugin, player, call::run, call::finish, 1L));
++      } catch (RuntimeException failure) {
++        call.finish();
+       }
+     }
+   }
+ 
+-  /** 保存玩家宗教信息（异步） */
+-  private void saveReligion(UUID playerId, Religion religion) {
+-    // 捕获需要在异步任务中使用的值
+-    String playerIdStr = playerId.toString();
+-    String religionTypeName = religion.getType().name();
+-    int faith = religion.getFaith();
+-    long joinTime = religion.getJoinTime();
+-    int contributions = religion.getContributions();
+-    int blessed = religion.isBlessed() ? 1 : 0;
++  private final class OwnerCall {
++    final Player player;
++    final Runnable action;
++    final AtomicBoolean finished = new AtomicBoolean();
++    volatile BukkitTask task;
+ 
+-    Bukkit.getScheduler()
+-        .runTaskAsynchronously(
+-            plugin,
+-            () -> {
+-              try {
+-                writeReligion(
+-                    playerId,
+-                    new ReligionSnapshot(
+-                        religionTypeName, faith, joinTime, contributions, blessed));
+-              } catch (Exception e) {
+-                plugin.getLogger().severe("保存宗教信息失败: " + e.getMessage());
+-              }
+-            });
+-  }
++    OwnerCall(Player player, Runnable action) {
++      this.player = player;
++      this.action = action;
++    }
+ 
+-  private void writeReligion(UUID playerId, Religion religion) throws SQLException {
+-    writeReligion(
+-        playerId,
+-        new ReligionSnapshot(
+-            religion.getType().name(),
+-            religion.getFaith(),
+-            religion.getJoinTime(),
+-            religion.getContributions(),
+-            religion.isBlessed() ? 1 : 0));
+-  }
+-
+-  private void writeReligion(UUID playerId, ReligionSnapshot snapshot) throws SQLException {
+-    String sql =
+-        "INSERT OR REPLACE INTO player_religion "
+-            + "(player_id, religion_type, faith, join_time, contributions, blessed) "
+-            + "VALUES (?, ?, ?, ?, ?, ?)";
+-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+-      stmt.setString(1, playerId.toString());
+-      stmt.setString(2, snapshot.type());
+-      stmt.setInt(3, snapshot.faith());
+-      stmt.setLong(4, snapshot.joinTime());
+-      stmt.setInt(5, snapshot.contributions());
+-      stmt.setInt(6, snapshot.blessed());
+-      stmt.executeUpdate();
++    void bind(BukkitTask handle) {
++      task = handle;
++      if (finished.get()) handle.cancel();
+     }
+-  }
+ 
+-  /** 保存所有圣地 */
+-  private void saveAllHolyPlaces() {
+-    for (HolyPlace holyPlace : holyPlaces.values()) {
++    void run() {
++      if (finished.get()) return;
+       try {
+-        writeHolyPlace(holyPlace);
+-      } catch (Exception e) {
+-        plugin.getLogger().severe("保存圣地失败: " + e.getMessage());
++        if (state == State.RUNNING && enabled && plugin.isEnabled() && player.isOnline())
++          action.run();
++      } finally {
++        finish();
+       }
+     }
+-  }
+ 
+-  /** 保存圣地（异步） */
+-  private void saveHolyPlace(HolyPlace holyPlace) {
+-    // 捕获需要在异步任务中使用的值
+-    Location loc = holyPlace.getLocation();
+-    String idStr = holyPlace.getId().toString();
+-    String religionName = holyPlace.getReligion().name();
+-    String name = holyPlace.getName();
+-    String worldName = loc.getWorld().getName();
+-    double x = loc.getX();
+-    double y = loc.getY();
+-    double z = loc.getZ();
+-    int radius = holyPlace.getRadius();
+-    int holyPower = holyPlace.getHolyPower();
+-    long lastBlessing = holyPlace.getLastBlessing();
+-
+-    Bukkit.getScheduler()
+-        .runTaskAsynchronously(
+-            plugin,
+-            () -> {
+-              try {
+-                writeHolyPlace(
+-                    new HolyPlaceSnapshot(
+-                        idStr,
+-                        religionName,
+-                        name,
+-                        worldName,
+-                        x,
+-                        y,
+-                        z,
+-                        radius,
+-                        holyPower,
+-                        lastBlessing));
+-              } catch (Exception e) {
+-                plugin.getLogger().severe("保存圣地失败: " + e.getMessage());
+-              }
+-            });
+-  }
+-
+-  private void writeHolyPlace(HolyPlace holyPlace) throws SQLException {
+-    Location loc = holyPlace.getLocation();
+-    writeHolyPlace(
+-        new HolyPlaceSnapshot(
+-            holyPlace.getId().toString(),
+-            holyPlace.getReligion().name(),
+-            holyPlace.getName(),
+-            loc.getWorld().getName(),
+-            loc.getX(),
+-            loc.getY(),
+-            loc.getZ(),
+-            holyPlace.getRadius(),
+-            holyPlace.getHolyPower(),
+-            holyPlace.getLastBlessing()));
+-  }
+-
+-  private void writeHolyPlace(HolyPlaceSnapshot snapshot) throws SQLException {
+-    String sql =
+-        "INSERT OR REPLACE INTO holy_places (id, religion_type, name, world, x, y, z,"
+-            + " radius, holy_power, last_blessing) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+-      stmt.setString(1, snapshot.id());
+-      stmt.setString(2, snapshot.religion());
+-      stmt.setString(3, snapshot.name());
+-      stmt.setString(4, snapshot.world());
+-      stmt.setDouble(5, snapshot.x());
+-      stmt.setDouble(6, snapshot.y());
+-      stmt.setDouble(7, snapshot.z());
+-      stmt.setInt(8, snapshot.radius());
+-      stmt.setInt(9, snapshot.holyPower());
+-      stmt.setLong(10, snapshot.lastBlessing());
+-      stmt.executeUpdate();
++    void finish() {
++      finished.set(true);
++      callbacks.remove(this);
+     }
+-  }
+-
+-  private record ReligionSnapshot(
+-      String type, int faith, long joinTime, int contributions, int blessed) {}
+ 
+-  private record HolyPlaceSnapshot(
+-      String id,
+-      String religion,
+-      String name,
+-      String world,
+-      double x,
+-      double y,
+-      double z,
+-      int radius,
+-      int holyPower,
+-      long lastBlessing) {}
+-
+-  /** 获取玩家宗教信息 */
+-  public Religion getReligion(UUID playerId) {
+-    return religionCache.get(playerId);
+-  }
+-
+-  /** 设置玩家宗教信仰 */
+-  public void setReligion(UUID playerId, ReligionType type) {
+-    Religion religion = religionCache.get(playerId);
+-
+-    if (religion == null) {
+-      religion = new Religion(playerId, type);
+-      religionCache.put(playerId, religion);
+-    } else {
+-      religion.changeFaith(type);
+-    }
+-
+-    Player player = Bukkit.getPlayer(playerId);
+-    if (player != null) {
+-      player.sendMessage("§a你已加入 " + type.getColoredName());
+-      player.sendMessage("§7" + type.getDescription());
++    void cancel() {
++      finish();
++      BukkitTask handle = task;
++      if (handle != null) handle.cancel();
+     }
+   }
+ 
+-  /** 创建圣地 */
+-  public HolyPlace createHolyPlace(ReligionType type, Location location, String name, int radius) {
+-    UUID id = UUID.randomUUID();
+-    HolyPlace holyPlace = new HolyPlace(id, type, location, name, radius);
+-    holyPlaces.put(id, holyPlace);
+-    addToChunkIndex(holyPlace);
+-    saveHolyPlace(holyPlace);
+-    return holyPlace;
++  private void requireNotWorker() {
++    if (Thread.currentThread() == workerThread)
++      throw new IllegalStateException("Use async Religion API from storage callbacks");
+   }
+ 
+-  /** 删除圣地（异步） */
+-  public void removeHolyPlace(UUID id) {
+-    HolyPlace removed = holyPlaces.remove(id);
+-    if (removed != null) {
+-      removeFromChunkIndex(removed);
+-    }
+-    String idStr = id.toString();
+-
+-    Bukkit.getScheduler()
+-        .runTaskAsynchronously(
+-            plugin,
+-            () -> {
+-              try {
+-                String sql = "DELETE FROM holy_places WHERE id = ?";
+-                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+-                  stmt.setString(1, idStr);
+-                  stmt.executeUpdate();
++  /**
++   * Stops admission, drains admitted writes, freezes references, saves and closes in queue order.
++   */
++  public void shutdown() {
++    requireNotWorker();
++    CompletableFuture<Void> completion;
++    synchronized (lifecycle) {
++      if (state == State.STOPPED) return;
++      if (stopped == null) {
++        state = State.STOPPING;
++        enabled = false;
++        cancelTimers();
++        if (dispatcher != null) unsubscribe(dispatcher);
++        callbacks.forEach(OwnerCall::cancel);
++        HandlerList.unregisterAll(this);
++        stopped = new CompletableFuture<>();
++        if (worker == null || worker.isShutdown()) {
++          closeConnection();
++          state = State.STOPPED;
++          stopped.complete(null);
++        } else {
++          worker.execute(
++              () -> {
++                try {
++                  religionCache.values().forEach(Religion::freeze);
++                  holyPlaces.values().forEach(HolyPlace::freeze);
++                  saveDirty();
++                  closeConnection();
++                  state = State.STOPPED;
++                  stopped.complete(null);
++                } catch (Throwable failure) {
++                  closeConnection();
++                  state = State.STOPPED;
++                  stopped.completeExceptionally(failure);
+                 }
+-              } catch (Exception e) {
+-                plugin.getLogger().severe("删除圣地失败: " + e.getMessage());
+-              }
+-            });
+-  }
+-
+-  /** 获取所有圣地 */
+-  public Collection<HolyPlace> getHolyPlaces() {
+-    return List.copyOf(holyPlaces.values());
++              });
++          worker.shutdown();
++        }
++      }
++      completion = stopped;
++    }
++    try {
++      completion.join();
++    } catch (CompletionException failure) {
++      plugin.getLogger().severe("宗教停用保存失败: " + failure.getCause());
++    }
+   }
+ 
+-  /** 关闭服务 */
+-  public void shutdown() {
+-    cancelTask(saveTask);
+-    cancelTask(blessingTask);
+-    cancelTask(holyPowerTask);
++  private void cancelTimers() {
++    for (BukkitTask task : new BukkitTask[] {saveTask, blessingTask, holyPowerTask})
++      if (task != null) task.cancel();
+     saveTask = null;
+     blessingTask = null;
+     holyPowerTask = null;
+-    org.bukkit.event.HandlerList.unregisterAll(this);
+-    saveAllData();
++  }
+ 
+-    try {
+-      if (connection != null && !connection.isClosed()) {
++  private void closeConnection() {
++    if (connection != null) {
++      try {
+         connection.close();
++      } catch (SQLException failure) {
++        plugin.getLogger().warning("关闭宗教数据库失败: " + failure.getMessage());
+       }
+-    } catch (Exception e) {
+-      plugin.getLogger().severe("关闭宗教数据库失败: " + e.getMessage());
+-    }
+-    connection = null;
+-
+-    religionCache.clear();
+-    holyPlaces.clear();
+-    holyPlacesByChunk.clear();
+-  }
+-
+-  private void cancelTask(BukkitTask task) {
+-    if (task != null) {
+-      task.cancel();
++      connection = null;
+     }
+   }
+ 
+@@ -668,6 +732,6 @@ public class ReligionService implements Listener {
+   }
+ 
+   public boolean isEnabled() {
+-    return enabled;
++    return state == State.RUNNING && enabled && !storageFailed;
+   }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/mechanics/ReligionType.java b/src/main/java/dev/starcore/starcore/mechanics/ReligionType.java
+index a4e8371..f2020f9 100644
+--- a/src/main/java/dev/starcore/starcore/mechanics/ReligionType.java
++++ b/src/main/java/dev/starcore/starcore/mechanics/ReligionType.java
+@@ -1,97 +1,88 @@
+ package dev.starcore.starcore.mechanics;
+ 
+-/**
+- * 宗教类型枚举
+- */
++/** 宗教类型枚举 */
+ public enum ReligionType {
++  NATURE("自然教", "崇拜自然与生命", "§a"),
++  SUN("太阳教", "信仰光明与正义", "§e"),
++  MOON("月亮教", "追求智慧与神秘", "§b"),
++  WAR("战争教", "崇尚力量与荣耀", "§c"),
++  PEACE("和平教", "向往和谐与共存", "§f"),
++  DEATH("死亡教", "理解终结与轮回", "§8"),
++  OCEAN("海洋教", "敬畏海洋与深渊", "§9"),
++  MOUNTAIN("山岳教", "崇拜高山与大地", "§7");
+ 
+-    NATURE("自然教", "崇拜自然与生命", "§a"),
+-    SUN("太阳教", "信仰光明与正义", "§e"),
+-    MOON("月亮教", "追求智慧与神秘", "§b"),
+-    WAR("战争教", "崇尚力量与荣耀", "§c"),
+-    PEACE("和平教", "向往和谐与共存", "§f"),
+-    DEATH("死亡教", "理解终结与轮回", "§8"),
+-    OCEAN("海洋教", "敬畏海洋与深渊", "§9"),
+-    MOUNTAIN("山岳教", "崇拜高山与大地", "§7");
++  private final String displayName;
++  private final String description;
++  private final String colorCode;
+ 
+-    private final String displayName;
+-    private final String description;
+-    private final String colorCode;
++  ReligionType(String displayName, String description, String colorCode) {
++    this.displayName = displayName;
++    this.description = description;
++    this.colorCode = colorCode;
++  }
+ 
+-    ReligionType(String displayName, String description, String colorCode) {
+-        this.displayName = displayName;
+-        this.description = description;
+-        this.colorCode = colorCode;
+-    }
+-
+-    public String getDisplayName() {
+-        return displayName;
+-    }
++  public String getDisplayName() {
++    return displayName;
++  }
+ 
+-    public String getDescription() {
+-        return description;
+-    }
++  public String getDescription() {
++    return description;
++  }
+ 
+-    public String getColorCode() {
+-        return colorCode;
+-    }
++  public String getColorCode() {
++    return colorCode;
++  }
+ 
+-    /**
+-     * 获取带颜色的显示名称
+-     */
+-    public String getColoredName() {
+-        return colorCode + displayName;
+-    }
++  /** 获取带颜色的显示名称 */
++  public String getColoredName() {
++    return colorCode + displayName;
++  }
+ 
+-    /**
+-     * 获取宗教祝福效果
+-     */
+-    public String getBlessingEffect() {
+-        switch (this) {
+-            case NATURE:
+-                return "生命恢复 +20%, 作物生长 +30%";
+-            case SUN:
+-                return "伤害 +15%, 不死生物伤害 +30%";
+-            case MOON:
+-                return "经验获取 +25%, 附魔效果 +20%";
+-            case WAR:
+-                return "攻击力 +20%, 防御力 +15%";
+-            case PEACE:
+-                return "交易折扣 10%, 声望获取 +20%";
+-            case DEATH:
+-                return "亡灵抗性 +50%, 暗影伤害 +25%";
+-            case OCEAN:
+-                return "水下呼吸, 游泳速度 +30%";
+-            case MOUNTAIN:
+-                return "挖掘速度 +25%, 跌落伤害 -50%";
+-            default:
+-                return "未知效果";
+-        }
++  /** 获取宗教祝福效果 */
++  public String getBlessingEffect() {
++    switch (this) {
++      case NATURE:
++        return "生命恢复 I";
++      case SUN:
++        return "力量 I";
++      case MOON:
++        return "幸运 I";
++      case WAR:
++        return "力量 I、抗性提升 I";
++      case PEACE:
++        return "饱和 I";
++      case DEATH:
++        return "抗性提升 II";
++      case OCEAN:
++        return "水下呼吸、海豚的恩惠";
++      case MOUNTAIN:
++        return "缓降 I";
++      default:
++        return "未知效果";
+     }
++  }
+ 
+-    /**
+-     * 获取宗教禁忌
+-     */
+-    public String getTaboo() {
+-        switch (this) {
+-            case NATURE:
+-                return "不可过度砍伐树木";
+-            case SUN:
+-                return "不可在黑暗中长时间停留";
+-            case MOON:
+-                return "不可在白天进行重要仪式";
+-            case WAR:
+-                return "不可逃避战斗";
+-            case PEACE:
+-                return "不可主动发起攻击";
+-            case DEATH:
+-                return "不可埋葬尸体";
+-            case OCEAN:
+-                return "不可污染水源";
+-            case MOUNTAIN:
+-                return "不可破坏山体";
+-            default:
+-                return "无特殊禁忌";
+-        }
++  /** 获取宗教禁忌 */
++  public String getTaboo() {
++    switch (this) {
++      case NATURE:
++        return "不可过度砍伐树木";
++      case SUN:
++        return "不可在黑暗中长时间停留";
++      case MOON:
++        return "不可在白天进行重要仪式";
++      case WAR:
++        return "不可逃避战斗";
++      case PEACE:
++        return "不可主动发起攻击";
++      case DEATH:
++        return "不可埋葬尸体";
++      case OCEAN:
++        return "不可污染水源";
++      case MOUNTAIN:
++        return "不可破坏山体";
++      default:
++        return "无特殊禁忌";
+     }
++  }
+ }
+diff --git a/src/main/resources/config.yml b/src/main/resources/config.yml
+index c54767e..222b51d 100644
+--- a/src/main/resources/config.yml
++++ b/src/main/resources/config.yml
+@@ -9,7 +9,7 @@
+ config-version: "1.0"
+ 
+ # Explicit reduced StarCore deployment for the complete StarSupply authority dependency closure.
+-# Required on Folia; includes Clan, disables unrelated modules and religion.
++# Required on Folia; includes Clan and Religion; disables other unrelated modules.
+ # Entity-owned sound, screen feedback and modern HUD are included in the experimental profile.
+ # See the supplied Folia compatibility patch and acceptance instructions before production use.
+ platform:
+diff --git a/src/test/java/dev/starcore/starcore/mechanics/HolyPlaceTest.java b/src/test/java/dev/starcore/starcore/mechanics/HolyPlaceTest.java
+index 356dd29..826f38d 100644
+--- a/src/test/java/dev/starcore/starcore/mechanics/HolyPlaceTest.java
++++ b/src/test/java/dev/starcore/starcore/mechanics/HolyPlaceTest.java
+@@ -36,6 +36,7 @@ class HolyPlaceTest {
+ 
+   @BeforeEach
+   void setUp() {
++    lenient().when(world.getName()).thenReturn("overworld");
+     lenient().when(location.getWorld()).thenReturn(world);
+     lenient().when(location.getX()).thenReturn(0.0);
+     lenient().when(location.getY()).thenReturn(64.0);
+diff --git a/src/test/java/dev/starcore/starcore/mechanics/ReligionCommandTest.java b/src/test/java/dev/starcore/starcore/mechanics/ReligionCommandTest.java
+index 05e3468..f88b945 100644
+--- a/src/test/java/dev/starcore/starcore/mechanics/ReligionCommandTest.java
++++ b/src/test/java/dev/starcore/starcore/mechanics/ReligionCommandTest.java
+@@ -3,7 +3,9 @@ package dev.starcore.starcore.mechanics;
+ import static org.junit.jupiter.api.Assertions.*;
+ import static org.mockito.Mockito.*;
+ 
++import java.util.List;
+ import java.util.UUID;
++import java.util.concurrent.CompletableFuture;
+ import org.bukkit.ChatColor;
+ import org.bukkit.Location;
+ import org.bukkit.World;
+@@ -52,11 +54,23 @@ class ReligionCommandTest {
+   void setUp() {
+     religionCommand = new ReligionCommand(null);
+     religionCommand.setReligionService(religionService);
+-
++    when(religionService.isEnabled()).thenReturn(true);
++    when(religionService.setReligionAsync(any(), any()))
++        .thenReturn(CompletableFuture.completedFuture(religion));
++    when(religionService.blessAsync(any())).thenReturn(CompletableFuture.completedFuture(true));
++    doAnswer(
++            call -> {
++              ((Runnable) call.getArgument(1)).run();
++              return null;
++            })
++        .when(religionService)
++        .feedback(any(), any());
++
++    when(player.hasPermission("starcore.religion.set")).thenReturn(true);
+     when(player.getUniqueId()).thenReturn(TEST_UUID);
+     when(player.getName()).thenReturn("TestPlayer");
+     when(player.getWorld()).thenReturn(world);
+-    when(player.getLocation()).thenReturn(playerLocation);
++    when(player.getLocation()).thenReturn(new Location(world, 100, 64, 100));
+     lenient().when(playerLocation.getBlock()).thenReturn(playerBlock);
+     lenient().when(playerBlock.getLocation()).thenReturn(new Location(world, 100, 64, 100));
+     lenient().when(world.getName()).thenReturn("overworld");
+@@ -218,7 +232,7 @@ class ReligionCommandTest {
+           religionCommand.onCommand(player, command, "religion", new String[] {"set", "NATURE"});
+ 
+       assertTrue(result);
+-      verify(religionService).setReligion(TEST_UUID, ReligionType.NATURE);
++      verify(religionService).setReligionAsync(TEST_UUID, ReligionType.NATURE);
+       verify(player).sendMessage(ChatColor.GOLD + "已选择信仰: " + ReligionType.NATURE.getDisplayName());
+     }
+ 
+@@ -296,9 +310,9 @@ class ReligionCommandTest {
+     @DisplayName("创建圣地成功")
+     void createSuccess() {
+       when(player.hasPermission("starcore.religion.admin")).thenReturn(true);
+-      when(religionService.createHolyPlace(
++      when(religionService.createHolyPlaceAsync(
+               eq(ReligionType.NATURE), any(Location.class), eq("Forest Shrine"), eq(80)))
+-          .thenReturn(holyPlace);
++          .thenReturn(CompletableFuture.completedFuture(holyPlace));
+       when(holyPlace.getName()).thenReturn("Forest Shrine");
+       when(holyPlace.getLocation()).thenReturn(new Location(world, 100, 64, 100));
+ 
+@@ -331,7 +345,8 @@ class ReligionCommandTest {
+     @DisplayName("自定义半径创建成功")
+     void createWithCustomRadius() {
+       when(player.hasPermission("starcore.religion.admin")).thenReturn(true);
+-      when(religionService.createHolyPlace(any(), any(), any(), anyInt())).thenReturn(holyPlace);
++      when(religionService.createHolyPlaceAsync(any(), any(), any(), anyInt()))
++          .thenReturn(CompletableFuture.completedFuture(holyPlace));
+       when(holyPlace.getName()).thenReturn("Big Shrine");
+ 
+       boolean result =
+@@ -342,7 +357,7 @@ class ReligionCommandTest {
+               new String[] {"createshrine", "SUN", "Big Shrine", "80"});
+ 
+       assertTrue(result);
+-      verify(religionService).createHolyPlace(any(), any(), any(), anyInt());
++      verify(religionService).createHolyPlaceAsync(any(), any(), any(), anyInt());
+     }
+   }
+ 
+@@ -401,7 +416,8 @@ class ReligionCommandTest {
+           religionCommand.onCommand(player, command, "religion", new String[] {"blessing"});
+ 
+       assertTrue(result);
+-      verify(religion).setBlessed(true);
++      verify(religionService).blessAsync(TEST_UUID);
++      verify(religion, never()).setBlessed(true);
+       verify(player).sendMessage(ChatColor.GOLD + "§l你获得了神的祝福！");
+       verify(player).sendMessage(ChatColor.YELLOW + "你将在下一节祝福循环中获得额外效果");
+     }
+@@ -419,7 +435,7 @@ class ReligionCommandTest {
+ 
+       assertTrue(result);
+       verify(player).sendMessage(ChatColor.GOLD + "§l=== 信仰榜单 ===");
+-      verify(player).sendMessage(ChatColor.GRAY + "信仰榜单功能待完善");
++      verify(player).sendMessage(ChatColor.GRAY + "暂无信仰记录");
+     }
+ 
+     @Test
+@@ -501,4 +517,66 @@ class ReligionCommandTest {
+       verify(player).sendMessage(ChatColor.GOLD + "§l=== 宗教命令帮助 ===");
+     }
+   }
++
++  @Test
++  void successWaitsForPersistenceAndFailureIsReported() {
++    var saved = new CompletableFuture<Religion>();
++    when(religionService.setReligionAsync(TEST_UUID, ReligionType.NATURE)).thenReturn(saved);
++    religionCommand.onCommand(player, command, "religion", new String[] {"set", "NATURE"});
++    verify(player, never()).sendMessage(anyString());
++    saved.completeExceptionally(new IllegalStateException("disk full"));
++    verify(player).sendMessage(contains("保存失败"));
++    verify(player, never()).sendMessage(contains("已选择信仰"));
++  }
++
++  @Test
++  void defaultRadiusUsesProvidedNameAndNoBlockRead() {
++    when(player.hasPermission("starcore.religion.admin")).thenReturn(true);
++    when(religionService.createHolyPlaceAsync(any(), any(), any(), anyInt()))
++        .thenReturn(CompletableFuture.completedFuture(holyPlace));
++    religionCommand.onCommand(
++        player, command, "religion", new String[] {"createshrine", "NATURE", "Shrine"});
++    verify(religionService)
++        .createHolyPlaceAsync(eq(ReligionType.NATURE), any(), eq("Shrine"), eq(50));
++    verify(playerLocation, never()).getBlock();
++  }
++
++  @Test
++  void radiusErrorDoesNotClaimTypeIsInvalid() {
++    when(player.hasPermission("starcore.religion.admin")).thenReturn(true);
++    religionCommand.onCommand(
++        player, command, "religion", new String[] {"createshrine", "NATURE", "Shrine", "no"});
++    verify(player).sendMessage(contains("半径必须"));
++    verify(player, never()).sendMessage(contains("无效的信仰类型"));
++    verify(religionService, never()).createHolyPlaceAsync(any(), any(), any(), anyInt());
++  }
++
++  @Test
++  void leaderboardShowsRealRows() {
++    when(religionService.leaderboard(10))
++        .thenReturn(
++            List.of(new ReligionService.LeaderboardEntry(TEST_UUID, ReligionType.NATURE, 250, 17)));
++    religionCommand.onCommand(player, command, "religion", new String[] {"stat"});
++    verify(player).sendMessage(contains(TEST_UUID.toString()));
++    verify(player).sendMessage(contains("信仰 250"));
++  }
++
++  @Test
++  void nullServiceIsHandledForEveryMutation() {
++    religionCommand.setReligionService(null);
++    when(player.hasPermission(anyString())).thenReturn(true);
++    religionCommand.onCommand(player, command, "religion", new String[] {"set", "NATURE"});
++    religionCommand.onCommand(player, command, "religion", new String[] {"blessing"});
++    religionCommand.onCommand(
++        player, command, "religion", new String[] {"createshrine", "NATURE", "Shrine"});
++    verify(player, times(3)).sendMessage(ChatColor.RED + "宗教服务未初始化");
++  }
++
++  @Test
++  void setPermissionIsEnforcedBeforeAdmission() {
++    when(player.hasPermission("starcore.religion.set")).thenReturn(false);
++    religionCommand.onCommand(player, command, "religion", new String[] {"set", "NATURE"});
++    verify(religionService, never()).setReligionAsync(any(), any());
++    verify(player).sendMessage(contains("没有权限选择信仰"));
++  }
+ }
+diff --git a/src/test/java/dev/starcore/starcore/mechanics/ReligionModelSafetyTest.java b/src/test/java/dev/starcore/starcore/mechanics/ReligionModelSafetyTest.java
+new file mode 100644
+index 0000000..d856087
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/mechanics/ReligionModelSafetyTest.java
+@@ -0,0 +1,109 @@
++package dev.starcore.starcore.mechanics;
++
++import static org.junit.jupiter.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import java.util.UUID;
++import java.util.concurrent.*;
++import org.bukkit.Location;
++import org.bukkit.World;
++import org.bukkit.potion.PotionEffect;
++import org.junit.jupiter.api.Test;
++
++class ReligionModelSafetyTest {
++  @Test
++  void negativeAmountsCannotMintFaithContributionsOrPower() {
++    Religion religion = new Religion(UUID.randomUUID(), ReligionType.NATURE);
++    assertThrows(IllegalArgumentException.class, () -> religion.addFaith(-1));
++    assertThrows(IllegalArgumentException.class, () -> religion.reduceFaith(-1));
++    assertThrows(IllegalArgumentException.class, () -> religion.addContribution(-1));
++    HolyPlace place =
++        new HolyPlace(UUID.randomUUID(), ReligionType.NATURE, "world", 0, 64, 0, "Shrine", 50);
++    assertThrows(IllegalArgumentException.class, () -> place.consumeHolyPower(-1));
++    assertThrows(IllegalArgumentException.class, () -> place.addHolyPower(-1));
++    assertEquals(0, religion.getFaith());
++    assertEquals(100, place.getHolyPower());
++  }
++
++  @Test
++  void additionsSaturateWithoutIntegerOverflow() {
++    Religion religion = new Religion(UUID.randomUUID(), ReligionType.NATURE);
++    religion.addContribution(Integer.MAX_VALUE);
++    religion.addContribution(Integer.MAX_VALUE);
++    assertEquals(Integer.MAX_VALUE, religion.getContributions());
++    assertEquals(1000, religion.getFaith());
++    religion.addFaith(Integer.MAX_VALUE);
++    assertEquals(1000, religion.getFaith());
++    HolyPlace place =
++        new HolyPlace(UUID.randomUUID(), ReligionType.NATURE, "world", 0, 64, 0, "Shrine", 50);
++    place.addHolyPower(Integer.MAX_VALUE);
++    assertEquals(1000, place.getHolyPower());
++  }
++
++  @Test
++  void callerLocationMutationDoesNotMoveShrine() {
++    World world = mock(World.class);
++    when(world.getName()).thenReturn("world");
++    Location origin = new Location(world, 0, 64, 0);
++    HolyPlace place = new HolyPlace(UUID.randomUUID(), ReligionType.NATURE, origin, "Shrine", 50);
++    origin.setX(1000);
++    assertTrue(place.isInRange(new Location(world, 0, 64, 0)));
++    assertFalse(place.isInRange(origin));
++    assertFalse(place.isInRange(null));
++    assertFalse(place.isInRange(new Location(null, 0, 64, 0)));
++  }
++
++  @Test
++  void concurrentContributionsDoNotLoseUpdates() throws Exception {
++    Religion religion = new Religion(UUID.randomUUID(), ReligionType.NATURE);
++    try (ExecutorService executor = Executors.newFixedThreadPool(4)) {
++      var first =
++          executor.submit(
++              () -> {
++                for (int i = 0; i < 1000; i++) religion.addContribution(1);
++              });
++      var second =
++          executor.submit(
++              () -> {
++                for (int i = 0; i < 1000; i++) religion.addContribution(1);
++              });
++      first.get(5, TimeUnit.SECONDS);
++      second.get(5, TimeUnit.SECONDS);
++    }
++    assertEquals(2000, religion.getContributions());
++  }
++
++  @Test
++  void failedPowerConsumptionDoesNotAdvanceBlessingTime() {
++    HolyPlace place =
++        new HolyPlace(UUID.randomUUID(), ReligionType.NATURE, "world", 0, 64, 0, "Shrine", 50);
++    place.setHolyPower(5);
++    place.setLastBlessing(10);
++    place.performBlessing();
++    assertEquals(5, place.getHolyPower());
++    assertEquals(10, place.getLastBlessing());
++  }
++
++  @Test
++  void strongerAndInfiniteEffectsArePreserved() {
++    PotionEffect existing = mock(PotionEffect.class);
++    when(existing.getAmplifier()).thenReturn(2);
++    when(existing.getDuration()).thenReturn(1);
++    assertFalse(ReligionService.shouldRefresh(existing, 600, 0));
++    when(existing.getAmplifier()).thenReturn(0);
++    when(existing.isInfinite()).thenReturn(true);
++    assertFalse(ReligionService.shouldRefresh(existing, 600, 0));
++  }
++
++  @Test
++  void absentWeakerAndExpiringEffectsAreRefreshed() {
++    assertTrue(ReligionService.shouldRefresh(null, 600, 0));
++    PotionEffect existing = mock(PotionEffect.class);
++    when(existing.getAmplifier()).thenReturn(0);
++    when(existing.getDuration()).thenReturn(1000);
++    assertTrue(ReligionService.shouldRefresh(existing, 600, 1));
++    assertFalse(ReligionService.shouldRefresh(existing, 600, 0));
++    when(existing.getDuration()).thenReturn(300);
++    assertTrue(ReligionService.shouldRefresh(existing, 600, 0));
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/mechanics/ReligionPersistenceTest.java b/src/test/java/dev/starcore/starcore/mechanics/ReligionPersistenceTest.java
+new file mode 100644
+index 0000000..201cf00
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/mechanics/ReligionPersistenceTest.java
+@@ -0,0 +1,516 @@
++package dev.starcore.starcore.mechanics;
++
++import static org.junit.jupiter.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.scheduler.FeedbackSchedulerFixture;
++import dev.starcore.starcore.performance.OptimizedMoveListener;
++import java.lang.reflect.*;
++import java.nio.file.Path;
++import java.sql.*;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.*;
++import java.util.logging.Logger;
++import org.bukkit.Location;
++import org.junit.jupiter.api.*;
++import org.junit.jupiter.api.io.TempDir;
++
++@Timeout(30)
++class ReligionPersistenceTest {
++  @TempDir Path directory;
++  FeedbackSchedulerFixture fixture;
++  ReligionService service;
++  Connection raw;
++  final AtomicBoolean failWrites = new AtomicBoolean();
++  final AtomicBoolean loseCommitReply = new AtomicBoolean();
++  final AtomicInteger failWriteNumber = new AtomicInteger();
++  final AtomicReference<Gate> nextWrite = new AtomicReference<>();
++  final AtomicReference<Runnable> afterCommit = new AtomicReference<>();
++  final UUID playerId = UUID.fromString("00000000-0000-0000-0000-000000000001");
++
++  @BeforeEach
++  void setup() throws Exception {
++    fixture = new FeedbackSchedulerFixture();
++    when(fixture.plugin.getDataFolder()).thenReturn(directory.toFile());
++    when(fixture.plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    when(fixture.world.getName()).thenReturn("overworld");
++    start();
++  }
++
++  void start() {
++    service =
++        new ReligionService(fixture.plugin) {
++          @Override
++          protected Connection openConnection() throws SQLException {
++            raw = super.openConnection();
++            return (Connection)
++                Proxy.newProxyInstance(
++                    Connection.class.getClassLoader(),
++                    new Class<?>[] {Connection.class},
++                    (proxy, method, args) -> {
++                      Object result = invoke(raw, method, args);
++                      if (method.getName().equals("prepareStatement"))
++                        return statement((PreparedStatement) result);
++                      if (method.getName().equals("commit")) {
++                        Runnable action = afterCommit.getAndSet(null);
++                        if (action != null) action.run();
++                        if (loseCommitReply.getAndSet(false))
++                          throw new SQLException("commit response lost");
++                      }
++                      return result;
++                    });
++          }
++        };
++    service.initialize();
++  }
++
++  Object statement(PreparedStatement statement) {
++    return Proxy.newProxyInstance(
++        PreparedStatement.class.getClassLoader(),
++        new Class<?>[] {PreparedStatement.class},
++        (proxy, method, args) -> {
++          if (method.getName().equals("executeUpdate")) {
++            Gate gate = nextWrite.getAndSet(null);
++            if (gate != null) gate.block();
++            if (failWrites.get()
++                || (failWriteNumber.get() > 0 && failWriteNumber.decrementAndGet() == 0))
++              throw new SQLException("injected write failure");
++          }
++          return invoke(statement, method, args);
++        });
++  }
++
++  static Object invoke(Object target, Method method, Object[] args) throws Throwable {
++    try {
++      return method.invoke(target, args);
++    } catch (InvocationTargetException failure) {
++      throw failure.getCause();
++    }
++  }
++
++  @AfterEach
++  void close() {
++    failWrites.set(false);
++    if (service != null) service.shutdown();
++    fixture.close();
++  }
++
++  long number(String query) throws Exception {
++    try (Connection read =
++            DriverManager.getConnection("jdbc:sqlite:" + directory.resolve("religion.db"));
++        Statement sql = read.createStatement();
++        ResultSet rows = sql.executeQuery(query)) {
++      assertTrue(rows.next());
++      return rows.getLong(1);
++    }
++  }
++
++  HolyPlace shrine() {
++    return service.createHolyPlace(
++        ReligionType.NATURE, new Location(fixture.world, 0, 64, 0), "Forest", 100);
++  }
++
++  Religion religion() {
++    service.setReligion(playerId, ReligionType.NATURE);
++    return service.getReligion(playerId);
++  }
++
++  void restart() {
++    service.shutdown();
++    start();
++  }
++
++  @Test
++  void acknowledgedChoiceAndBlessingSurviveOfflineRestart() {
++    Religion religion = religion();
++    religion.addContribution(1000);
++    assertTrue(service.blessAsync(playerId).join());
++    long joined = religion.getJoinTime();
++    restart();
++    assertEquals(100, service.getReligion(playerId).getFaith());
++    assertEquals(1000, service.getReligion(playerId).getContributions());
++    assertEquals(joined, service.getReligion(playerId).getJoinTime());
++    assertTrue(service.getReligion(playerId).isBlessed());
++    assertFalse(service.blessAsync(playerId).join());
++  }
++
++  @Test
++  void failedChoiceDoesNotPublishOrResetExistingReligion() {
++    Religion religion = religion();
++    religion.setFaith(150);
++    service.flush().join();
++    failWrites.set(true);
++    assertThrows(
++        CompletionException.class,
++        () -> service.setReligionAsync(playerId, ReligionType.WAR).join());
++    assertEquals(ReligionType.NATURE, religion.getType());
++    assertEquals(150, religion.getFaith());
++    UUID absent = UUID.randomUUID();
++    assertThrows(
++        CompletionException.class, () -> service.setReligionAsync(absent, ReligionType.WAR).join());
++    assertNull(service.getReligion(absent));
++  }
++
++  @Test
++  void failedBlessingRemainsUnclaimedAndCanRetry() {
++    Religion religion = religion();
++    religion.setFaith(100);
++    service.flush().join();
++    failWrites.set(true);
++    assertThrows(CompletionException.class, () -> service.blessAsync(playerId).join());
++    assertFalse(religion.isBlessed());
++    failWrites.set(false);
++    assertTrue(service.blessAsync(playerId).join());
++  }
++
++  @Test
++  void competingBlessingRequestsOnlyGrantOnce() {
++    Religion religion = religion();
++    religion.setFaith(100);
++    var first = service.blessAsync(playerId);
++    var second = service.blessAsync(playerId);
++    assertTrue(first.join());
++    assertFalse(second.join());
++  }
++
++  @Test
++  void changingFaithKeepsContributionsAndResetsBlessingDurably() {
++    Religion religion = religion();
++    religion.addContribution(1000);
++    service.blessAsync(playerId).join();
++    service.setReligion(playerId, ReligionType.SUN);
++    assertSame(religion, service.getReligion(playerId));
++    restart();
++    Religion stored = service.getReligion(playerId);
++    assertEquals(ReligionType.SUN, stored.getType());
++    assertEquals(1000, stored.getContributions());
++    assertEquals(0, stored.getFaith());
++    assertFalse(stored.isBlessed());
++  }
++
++  @Test
++  void failedCreateIsInvisibleAndDeleteFailureKeepsShrine() {
++    failWrites.set(true);
++    assertThrows(CompletionException.class, this::shrine);
++    assertTrue(service.getHolyPlaces().isEmpty());
++    failWrites.set(false);
++    HolyPlace place = shrine();
++    failWrites.set(true);
++    assertThrows(
++        CompletionException.class, () -> service.removeHolyPlaceAsync(place.getId()).join());
++    assertTrue(service.getHolyPlaces().contains(place));
++    place.addHolyPower(5);
++  }
++
++  @Test
++  void deletedDirtyShrineCannotReappearAfterSaveOrRestart() {
++    HolyPlace place = shrine();
++    place.addHolyPower(5);
++    assertTrue(service.removeHolyPlaceAsync(place.getId()).join());
++    assertFalse(service.removeHolyPlaceAsync(place.getId()).join());
++    assertThrows(IllegalStateException.class, () -> place.addHolyPower(10));
++    service.flush().join();
++    restart();
++    assertTrue(service.getHolyPlaces().isEmpty());
++  }
++
++  @Test
++  void unloadedWorldNameCoordinatesAndPowerSurviveSave() {
++    HolyPlace place = shrine();
++    place.setHolyPower(211);
++    place.setLastBlessing(12345);
++    service.flush().join();
++    restart();
++    HolyPlace loaded = service.getHolyPlaces().iterator().next();
++    assertEquals("overworld", loaded.getWorldName());
++    assertEquals(64, loaded.getY());
++    assertEquals(211, loaded.getHolyPower());
++    assertEquals(12345, loaded.getLastBlessing());
++    assertNull(loaded.getLocation().getWorld());
++    loaded.addHolyPower(5);
++    service.flush().join();
++    restart();
++    assertEquals(216, service.getHolyPlaces().iterator().next().getHolyPower());
++  }
++
++  @Test
++  void flushRollsBackAllRowsAndRetainsDirtyStateOnFailure() throws Exception {
++    Religion religion = religion();
++    HolyPlace place = shrine();
++    religion.onChange(() -> {});
++    place.onChange(() -> {});
++    religion.addFaith(77);
++    place.addHolyPower(8);
++    failWriteNumber.set(2);
++    assertThrows(CompletionException.class, () -> service.flush().join());
++    assertEquals(0, number("SELECT faith FROM player_religion"));
++    assertEquals(100, number("SELECT holy_power FROM holy_places"));
++    assertTrue(religion.isDirty());
++    assertTrue(place.isDirty());
++    service.flush().join();
++    assertEquals(77, number("SELECT faith FROM player_religion"));
++    assertEquals(108, number("SELECT holy_power FROM holy_places"));
++  }
++
++  @Test
++  void mutationDuringCommitIsNotMarkedSavedByOlderSnapshot() throws Exception {
++    Religion religion = religion();
++    religion.onChange(() -> {});
++    religion.setFaith(50);
++    afterCommit.set(() -> religion.addFaith(1));
++    service.flush().join();
++    assertTrue(religion.isDirty());
++    assertEquals(50, number("SELECT faith FROM player_religion"));
++    service.flush().join();
++    assertEquals(51, number("SELECT faith FROM player_religion"));
++  }
++
++  @Test
++  void uncertainCommitFreezesWritesUntilReloadOfAuthority() {
++    loseCommitReply.set(true);
++    assertThrows(
++        CompletionException.class,
++        () -> service.setReligionAsync(playerId, ReligionType.WAR).join());
++    assertFalse(service.isEnabled());
++    assertNull(service.getReligion(playerId));
++    assertThrows(
++        CompletionException.class,
++        () -> service.setReligionAsync(playerId, ReligionType.NATURE).join());
++    restart();
++    assertEquals(ReligionType.WAR, service.getReligion(playerId).getType());
++  }
++
++  @Test
++  void callerCancellationDoesNotCancelAdmittedWrite() throws Exception {
++    Gate gate = new Gate();
++    nextWrite.set(gate);
++    var result = service.setReligionAsync(playerId, ReligionType.SUN);
++    try {
++      gate.awaitEntered();
++      assertTrue(result.cancel(true));
++    } finally {
++      gate.release.countDown();
++    }
++    service.flush().join();
++    restart();
++    assertEquals(ReligionType.SUN, service.getReligion(playerId).getType());
++  }
++
++  @Test
++  void shutdownDrainsAdmittedWorkRejectsNewWorkAndClosesConnection() throws Exception {
++    Religion old = religion();
++    Gate gate = new Gate();
++    nextWrite.set(gate);
++    UUID other = UUID.randomUUID();
++    var operation = service.setReligionAsync(other, ReligionType.MOON);
++    gate.awaitEntered();
++    var shutdown = CompletableFuture.runAsync(service::shutdown);
++    try {
++      long until = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
++      while (service.isEnabled() && System.nanoTime() < until) Thread.sleep(1);
++      assertFalse(service.isEnabled());
++      assertFalse(shutdown.isDone());
++      assertThrows(
++          CompletionException.class,
++          () -> service.setReligionAsync(UUID.randomUUID(), ReligionType.WAR).join());
++    } finally {
++      gate.release.countDown();
++    }
++    shutdown.get(5, TimeUnit.SECONDS);
++    assertNotNull(operation.join());
++    assertTrue(raw.isClosed());
++    assertThrows(IllegalStateException.class, () -> old.addFaith(1));
++    service.setEnabled(true);
++    assertFalse(service.isEnabled());
++    start();
++    assertEquals(ReligionType.MOON, service.getReligion(other).getType());
++  }
++
++  @Test
++  void corruptedRowPreventsPartialStartupAndWrites() throws Exception {
++    religion();
++    service.shutdown();
++    try (Connection edit =
++            DriverManager.getConnection("jdbc:sqlite:" + directory.resolve("religion.db"));
++        Statement sql = edit.createStatement()) {
++      sql.executeUpdate("UPDATE player_religion SET faith=-1");
++    }
++    assertThrows(IllegalStateException.class, this::start);
++    assertFalse(service.isEnabled());
++    assertNull(service.getReligion(playerId));
++    assertTrue(raw.isClosed());
++    assertEquals(-1, number("SELECT faith FROM player_religion"));
++  }
++
++  @Test
++  void leaderboardLoadsOfflineRowsAndSortsTiesDeterministically() {
++    UUID second = UUID.fromString("00000000-0000-0000-0000-000000000002");
++    UUID third = UUID.fromString("00000000-0000-0000-0000-000000000003");
++    religion().setFaith(200);
++    service.setReligion(second, ReligionType.SUN);
++    service.getReligion(second).setFaith(200);
++    service.setReligion(third, ReligionType.MOON);
++    service.getReligion(third).setFaith(200);
++    service.getReligion(third).setContributions(10);
++    restart();
++    assertEquals(
++        List.of(third, playerId, second),
++        service.leaderboard(10).stream().map(ReligionService.LeaderboardEntry::playerId).toList());
++    assertEquals(1, service.leaderboard(1).size());
++    assertThrows(UnsupportedOperationException.class, () -> service.leaderboard(10).clear());
++    assertThrows(IllegalArgumentException.class, () -> service.leaderboard(101));
++  }
++
++  @Test
++  void shrineIndexCoversRadiusBoundaryBeyondAdjacentChunksAndUnsubscribes() {
++    var player = fixture.player(0);
++    UUID id = player.getUniqueId();
++    service.setReligion(id, ReligionType.NATURE);
++    shrine();
++    OptimizedMoveListener dispatcher = new OptimizedMoveListener();
++    service.subscribe(dispatcher);
++    service.subscribe(dispatcher);
++    assertEquals(1, dispatcher.blockSubscribers());
++    fixture.owner = player;
++    service.onBlockMove(
++        player, new Location(fixture.world, 101, 64, 0), new Location(fixture.world, 100, 64, 0));
++    assertEquals(1, service.getReligion(id).getFaith());
++    verify(player).sendMessage(contains("你进入了圣地"));
++    service.onBlockMove(
++        player, new Location(fixture.world, -101, 64, 0), new Location(fixture.world, -100, 64, 0));
++    assertEquals(2, service.getReligion(id).getFaith());
++    service.shutdown();
++    assertEquals(0, dispatcher.blockSubscribers());
++  }
++
++  @Test
++  void movementHandlesNullAndForeignWorldAndDeletedIndex() {
++    var player = fixture.player(0);
++    UUID id = player.getUniqueId();
++    service.setReligion(id, ReligionType.NATURE);
++    HolyPlace place = shrine();
++    service.onBlockMove(player, null, null);
++    service.onBlockMove(player, null, new Location(null, 0, 64, 0));
++    assertEquals(0, service.getReligion(id).getFaith());
++    service.removeHolyPlace(place.getId());
++    service.onBlockMove(player, null, new Location(fixture.world, 0, 64, 0));
++    assertEquals(0, service.getReligion(id).getFaith());
++  }
++
++  @Test
++  void feedbackRunsOnlyOnOwnerAndRetirementOrShutdownSuppressesIt() {
++    var player = fixture.player(0);
++    AtomicInteger delivered = new AtomicInteger();
++    service.feedback(
++        player,
++        () -> {
++          assertSame(player, fixture.owner);
++          delivered.incrementAndGet();
++        });
++    assertEquals(0, delivered.get());
++    fixture.pending.getLast().tick();
++    assertEquals(1, delivered.get());
++    service.feedback(player, delivered::incrementAndGet);
++    fixture.pending.getLast().retire();
++    fixture.pending.getLast().tick();
++    assertEquals(1, delivered.get());
++    service.feedback(player, delivered::incrementAndGet);
++    var pending = fixture.pending.getLast();
++    service.shutdown();
++    assertTrue(pending.cancelled.get());
++    pending.tick();
++    assertEquals(1, delivered.get());
++  }
++
++  @Test
++  void blessingTimerReadsPlayerStateOnlyAfterOwnerDispatchAndRechecksCurrentFaith() {
++    var player = fixture.player(0);
++    UUID id = player.getUniqueId();
++    service.setReligion(id, ReligionType.NATURE);
++    service.getReligion(id).setFaith(100);
++    service.blessAsync(id).join();
++    service.applyBlessings();
++    assertEquals(1, fixture.pending.size());
++    verify(player, never()).getPotionEffect(any());
++    service.setReligion(id, ReligionType.MOON);
++    fixture.pending.getLast().tick();
++    verify(player, never()).getPotionEffect(any());
++  }
++
++  @Test
++  void disablingRejectsNewMutationsWhileFlushAndShutdownRemainAvailable() {
++    Religion religion = religion();
++    religion.addFaith(9);
++    service.setEnabled(false);
++    assertThrows(CompletionException.class, () -> service.blessAsync(playerId).join());
++    service.flush().join();
++    restart();
++    assertEquals(9, service.getReligion(playerId).getFaith());
++  }
++
++  @Test
++  void nonNumericPersistedFaithCannotSilentlyLoadAsZero() throws Exception {
++    religion();
++    service.shutdown();
++    try (Connection edit =
++            DriverManager.getConnection("jdbc:sqlite:" + directory.resolve("religion.db"));
++        Statement sql = edit.createStatement()) {
++      sql.executeUpdate("UPDATE player_religion SET faith='corrupt'");
++    }
++    assertThrows(IllegalStateException.class, this::start);
++    assertTrue(raw.isClosed());
++  }
++
++  @Test
++  void lastShutdownSnapshotIncludesUnsavedDirectModelChanges() throws Exception {
++    Religion religion = religion();
++    religion.onChange(() -> {});
++    religion.addFaith(55);
++    service.shutdown();
++    assertEquals(55, number("SELECT faith FROM player_religion"));
++  }
++
++  @Test
++  void failedAutomaticSaveRetriesOnNextFlush() throws Exception {
++    Religion religion = religion();
++    failWrites.set(true);
++    religion.addFaith(44);
++    assertThrows(CompletionException.class, () -> service.flush().join());
++    assertTrue(religion.isDirty());
++    failWrites.set(false);
++    service.flush().join();
++    assertEquals(44, number("SELECT faith FROM player_religion"));
++  }
++
++  @Test
++  void schedulingFailureClosesStorageAndStillAllowsShutdown() throws Exception {
++    service.shutdown();
++    var scheduler = org.bukkit.Bukkit.getGlobalRegionScheduler();
++    fixture
++        .bukkit
++        .when(org.bukkit.Bukkit::getGlobalRegionScheduler)
++        .thenThrow(new IllegalStateException("scheduler unavailable"));
++    try {
++      assertThrows(IllegalStateException.class, this::start);
++      assertFalse(service.isEnabled());
++      assertTrue(raw.isClosed());
++      assertDoesNotThrow(service::shutdown);
++    } finally {
++      fixture.bukkit.when(org.bukkit.Bukkit::getGlobalRegionScheduler).thenReturn(scheduler);
++    }
++  }
++
++  static final class Gate {
++    final CountDownLatch entered = new CountDownLatch(1), release = new CountDownLatch(1);
++
++    void block() throws Exception {
++      entered.countDown();
++      if (!release.await(10, TimeUnit.SECONDS)) throw new SQLException("gate timed out");
++    }
++
++    void awaitEntered() throws Exception {
++      assertTrue(entered.await(5, TimeUnit.SECONDS));
++    }
++  }
++}

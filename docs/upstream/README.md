@@ -1,6 +1,6 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-当前最新兼容包按顺序应用六份补丁：后勤、玩家资金回执、税款回执、公共反馈、HUD 设置、[Clan 闭环](CLAN-CLOSURE.md)。第六份补丁提供真实银行交易与回执恢复、原子存档、聊天和线程/生命周期修复；当前代码测试范围见 [Clan 说明](CLAN-CLOSURE.md)。
+当前最新兼容包按顺序应用七份补丁：后勤、玩家资金回执、税款回执、公共反馈、HUD 设置、[Clan 闭环](CLAN-CLOSURE.md)、[Religion 闭环](RELIGION-CLOSURE.md)。第七份补丁补齐宗教的串行事务保存、耐久命令反馈、真实排行榜、圣地范围索引与 Folia 生命周期；独立国家 Faith 和其他未适配模块仍待完成。当前测试与剩余工作见 [Religion 说明](RELIGION-CLOSURE.md)和[代码闭环清单](../CODE-CLOSURE.md)。
 
 此前 HUD 兼容包按顺序应用五份补丁，在下述四份补丁后追加 [starcore-hud-settings.patch](starcore-hud-settings.patch)。个人设置持久化、真实重载、呼吸动画和彩色主题等 HUD 缺口已补齐；配置、命令、构建与验收范围见 [HUD-SETTINGS](HUD-SETTINGS.md)。
 

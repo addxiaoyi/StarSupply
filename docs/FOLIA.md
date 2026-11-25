@@ -2,11 +2,17 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
+## 2026-11-26 Religion 代码与自动化闭环
+
+2026-11-26 已追加第七份 [Religion 闭环补丁](upstream/RELIGION-CLOSURE.md)：SQLite 串行事务、耐久命令反馈、离线排行榜、完整圣地范围索引、实体线程和启停接线已完成。466 项 Core 定向测试（Religion 新增 37 项）与实际最终 Core 成品下 StarSupply 全套 177 项通过。未启动实服；独立国家 Faith、其他未适配模块、回执归档、全量 Core 与 MySQL 验证仍未闭环，见[代码清单](CODE-CLOSURE.md)和[本轮证据](verification/workspace-religion-closure-20261126.json)。
+
+当前 Core SHA-256：`9C2B07E1D2F390253AF01280578026ED11805914A7E04EDEE25C511A736B1195`。该构建尚未实服验收。
+
 ## 2026-11-26 Clan 代码与自动化闭环
 
-2026-11-26 已追加第六份 [Clan 闭环补丁](upstream/CLAN-CLOSURE.md)：存取款接入真实玩家资金与耐久回执，氏族元数据先于转账落盘，损坏存档冻结写入；修复聊天状态、成员并发、权限、命令结果和实体线程回调，并接入启动/停用及实验后勤 profile。370 项 Core 定向测试（新增 48 项 Clan）与该实际 Core 成品下 StarSupply 全套 177 项通过。未启动实服，Religion 和其他白名单外模块仍未完成 Folia 适配。见[本轮验证](verification/workspace-clan-closure-20261126.json)。
+2026-11-26 已追加第六份 [Clan 闭环补丁](upstream/CLAN-CLOSURE.md)：存取款接入真实玩家资金与耐久回执，氏族元数据先于转账落盘，损坏存档冻结写入；修复聊天状态、成员并发、权限、命令结果和实体线程回调，并接入启动/停用及实验后勤 profile。370 项 Core 定向测试（新增 48 项 Clan）与该实际 Core 成品下 StarSupply 全套 177 项通过。该检查点未启动实服，当时 Religion 尚未适配；其缺口已由上方第七份补丁修复。见[本轮验证](verification/workspace-clan-closure-20261126.json)。
 
-当前 Core SHA-256：`47D90F517D9DE131C8CF8F41B847A6792FBC7021FE7AAACD153FA8870D5B0838`。该构建尚未实服验收。
+Clan 检查点 Core SHA-256：`47D90F517D9DE131C8CF8F41B847A6792FBC7021FE7AAACD153FA8870D5B0838`。该构建尚未实服验收。
 
 ## 2026-11-26 HUD 设置闭环与公共反馈适配
 

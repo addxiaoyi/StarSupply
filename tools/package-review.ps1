@@ -36,6 +36,8 @@ $hudPatch = 'docs/upstream/starcore-hud-settings.patch'
 $hudPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $hudPatch) -Algorithm SHA256).Hash
 $clanPatch = 'docs/upstream/starcore-clan-closure.patch'
 $clanPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $clanPatch) -Algorithm SHA256).Hash
+$religionPatch = 'docs/upstream/starcore-religion-closure.patch'
+$religionPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $religionPatch) -Algorithm SHA256).Hash
 $companionSha = $null
 if ($StarCoreJar) {
     $StarCoreJar = (Resolve-Path -LiteralPath $StarCoreJar).Path
@@ -121,6 +123,8 @@ $manifest = [ordered]@{
     starcore_hud_patch_sha256 = $hudPatchSha
     starcore_clan_patch = $clanPatch
     starcore_clan_patch_sha256 = $clanPatchSha
+    starcore_religion_patch = $religionPatch
+    starcore_religion_patch_sha256 = $religionPatchSha
     starcore_companion_jar_sha256 = $companionSha
 }
 $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $release 'manifest.json') -Encoding utf8
