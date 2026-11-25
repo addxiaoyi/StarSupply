@@ -3,6 +3,7 @@ const path = require('node:path');
 const {createHash} = require('node:crypto');
 const helpers = require('./iron-pickaxe.cjs');
 const {installServerDigConfirmation} = require('./server-dig.cjs');
+const {smeltingState, smeltUntil} = require('./survival-smelting.cjs');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function main() {
@@ -324,29 +325,24 @@ async function main() {
     }
     await approach(block); return block;
   }
-  async function smelt(input, output, desired) {
+  async function smelt(input, output, desired, gatherMissing) {
     if (count(output) >= desired) return;
-    const block = await furnace(), window = await bot.openFurnace(block);
+    const block = await furnace();
+    let window = await bot.openFurnace(block);
     try {
-      const needed = desired - count(output);
-      if (window.outputItem()) {
-        if (window.outputItem().name !== output) throw new Error(`Furnace has different output: ${window.outputItem().name}`);
-        await window.takeOutput();
+      const state = smeltingState(window, input, output, desired);
+      if (state.acquireInput && gatherMissing) {
+        window.close();
+        await gatherMissing(state.missingInput);
+        await approach(bot.blockAt(block.position));
+        window = await bot.openFurnace(bot.blockAt(block.position));
       }
-      const remaining = desired - count(output);
-      if (remaining <= 0) return;
-      if (!window.fuelItem() && !window.fuel) {
-        await window.putFuel(bot.registry.itemsByName.coal.id, null, Math.ceil(remaining / 8));
-      }
-      if (!window.inputItem()) await window.putInput(bot.registry.itemsByName[input].id, null, remaining);
-      log('smelting_started', {input, output, needed, position: block.position});
-      await until(() => window.outputItem()?.name === output && window.outputItem().count >= remaining,
-        `smelt ${remaining} ${output}`, remaining * 12000 + 30000);
-      await window.takeOutput();
-      log('smelting_collected', {output, count: count(output), inventory: inventory()});
-    } finally { window.close(); }
+      log('smelting_started', {input, output, desired, position: block.position});
+      await smeltUntil(bot, window, input, output, desired, {log, check: () => { if (failure) throw failure; }});
+    } finally { if (bot.currentWindow === window) window.close(); }
     await delay(500);
     if (count(output) < desired) throw new Error(`Smelting output did not persist: ${output}`);
+    log('smelting_collected', {output, count: count(output), inventory: inventory()});
   }
 
   async function farmBread() {
@@ -484,14 +480,13 @@ async function main() {
     if (phase === 'mining') {
       if (count('iron_ingot') < 6) {
         await gather(['coal_ore', 'deepslate_coal_ore'], 'coal', 6, 'iron_pickaxe');
-        await gather(['iron_ore', 'deepslate_iron_ore'], 'raw_iron', 6 - count('iron_ingot'), 'iron_pickaxe');
-        await smelt('raw_iron', 'iron_ingot', 6);
+        await smelt('raw_iron', 'iron_ingot', 6,
+          needed => gather(['iron_ore', 'deepslate_iron_ore'], 'raw_iron', needed, 'iron_pickaxe'));
       }
       if (count('glass_bottle') < 3) {
         await ascendToSurface();
         await travel(new Vec3(-60, 65, -1), 4);
-        await gather(['sand'], 'sand', Math.max(0, 3 - count('glass')), null, 24);
-        await smelt('sand', 'glass', 3);
+        await smelt('sand', 'glass', 3, needed => gather(['sand'], 'sand', needed, null, 24));
         await craft('glass_bottle', [['glass', [1, 3, 5]]]);
       }
     } else if (phase === 'surface') {

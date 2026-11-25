@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-25",
+  "base_commit": "d0df8c5",
+  "change": "Resume partial furnace batches using pending inputs and finished outputs; refill depleted fuel; require authoritative single/batched block packets for survival placement.",
+  "github_before": {
+    "branch": "codex/strategic-logistics",
+    "fetch": "succeeded; local and origin matched",
+    "worktree": "clean"
+  },
+  "verify": {
+    "command": "mvnw.cmd -B -ntp -DforkCount=0 verify",
+    "java": "21.0.13.1",
+    "maven": "3.9.16",
+    "maven_opts": "-Xms32m -Xmx192m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC",
+    "finished": "2026-11-25T17:42:51+08:00",
+    "tests": 124,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "artifact": {
+    "path": "target/starsupply-0.1.0.jar",
+    "bytes": 14678765,
+    "sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+    "unchanged_production_source": true
+  },
+  "acceptance_tool_tests": {
+    "scope": "Every *.test.cjs under tools/acceptance/survival-progression",
+    "tests": 47,
+    "failures": 0,
+    "skipped": 0,
+    "new_placement_tests": 8,
+    "new_smelting_tests": 9,
+    "powershell_restoration_checks": 7,
+    "node_syntax_checks": 21,
+    "git_diff_check": "passed"
+  },
+  "saved_checkpoint": {
+    "player": "SupplyCook",
+    "gameMode": "survival",
+    "position": [5.499105686866461, 49, 58.4309376655394],
+    "sha256": "747194DCF7BBF6FAA52996FA9DA2A59939227354612FC69A0F05AC92D0BD24D0",
+    "matches_handoff": true,
+    "inventory_extract": {"coal": 6, "raw_iron": 6, "cobblestone": 146, "iron_pickaxe": 1},
+    "health": 20,
+    "food": 20,
+    "modified_during_this_work": false
+  },
+  "logs": [
+    {"path": "target-resume-verify.log", "sha256": "B57EA202C63491B01BBA73E4235650FABA81367FD939CF09EF5A6C650BFD83FF"},
+    {"path": "target/survival-resume-tests-20261125.log", "sha256": "172E7C71435869C8F3539C9CE5E7A38116A61E9F05D4786BDE7EC8F0B9B62D99"},
+    {"path": "target/survival-resume-restoration-20261125.log", "sha256": "07F2324FD898FF3D13470EE21D50B933228774E09271425707DE038BA05085E1"}
+  ],
+  "live_acceptance": {
+    "performed": false,
+    "reason": "Host had about 325 MiB free physical memory at initial inspection. User explicitly chose to complete runnable development/tests and retain live acceptance as pending.",
+    "pending": [
+      "Live confirmation of the updated mining/smelting and placement paths",
+      "All six survival-production phases and subsequent purchase, transport and sustained consumption",
+      "Current complete optional Folia stack and production support certification",
+      "Graphical client resource-pack rendering"
+    ]
+  }
+}

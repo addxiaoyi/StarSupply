@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const net = require('node:net');
 const path = require('node:path');
+const {placeBlockConfirmed} = require('./server-place.cjs');
 
 const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
@@ -69,35 +70,7 @@ async function waitForNearbyChunkColumns(bot, Vec3, radius = 2, timeoutMs = 6000
 }
 
 async function placeBlockEventually(bot, referenceBlock, face, blockName, label, log) {
-  const target = referenceBlock.position.offset(face.x, face.y, face.z);
-  const waitForPlacement = () => until(() => {
-    const block = bot.blockAt(target);
-    if (block?.name === blockName) return block;
-    if (block && block.name !== 'air') {
-      throw new Error(`Unexpected ${block.name} at ${target} while waiting for ${blockName}`);
-    }
-  }, `server-confirmed ${label}`, 5000);
-  try {
-    await within(bot.placeBlock(referenceBlock, face), label, 10000);
-  } catch (error) {
-    if (!/Server refused to place .*: the block is still air|Server did not answer the placement at |Event blockUpdate:.*did not fire|No block has been placed/.test(error.message)) {
-      throw error;
-    }
-    try {
-      const placed = await waitForPlacement();
-      log('placement_confirmed_after_client_place_error', {
-        block: blockName,
-        target,
-        support: referenceBlock.position,
-        clientError: error.message,
-        playerPosition: bot.entity.position.clone()
-      });
-      return placed;
-    } catch {
-      throw error;
-    }
-  }
-  return waitForPlacement();
+  return placeBlockConfirmed(bot, referenceBlock, face, blockName, label, log);
 }
 
 function listenerOpen(host, port) {

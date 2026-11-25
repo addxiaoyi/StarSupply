@@ -40,10 +40,15 @@ Use `-ClientTimeoutMs 2100000` for farming, which may wait for natural crop grow
 
 Explicit digging waits for real single- or multi-block server packets, including negative chunk coordinates; local Mineflayer prediction is insufficient. Craft output requires server window packets. Script hashes are captured before the gameplay client launches. `inspect-world.cjs <world> <mineflayerModule> [x y z]` provides a read-only survey of a stopped acceptance world, including natural resources and unopened loot containers; survey results only guide navigation and are not acquisition evidence.
 
+Placement now also requires a matching server packet for the target position and block type. A local world-cache change cannot pass; late server confirmation may recover a known Mineflayer placement timeout, while disconnects and other failures still stop the phase. All packet listeners are removed on completion or timeout.
+
+Smelting counts the open furnace's player inventory, pending input and finished output before gathering more ingredients. It collects partial batches, adds only missing input and replenishes depleted fuel from real coal or charcoal. Unrelated furnace contents are preserved, and shortages or closed windows fail with a resumable checkpoint. These fixes have automated protocol/fixture coverage; their live Folia validation remains pending.
+
 Run the acceptance-tool regression tests without starting a server:
 
 ```powershell
-node --test tools/acceptance/survival-progression/runtime-health.test.cjs tools/acceptance/survival-progression/memory-preflight.test.cjs tools/acceptance/survival-progression/survival-checkpoint.test.cjs tools/acceptance/survival-progression/rcon-stop.test.cjs tools/acceptance/survival-progression/server-dig.test.cjs
+$tests = Get-ChildItem tools/acceptance/survival-progression -Filter '*.test.cjs'
+node --test @($tests.FullName)
 .\tools\acceptance\survival-progression\restore-stage.test.ps1
 ```
 
