@@ -2,11 +2,13 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
-## 2026-11-26 Religion 代码与自动化闭环
+## 2026-11-26 Faith 与 Religion 代码和自动化闭环
 
-2026-11-26 已追加第七份 [Religion 闭环补丁](upstream/RELIGION-CLOSURE.md)：SQLite 串行事务、耐久命令反馈、离线排行榜、完整圣地范围索引、实体线程和启停接线已完成。466 项 Core 定向测试（Religion 新增 37 项）与实际最终 Core 成品下 StarSupply 全套 177 项通过。未启动实服；独立国家 Faith、其他未适配模块、回执归档、全量 Core 与 MySQL 验证仍未闭环，见[代码清单](CODE-CLOSURE.md)和[本轮证据](verification/workspace-religion-closure-20261126.json)。
+2026-11-26 已追加第八份 [国家 Faith 闭环补丁](upstream/FAITH-CLOSURE.md)：耐久原子保存、祈祷权威结果、持久冷却/登录/祝福、每日衰减、命令/GUI 权限、实际资源/战斗/经验/税款加成和启停 owner 接线已完成，并加入实验后勤 profile。Core 629 项（Faith 93 项）及确切最终 Core JAR 下 StarSupply 177 项全部通过。未启动实服；其他模块审计、回执容量/归档、全量 Core 与 MySQL 验证继续见[代码清单](CODE-CLOSURE.md)和[本轮证据](verification/workspace-faith-closure-20261126.json)。
 
-当前 Core SHA-256：`9C2B07E1D2F390253AF01280578026ED11805914A7E04EDEE25C511A736B1195`。该构建尚未实服验收。
+2026-11-26 已追加第七份 [Religion 闭环补丁](upstream/RELIGION-CLOSURE.md)：SQLite 串行事务、耐久命令反馈、离线排行榜、完整圣地范围索引、实体线程和启停接线已完成。466 项 Core 定向测试（Religion 新增 37 项）与实际最终 Core 成品下 StarSupply 全套 177 项通过。该 Religion 检查点未启动实服；国家 Faith 后续由第八份补丁完成代码与定向验证。其他未适配模块、回执归档、全量 Core 与 MySQL 验证仍未闭环，见[代码清单](CODE-CLOSURE.md)和[本轮证据](verification/workspace-religion-closure-20261126.json)。
+
+当前 Core SHA-256：`E3CCA19A08A602197FB9C816BE85D405BA0FDB6286455D1B3BDD43F4654895B7`。该构建尚未实服验收。
 
 ## 2026-11-26 Clan 代码与自动化闭环
 

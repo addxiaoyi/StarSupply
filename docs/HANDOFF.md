@@ -41,7 +41,7 @@
 
 ## 最新构建与验证
 
-- 本轮 StarSupply 源码和此前 157 项 verify 的生产 JAR 未变；最新 Core 为 `9C2B07E1D2F390253AF01280578026ED11805914A7E04EDEE25C511A736B1195`（19,649,636 字节），定向 466 项与该成品下 StarSupply 全套 177 项通过。6 个生产源与 6 个测试源增量编译，10 个改动 Java 文件格式检查通过；不是 Core 全仓 verify。第七份 11 文件补丁重放后，全部 3,541 个 src 文件匹配，17 个改动源 class 条目与 JAR 相符，只移除两个已替代的私有快照 class；原生存存档哈希不变。见[Religion 记录](verification/workspace-religion-closure-20261126.json)。
+- 最新国家 Faith 检查点：StarSupply 生产源码和 157 项 verify 的 JAR 未变；Core `E3CCA19A08A602197FB9C816BE85D405BA0FDB6286455D1B3BDD43F4654895B7`（19,684,304 字节）通过 629 项定向测试，配套 StarSupply 177 项通过。26 个改动生产源在空输出目录重新编译，9 个改动测试源编译、35 个 Java 格式检查通过。第八份 38 文件补丁重放后全部 3,551 个 src 文件匹配；46 个编译 class 与 JAR 字节一致，仅移除已删除的匿名 Faith 退出监听 class。实服未运行，原玩家存档哈希不变。见 [Faith 证据](verification/workspace-faith-closure-20261126.json)；之前 Religion 证据仍独立保留。
 
 - Java 21；Maven Wrapper 3.9.16；Paper API 1.21.11。当前生产 JAR 大小 14,695,959 字节，SHA-256 `267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C`。
 - 完整 `mvnw.cmd -o -B -ntp -DforkCount=0 verify`：157 项测试，0 失败/错误/跳过；最终实际兼容 Core 下 177 项通过，包含 11 个真实玩家资金场景与 9 个真实税款场景。Core 财政定向测试 116 项：114 项执行通过，2 项 MySQL 环境测试跳过。未改写 Maven 依赖、未启动 Paper/Folia。详见[税款记录](verification/workspace-tax-funding-receipts-20261126.json)；此前玩家接口证据仍见[玩家资金记录](verification/workspace-player-money-receipts-20261125.json)。
@@ -57,8 +57,9 @@
 | --- | --- | --- |
 | 玩家资金恢复的部署与旧账处理 | 新回执协议代码与自动化故障测试已完成；旧无标记交易不迁移，已有 REVIEW 不自动解冻 | 部署兼容 Core 后进行实服验收；旧账继续按独立证据核对。MySQL 存储与大规模历史回执性能仍未验证 |
 | 税款自动恢复 | 新协议已通过完整报价绑定的国库耐久回执恢复，意图不作为到账凭证；SQL/事务记录写回失败保持原编号重试，人工标志不能制造到账 | 当前新组合待实服、MySQL 与规模验收；旧无协议税款继续独立核对 |
-| 完整 Folia 支持范围 | 后勤 profile 已接回音效、客户端震动、HUD、Clan 和 Religion；独立 Faith 及其他未适配模块仍限制；生产描述符未声明支持 | 完成目标模块/可选插件的线程归属与生命周期适配，并对明确组合验收；不能只改描述符 |
-| Religion 宗教与圣地 | 已完成耐久命令反馈、SQLite 串行保存与失败恢复、离线排行榜、范围索引和实体/启停接线；新增 37 项行为测试 | 当前公开功能的代码与定向自动化已闭环；实服效果仍待验，独立国家 Faith 不在本轮范围 |
+| 完整 Folia 支持范围 | 后勤 profile 已接回音效、客户端震动、HUD、Clan 和 Religion；国家 Faith 已加入，其他未适配模块仍限制；生产描述符未声明支持 | 完成目标模块/可选插件的线程归属与生命周期适配，并对明确组合验收；不能只改描述符 |
+| Religion 宗教与圣地 | 已完成耐久命令反馈、SQLite 串行保存与失败恢复、离线排行榜、范围索引和实体/启停接线；新增 37 项行为测试 | 当前公开功能的代码与定向自动化已闭环；实服效果仍待验；独立国家 Faith 后由第八份补丁完成 |
+| 国家 Faith | 原子保存、失败处理、持久冷却/每日奖励/祝福、权限与实际四类加成、owner 回调和启停重载已完成，93 项 Faith 测试通过 | 同步快照写入的规模/延迟、跨区域联机及效果待验 |
 | Clan 功能与资金 | 已完成真实存取款、耐久恢复、存档屏障、聊天/权限/并发和生命周期接线；新增 48 项行为测试 | 代码与定向自动化已闭环；当前组合的现场迁移、跨区域操作和重启仍待验 |
 | 历史流水规模与存储 | 玩家/国库/Clan 新回执保证原编号恢复；Clan 使用完整文件快照，没有历史归档/压缩协议 | 补 MySQL 与大规模历史数据验证，再完成有界存储方案；归档不能删除重放保护 |
 | HUD 偏好命令与动画 | 已接通个人设置持久化、默认配置重载、管理员权限、彩色背景动画、禁用模块入口及实际导航；关闭/重连/停用回调与保存失败有行为测试，详见 [HUD 设置](upstream/HUD-SETTINGS.md) | 本轮代码与自动化闭环完成；当前新 JAR 的实服界面/效果仍待验 |
@@ -83,7 +84,7 @@ $env:JAVA_HOME = 'C:\path\to\jdk-21'
 .\tools\build.ps1 -StarCoreRoot ..\starsupply-starcore-api -JavaHome $env:JAVA_HOME
 ```
 
-运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`、`starcore-religion-closure.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `9C2B07E1D2F390253AF01280578026ED11805914A7E04EDEE25C511A736B1195`。
+运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`、`starcore-religion-closure.patch`、`starcore-faith-closure.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `E3CCA19A08A602197FB9C816BE85D405BA0FDB6286455D1B3BDD43F4654895B7`。
 
 依赖已安装时，低内存构建命令为：
 

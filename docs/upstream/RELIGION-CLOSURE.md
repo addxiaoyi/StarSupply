@@ -1,6 +1,6 @@
 # Religion 保存、圣地与 Folia 生命周期
 
-第七份补丁 [starcore-religion-closure.patch](starcore-religion-closure.patch) 应用在 [Clan 补丁](CLAN-CLOSURE.md) 之后。原始 Core 基线仍是 `f769e62799e769a18fe51305b545869a17f80cd1`，前六份补丁顺序见 [上游说明](README.md)。这不是独立的 `module/faith` 国家信仰系统；后者仍待适配。
+第七份补丁 [starcore-religion-closure.patch](starcore-religion-closure.patch) 应用在 [Clan 补丁](CLAN-CLOSURE.md) 之后。原始 Core 基线仍是 `f769e62799e769a18fe51305b545869a17f80cd1`，前六份补丁顺序见 [上游说明](README.md)。这不是独立的 `module/faith` 国家信仰系统；后者在随后第八份 [Faith 补丁](FAITH-CLOSURE.md) 完成代码与定向验证。
 
 原 Religion 的多个异步任务共用 SQLite 连接，选信仰和领取祝福在保存前就报告成功，删除圣地可被晚到的保存覆盖。加入事件只加载在线玩家，排行榜是占位内容；移动订阅未接线，中心区块索引也会漏掉大圣地边缘。关闭时未排空任务，世界未加载的圣地不能安全保存。
 
