@@ -1,0 +1,3811 @@
+{
+  "recorded_date": "2026-11-26",
+  "kind": "workspace-nation-creation-recovery-and-player-money-sql-revisions",
+  "source_base_commit": "c09afce62e061cb0e0f0dc592f32d06af368a890",
+  "scope": "Durable original-ID nation and city-state creation, refund/cancel recovery and admin commands; lifecycle guards and stale split protection; shared SQL player money snapshot/account revision and queued-generation protection",
+  "artifacts": {
+    "starsupply": {
+      "path": "starsupply-0.1.0.jar",
+      "sha256": "267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C",
+      "bytes": 14695959
+    },
+    "core_companion": {
+      "path": "starcore-1.0.0.jar",
+      "sha256": "F6B5BCF965CD2279B096A55D9961DDF00E3D1A5F5E428698293D8C12077DC91B",
+      "bytes": 19796345
+    }
+  },
+  "core_targeted": {
+    "log": {
+      "path": "creation-tests-final-20261126.log",
+      "sha256": "BDE4F69861362B7535C00378AF24D81ABA89F1B34E79AB3280185A816C7ACFAC",
+      "bytes": 832509
+    },
+    "completed_at": "2026-11-26T06:04:35+08:00",
+    "totals": {
+      "tests": 1322,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": [
+      {
+        "suite": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7526B20BE15BDACE9E6E208399227DA26EE2A809259F72B9B3D8592F2817B919",
+        "cases": [
+          "publicApiMatchesCommittedBaseline"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanBankRecoveryTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B85CB369986FD360E2266158401437AD7E9CB1A6F8C47AE121495B2E091908E9",
+        "cases": [
+          "authoritativeRejectionReleasesWithdrawalReservation",
+          "conflictingPlayerReceiptStaysPendingWithoutChangingClanBalance",
+          "realMoneyDepositAndWithdrawalConserveValueAcrossBothRestarts",
+          "insufficientClanBalanceDoesNotInvokeMoneyAndInvalidAmountsAreRejected",
+          "failedFinalLedgerWriteUsesReceiptWithoutRepeatingMoney(boolean)[1]",
+          "failedFinalLedgerWriteUsesReceiptWithoutRepeatingMoney(boolean)[2]",
+          "callerCancellationCannotDiscardAnAdmittedTransfer",
+          "realPlayerInsufficientFundsCannotMintClanMoney",
+          "failedPreparedResponseAfterReplaceIsRecoveredWithOnePlayerOperation",
+          "corruptLedgerStopsRecoveryAndCannotBeReplacedByOldMemory",
+          "managerRestartRecoversPendingMoneyAndBlocksDisbandUntilResolved",
+          "lostPlayerReceiptResponseRecoversWithOriginalIdExactlyOnce(boolean)[1]",
+          "lostPlayerReceiptResponseRecoversWithOriginalIdExactlyOnce(boolean)[2]",
+          "failedPreparedWriteCannotCallPlayerAuthority"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanManagerDirtyDataTest",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "BB38EE8B4ED76E91C7FD848F361217E24AEB4EB942CD12736C20FED85A15AB1D",
+        "cases": [
+          "testSetRank_marksClanAsDirty",
+          "testToggleClanChat_marksClanAsDirty",
+          "testSaveDirtyClans_savesAllClansEvenIfOneNotDirty",
+          "testMarkDirty_addsClanToDirtySet",
+          "testCreateAlliance_marksBothClansAsDirty",
+          "testRemoveAlly_marksClanAsDirty",
+          "testSaveDirtyClans_emptyDirtySet_skipsSave",
+          "testMarkDirty_nullClanId_doesNotThrow",
+          "testRejectInvite_marksClanAsDirty",
+          "testCreateClan_marksClanAsDirty",
+          "testRemoveAlliance_marksClansAsDirty",
+          "testInvitePlayer_marksClanAsDirty",
+          "testSetTag_marksClanAsDirty",
+          "testTransferLeader_marksClanAsDirty",
+          "testMarkDirty_multipleCalls_singleEntryInSet",
+          "testDeclareRivalry_marksClanAsDirty",
+          "testWithdraw_marksClanAsDirty",
+          "testSaveDirtyClans_clearsDirtySetAfterSave",
+          "testJoinClan_marksClanAsDirty",
+          "testDeposit_marksClanAsDirty",
+          "testAcceptInvite_marksClanAsDirty",
+          "testKickMember_marksClanAsDirty",
+          "testMultipleOperations_accumulateDirtyClans",
+          "testLeaveClan_marksClanAsDirty"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanManagerTest",
+        "tests": 47,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "FA857A431F9D6C356297E318FEF209CDD9A72F01061BA2B670985D81E67D2C69",
+        "cases": [
+          "testCreateClan_validTag",
+          "testLeaveClan",
+          "testSetRank_byLeader",
+          "testCreateClan_invalidTagTooLong",
+          "testGetStats",
+          "testSetFriendlyFire_byNonLeader",
+          "testSetFriendlyFire",
+          "testGetTotalMembers",
+          "testRejectInvite",
+          "testGetAllClans",
+          "testCreateClan_playerAlreadyInClan",
+          "testCreateClan_duplicateTagFails",
+          "testGetPlayerClan",
+          "testJoinClan_viaInvite",
+          "testTransferLeader_byNonLeader",
+          "testAreAllies",
+          "testSetRank_byNonLeader",
+          "testGetTopClansByMembers",
+          "testLeaveClan_leaderTransfers",
+          "testWithdraw",
+          "testTransferLeader",
+          "testGetInvites_empty",
+          "testDeclareRivalry",
+          "testLeaveClan_leaderBecomesDisband",
+          "testAreRivals_unidirectional",
+          "testSetRank_rejectsLeaderRank",
+          "testInvite_nonMemberReturnsFalse",
+          "testKickMember_byLeader",
+          "testCreateClan",
+          "testGetClanByTag",
+          "testGetClanCount",
+          "testDisbandClan_byNonLeader",
+          "testToggleClanChat",
+          "testInviteAndAccept",
+          "testCreateClan_invalidTagTooShort",
+          "testSetPvPEnabled",
+          "testCreateClan_caseInsensitiveTag",
+          "testDeposit",
+          "testWithdraw_insufficient",
+          "testAcceptInvite_invalidClan",
+          "testGetInvites_containsInvite",
+          "testCreateAlliance_actorNotInClan",
+          "testCreateClan_invalidTagSpecialChars",
+          "testDisbandClan_byLeader",
+          "testGetTopClansByKDR",
+          "testKickMember_byNonMember",
+          "testInvite_duplicateTargetReturnsFalse"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanOwnershipTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A831C1EAAC00E25A2D179857DBC6289E670BFAD4D8B9C9A6B3764433BA9A9BA9",
+        "cases": [
+          "bankResultsReturnToOwnerAndOnlyAppliedReportsSuccess(State)[1]",
+          "bankResultsReturnToOwnerAndOnlyAppliedReportsSuccess(State)[2]",
+          "bankResultsReturnToOwnerAndOnlyAppliedReportsSuccess(State)[3]",
+          "bankResultsReturnToOwnerAndOnlyAppliedReportsSuccess(State)[4]",
+          "delayedSenderCannotSendIntoAClanTheyJustLeft",
+          "teleportCompletionRunsOnPlayerOwner",
+          "lifecycleStartsWithDurableMigrationAndStopsTasksAndAdmissions",
+          "invalidMagnitudeOrPrecisionNeverReachesMoneyAuthority(String)[1]",
+          "invalidMagnitudeOrPrecisionNeverReachesMoneyAuthority(String)[2]",
+          "invalidMagnitudeOrPrecisionNeverReachesMoneyAuthority(String)[3]",
+          "commandToggleControlsAsyncChatAndEachReceiverOwnsDelivery",
+          "unsupportedSelectedEconomyCannotSilentlyUseAnotherPlayerWallet",
+          "clanUtilityDeliveryUsesOwnersAndMissingServiceDoesNotBroadcastPrivateMessages",
+          "projectileDamageHonorsFriendlyFireAndDeathStatsRemainDirty",
+          "shutdownCancelsQueuedCommandAndBankResultCallbacks",
+          "failedManagerUpdatesAndInvalidSettingsDoNotClaimSuccess",
+          "memberLeavingBeforeDeliveryReceivesNoOldClanChat"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanPermissionTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "05068CC29C5474168D880072B8C55D9382E0F405B526D3B3280EB73B2ECB7136",
+        "cases": [
+          "testAllPermissionsExist",
+          "testEnumCount"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanPersistenceConcurrencyTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6660A1CD280ABC66ACADC30188BC56764AD76E4F834D8B16EB5A8D632A6CFBD0",
+        "cases": [
+          "bankMigrationMarkerAndNewClanIdentityMustBeSavedBeforeAnyMoneyCall",
+          "mutationsDuringSnapshotWriteRemainDirtyAndSurviveNextRestart",
+          "legacySnapshotRestoresTimesStatsRanksAndUnloadedHomeWithoutBukkitAccess",
+          "snapshotsAndRanksCannotGrantOutsiderOrDemoteLeader",
+          "corruptSnapshotsFreezeMutationAndCannotBeOverwritten(String)[1]",
+          "corruptSnapshotsFreezeMutationAndCannotBeOverwritten(String)[2]",
+          "corruptSnapshotsFreezeMutationAndCannotBeOverwritten(String)[3]",
+          "corruptSnapshotsFreezeMutationAndCannotBeOverwritten(String)[4]",
+          "corruptSnapshotsFreezeMutationAndCannotBeOverwritten(String)[5]",
+          "corruptSnapshotsFreezeMutationAndCannotBeOverwritten(String)[6]",
+          "corruptSnapshotsFreezeMutationAndCannotBeOverwritten(String)[7]",
+          "corruptSnapshotsFreezeMutationAndCannotBeOverwritten(String)[8]",
+          "simultaneousCreateAndJoinKeepUniqueTagsMembersAndCapacity",
+          "migratedBankCannotBeReimportedWhenAuthorityDisappears",
+          "missingCurrentWithBackupDoesNotBecomeAnEmptyClanDatabase",
+          "failedAtomicWriteRetainsPriorSnapshotAndUnsavedChanges",
+          "acceptingAnExpiredInviteCannotBypassTheThirtyMinuteLimit"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanRankTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "520339B90A09EF9D173BAFD180ABBCC4FB2E1FBBD5CD42A0B17D5AECF6F57896",
+        "cases": [
+          "testAllValuesHaveDisplayName",
+          "testPermissions_officer",
+          "testLevels",
+          "testPermissions_memberLimited",
+          "testLevelsOrdered",
+          "testPermissions_leaderHasAll"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanTest",
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "75788A461753A5514295F71F942D40ECA47FE552480BF67BD0AE795EAF422838",
+        "cases": [
+          "testHasPermission_leaderHasAll",
+          "testPvpEnabled",
+          "testSetRank_member",
+          "testToString_containsKeyInfo",
+          "testHasPermission_memberLimited",
+          "testDeposit_negativeIgnored",
+          "testGetColoredTag",
+          "testRemoveMember_cannotRemoveLeader",
+          "testTransferLeadership_nonMember",
+          "testWithdraw_negativeIgnored",
+          "testGetMembers_unmodifiable",
+          "testRemoveRival",
+          "testConstruction",
+          "testSetNationId",
+          "testGetMaxMembers",
+          "testAddDeath",
+          "testUpdateActiveTime",
+          "testWithdraw",
+          "testGetDisplayName",
+          "testRemoveMember",
+          "testGetRank_defaultIsMember",
+          "testAddKill_incrementsKdr",
+          "testGetAgeDays_zero",
+          "testSetRank_rejectsLeader",
+          "testRemoveAlly",
+          "testAddMember",
+          "testTransferLeadership",
+          "testIsAllyRival",
+          "testDeposit",
+          "testWithdraw_insufficient",
+          "testAddRival_removesAlly",
+          "testKdrWithDeaths",
+          "testEqualsAndHashCode",
+          "testFriendlyFire",
+          "testSetName",
+          "testAddMember_capacityLimit",
+          "testSetTag",
+          "testAddMember_duplicateReturnsFalse",
+          "testIsActive_newlyCreated"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.core.config.ConfigurationServiceFoliaProfileTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F92B3CB765453458501F27C59117656A73900F0209F7D8DF7DDFEF96D0157E0C",
+        "cases": [
+          "profileIsExplicitAndPreservesNormalModuleDefaults",
+          "enabledProfileKeepsWholeSupplyClosureAndExcludesUnauditedModules"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.core.scheduler.CompatSchedulerTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "97790F2A854FE2FA4F7FEB8CF72C4CA25F29B1FFE2EC4B0CF1F2769FCA836DDE",
+        "cases": [
+          "foliaRoutesEntityTasksWithRetirementCallbacks",
+          "nativeTickSchedulersClampZeroDelayToTheNextTick",
+          "entityTimerCallbackCanCancelBeforeNativeHandleBinding",
+          "foliaRoutesAsyncTasksWithTickDurationsConvertedToMilliseconds",
+          "cancelTasksOnlyRemovesHandlesOwnedByTheRequestedPlugin",
+          "foliaRoutesGlobalTasksToTheGlobalScheduler",
+          "asyncDurationsSaturateInsteadOfOverflowing",
+          "alreadyRetiredEntityReturnsACancelledHandleWithoutLeaking",
+          "repeatingTasksRemainRegisteredUntilCancelled",
+          "schedulerRegistrationFailureDoesNotLeakItsPendingHandle",
+          "oneShotCompletionRemovesItsRegistryEntryAndCannotRunTwice",
+          "retirementBeforeNativeHandleBindingCancelsTheLateHandle",
+          "paperPreservesAllLegacySchedulerRoutesAndHandles",
+          "entityRetirementRunsItsFallbackOnceAndReleasesThePendingHandle",
+          "failingCallbacksCancelAndRemoveTheirTask",
+          "cancellingAOneShotRemovesItAndSuppressesAQueuedCallback",
+          "oneShotCompletionBeforeHandleBindingDoesNotLeakARegistryEntry",
+          "foliaRegionTasksUseAnIndependentLocationSnapshot",
+          "paperCancellationRetainsLegacyTaskIdAndPluginSemantics"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.AnimationOwnershipTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "EF91AE6E07EE501DFD3AAB266C6F2272446A60A0F562FC2D9874BEC31522DF37",
+        "cases": [
+          "completedLoadingCallbackSettlesOnceAndCancelsItsTimer",
+          "foreignPlayerDispatchUsesEntitySchedulerAndShutdownSuppressesQueuedEffects"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.AnimationPlayerTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "523B0531194AFA2975589C1F0550DE119B5480798C6CE86550CEBCB44DDDE5A2",
+        "cases": [
+          "numberAnimationReachesExactTargetWhenStepIsSmallerThanFrameCount"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.AnimationTaskTrackerLifecycleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C79C6788C09AC33F272490002FE2D6742FA49F47A02D24CAA3D938BD450FE3B0",
+        "cases": [
+          "paperBackgroundWorkDispatchesToMainThreadAndShutdownSuppressesIt",
+          "shutdownWaitsForActiveFeedbackAndPreventsFurtherWork"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.AnimationTaskTrackerTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F4348D2B94926BF25AAF0A8561E4063B1268C6C7F6A043F7C26D2EC3B556CBB4",
+        "cases": [
+          "shutdownCancelsTrackedTasksAndPreventsCallbacksFromStarting"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.GuiAnimationRegistryLifecycleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E85D4874CEDBB50030F59D50475E354FFCB65DED62260501489F8AEABFA46D7D",
+        "cases": [
+          "shutdownCancelsAnimationPlayerAndDelayedSoundTasks",
+          "shutdownCancelsEffectsAndAllowsAnewPluginInstanceToInitialize"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.ParticleEffectManagerFoliaOwnershipTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5F3F92249802A9F2D1A56E81FEED8D421AB33F8E69655954962FF61C1F1D5869",
+        "cases": [
+          "fixedWarAnimationUsesItsRegionAndCancelsWithoutLegacyScheduler"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.ParticleEffectManagerLifecycleTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7934B97F3AAB5AD3CE9C66855D4A7F46408705C20FD8A3746AE90C3286E9575B",
+        "cases": [
+          "playerAndGlobalCancellationCoverTrackedEffectsWithoutCrossPlayerCancellation",
+          "delayedPresetCallbacksAreIncludedInPlayerCancellation",
+          "naturallyCompletedAnimationUnregistersItsTask",
+          "rejectedSchedulesAreRemovedFromTheActiveRegistry",
+          "cancellationReenteredDuringSchedulingCancelsTheNewlyCreatedTask"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.ParticleEffectManagerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "352EFC70F59E3E3D5B0B6D027FF2BB57CBEE33F83BAD27EDD0B58145C8EF0C00",
+        "cases": [
+          "battlePresetsUseExpectedParticles",
+          "commonPresetsExposeParameters",
+          "allPresetsHaveValidNumericRanges",
+          "blockPresetCarriesMaterial",
+          "managerConstructionDoesNotTouchBukkitRuntime"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.ScreenShakeFoliaTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A66667262C4D6A5FD0BF3D2C74120041ED7BC19C0570B1868193232624B50FE1",
+        "cases": [
+          "areaSamplesEachPlayerOnOwnerAndClonesCallerLocation",
+          "foreignDispatchUsesOwnerAndNeverTeleportsOrDamages",
+          "shutdownSuppressesQueuedAndActiveCallbacksAndAllowsSeparateManager",
+          "stopIsOrderedAfterQueuedStartOnSameEntity",
+          "staleTickAndRetirementCannotRemoveReplacement",
+          "retirementDuringSubmissionAndSchedulingFailureReleaseState",
+          "expiryCleanupCancelsTimerAndInvalidConfigIsRejected"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.ScreenShakeManagerTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E0BEB122DEB20D1355E04A87CF04F5AB28C0CA975AFCB7D31F66E77E9C5A0B6E",
+        "cases": [
+          "presetConfigInheritsTypeValues",
+          "nullAndOfflinePlayersAreIgnored",
+          "customConfigPreservesArguments",
+          "cleanupAndStopAreIdempotent",
+          "playerPreferencesControlShakeEligibility",
+          "shakeTypesExposeConfiguration"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyAccountFailureTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A51991BA8F9F28C0B009A068FB77078B36D54BC9892FC510773B4FB552F96966",
+        "cases": [
+          "accountCreationRemovesMemoryOnlyAccountWhenPersistenceFails"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyAsyncFailureTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "AC4FC40C3470DE70EC6A622D7213E754A10FEABFB8DB2F70E80AE9DC44A2E1BA",
+        "cases": [
+          "asynchronousBalanceMutationRecoversAfterTransientSqlFailureWithoutAnotherMutation",
+          "asynchronousWithdrawRestoresBalanceWhenPersistenceFails"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyDiagnosticsTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "76E289067F659C80B39AD4FEA5627C51FDE165FA4F6FCD52C855E6C66A65B7F2",
+        "cases": [
+          "invalidWithdrawAndTransferLogStableValidationCodes",
+          "invalidDepositAndSetBalanceLogStableValidationCodes",
+          "asynchronousWithdrawPersistenceFailureLogsModeAndRollbackContext",
+          "transferPersistenceFailureLogsStableCodeAndRollbackContext",
+          "synchronousWithdrawPersistenceFailureLogsModeAndRollbackContext",
+          "depositPersistenceFailureLogsStableCodeAndRollbackContext",
+          "accountCreationPersistenceFailureLogsStableCodeAndRollbackContext",
+          "setBalancePersistenceFailureLogsStableCodeAndRollbackContext",
+          "subCentDepositLogsStableValidationCode"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyExtensionFailureDiagnosticsTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0D26C7B1148FE9FE99F0831F682AAAE6582D13D3815EE913A606C9726498AB9B",
+        "cases": [
+          "withdrawExtensionFailureLogsStableContextAndContinuesTransaction",
+          "transferExtensionFailureLogsStableContextAndContinuesTransaction"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyObservabilityTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "167C926051D261D2DEB9A8CB3B3F52A51057CBEA4E859161BC791D134C014837",
+        "cases": [
+          "accountCreatePersistenceFailureIncludesOpAndTxId",
+          "setBalancePersistenceFailureIncludesOpAndTxId",
+          "withdrawValidationFailureIncludesOpAndTxId",
+          "withdrawPersistenceFailureIncludesOpAndTxId",
+          "depositPersistenceFailureIncludesOpAndTxId",
+          "depositValidationFailureIncludesOpAndTxId",
+          "transferValidationFailureIncludesOpAndTxId",
+          "transferPersistenceFailureIncludesOpAndTxId"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyServiceTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "BB27C0AB73E6725B23CC4DD226191DA030706ADD1C63CAAA50F6DC26642B40E4",
+        "cases": [
+          "defaultMutationsPersistSynchronouslyBeforeReturning",
+          "setBalanceRollsBackWhenAsyncPersistenceRejects",
+          "failedTransferAccountBatchRestoresBalancesAndAccountExistence",
+          "depositRollsBackWhenAsyncPersistenceRejects",
+          "singleAccountMutationsAndTransfersUseTargetedStorageWrites",
+          "depositRemainsCommittedWhenEventPublicationFails",
+          "failedTransferRollbackCompletesBeforeConcurrentAsyncSnapshot",
+          "transferFallsBackToSnapshotWhenStorageDoesNotSupportAccountBatches"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomySyncFailureTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "957738E1B98CDB1E408F969AEB338DB1D2EB372E07B07E82A0BBC6440FB2BE36",
+        "cases": [
+          "failedTransferDoesNotCreatePreviouslyMissingRecipientAccount",
+          "synchronousWithdrawRestoresBalanceWhenPersistenceFails",
+          "transferKeepsAccountLocksUntilPersistenceCompletes",
+          "failedDepositDoesNotRollbackAConcurrentSuccessfulDeposit"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyValidationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6534261BA9597568F2E07FA36C13B8E1B7EA22EDE9CF102E3FFE47D35F63153F",
+        "cases": [
+          "hasRejectsNullAccountNullAmountAndNegativeAmount",
+          "rejectsInvalidWithdrawAndTransferAmountsWithoutThrowing",
+          "rejectsNullAccountAcrossAllMutatingEntryPoints"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.PlayerMoneyReceiptTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "66CE9305A477F44A5CDF9B3070EF78960CADADB9D9BA302AAA045BD8806AA7F6",
+        "cases": [
+          "oldSnapshotCannotEraseReceiptOrOverwriteItsBalance",
+          "receiptWaitsForOldAsyncSnapshotAndFutureSnapshotsKeepItsEvidence",
+          "concurrentDuplicateCreditChangesBalanceOnce",
+          "duplicateBusinessIdCannotChangeAccountDirectionAmountOrSource",
+          "fileWriteFailureBeforeOrAfterReplacementKeepsBalanceAndReceiptTogether(boolean)[1]",
+          "fileWriteFailureBeforeOrAfterReplacementKeepsBalanceAndReceiptTogether(boolean)[2]",
+          "unknownCommitBlocksOrdinaryWritesUntilAuthoritativeReload",
+          "largeSqliteBalancesRetainEveryCentAcrossReceiptsAndOrdinaryWrites",
+          "providerCannotSilentlyChangeAmountAndDeniedReceiptDoesNotReinvokeIt",
+          "corruptReceiptStopsLoadingAndCannotBeTreatedAsAbsent",
+          "fileSnapshotAndDatabaseMigrationPreserveReceipts",
+          "fatalInterruptionAfterCommitStillRequiresReloadBeforeAnotherWrite",
+          "rejectedRequestOnNewAccountRemainsRejectedAfterFundingAndRestart",
+          "receiptInsertRollbackAlsoRollsBackBalanceAndOriginalIdCanRetry",
+          "creditDebitAndRejectedReceiptsSurviveRestartAndOrdinaryMutations",
+          "commitResponseLossIsResolvedFromActualSqlReceipt",
+          "legacySqliteMigrationPreservesStoredBalanceIndexesAndTriggers"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.SqlBalanceStorageTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E3D80E017D063BD4A178C58C2AC05EB304411FFCC3EDB28A3005EE05CF75EA9F",
+        "cases": [
+          "asyncSaveRetainsSnapshotAfterDatabaseFailureForLaterRetry",
+          "synchronousSaveSupersedesDelayedRetryWithoutWritingAnOlderSnapshot",
+          "asyncSaveReportsExecutorRejectionAndCanRetry",
+          "publishedEmptyAuthorityDoesNotReimportLaterLegacyFile",
+          "accountBatchUpdatesQueuedSnapshotForBothAccounts",
+          "missingPublishedBalancesCannotBeResurrectedFromLegacyFile",
+          "accountBatchRollsBackEarlierRowsWhenALaterUpsertFails",
+          "shutdownFlushesQueuedSnapshotAfterAsyncFailureCancelsRetry",
+          "failedAccountSaveLeavesPreviouslyCommittedBalanceReadable",
+          "asyncSavesUseIoExecutorAndShutdownDrainsLatestSnapshot",
+          "shutdownWaitsForSnapshotQueuedDuringFinalFlush",
+          "queuedSnapshotCannotUseRevisionLearnedFromLaterReload",
+          "updatesExistingBalanceInSqlite",
+          "asyncSaveRetriesTransientDatabaseFailureWithoutAnotherSaveRequest",
+          "staleSnapshotsAndAccountBatchesCannotOverwriteAnotherWriter",
+          "recordsSqlStagesForSynchronousEconomyWrites",
+          "accountSaveUpdatesQueuedSnapshotWithoutDroppingOtherPendingAccounts",
+          "accountBatchAtomicallyUpsertsBothBalancesAndPreservesOtherAccounts",
+          "accountSaveUpsertsOneBalanceWithoutReplacingOtherAccounts"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.hud.HudPreferencesTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2F8AF8DC0303EFB7E4A2FB704ED7EB6A1ED0E84A770AC3D5BFF820F8212292C3",
+        "cases": [
+          "failedAtomicSaveLeavesMemoryAndPreviouslyAcknowledgedFileUnchanged",
+          "rapidTogglesAreSerializedAndDoNotLoseAnotherPlayersChanges",
+          "unknownOptionsAndVersionsFailWithoutPublishing",
+          "brokenPlayerReloadDoesNotPublishNewDefaults",
+          "corruptExistingPlayerFileIsNotOverwrittenAndCanBeRepairedWithReload",
+          "cancellingObservationDoesNotCancelAdmittedPreference",
+          "shutdownDrainsAdmittedChangesAndRefusesNewWrites",
+          "personalOverridesSurviveRestartAndDefaultsReloadWithoutAffectingOtherPlayers",
+          "invalidReloadRetainsEntireSnapshotAndDoesNotRewriteAdministratorsFile"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.hud.HudSettingsBehaviorTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "98697CD5F5737AA02E99A4D201A11665224D3E9CA6AA2A9DD3B891CEA037D320",
+        "cases": [
+          "reloadPermissionIsEnforcedAndZeroArgumentCompletionIsSafe",
+          "mainMenuSettingsUsesHudRouteAndUnavailableModulesHaveNoClickAction",
+          "publicAppearanceSettersDispatchToOwnerAndDisablingBreathingRestoresTheme",
+          "chosenParticleTypesReachEachPlayersActualSpawnCallback",
+          "breathingTimerPreservesButtonsDirectContentAndInventoryIdentityWithoutParticles",
+          "particleAndBreathingCommandsAffectOnlyTheirPlayerAndPreviewNeverEmitsParticles",
+          "themesUseColoredPanesAndNineSlotMenuStaysWithinBounds",
+          "styleCommandAcknowledgesAfterSaveAndUpdatesExistingInventoryInPlace",
+          "authorizedReloadUpdatesOwnedMenusPreservesOverridesAndLeavesPreviewAlone",
+          "oldPlayerCompletionCannotAlterReconnectedPlayersMenu",
+          "failedSaveDoesNotClaimSuccessOrChangeMenu",
+          "shutdownDrainsSaveButSuppressesQueuedGuiFeedback",
+          "closingMenuBeforeSaveCompletesNeverReopensIt"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.hud.ModernHudFoliaTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C05E308AAE8575412769AEFC593FB221AADD03FF82BD49A9C4E7AC837051850B",
+        "cases": [
+          "restartingSameMenusParticlesSurvivesOldRetirement",
+          "bottomInventoryTransfersAndTopSlotDragsCannotModifyMenu",
+          "replacedTimerRetirementDoesNotDiscardNewMenu",
+          "immediateRetirementAndDisableLeaveNoMenuOrLiveTimer",
+          "queuedOpenFromDisabledListenerCannotEnterReplacementInstance",
+          "menuOpenAndRefreshUseOwnerAndCloseCallbackRunsExactlyOnce",
+          "clickRunsNextTickAndStaleClickCannotActOnReplacementMenu"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.sound.BukkitSoundResolverTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "BFFC8419547A6B0A6DAAF9495EB7882E77158E59DA0399A34684D7AF9D13734C",
+        "cases": [
+          "everyDefaultSceneSoundIsDeclaredByPinnedPaperApi",
+          "customNamespacesRemainExplicitAndCannotOverrideMinecraftAliases",
+          "legacyNamesPreserveUnderscoresInsideMinecraftKeySegments"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.sound.SceneSoundConfigTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "63EC5ECBEF4A6C0CADE015D7DCF1A47F6070A7E4261DEF453FFC554EC4858FA6",
+        "cases": [
+          "configurationPersistsSeparatelyAndReloadedSnapshotControlsPlayerSound",
+          "invalidReloadPreservesPreviousStateAndDefaultYamlUsesNestedScenePaths"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.sound.SceneSoundFoliaTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D88CF0532EC9B07B95A8A04E47C7F6132EDE96434CF5FA483C4736D7FDBD4F94",
+        "cases": [
+          "concurrentPreferenceCollectionsCanBeReadWithoutCopyingMutableHashSets",
+          "eachPlayersDelayedSequenceRemainsOnItsEntityAndRetirementSuppressesIt",
+          "ownerDispatchRespectsLatestMuteAndShutdownStopsDelayedReward",
+          "fixedPositionIsClonedAndUsesRegionCallback"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.integration.placeholder.StarCorePlaceholderThreadingTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D9AFD2EC0EAF1123AA84C96F575DEF262C7BD49EB3ADD486C0232003829B4450",
+        "cases": [
+          "rankPlaceholderDoesNotWaitForAnIncompleteLookupOnTheServerThread",
+          "completedAsyncStatisticsRemainAvailableToPlaceholders",
+          "statisticPlaceholderDoesNotWaitForAnIncompleteLookupOnTheServerThread"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.HolyPlaceTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "07BD819B051984983F72E4835D7C02DC126DA6FAE2699365209CEBD6ED90CABF",
+        "cases": []
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.HolyPlaceTest$Range",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "22D62404C42E38F80708901DC69329F212A6ECC78682FD6FDF97D1020E5982A6",
+        "cases": [
+          "outOfRange",
+          "inRange"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.HolyPlaceTest$Blessing",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1A63F159E343C791B42CF8B718D7864FCB6FAB37CEC5A3D936CE3CD4818047F8",
+        "cases": [
+          "perform",
+          "canBlessFalse"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.HolyPlaceTest$HolyPower",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "AC420088430A20D0E5C6F0891A6B3390DF99DEB4C3A3147638CFEF0944758589",
+        "cases": [
+          "clampUpper",
+          "consumeInsufficient",
+          "add",
+          "consume",
+          "setClamp"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.HolyPlaceTest$Construction",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5C55AA2D4EE2D82C727631DAE674F75614364DE52947533DF0233CEA0E6FF781",
+        "cases": [
+          "description",
+          "initial"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A24287D60517F746425062F4CF7F66FFE45B142B6A82203893C595D059104B45",
+        "cases": []
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest$UnknownSubCommand",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "43EDECD17A2CF3992C7FAC7B276462E67305053D44328AF499494B9F02A79A85",
+        "cases": [
+          "nullServiceIsHandledForEveryMutation",
+          "defaultRadiusUsesProvidedNameAndNoBlockRead",
+          "setPermissionIsEnforcedBeforeAdmission",
+          "radiusErrorDoesNotClaimTypeIsInvalid",
+          "successWaitsForPersistenceAndFailureIsReported",
+          "leaderboardShowsRealRows",
+          "showsErrorAndHelp"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest$HelpSubCommand",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A2FFDBC7E75B51F8E6E40D73D6F97CED5D7E10AE8C2EEC594DCBB716E46A62D3",
+        "cases": [
+          "showsHelp",
+          "consoleCanHelp"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest$ListSubCommand",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1F6060997E8D8D0B1696A08B92060D2EF6D46AD62A4C8E9DF1AE1B64D7769674",
+        "cases": [
+          "listsAllReligions",
+          "consoleCanList"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest$StatSubCommand",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "CC84A908371E7B5D63E9ADAAA6904B5C67A363B8E1CAA83F5A4869EA62CB8834",
+        "cases": [
+          "nullService",
+          "showsLeaderboard"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest$BlessingSubCommand",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D83D4E21F954C2759D5A3EE488735DC203BD525F20626EB9A061CBD06E254898",
+        "cases": [
+          "faithTooLow",
+          "noReligion",
+          "noPermission",
+          "blessSuccess"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest$CreateShrineSubCommand",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "089543333C2E2B12E71E1D07889255B58BCD3D2F1992FE275489CCFB7F4248C5",
+        "cases": [
+          "createWithCustomRadius",
+          "invalidType",
+          "createSuccess",
+          "noPermission",
+          "missingArgs"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest$SetSubCommand",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "68FDFEAB4A50DD8EB4705B0409EE078ADADC34D62CB45B63209CC121D9F6B070",
+        "cases": [
+          "invalidType",
+          "selectReligion",
+          "missingType"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest$InfoSubCommand",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "805317ABA6F833DD60FF4194B6E4DE25B6BCFC36B66DDAA76B49B3128C439F58",
+        "cases": [
+          "showsInfo",
+          "nullService",
+          "noReligion"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest$NoArgs",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B9F10A560674F53173C78EF7CB2E8D881522FA0181E86267D2C2782F7B2F2FDE",
+        "cases": [
+          "nullServiceSendsError",
+          "showsReligionInfo",
+          "noReligionSelected"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionCommandTest$SenderCheck",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1E991B50AEF5F2F148FAD0502BE07A0E0EB5BE021E28ABDEA279BF6F9F7C5DF7",
+        "cases": [
+          "nonPlayerRejectedCreate",
+          "nonPlayerRejectedSet",
+          "nonPlayerRejectedBlessing",
+          "nonPlayerRejected"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionComprehensiveTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E2439F07084F8F796915CE98C0A5B1530E4A8210BE5A55C4B158FDB36BF2BEEE",
+        "cases": []
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionComprehensiveTest$Description",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F4958D878C5497DFDB5F87A2A7186DD9C25D9F7086C9178EADA0566659DB6FF4",
+        "cases": [
+          "containsFields",
+          "setFaithClamp"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionComprehensiveTest$Blessing",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E43687A68ABD8C8AD893F6954244C359312C6ABF9C0367E786C63553E349CB3E",
+        "cases": [
+          "canReceiveBlessing"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionComprehensiveTest$FaithLevel",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A9A0B9EBFBCF1C1325C2A2596FCE548E577004B92FE80047D305F69237D7CC1E",
+        "cases": [
+          "levels"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionComprehensiveTest$ChangeFaith",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "04114BBEE98D3A5D1D2A4E72512776A0A5092749FB5299B40B4DFC803DF888AB",
+        "cases": [
+          "resets"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionComprehensiveTest$Faith",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "490F0DC7B6D77BF712CAFF4EA0115F7CEFAFE295103F7D008ABB031B16EDCC9F",
+        "cases": [
+          "clampLower",
+          "clampUpper",
+          "add",
+          "contributionAddsFaith"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionComprehensiveTest$Construction",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "08165C58E6DA6BC467890B37291B57B1D4D33A00CC2DFE594B6664601F199CDF",
+        "cases": [
+          "initial"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionModelSafetyTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D529E38F7E975B9BE25A876C9E6826951A41D1ACB748A5AE1109E0F50196973E",
+        "cases": [
+          "concurrentContributionsDoNotLoseUpdates",
+          "negativeAmountsCannotMintFaithContributionsOrPower",
+          "absentWeakerAndExpiringEffectsAreRefreshed",
+          "additionsSaturateWithoutIntegerOverflow",
+          "callerLocationMutationDoesNotMoveShrine",
+          "strongerAndInfiniteEffectsArePreserved",
+          "failedPowerConsumptionDoesNotAdvanceBlessingTime"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionPersistenceTest",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "975A705032660F2C499C81FB4BD37706DF5EE1ED270F3B41AB227FC9099C4A6D",
+        "cases": [
+          "blessingTimerReadsPlayerStateOnlyAfterOwnerDispatchAndRechecksCurrentFaith",
+          "lastShutdownSnapshotIncludesUnsavedDirectModelChanges",
+          "deletedDirtyShrineCannotReappearAfterSaveOrRestart",
+          "failedAutomaticSaveRetriesOnNextFlush",
+          "failedCreateIsInvisibleAndDeleteFailureKeepsShrine",
+          "flushRollsBackAllRowsAndRetainsDirtyStateOnFailure",
+          "acknowledgedChoiceAndBlessingSurviveOfflineRestart",
+          "uncertainCommitFreezesWritesUntilReloadOfAuthority",
+          "feedbackRunsOnlyOnOwnerAndRetirementOrShutdownSuppressesIt",
+          "movementHandlesNullAndForeignWorldAndDeletedIndex",
+          "leaderboardLoadsOfflineRowsAndSortsTiesDeterministically",
+          "disablingRejectsNewMutationsWhileFlushAndShutdownRemainAvailable",
+          "mutationDuringCommitIsNotMarkedSavedByOlderSnapshot",
+          "corruptedRowPreventsPartialStartupAndWrites",
+          "callerCancellationDoesNotCancelAdmittedWrite",
+          "shrineIndexCoversRadiusBoundaryBeyondAdjacentChunksAndUnsubscribes",
+          "competingBlessingRequestsOnlyGrantOnce",
+          "failedChoiceDoesNotPublishOrResetExistingReligion",
+          "nonNumericPersistedFaithCannotSilentlyLoadAsZero",
+          "shutdownDrainsAdmittedWorkRejectsNewWorkAndClosesConnection",
+          "unloadedWorldNameCoordinatesAndPowerSurviveSave",
+          "schedulingFailureClosesStorageAndStillAllowsShutdown",
+          "changingFaithKeepsContributionsAndResetsBlessingDurably",
+          "failedBlessingRemainsUnclaimedAndCanRetry"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.ReligionTypeTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E6B3CB9AF9177668CAFAC81F319CA1FC61AF2D33D527DF1BE748673B1EBE67AE",
+        "cases": [
+          "testBlessingEffectNonEmpty",
+          "testTabooNonEmpty",
+          "testAllTypesHaveDisplayName",
+          "testColoredName",
+          "testAllTypesHaveDescription",
+          "testAllTypesHaveColorCode"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.mechanics.SeasonServiceFoliaTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "19253C4F261CF1E9C85EAF7D2B7680FA0C55A5F878B6B357BCE84807D7EFFF59",
+        "cases": [
+          "startupWaitsForGlobalTickAndShutdownDiscardsPendingInitialization",
+          "regionReadersUseOwnerCapturedWorldTime",
+          "globalEffectTimerOnlyQueuesPlayerOwnedWork"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.ArmyRemainingModuleLifecycleTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "BDB404B5E8A0C0A7AE91D0B756FBFEE518218718DF46D767CE9B1566AEAE9A95",
+        "cases": [
+          "disableReleasesListenersServicesAndWeatherTasks"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.ArmyServiceBudgetSpendingTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "75BE4E3ED51E796CAE3998AF94E83E6CAB9ED9DF8D7F04515E9E3C25183830A1",
+        "cases": [
+          "cancelledPersistenceRollsBackArmyAndRefundsTreasury",
+          "successfulDisbandRemovesDurableAndInMemoryArmy",
+          "persistenceFailureRollsBackNationIndexAndAllowsRetry",
+          "failedRefundIsReportedAsCriticalAndArmyRemainsUnregistered",
+          "rejectedWithdrawalDoesNotRegisterArmy",
+          "fullArmySnapshotsRetainUnparsedRecordsForOperatorRecovery",
+          "failedDefeatedArmyCleanupDoesNotDiscardBattleResult",
+          "fullArmySnapshotsPreserveOtherArmiesAndCannotResurrectDisbands",
+          "insufficientTreasuryDoesNotWithdrawOrRegisterArmy",
+          "persistenceFailureRollsBackArmyAndRefundsTreasury",
+          "failedDurableRollbackKeepsTreasuryChargedForRecovery",
+          "deadArmyIsHiddenFromQueriesAndCannotBeResupplied",
+          "failedDisbandRecoveryKeepsArmyRegisteredForAdministratorRepair",
+          "failedDisbandRestoresArmyRecordAndKeepsArmyRegistered"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.espionage.EspionageServiceBudgetSpendingTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D3FC44C91E949383A9267BEE7F605984C2AE770F7EDE0651A391FAC3D8576D51",
+        "cases": [
+          "committedOperationRestartsWithCooldownWithoutChargingAgain",
+          "futureStateVersionFailsClosed",
+          "trainingInsufficientFundsThrows",
+          "spyProgressionAllowsEntryLevelReconAndPersistsExperienceGain",
+          "trainingUsesMilitaryBudgetAndPersistsBeforeRegistration",
+          "operationPersistsActiveStateAndCooldownBeforeRegistration",
+          "operationInsufficientFundsThrowsWithoutRegistration",
+          "concurrentOperationStartsChargeOnlyOnce",
+          "legacyActiveOperationWithoutSpyIsSkipped"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.exercise.ExerciseCommandTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "50366C135B6A740829319BED848801FC49E0099B0073315C19FEA56DFE260BD0",
+        "cases": [
+          "ordinaryNationMemberCannotMutateExercise(String)[1]",
+          "ordinaryNationMemberCannotMutateExercise(String)[2]",
+          "ordinaryNationMemberCannotMutateExercise(String)[3]",
+          "ordinaryNationMemberCannotMutateExercise(String)[4]",
+          "consoleRecoveryRequiresAdminAndOldCommandStops",
+          "permissionIsCheckedBeforeLookupOrMutation",
+          "cancellationUsesCancellationEndpoint",
+          "ambiguousPrefixCannotSelectAnArbitraryExercise",
+          "fullAndShortIdsCannotBypassOrganizerOwnership(String)[1]",
+          "fullAndShortIdsCannotBypassOrganizerOwnership(String)[2]",
+          "fullAndShortIdsCannotBypassOrganizerOwnership(String)[3]",
+          "fullAndShortIdsCannotBypassOrganizerOwnership(String)[4]",
+          "fullAndShortIdsCannotBypassOrganizerOwnership(String)[5]",
+          "fullAndShortIdsCannotBypassOrganizerOwnership(String)[6]",
+          "requestedResultDoesNotReturnUnrelatedRecentResults"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.exercise.ExerciseListenerTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0432CB70DD4D80C688595EC2FF5823534BE49EC7BE86E084BF3BE7D10790AE9E",
+        "cases": [
+          "nearbyCombatUsesRealMembershipAndBothEntityOwners",
+          "deathUsesDurableCasualtyEndpointOnlyInZone",
+          "membershipChangeBetweenOwnerCallbacksSuppressesCombat",
+          "retiredSubscriptionCannotRunQueuedOrOldMovementWork",
+          "noZoneAndOtherWorldDoNotSimulateGlobalCombat",
+          "broadcastsUseMemberPlayersAndTheirOwners"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.exercise.ExerciseModuleLifecycleTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B3C3518893DF53FE9920A579C5FA8ABA7F40D58867BBF8D26556EFDA468DC54B",
+        "cases": [
+          "missingExperienceReceiptAuthorityPreventsEnable",
+          "reloadUnregistersCommandsMovementAndOldService",
+          "registrationFailureCleansPublishedServiceAndTask",
+          "corruptAuthorityPreventsSchedulingAndRegistration",
+          "stoppingOldModulePreservesAReplacementService"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.exercise.ExerciseRecoveryTest",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9FB64A0EE46581833371B3FD6A76FBA2F845C08B63534203390A8ED3CF1678AF",
+        "cases": [
+          "resultsRewardsStatisticsAndSymmetricCooldownPersist",
+          "originZoneAndJoinLeaveAreSaved",
+          "rewardFailureRetainsOriginalIntentAndOtherRecipientsCanFinish",
+          "startingAndEndingWithoutBattleDoesNotFarmExperience",
+          "differentWriterCannotOverwriteCommittedParticipants",
+          "beforeFirstSaveCanRetryWithoutFreezingOrPublishing",
+          "everyTypeStartsWithMultipleParticipantsAndSurvivesRestart(ExerciseType)[1]",
+          "everyTypeStartsWithMultipleParticipantsAndSurvivesRestart(ExerciseType)[2]",
+          "everyTypeStartsWithMultipleParticipantsAndSurvivesRestart(ExerciseType)[3]",
+          "everyTypeStartsWithMultipleParticipantsAndSurvivesRestart(ExerciseType)[4]",
+          "everyTypeStartsWithMultipleParticipantsAndSurvivesRestart(ExerciseType)[5]",
+          "everyTypeStartsWithMultipleParticipantsAndSurvivesRestart(ExerciseType)[6]",
+          "everyTypeStartsWithMultipleParticipantsAndSurvivesRestart(ExerciseType)[7]",
+          "alliedSideAndSelfCombatDoNotProduceStats",
+          "rewardAuthorityLostReplyDoesNotRepeatExperience",
+          "cancellingAfterBattleNeverGrantsRewardsOrChangesTerminalResult",
+          "losingCaptainDoesNotEliminateRemainingTeam",
+          "interruptedRewardAcknowledgementReplaysExistingNationReceipt",
+          "callersCannotMutateStoredParticipantsAndOldServiceStops",
+          "casualtiesAutomaticallySettleAndDoNotCountAsSimulatedBattle",
+          "pauseBlocksCombatAndTimeoutStillSettlesOnce",
+          "lostSettlementReplyIsConfirmedThenAwardsOnlyOnce",
+          "eventOnlySeesCommittedStateAndCannotReenterMutation",
+          "failedEndLeavesActiveStateAndNoExperience"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.exercise.ExerciseStateCodecTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2DA7D424F3555479B0E7542F499E0C13D20F494FCEF1C1EA08C991BF17B55B99",
+        "cases": [
+          "missingPrimaryNeverResurrectsOldExerciseBackup",
+          "inconsistentStateIsRejectedEvenWithRecomputedChecksum(String)[1]",
+          "inconsistentStateIsRejectedEvenWithRecomputedChecksum(String)[2]",
+          "inconsistentStateIsRejectedEvenWithRecomputedChecksum(String)[3]",
+          "inconsistentStateIsRejectedEvenWithRecomputedChecksum(String)[4]",
+          "inconsistentStateIsRejectedEvenWithRecomputedChecksum(String)[5]",
+          "inconsistentStateIsRejectedEvenWithRecomputedChecksum(String)[6]",
+          "inconsistentStateIsRejectedEvenWithRecomputedChecksum(String)[7]",
+          "inconsistentStateIsRejectedEvenWithRecomputedChecksum(String)[8]",
+          "inconsistentStateIsRejectedEvenWithRecomputedChecksum(String)[9]",
+          "inconsistentStateIsRejectedEvenWithRecomputedChecksum(String)[10]",
+          "lossPenaltyAcceptsHistoricalNegativeValueButAlwaysSubtracts",
+          "terminalResultCollectionsCannotBeChanged",
+          "teamScoreIncludesEveryParticipantInsteadOfOnlyCaptains",
+          "duplicateAndEmptyFileAreNotAcceptedAsNoExercises"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.mercenary.MercenaryServiceBudgetSpendingTest",
+        "tests": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A86361221A477B5AF181672D8D605837984BB6DB24FC78901316B51D1BB891DD",
+        "cases": [
+          "concurrentDuplicateHireChargesOnlyOnce",
+          "startupRetriesRefundAfterManualReviewWhenContractCleanupIsDurable",
+          "mercenarySettingsAsyncMutationReportsPersistenceFailure",
+          "contractSnapshotsRetainEarlierContractsAcrossQueuedSaves",
+          "missionEventWaitsUntilContractSnapshotIsDurable",
+          "mercenarySettingsUpdatesPersistAndReload",
+          "killBonusIsIncludedInTheDurableContractSnapshot",
+          "periodicSnapshotWaitsForPaidHireCommitAndIncludesContract",
+          "asyncHireReservesCapacityUntilContractWriteCompletes",
+          "failedCleanupKeepsHireReservedAndDoesNotRefundAnUncertainContract",
+          "hireRejectsCostOverflowBeforeCharging",
+          "concurrentHiresCannotExceedNationCapacity",
+          "concurrentDatabaseWritesForOneContractStayInMutationOrder",
+          "failedMainThreadDispatchReleasesTerminationForPeriodicRecovery",
+          "startupRefundsPaidHireWhenContractWasNotPersistedBeforeCrash",
+          "mercenarySettingsWritesAreSerializedAndPreserveTheLatestSnapshot",
+          "failedTerminationStaysReservedAndPeriodicFlushRecoversIt",
+          "startupCommitsPersistedPaidHireWithoutChargingAgain",
+          "directAsyncContractSaveReturnsAuthoritativeWriteCompletion",
+          "insufficientBudgetThrows",
+          "hireUsesMilitaryBudgetAndPersistsBeforeRegistration",
+          "persistenceFailureRefundsAndDoesNotRegisterContract",
+          "contractEndEventWaitsUntilTerminalSaveAndDeletionAreDurable",
+          "startupPurgesTerminalContractsInsteadOfRestoringThem",
+          "failedRefundKeepsHireReservedAfterContractCleanup",
+          "hireRejectsDurationOutsideConfiguredRangeBeforeCharging",
+          "asyncDatabaseSaveUsesCapturedContractState",
+          "committedContractRestartsWithoutChargingAgain",
+          "asyncDatabaseSaveReportsSqlFailureToCaller"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.navy.NavyBattleListenerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B114A72397F4EB98DDAF35CABECAF8541E554312B4AD593E7D7A839B44826554",
+        "cases": [
+          "expiredOrBlockedBattleDoesNotEmitSuccess",
+          "autoBattleUsesPlayerNationDefenderAndNeverUnrelatedNeutralFleet",
+          "oldCallbackIsSuppressedAfterUnsubscribeAndDuplicateSubscribeIsIdempotent",
+          "ceasefireAndMissingNationNeverTriggerBattle",
+          "oldSubscriptionCannotResumeAfterSubscribingAgain"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.navy.NavyCommandTest",
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "372CA5B9195AAF8A0781AA771622A67879D061A69DE80401A7797DB0F9D764EC",
+        "cases": [
+          "membershipAloneDoesNotAuthorizeTreasurySpending",
+          "creationSupportsDefaultAndMultiwordNames",
+          "ambiguousShortIdDoesNotSelectFirstMatch",
+          "recoveryRequiresAdministratorPermission",
+          "leaderMayManageOwnFleetWithEitherIdentifier",
+          "attackerMustBeOwnedButEnemyTargetMayUseCompleteUuid",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[1]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[2]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[3]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[4]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[5]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[6]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[7]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[8]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[9]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[10]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[11]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[12]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[13]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[14]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[15]",
+          "fullForeignUuidCannotReachAnyMutationOrAlias(String)[16]",
+          "pendingRequestsAreOnlyVisibleToAdministrators",
+          "disabledCommandAndDeniedBasePermissionCannotMutate",
+          "administratorMayManageForeignFleetButStillNeedsOperationPermission"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.navy.NavyModelStorageTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "DB82A13B299B73C8E2EF18C58C7085AC997EABCEF925A4867008E97CD946D5E8",
+        "cases": [
+          "fractionalIntegerFieldsAndNegativeMaintenanceAreRejected",
+          "strongerAttackDamagesOpponentAndPredictionProbabilitiesSumToOne",
+          "invalidNumbersCannotWrapIntoShipsCargoSupplyOrHealth",
+          "eachHourlyRateAccumulatesAcrossSerialization(NavyState)[1]",
+          "eachHourlyRateAccumulatesAcrossSerialization(NavyState)[2]",
+          "eachHourlyRateAccumulatesAcrossSerialization(NavyState)[3]",
+          "eachHourlyRateAccumulatesAcrossSerialization(NavyState)[4]",
+          "eachHourlyRateAccumulatesAcrossSerialization(NavyState)[5]",
+          "eachHourlyRateAccumulatesAcrossSerialization(NavyState)[6]",
+          "eachHourlyRateAccumulatesAcrossSerialization(NavyState)[7]",
+          "consumptionDoesNotApplyHiddenMoralePenaltyAndEmptySupplyClearsRemainder",
+          "duplicateLegacyRecordsAndWrongKeyCannotBeSilentlyDropped",
+          "missingWorldAndChangedWorldIdentityNeverFallBackToDefaultWorld",
+          "damagedFleetReportsActualShipLossesAndCannotRetainOvercapacityCargo",
+          "legacyMigrationPreservesIdentityLocationAndUpdatedTime",
+          "truncatedChecksumAndRecoveryOnlyFilesFailClosed",
+          "emptyAndDuplicateJsonAuthoritiesAreRejected",
+          "locationsAreCopiedAtConstructionMutationAndRead"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.navy.NavyModuleLifecycleTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "BF1D1001B208277A8BA3CE0E381BD687E765199F45E112EBA2711F58CBEF5A8B",
+        "cases": [
+          "missingFinancialAuthorityFailsBeforeSchedulingAndDependenciesDeclareTreasury",
+          "unrelatedBudgetRegistrationCannotReplaceDirectTreasuryBilling",
+          "treasuryWithoutDurableReceiptsCannotStartNavy",
+          "failedListenerRegistrationClosesServiceAndRemovesRegistry",
+          "reloadUnsubscribesCancelsAndFreezesOldReferences",
+          "corruptedFileCannotRegisterServiceOrScheduleMaintenance"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.navy.NavyServiceBudgetSpendingTest",
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "44F024A9DF8F654E5FBCF1F42CC3458D63430984EF8B326EDF6EF5C3686E7209",
+        "cases": [
+          "failedPreparationCannotDebitOrPublish",
+          "gettersAndEventsCannotMutateAuthority",
+          "fullSupplyRequestCannotBecomeAFreshChargeAfterConsumption",
+          "failedBattleSaveLeavesBothFleetsAndCooldownUntouched",
+          "maintenanceRemainderSurvivesRestartAndChargesExactlyHourlyRate",
+          "corruptPublicationFreezesWritesAndCannotBeOverwrittenAtShutdown",
+          "mismatchedRejectionCannotCloseAnUnconfirmedPayment",
+          "failedDeleteRetainsFleetAndCanRetryWithoutResurrection",
+          "nationDisappearingAfterConfirmedPaymentDoesNotDiscardPurchasedFleet",
+          "noOpWriterNeverReportsSuccess",
+          "mismatchedMoneyReceiptBlocksFurtherMutationsAndPreservesIntent",
+          "lostFleetFileRepliesAreConfirmedFromExactCandidate(int)[1]",
+          "lostFleetFileRepliesAreConfirmedFromExactCandidate(int)[2]",
+          "failedFinalSaveKeepsOriginalPaymentAndRecoversOnce",
+          "insufficientFundsAreTerminalForTheOriginalRequest",
+          "normalBudgetProviderUsesFundedMilitaryPoolAndReplaysPersistedReceipt",
+          "oldServiceCannotMutateAfterShutdown",
+          "concurrentCreationCannotExceedLimitOrLoseAFleet",
+          "corruptOrRefundedReceiptNeverPublishesCandidate",
+          "committedNotificationFailureDoesNotTurnSuccessIntoRetryableError",
+          "resupplyFailureAndRestartRetainExactQuoteAndSingleDebit",
+          "treasuryUncommittedWriteRetriesOriginalRequest",
+          "requestIdentityCannotChangeAfterCommit",
+          "battleCooldownIsDurableSymmetricAndCeasefireRejectsCombat",
+          "nationDisappearingBeforeUnspentRecoveryRejectsWithoutDebit",
+          "creationAndReplaySurviveBothAuthorityRestartsAndDisband",
+          "everyAcknowledgedFleetMutationSurvivesRestart",
+          "eventUsesCallingThreadMetadataAndRejectsReentrantMutations",
+          "readsRemainAvailableDuringDurableWrite",
+          "externalFileChangeCannotBeOverwritten",
+          "thrownMoneyReplyPreservesIntentAcrossRestart",
+          "treasuryLostWriteReplyIsReadBackBeforeFleetIsPublished"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.siege.SiegeServiceBudgetSpendingTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C7D160BDDAD81C71A906E645AD2D047193187AEE0423805CDFBB410377D43664",
+        "cases": [
+          "creationPersistenceFailureDoesNotRegisterSiege",
+          "publicSnapshotsCannotMutateLiveSiegeOrItsLocation",
+          "creationInsufficientFundsDoesNotCreateOrPersist",
+          "periodicSaveWaitsForPaidCreationCommit",
+          "creationUsesMilitaryBudgetAndPersistsBeforeRegistration"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.tunnel.TunnelServiceBudgetSpendingTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "56BF0A7E377B53CA2DCCD4A0DBD85A7F61E79C573B24A0BFCFEF6A1F9E9E09AD",
+        "cases": [
+          "authoritativeMutationsRestartWithEntrancesDiscoveriesTrapsAndState",
+          "schedulingFailureAfterCommitDoesNotLoseTunnel",
+          "concurrentCreationAtLimitChargesOnlyOnce",
+          "destroyPersistsRemovalAndTunnelDoesNotReturnAfterRestart",
+          "committedTunnelRestartsWithoutChargingAgain",
+          "createUsesEconomyAndPersistsBeforeLiveRegistration",
+          "insufficientBudgetDoesNotPersistOrRegister",
+          "eventFailureAfterCommitDoesNotMisreportFailure"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.command.NationDiplomacyAliasPermissionBoundaryTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9445EF4F4D10377F7138EE48994BA36CBDF2539F551E1D9409DF493C1FFF4762",
+        "cases": [
+          "allyAliasCannotBypassAllyInvitePermission"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.command.NationDiplomacyCommandMenuTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "83EC1D6730B56C9D42096734D271CADBE53F9B524FA73496B6B7BD3F39E99C7B",
+        "cases": [
+          "allianceInvitationCommandUsesTheNarrowAllianceService",
+          "opensMenuForExplicitGuiSubcommand",
+          "allyAliasUsesThePermissionCheckedInvitationPath",
+          "allyAcceptRequiresAllyAddBeforeResolvingTheInviter",
+          "neutralEndsLiveWarThroughTheAuthoritativeDiplomacyService",
+          "neutralUsesAuthoritativeRelationServiceForNonWarRelations",
+          "allyRejectRequiresAllyAddBeforeResolvingTheInviter",
+          "opensMenuWhenNoSubcommandIsGiven"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.event.NationEventRecordTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3C76F38A2730B395F9070D990993530346F3080FC0B8F13E5B9C0C79793E4218",
+        "cases": [
+          "fields",
+          "newestFirstEmpty",
+          "newestFirst",
+          "newestFirstImmutable"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.command.FaithCommandTest",
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B8B50F7CE55FF5CC5470A9B88B18E17FA99D81A05D3EF4C9F323B4131DA840C0",
+        "cases": [
+          "failedSetNeverReportsSuccess",
+          "unavailableServiceAndOldCommandCannotMutate",
+          "infoAndStatsRespectReadPermission",
+          "consoleIsRejected",
+          "helpAndTabsAreAvailable",
+          "prayPermissionDenialDoesNotMutate",
+          "negativeTopIsClampedAndRanksContainNoComponentDebugText",
+          "invalidNumberAndMissingArgumentsNeverCreateData",
+          "noNationPrayerDoesNotMutate",
+          "adminSetUsesNamedTargetEvenWithoutOwnNation",
+          "deniedAdminCannotMutate",
+          "ownAndTargetInfoUseCorrectNation",
+          "blessingPermissionAppliesToLeaderAndAdmin",
+          "leaderWithPermissionCanBless",
+          "everyPrayerResultIsReportedWithoutInventingSuccess(PrayerStatus)[1]",
+          "everyPrayerResultIsReportedWithoutInventingSuccess(PrayerStatus)[2]",
+          "everyPrayerResultIsReportedWithoutInventingSuccess(PrayerStatus)[3]",
+          "everyPrayerResultIsReportedWithoutInventingSuccess(PrayerStatus)[4]",
+          "everyPrayerResultIsReportedWithoutInventingSuccess(PrayerStatus)[5]",
+          "everyPrayerResultIsReportedWithoutInventingSuccess(PrayerStatus)[6]",
+          "everyPrayerResultIsReportedWithoutInventingSuccess(PrayerStatus)[7]",
+          "invalidOrMissingBlessingNeverCharges",
+          "missingExceptionMessageStillGivesUsefulFailure",
+          "ordinaryMemberCannotBless",
+          "unknownTargetNeverInitializesOrMutatesSenderNation",
+          "adminAddAndRemoveUseUuidTarget"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithInteractionTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F865132931D6DCC812E66F3AEFD3F4D0388BCA6B565879045B222DA4EF28B5D6",
+        "cases": [
+          "offhandAndDeniedPermissionCannotPray",
+          "shutdownSuppressesQueuedBroadcastsAndLoginRewards",
+          "cancelledAndRetiredOwnerCallbacksDoNothing",
+          "rightClickUsesChunkCoordinatesAndRejectedPrayerHasNoSuccessFeedback",
+          "guiMemberCannotSpendAndAuthorizedLeaderCanSpendOnlyOnce",
+          "guiDeferredClickRunsOnOwnerAndOldListenerCannotRunAfterShutdown",
+          "combatDefenseAndExperienceActuallyApplyBoundedBonuses",
+          "broadcastsDispatchToOwnerAndRecheckNationMembership",
+          "bonusesCannotIntroduceNaNOrNegativeValues",
+          "guiClickDefersInventoryMutationAndRejectsForeignHolderOrChangedNation"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithModelValidationTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F6F95E319C8058084A0FE17FE4A191AD2CBCD4FDE690C9CDF74F48F8469961BC",
+        "cases": [
+          "configurableMaximumAndSaturatedArithmeticArePreserved",
+          "staleStoreCannotReplaceNewAuthority",
+          "packagedDefaultsAndBothMessageCataloguesContainUsableFaithConfiguration",
+          "invalidBlessingPricesAndBonusesCannotEnterRuntime",
+          "calendarDayAcrossMidnightDoesNotRequireTwentyFourHours",
+          "invalidLegacyCountCannotBecomeEmptyAuthority",
+          "thresholdsAreDefensiveAndMalformedConfiguredThresholdsFail"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithModuleLifecycleTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9B6CBD78FBC9904485EB48201AFD8546670AFE729C4CB709ADB155619BDA8AAB",
+        "cases": [
+          "removalDoesNotResurrectOnModuleReloadAndUnknownNationCannotBeCreated",
+          "disableUnregistersEveryListenerAndServiceAndFreezesOldCommand",
+          "corruptedFileFailsEnableWithoutRegisteringAnyListener",
+          "alreadyOnlinePlayerLoginUsesOwnerCallbackAndDeduplicatesReload",
+          "failedRegistrationClosesServiceAndRemovesRegistryEntry"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithServiceImplDirtyDataTest",
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "EB0A8F1B7D02819C4294E177F43C70F2E6FF4AE87A6BE2E147929A83A7BC5229",
+        "cases": [
+          "passiveReadsReflectOverdueDecayWithoutWritingOnPlayerThread",
+          "externalChangesCannotBeOverwritten",
+          "readsRemainResponsiveWhileWriteIsBlockedAndShutdownDrainsIt",
+          "dailyLimitIsNationalAndResetsByCalendarDay",
+          "corruptAmbiguousWriteFreezesFurtherOperations",
+          "callbacksRunOnOwnerAndAreSuppressedAfterShutdown",
+          "failedWriteCanRetryWithoutFalseSuccess",
+          "lostWriteReplyIsRecognizedFromExactCandidate",
+          "backwardClockDoesNotRepeatDailyReward",
+          "removedNationDoesNotResurrectOnEnsureOrRestart",
+          "overdueMaintenanceFailureRejectsNewGainWithoutChargingLater",
+          "prayerIsDurableAndCooldownSurvivesQuitAndRestart",
+          "maximumMilestoneCooldownIsDurableAndPrayerReportsActualGain",
+          "startupAppliesElapsedDecayBeforeNewNationAndLogin",
+          "cancellationDoesNotConsumeCountCooldownOrFaith",
+          "loginGainIsOncePerPlayerPerDayAcrossRestartAndNationChange",
+          "failedBlessingDoesNotChargeOrGrantEffect",
+          "writerReturningWithoutSavingIsNotSuccess",
+          "blessingCostAndEffectAreSavedTogetherAndExpire",
+          "v1MigrationPreservesOfflineNationAndStats",
+          "invalidAuthorityNeverFallsBackToBackup(String)[1]",
+          "invalidAuthorityNeverFallsBackToBackup(String)[2]",
+          "invalidAuthorityNeverFallsBackToBackup(String)[3]",
+          "reentrantPrayerIsBusyAndOtherCommittedChangeIsPreserved",
+          "concurrentUpdatesDoNotLoseIncrements"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithStatsTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C13D602600B1EA0AE4F2ADA6571D649A9AA8C79B977BBEDDEA33FAA4E99B8BAD",
+        "cases": [
+          "percentage",
+          "empty",
+          "maxLevel",
+          "toNextLevel",
+          "levelFourStillNeedsTheFourthThreshold",
+          "notNegative"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "DF8151D4358A88C6352034770AE81F49A1AC3931C1D474F383FDA37EC62642E0",
+        "cases": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithTest$Prayer",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ED8428C9FC49636AC5062FD718701019CD3D0B045843C2962535D575A368FE4D",
+        "cases": [
+          "fields"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithTest$FaithDataModel",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A1DACDA7C03EA665893DAC44C61E7AB2B927E7FF4F41CE5F4D6DB8792CAA61C3",
+        "cases": [
+          "create",
+          "addFaith",
+          "isNewDay",
+          "withFaith",
+          "withConsecutiveDays",
+          "recordPrayer"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithTest$LevelConfig",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "BA6B7E0C0BECAA1F3DC0F305D1DEFBCF31A4160CC1787B636E585E9BF8EBD9B4",
+        "cases": [
+          "level5",
+          "defaults",
+          "progression"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithTest$Config",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4B72F1877DD16CDE161397F1AFAA1D1D4175482FE9B0C69B3BE20948F99609CD",
+        "cases": [
+          "getThreshold",
+          "calculateLevel",
+          "getThresholdBounds",
+          "defaults"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.command.NationCreationRecoveryCommandTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B88DF6AC24AC16926581E6E9280076EA82CF7B5A351EF65A660B69E6880AA01D",
+        "cases": [
+          "permissionsProtectConsoleQueriesAndCancellation",
+          "retiredCommandCannotRecoverOrForward"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.gui.NationMenuFactoryTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3A46297DD5E84CF652DD914BE19E0E8352A4E224835A30928A3DFD29468528B6",
+        "cases": [
+          "legacyDiplomacyFacadeIsAdaptedWithoutLosingInvitationResults",
+          "usesChestMenusWhenPacketEventsIsMissing",
+          "nationMenuUsesTheNarrowAllianceContractForInvitations"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationIdTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3E45FC455EBB8035395A9BF19D0895588FB4F9D9CC8D22FA77E4FC162985D6F6",
+        "cases": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationIdTest$ToString",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "225E9B2545BEA97669796C8ABD99249DFD724116592DB556D3D6F320F02214E9",
+        "cases": [
+          "toStringIsParsable",
+          "toStringReturnsUuidString"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationIdTest$Equality",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "88FE4A7DFC615781C6CC6F2B6EF4B3F0865B5934CAEBC81E281036EBDA906B70",
+        "cases": [
+          "selfEquals",
+          "notEqualsDifferentType",
+          "notEqualsNull",
+          "differentValueNotEquals",
+          "sameValueEquals"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationIdTest$StaticFactoryMethods",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ECB1AEF8903EADDFAE0B2DE1E62FEE0888C98C7553E2551164CAF759C2593BBC",
+        "cases": [
+          "ofNullThrows",
+          "randomGeneratesNonNull",
+          "fromStringInvalidThrows",
+          "fromStringParsesUuid",
+          "ofWrapsUuid",
+          "randomGeneratesUnique"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationIdTest$Constructor",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7872462152394D3B150D56D1B72DD1659480DC04D19142CEBA9F8443BE271EC3",
+        "cases": [
+          "nullValueThrows",
+          "validUuidSaved"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationKindTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "03117A409BC93D581E516BFA705FDE08463B080E54440A99E55B331DAAC76D82",
+        "cases": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationKindTest$Ordinal",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6905DB08C9C01936EC85FFE8689806E188334B786A6843F5687926D667F96018",
+        "cases": [
+          "valuesReturnsAll",
+          "ordinalOrder"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationKindTest$ValueOf",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4CB4026C3BFB2325E6479E1A51D987DA032B39FC760C12E3798928F9CD9BFF83",
+        "cases": [
+          "invalidNameThrows",
+          "valueOfByName"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationKindTest$CityStateValue",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0B1B643DEDFA6437B731A27A695DCFDCCDB9A60420D7CEC7AB51EA9BFFBDAB04",
+        "cases": [
+          "displayNameIsCorrect"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationKindTest$NationValue",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "503F84741B7DA31FA3DC72C1F707053356E4550AB70F48C0B25D817E820B0513",
+        "cases": [
+          "displayNameIsCorrect"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationKindTest$AllValues",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "49EECCB547683F10174C5532B76BF813DDAC5DF31EAB670CADAFDD54AB1E0D09",
+        "cases": [
+          "eachEqualsSelf(NationKind)[1]",
+          "eachEqualsSelf(NationKind)[2]",
+          "allDisplayNamesNonEmpty",
+          "eachToStringContainsName(NationKind)[1]",
+          "eachToStringContainsName(NationKind)[2]",
+          "eachHashCodeConsistent(NationKind)[1]",
+          "eachHashCodeConsistent(NationKind)[2]"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A5ECBDB5200C0E63E75F8C6439FD222FEFF0E91F513486592E20EE5DB00ECC13",
+        "cases": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationTest$Equality",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "547DDB969ED7AA21A9632C6962215F4FC3FAF3D3306CF260B2F1653DB81FADEB",
+        "cases": [
+          "getIdAlias",
+          "getMembersAlias"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationTest$TownCache",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9BB78D94DF3199FB38465FEEF7B2672FB00BD37CE130EFA44D6AFFAEF196810C",
+        "cases": [
+          "setTownNamesNull",
+          "setGetTownLocations",
+          "setTownLocationsNull",
+          "setGetTownNames",
+          "refreshTownCache"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationTest$RefreshStats",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "FC60257FD98D4A0D379FD0EED7C7C5466AE057A885974518EAB4A552D282535F",
+        "cases": [
+          "refresh"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationTest$Caching",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6AA75EE0020A40B980270E7B020B6DBB2997B60A254FEA1F2A7AF69886E402BD",
+        "cases": [
+          "markCache",
+          "setTreasury",
+          "setTerritory",
+          "cacheSetters",
+          "setTaxRate",
+          "getPopulation"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationTest$GovernmentAndExp",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1856925A8A58A41C538611E94CC10D34C00BC97F9391D93DCF23C803C6E8D9AA",
+        "cases": [
+          "getGovString",
+          "addExp",
+          "setExpNegative",
+          "setGov",
+          "addExpNonPositive",
+          "setGovNullThrows",
+          "setExpNormal"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationTest$Renaming",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A426F349FC690A057C1691291271C70991F4D4DB97312048E9CD0C52E7E3EF9B",
+        "cases": [
+          "rename",
+          "renameNullThrows",
+          "renameEmptyThrows"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationTest$Permissions",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9935960ECB9AC88C78F2FBB76D7513B18F646E8BA9B74F6DDF9B6A50F663A8D1",
+        "cases": [
+          "regularMemberHasBasic",
+          "nonMemberHasNone",
+          "founderHasAllPermissions"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationTest$MemberManagement",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "48AA0C8968C147FA5C9F28767497CCAF3F621A59C3E8EC9171F51C72CF30AB3E",
+        "cases": [
+          "removeNonExistent",
+          "isFounder",
+          "removeMember",
+          "addNewMember",
+          "hasMember",
+          "addExistingMember"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.model.NationTest$Constructors",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3A4769311FFA5A76F7E1973ADC19256F3433147FF3A8BF0BA13DDFF20A42628E",
+        "cases": [
+          "nullFounderThrows",
+          "basicConstructor",
+          "cityStateConstructor",
+          "withParentConstructor",
+          "baseFields",
+          "fullConstructor",
+          "emptyNameThrows",
+          "nullKindThrows",
+          "nullNameThrows"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationCreationCoordinatorTest",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A369973AC975ED0237D572684D2CCE2A231DDEE6C713D86A1DB7B7A0A07D3ECD",
+        "cases": [
+          "retainedResultCannotResurrectDisbandedNationOrChargeAgain",
+          "cityStateRestoresOriginalParentAndPriceAndPreservesExperienceReceipts",
+          "ordinaryIncomeFromAnotherSqlWriterCannotBeErasedByCreation",
+          "failedFinalWriteAndUnrelatedIncomeDoNotLosePaymentOrDoubleCharge",
+          "freeCreationDoesNotCallMoneyAuthority",
+          "rejectedRefundNeedsExplicitNewAttemptAfterBalanceLimitClears",
+          "separateSqlMoneyAuthoritiesSettleCancellationOnceAgainstLateCreator",
+          "sqliteWritersCannotReplaceCompletedCreationHistory",
+          "lostMoneyRepliesKeepOriginalDebitAndRefund(boolean, boolean)[1]",
+          "lostMoneyRepliesKeepOriginalDebitAndRefund(boolean, boolean)[2]",
+          "lostMoneyRepliesKeepOriginalDebitAndRefund(boolean, boolean)[3]",
+          "lostMoneyRepliesKeepOriginalDebitAndRefund(boolean, boolean)[4]",
+          "cancellationSealsOriginalDebitBeforeOrAfterItWasApplied(boolean)[1]",
+          "cancellationSealsOriginalDebitBeforeOrAfterItWasApplied(boolean)[2]",
+          "rejectedDebitRemainsRejectedAfterNewIncome",
+          "anotherWriterCannotOverwritePendingIntentOrChargeAnotherFounder",
+          "absentAndConflictingReceiptsCannotPublishNation",
+          "incompleteOrAlteredCreationSnapshotCannotLoad",
+          "conflictingRequestCannotReuseOriginalOperationId",
+          "changedParentRefundsOriginalChargeWithoutCreatingOrphan",
+          "everyCreationCatalogInterruptionReplaysOneCharge(int, boolean)[1]",
+          "everyCreationCatalogInterruptionReplaysOneCharge(int, boolean)[2]",
+          "everyCreationCatalogInterruptionReplaysOneCharge(int, boolean)[3]",
+          "everyCreationCatalogInterruptionReplaysOneCharge(int, boolean)[4]"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationCreationRecoveryTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A192FF84BF4FD027C53DEA38DAAC50EAD44F65477B0D0EBC95367EF618477FA6",
+        "cases": [
+          "legacyBalanceCannotAuthorizeRefundOrDiscardEvidence(String)[1]",
+          "legacyBalanceCannotAuthorizeRefundOrDiscardEvidence(String)[2]",
+          "legacyBalanceCannotAuthorizeRefundOrDiscardEvidence(String)[3]",
+          "clearsJournalWithoutRefundWhenNationStateAlreadyCommitted"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDevelopmentGuideTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4DDB4D785A75D08E276D3ACC8A9B52CE46C3058BD7B43D36F279ABC8660BC920",
+        "cases": [
+          "communityHintExplainsThatJoinCreatesAResolutionRequest",
+          "nullOverviewFallsBackToFoundation",
+          "marksEstablishedNationAsCompleted",
+          "advancesThroughEarlyNationMilestones"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDevelopmentMilestoneTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1B5B42DD7141DD5CB40D5910BC30383A00456502213E43459DF19B1226F18F19",
+        "cases": [
+          "reportsTheCompletedStageAndNextAction",
+          "doesNotRepeatFeedbackWithoutForwardProgress",
+          "reportsCompletionWhenDevelopmentReachesMaturity"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandCityRecoveryContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5EF3D057D6D878E338140EE3AD90D82209673958DD2A571CD08B8B9AA711CB18",
+        "cases": [
+          "disbandRecoveryPersistsAndDeletesCitiesWithTheirResidents"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandCityRecoveryTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C9533CB640755784FE9544FF2729DA6CD34D6B7FB77DA06A7AFDE48710BC1D2F",
+        "cases": [
+          "legacyJournalDiscoversAndDeletesCitiesByNationDuringRecovery",
+          "missingCityServiceFailsForLegacyJournalBeforeReleasingClaims",
+          "alreadyDeletedCityIsSafeDuringRecoveryReplay",
+          "missingCityServiceFailsBeforeReleasingClaims",
+          "cityStorageFailureRetainsDisbandJournal",
+          "unrelatedCityOwnershipFailsBeforeAnyCleanup"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandRecoveryTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "93BC1B1A42FF84AB3BE58715C7301B6EC805E06E75BD0A197A1AE430AFFDAC50",
+        "cases": [
+          "cleanupFailureKeepsJournalForRestartRecovery",
+          "transactionRejectsCleanupReferencesOutsideItsNationSet",
+          "uncommittedStateClearsJournalWithoutTouchingExternalResources",
+          "alreadyCleanedExternalStateIsSafeToReplay",
+          "committedRecoveryReplaysEarlierCleanupAfterLaterServiceFailure",
+          "successfulRecoveryIsIdempotentWhenInvokedAgain",
+          "transactionRejectsDuplicateClaimCoordinatesAndDiplomacyRelations",
+          "mixedPersistedStateFailsClosedAndRetainsJournal",
+          "committedRecoveryRetainsJournalWhenAnyRelationCleanupServiceIsMissing(MissingCleanupService)[1]",
+          "committedRecoveryRetainsJournalWhenAnyRelationCleanupServiceIsMissing(MissingCleanupService)[2]",
+          "committedRecoveryRetainsJournalWhenAnyRelationCleanupServiceIsMissing(MissingCleanupService)[3]",
+          "committedRecoveryRetainsJournalWhenAnyRelationCleanupServiceIsMissing(MissingCleanupService)[4]",
+          "committedRecoveryClearsAllianceMilitaryAndWarStateBeforeJournalRemoval",
+          "territoryDurabilityFailureKeepsJournalForRetry",
+          "committedStateRollsExternalCleanupForwardAndClearsJournal"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandTransactionTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ACB9024CB2997020D21B0B81D95D0F6F19D98132EA3F8C4A2E73C8A79BC9C0BD",
+        "cases": [
+          "disbandIsBlockedBeforeJournalWhenCleanupServiceIsUnavailable(RequiredCleanupService)[1]",
+          "disbandIsBlockedBeforeJournalWhenCleanupServiceIsUnavailable(RequiredCleanupService)[2]",
+          "disbandIsBlockedBeforeJournalWhenCleanupServiceIsUnavailable(RequiredCleanupService)[3]",
+          "disbandIsBlockedBeforeJournalWhenCleanupServiceIsUnavailable(RequiredCleanupService)[4]",
+          "disbandIsBlockedBeforeJournalWhenReparationsServiceIsUnavailable",
+          "explicitAdministratorOverloadCanDisbandWithoutFounderId",
+          "disbandIsBlockedBeforeStateCommitWhenCityServiceIsUnavailable",
+          "recoveryClearsTreasuryCreditedAfterJournalSnapshot",
+          "playerOverloadRejectsNonFounder",
+          "failedStateCommitRestoresNationTreeAndNeverTouchesExternalClaims",
+          "activeReparationBlocksNationDisbandBeforeStateCommit",
+          "rootAndChildCityStateAreRemovedInOneStateCommit",
+          "committedStateWithLostAcknowledgementRetainsJournalForForwardRecovery",
+          "activeReparationForCityStateBlocksRootNationDisband",
+          "disbandIsBlockedBeforeJournalWhenTreasuryServiceIsUnavailable",
+          "mixedCommitOutcomeRetainsJournalAndDoesNotCleanupClaims",
+          "unreadableCommitOutcomeRetainsJournalAndDoesNotCleanupClaims"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationExperienceReceiptTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "CFBC957BED2CAD0F010AE8AB01BCC166AC8D693E0239C96E27D558B179956AAE",
+        "cases": [
+          "absentRecipientNeverCreatesAnotherNation",
+          "missingLiveFileDoesNotFallBackToOlderBackup",
+          "originalIdIsOnceAcrossRestartAndLaterOrdinarySave",
+          "damagedReceiptSnapshotsFailClosed(String)[1]",
+          "damagedReceiptSnapshotsFailClosed(String)[2]",
+          "damagedReceiptSnapshotsFailClosed(String)[3]",
+          "damagedReceiptSnapshotsFailClosed(String)[4]",
+          "damagedReceiptSnapshotsFailClosed(String)[5]",
+          "conflictingAmountDoesNotChangeAuthority",
+          "unreadableCommitFreezesOldReferenceAndRestartRecovers",
+          "pendingLifecycleSnapshotCannotBeOvertakenByNewExperience(String)[1]",
+          "pendingLifecycleSnapshotCannotBeOvertakenByNewExperience(String)[2]",
+          "pendingLifecycleSnapshotCannotBeOvertakenByNewExperience(String)[3]",
+          "duplicatePropertiesAreRejected",
+          "beforeSaveFailureLeavesNoExperienceOrReceiptAndCanRetry",
+          "staleFileWriterReloadsReceiptBeforeRetry",
+          "committedLostReplyIsConfirmedFromExactFile",
+          "interruptedCommitFreezesOldReferenceAndRestartRecovers"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationExperienceSqlTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2033B76D2D197CB5230C915D2E3C498446A01A3F260F9352F5305B7A0CDB7B7B",
+        "cases": [
+          "damagedReceiptIsRejectedBeforeMigrationWritesAnything",
+          "sqliteStaleWriterCannotApplyExperienceTwice",
+          "migrationPreservesExistingReceiptAndOrdinaryRename",
+          "emptyPreviouslyPublishedTableDoesNotReimportStaleFile"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationLifecycleTransactionTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "51606E8EF72556CD5903DB479C62D6DC236DB7CFFB8BDCAE6A1C0548A866FE87",
+        "cases": [
+          "failedRenameRestoresOldNameAndIndex",
+          "failedRankChangeRestoresPreviousMemberRecord",
+          "failedMemberRemovalRestoresMembershipBinding",
+          "successfulRenameSurvivesFreshModuleLoad",
+          "failedGovernmentChangeRestoresValueBeforeReportingFailure",
+          "failedTaxRateChangeRestoresValueBeforeReportingFailure",
+          "failedExperienceGainRestoresValueBeforeReportingFailure"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationModuleSplitTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "43BA047610AD317D6F08653ECD4DE36CC594976D475060C96FF113B3483D114E",
+        "cases": [
+          "exposesAtomicSplitThroughNationService"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationPlayerJourneyIntegrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "EAE4EEE780512985FAD98849D0979C62C75BCB83F6E8625563BDB848968D6D63",
+        "cases": [
+          "threePlayerNationJourneySurvivesRestart",
+          "moneyCallbackCannotOverwriteIntentOrReenterCancellation",
+          "transferredParentDisbandRemovesFounderOwnedCityStates"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationProtectionTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "93A0F4B487FF5D4DCADAAD1853EACAD892B97B7449794E297D053315699E5248",
+        "cases": [
+          "marksTheFinalDayAndExplainsProtectionEffects",
+          "protectsNewNationUntilConfiguredDeadline",
+          "reportsStableRemainingTimeAndReadableText",
+          "expiresAndCanBeDisabled"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationSplitCoordinatorTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2CFBB8799E48F0641746358DE04271829AA4930921032B315A3D467225575635",
+        "cases": [
+          "rejectsSplitThatWouldLeaveTooFewClaims",
+          "createsNationMovesFounderAndTransfersClaims",
+          "rollsBackMembershipCatalogAndClaimsWhenNationSaveFails",
+          "rejectsClaimsThatDoNotAllBelongToSource",
+          "splitPreservesPriorExperienceReceiptOnOriginalNation",
+          "rejectsSourceFounderAndLeavesStateUntouched"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationSplitJournalTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "FE013584B507034A2876F72FE91C430EB6970191207F76D5AC0C613E96E3BEDA",
+        "cases": [
+          "recoveryRestoresPreviousStateWhenTerritoryWasNotTransferred",
+          "coordinatorPersistsIntentBeforeTerritoryTransferAndClearsItAfterCommit",
+          "committedSplitRemainsSuccessfulWhenJournalCleanupMustWaitForRestart",
+          "failedTerritoryTransactionRetainsIntentAndRecoveryRollsBackUnchangedClaims",
+          "recoveryKeepsJournalAndFailsLoudlyForMixedOwnership",
+          "codecPreservesTransactionSnapshotsAndCoordinates",
+          "recoveryCompletesNationStateWhenTerritoryWasAlreadyTransferred",
+          "nationModuleRunsRecoveryBeforeLoadingItsCatalog",
+          "lostTransferConfirmationRetainsIntentAndRecoveryCompletesCommittedSplit",
+          "oldSplitSnapshotCannotEraseLaterRename"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationStateCodecTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6463A897E07C521E1D5CDA4189E518283EED1A95F6E5D14F2C237062AF4C0B09",
+        "cases": [
+          "logsStableCodeWhenNationRecordCannotBeLoaded",
+          "preservesMemberRankAndTimestamps",
+          "skipsNationWithExplicitlyInvalidGovernmentInsteadOfUsingMonarchy",
+          "skipsNationWithExplicitlyInvalidMemberTimestamp",
+          "skipsNationWithExplicitlyInvalidExperience",
+          "skipsNationWithExplicitlyInvalidFoundedAtInsteadOfUsingCurrentTime",
+          "skipsNationWithExplicitlyInvalidMemberCount",
+          "skipsNationWithExplicitlyInvalidKindInsteadOfUsingNation",
+          "preservesTaxRateAcrossRestartSnapshot"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationStateConflictIntegrationTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F8B6B3106C6EC9061D751A5B798316B8DD0A9F37E058CAAB670C02C834B0832E",
+        "cases": [
+          "retriesTransientSqliteBusyWithoutLosingTheSnapshot(Path)",
+          "staleSqlSnapshotIsRejectedAndCanCommitAfterReload(Path)",
+          "moduleExperienceConflictReloadsCanonicalStateBeforeRetry(Path)",
+          "concurrentFirstSnapshotsHaveOneWinnerAndTheLoserCanReloadAndRetry(Path)",
+          "moduleReloadsCanonicalStateAfterRenameConflict(Path)",
+          "stopsAfterThreeSqliteBusyRetriesAndKeepsTheSnapshotUnchanged(Path)"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.PersistenceNationDisbandJournalTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "215B60649E6DAF5CFC1C1D071F667EBE763F5C2E5EEC5C06A34543FF2B1B95A5",
+        "cases": [
+          "loadRejectsUnknownFieldsButAcceptsLegacyJournalsWithoutCityCount",
+          "savedTransactionSurvivesReloadAndClearRemovesIt",
+          "loadRejectsNegativeAndUnboundedCollectionCounts",
+          "onlyEmptyPropertiesAreTreatedAsMissingTransaction",
+          "loadRejectsTreasuryReferencesOutsideTheDisbandedNations",
+          "journalSaveFailureLeavesNoFalseCompletedState"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.resource.NationResourceDistrictStateCodecTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1F71F09C2D244CA497C2A1ACC476103F21A5C9D191B3D9CC5683F58596EF7FA2",
+        "cases": [
+          "skipsMalformedResourceBlockAndLogsBlockContext",
+          "skipsMalformedDistrictAndLogsStableCode"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.resource.NativeNationResourceDistrictLifecycleTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "DD9ADA1F7DBE8D5821E754DC92A4403AF71DC5626A49E8C6B7467B4E1706E047",
+        "cases": [
+          "migrationPersistenceFailureRefundsChargeAndKeepsStateReady",
+          "regionRefreshGeneratesRealBlocksAndSettlesExperienceOnlyOnce",
+          "persistedDistrictPlacementDispatchesRegionsAndStopInvalidatesQueuedWork",
+          "migrationResumesAfterReloadAndMovesBetweenSourceAndTargetRegionTasks",
+          "faithHarvestBonusIncreasesRealGeneratedBlocksWithinExistingCap",
+          "ensureDistrictsDoesNotAutomaticallyLockClaimedChunks",
+          "placementPersistsCandidateBeforeLiveRegistration",
+          "abandonmentPersistenceFailureLeavesDistrictLive",
+          "placementPersistenceFailureLeavesCapacityAndLiveStateUntouched",
+          "abandonmentPersistsRemovalBeforeLiveMutationAndSurvivesRestart",
+          "awaitingTargetRestartReissuesCoreWithoutChargingAgain",
+          "loadRepairsOrphansDuplicateChunksAndInvalidMigrationTargets",
+          "concurrentPlacementAtOneDistrictLimitCommitsOnlyOnce"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.SqlNationStateFailureTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2D67D699C4126DA80AA524551111B2815CCE871C942054F09577D1AA71D75F6F",
+        "cases": [
+          "configuredDatabaseFailureDoesNotSelectFile",
+          "queuedWriteRechecksBackendBeforeObtainingPool",
+          "connectionFailureDoesNotReadOrWriteFallbackFile",
+          "classifiesDatabaseLockAndSerializationErrorsAsRetryableConflicts"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.statusbar.NationStatusBarSchedulingTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C22AACE28914607DB32338FCB51D782438CE956FC6FF81C476D55099E323C035",
+        "cases": [
+          "joiningPlayerUsesItsEntityDelayInsteadOfTheLegacyScheduler",
+          "globalRefreshDispatchesPlayerBossBarChangesToTheEntityAndShutdownCancelsTimer"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.teleport.NationTeleportServiceFoliaTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "425F2C43B416282397B2D2D5457A9D3B57CCF240C4996E796E7B99AC4BB151A4",
+        "cases": [
+          "failedAsyncTeleportRefundsOnceOnAuthorityDespiteLateRetirement",
+          "ambiguousTeleportOrRefundStaysReviewedAcrossRestart",
+          "disconnectDuringFlightWaitsForDefinitiveSuccessInsteadOfRefunding",
+          "retiredWarmupDoesNotChargeAndAllowsANewWarmup",
+          "ambiguousDebitPersistsManualReviewAndNeverRetriesMoney",
+          "refundProviderAmbiguityCannotBecomeAnAutomaticSecondCredit",
+          "retiredEntityBeforeTeleportStartsRefundsFeeAndDropsLateTask"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.policy.PolicyModuleBudgetSpendingTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C077250E8576109E0C9D83F8F096C32219D0768B2C2B9CB29442AA44068184F8",
+        "cases": [
+          "legacyActivationEntryStillUsesConfiguredIdempotentSpendingService",
+          "rejectsPolicyCostWithFractionalCentsBeforeSpending",
+          "legacyTreasuryCannotActivatePaidPolicyWithoutConfiguredSpendingService",
+          "refundedSpendingReceiptCannotCompletePaidPolicyActivation",
+          "insufficientTreasuryDoesNotPersistOrMutatePolicyState",
+          "insufficientIdempotentSpendClearsPendingIntentWithoutActivatingPolicy",
+          "paidActivationUsesDurableIdempotentSpendingReceipt",
+          "legacyTreasuryOverloadFailsClosedWhenStorageCannotBeUsed",
+          "paidActivationFailsBeforeSpendingWhenPolicyStorageIsMissing",
+          "restartCompletesPolicyWhenSpendingWasCommittedBeforePolicyState",
+          "failedPolicyWriteRetainsCommittedSpendingIntentForRestartRecovery",
+          "restartDiscardsPendingIntentWhenNoSpendingReceiptExists",
+          "administrativeClearReconcilesCommittedPaymentBeforeClearingPolicy",
+          "legacySetterDoesNotChargePaidPolicyEvenWhenSpendingServiceIsConfigured",
+          "spendingBackedActivationTreatsCommittedSnapshotAsSuccessfulAfterLostAcknowledgement"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.prosperity.NationProsperityTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0A1E65844D2AB1C7C99D6554B31C6C8A37E951A54E901ED6358000ACEDEE10AF",
+        "cases": []
+      },
+      {
+        "suite": "dev.starcore.starcore.module.prosperity.NationProsperityTest$Model",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5E4574CED658C5459A1CD530094ED7955932AEDFE47B70C3C2DB98533C23471F",
+        "cases": [
+          "fields",
+          "defaults"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.resource.model.NationalReserveTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4E1BA08DEF44C56360C553741FD6435C982E7C3E857F50A1EFB399A0BC40EA46",
+        "cases": [
+          "normalizesResourceKeysAndRejectsBlankKeys",
+          "saturatesReserveAmountsInsteadOfOverflowing"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.resource.NationResourceTransactionDescriptionLimitTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ED16AA26550FBB574A2E612DEF287931BA54E5CC36A8227F74309A4B0D050122",
+        "cases": [
+          "transactionRequestRejectsNullNationId",
+          "maxDescriptionLengthIsBounded",
+          "transactionRequestRejectsNonPositiveAmount",
+          "transactionReceiptTruncatesLongDescription",
+          "transactionRequestRejectsBlankTransactionId",
+          "transactionRequestRejectsNullCategory",
+          "transactionRequestTrimsAndLowercasesResourceType",
+          "transactionRequestNullDescriptionBecomesEmpty",
+          "transactionRequestRejectsDuplicateResourceType",
+          "transactionRequestTruncatesLongDescription",
+          "transactionRequestRejectsEmptyResources"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetAuthorityTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "050BAA29180420BBC801769A284BCAEF654B0EA7A89EF265663C81E0B3A84929",
+        "cases": [
+          "legacyV2RefundReusesOriginalCreditIdentity(boolean)[1]",
+          "legacyV2RefundReusesOriginalCreditIdentity(boolean)[2]",
+          "changedBalanceAfterPreparationRetainsIntentAndRejectsNewMutationsUntilRecovered",
+          "conflictingRefundProofCannotMarkReceiptRefunded(String)[1]",
+          "conflictingRefundProofCannotMarkReceiptRefunded(String)[2]",
+          "conflictingRefundProofCannotMarkReceiptRefunded(String)[3]",
+          "conflictingRefundProofCannotMarkReceiptRefunded(String)[4]",
+          "conflictingRefundProofCannotMarkReceiptRefunded(String)[5]",
+          "absentTreasuryReceiptAuthorityFailsBeforeIntentOrMoney",
+          "conflictingDebitProofNeverFinalizesOrTriggersCompensation(String)[1]",
+          "conflictingDebitProofNeverFinalizesOrTriggersCompensation(String)[2]",
+          "conflictingDebitProofNeverFinalizesOrTriggersCompensation(String)[3]",
+          "conflictingDebitProofNeverFinalizesOrTriggersCompensation(String)[4]",
+          "conflictingDebitProofNeverFinalizesOrTriggersCompensation(String)[5]",
+          "conflictingDebitProofNeverFinalizesOrTriggersCompensation(String)[6]",
+          "successWithoutDurableProofLeavesTheOriginalIntentPending"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetLifecycleTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B379A821667A83374BCF8FB2DD88C996EE11B06025B21D25684E63163B4F3F09",
+        "cases": [
+          "failedSchedulingCancelsEarlierTaskAndDisablesReference",
+          "minuteRecoveryRetriesTheSameIntentAfterStartupFailure",
+          "enableRecoversOriginalPaymentAndStoppedCallbacksCannotWrite",
+          "sameObjectReenableReloadsAuthorityBeforeServingOldReferences",
+          "reentrantOrFailingNotificationCannotReverseCommittedPayment",
+          "failedInitialLoadDoesNotPublishAnActiveServiceOrStartTasks"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetRecoveryTest",
+        "tests": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "60ECFAC1CFD56980EEC65EE8117107EAA86B217C395751A2D0E5D6873DD98B23",
+        "cases": [
+          "mixedBudgetQuoteSurvivesMonthChangeAndRefundRestoresBothParts",
+          "categoryAliasCannotReplayAnotherOriginalQuote",
+          "treasuryFailureKeepsQuoteUntilRecoveredRatherThanCompensating",
+          "corruptedOrMissingAuthorityCannotLoadOldBackup",
+          "originalCategoryAndDescriptionSurviveRestart(SpendingCategory)[1]",
+          "originalCategoryAndDescriptionSurviveRestart(SpendingCategory)[2]",
+          "originalCategoryAndDescriptionSurviveRestart(SpendingCategory)[3]",
+          "originalCategoryAndDescriptionSurviveRestart(SpendingCategory)[4]",
+          "originalCategoryAndDescriptionSurviveRestart(SpendingCategory)[5]",
+          "originalCategoryAndDescriptionSurviveRestart(SpendingCategory)[6]",
+          "originalCategoryAndDescriptionSurviveRestart(SpendingCategory)[7]",
+          "failedPreparationDoesNotSpendAndLostBudgetWriteReplyIsReadBack",
+          "refundInterruptionCannotCreditTwice(int, boolean)[1]",
+          "refundInterruptionCannotCreditTwice(int, boolean)[2]",
+          "refundInterruptionCannotCreditTwice(int, boolean)[3]",
+          "refundInterruptionCannotCreditTwice(int, boolean)[4]",
+          "fullyFundedPoolDoesNotDebitTreasuryAgain",
+          "originalCrashReproductionNowRestores840AndNever680",
+          "fundingInterruptionAtEachSnapshotBoundaryCannotFundTwice(int, boolean)[1]",
+          "fundingInterruptionAtEachSnapshotBoundaryCannotFundTwice(int, boolean)[2]",
+          "fundingInterruptionAtEachSnapshotBoundaryCannotFundTwice(int, boolean)[3]",
+          "fundingInterruptionAtEachSnapshotBoundaryCannotFundTwice(int, boolean)[4]",
+          "rejectedPreflightHasNoIntentAndCanRetryAfterFunding",
+          "oldServiceReferencesCannotModifyAfterDisable",
+          "spendingInterruptionAtEachSnapshotBoundaryRecoversSingleDebit(int, boolean)[1]",
+          "spendingInterruptionAtEachSnapshotBoundaryRecoversSingleDebit(int, boolean)[2]",
+          "spendingInterruptionAtEachSnapshotBoundaryRecoversSingleDebit(int, boolean)[3]",
+          "spendingInterruptionAtEachSnapshotBoundaryRecoversSingleDebit(int, boolean)[4]",
+          "lostTreasuryWriteReplyIsConfirmedWithoutAnotherDebit"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetServiceImplSpendingTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "01B8A6D3C6150239B3210E97F09262E2F1D8397F898AE0EEEAF1E642F34F6162",
+        "cases": [
+          "lostWriteReplyAndFailedPreparationRemainUsableWithNanosecondClock",
+          "retriesRefundAfterRestartWithoutCreditingTreasuryTwice",
+          "changedCategoryAfterSecondRefreshCannotReplayAnAliasedOriginalRequest",
+          "reportsNewAndRepeatedSpendsAccuratelyAcrossRestart",
+          "idleInstanceRefreshesPublicReceiptsAndStatisticsBeforeReplayingSpend"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetStateCodecTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E2AF5360024A80A11C1D5E8C02A7715B7C4C6C9514E410F88CED7FFE9608AE97",
+        "cases": [
+          "emptyCurrentIndexCannotResurrectAnOlderFundedBudget",
+          "legacyExecutedBudgetMigratesAsFullyConsumed",
+          "roundTripsFundedBudgetAndSpendingReceipt",
+          "unknownPrimaryCannotMasqueradeAsAnEmptyLegacyState",
+          "rejectsFutureSchemaAndPersistedBudgetOverspend",
+          "rejectsCorruptOrContradictoryOperationEvenWithRecomputedChecksum(String)[1]",
+          "rejectsCorruptOrContradictoryOperationEvenWithRecomputedChecksum(String)[2]",
+          "rejectsCorruptOrContradictoryOperationEvenWithRecomputedChecksum(String)[3]",
+          "rejectsCorruptOrContradictoryOperationEvenWithRecomputedChecksum(String)[4]",
+          "rejectsCorruptOrContradictoryOperationEvenWithRecomputedChecksum(String)[5]",
+          "rejectsCorruptOrContradictoryOperationEvenWithRecomputedChecksum(String)[6]",
+          "rejectsCorruptOrContradictoryOperationEvenWithRecomputedChecksum(String)[7]"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.FundedTaxLedgerTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "BFBCCBA98AD7D343DE8C8EA1BB24C897EA3B0000251EA7EB71A03E76A1C49134",
+        "cases": [
+          "rejectsAReusedTransactionIdWithDifferentTaxDetails",
+          "claimsEachTransactionOnceAndAllowsRetryAfterFundingFailure"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.NationTransferEconomyStateTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F9B3F00D2C149449BCF9506D5FCE41C6C61AA45577AA73784B5E0CBD9CFE0A27",
+        "cases": [
+          "transferStatusesMapToCanonicalStates"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.SqlBudgetStateStorageTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "17A16CA2E7B4201BCEA80E4398C72C78CAD14906A69D4F78E3095C758310AB7E",
+        "cases": [
+          "databaseFailureNeverFallsBackToLocalStateOrDebitsTreasury",
+          "connectionReleaseErrorAfterAcknowledgedCommitDoesNotCauseRefund",
+          "invalidRefreshIsRejectedWithoutAdoptingItsWriteRevision",
+          "simultaneousSameIdSpendAdmitsOneIntentBeforeTouchingMoney",
+          "independentInstancesRefreshReceiptsReplayAndRefundAfterRestart",
+          "lostCommitAcknowledgementIsConfirmedByExactReadback",
+          "fundedBudgetPropagatesAndCannotBeFundedAgainOnAnotherInstance",
+          "migrationRetainsOriginalFileAndRejectsDivergentSecondInstance",
+          "alreadyImportedV2FileAndSqlFingerprintRemainCompatible",
+          "concurrentRecoveryFinalizesOriginalIntentWithoutCompensationOrAnotherDebit",
+          "staleWriterCannotEraseAnotherInstancesSnapshot",
+          "unreadableCommitOutcomeBlocksOldInstanceUntilRestart",
+          "newerSnapshotAfterLostCommitReplyCannotBeOverwrittenByOldState"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxAssessmentTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7E9408B62854153E3A9200502E32CF91DCD03FDC62907D6EE9CC28B83E974836",
+        "cases": [
+          "assessesEveryTaxAgainstAnExplicitPayer",
+          "fundingOnlyReportsMoneyActuallyWithdrawn"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationFaithBonusTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "10E0A0824F070BF5F82BEE1709210BAF6672816FF4CF3FA1C093E33AC3FA8697",
+        "cases": [
+          "zeroExtensionExemptsCollectionAndUnavailableFaithHasNoBonus",
+          "failedPayerCannotCreateBonusRevenue",
+          "quotesContainBonusAndCannotExceedGrossProceeds",
+          "faithBonusIsAssessedBeforeDebitAndAuditMatchesActualTreasuryMoney",
+          "actualExtensionAggregationPreservesZeroExemption",
+          "extensionAdjustsActualChargesBeforeCollectionInsteadOfOnlyReturnValue",
+          "rejectedTreasuryRefundsTheExactBonusInclusiveDebit"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceCompensationFailureTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6E448C4357AFECF71247014B3B5BC85AE53286DF70EA93952EA1EE90DE1F39FA",
+        "cases": [
+          "auditFailureAfterFundingMustNotReportSuccessAndLeavesRetryableAuditState",
+          "failedRefundMustLeavePersistentCompensationForRetry"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceFundedTaxTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F5BB0D7F429435B5934AEABD051FBB761A26B271E868D32886888A4C8A205CD2",
+        "cases": [
+          "restartDoesNotFundTheSameTaxTransactionTwice",
+          "reversingFundedTaxWithdrawsTreasuryAndAllowsSafeRetry",
+          "restartRejectsReusedTransactionIdWithDifferentTaxDetails",
+          "failedTreasuryWithdrawalKeepsFundedClaimForRetry"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceInputValidationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "56F01D3E2145993DDAC7E91ED73188A05853090C9E8323310E4D3656E89215DD",
+        "cases": [
+          "nullTaxTypeQueryReturnsNoConfiguration",
+          "nullNationQueriesFailClosedWithoutCreatingConfiguration",
+          "rejectsNegativeFixedTaxAmountAtConfigurationBoundary"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceProviderMatrixTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3EA6F94BEA45DB1030F260E221C9375A5EF265E9F650EB0D5DCDA9F022DC0B6C",
+        "cases": [
+          "rejectedTreasuryCreditRefundsEverySuccessfulProviderWithdrawal",
+          "concurrentCollectionCannotChargeTheSameAvailableBalanceTwice"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxCollectionWindowTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "13CF4AD8DC2AEC7B94CFD4FA3E79C90A595352C4A3A58D0158AB2301B4498B24",
+        "cases": [
+          "rejectsNonPositiveIntervals",
+          "firstCollectionUsesTheExplicitBootstrapPeriod",
+          "blocksRepeatedCollectionUntilTheConfiguredIntervalEnds"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxFundingReceiptTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "191126060CF67BE41F1CB23CD3BA7146BBF3247A25A306444D7A04AF44D3D7B3",
+        "cases": [
+          "existingTreasuryReceiptMustBindEveryTaxField",
+          "corruptedSnapshotCannotBecomeAnAbsentTaxReceipt(String)[1]",
+          "corruptedSnapshotCannotBecomeAnAbsentTaxReceipt(String)[2]",
+          "corruptedSnapshotCannotBecomeAnAbsentTaxReceipt(String)[3]",
+          "responseLostOutsideTreasuryRecoversWithoutRepeatingCredit",
+          "lostJdbcCommitReplyRecoversSameReceipt",
+          "retryAndReopenHonorOriginalQuoteEvenWhenConfigChanges",
+          "auditFailureDoesNotReverseFundedMoneyAndConcurrentRetriesRemainUnique",
+          "unresolvedCommitBlocksReceiptsOtherMutationsAndShutdownFlush",
+          "legacySchemaMigratesWithoutPromotingAmbiguousClaims",
+          "intentWriteFailureDoesNotTouchTreasury",
+          "durableIntentCannotProveTreasuryFundingAndSurvivesRollback",
+          "changedQuoteOrLegacyReversalCannotReuseReceiptIdentity"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxQuoteFactoryTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "193799CA9B4BAA94BB3C1B4ACAE7719476D600419077E2FA43FF3DC1BA1752A1",
+        "cases": [
+          "neverWithholdsMoreThanTheGrossProceeds",
+          "withholdsBusinessTaxFromGrossProceedsBeforePayingTheSeller"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.nation.member.NationMemberTest",
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2AD7E9BDEA7532C490A9EC3602E89877E7E93CAB6642B9170459B666AE4C4FA8",
+        "cases": [
+          "promoteToLeader_fromTrusted_returnsTrue",
+          "setLevel_toFounder_whenAlreadyFounder_allowed",
+          "isActive_within7Days_returnsTrue",
+          "removeTrusted_fromMember_noChange",
+          "hasRank_returnsTrueWhenSet",
+          "isLeader_trustedLevel_returnsFalse",
+          "removeTrusted_fromTrusted_setsToMember",
+          "setRankName_storesRank",
+          "setLevel_founderCanStayFounder",
+          "hasRank_returnsFalseWhenEmpty",
+          "updateActiveTime_updatesLastActiveTime",
+          "setTrusted_fromLeader_noChange",
+          "demoteToMember_fromMember_noChange",
+          "isTrusted_trustedLevel_returnsTrue",
+          "isLeader_memberLevel_returnsFalse",
+          "toString_containsExpectedFields",
+          "demoteToMember_fromLeader_changesToMember",
+          "isFounder_memberLevel_returnsFalse",
+          "promoteToLeader_fromMember_returnsTrue",
+          "promoteToLeader_fromLeader_returnsFalse",
+          "demoteToMember_fromTrusted_changesToMember",
+          "setNationId_updatesNation",
+          "constructor_setsPlayerIdAndNationId",
+          "constructor_setsTimestamps",
+          "setTrusted_fromMember_setsToTrusted",
+          "setLevel_standardLevel_changeAllowed",
+          "isLeader_leaderLevel_returnsTrue",
+          "hasRank_returnsFalseWhenNull",
+          "isTrusted_memberLevel_returnsFalse",
+          "getMembershipDays_returnsPositiveDays",
+          "constructor_setsDefaultLevelToMember",
+          "setLevel_fromMemberToFounder_throws"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.nation.rank.NationRankPersistenceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "395E91A2CD9AF748B6803CB6B8A9E2B94250D978147EB8D97BD9481146AFE7E6",
+        "cases": [
+          "customNationRankAndPlayerAssignmentSurviveYamlReload"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.nation.relation.NationRelationManagerDiplomacyContractTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "105E14F5152BA32FF7ACC93BABA938A87042C6C8E07BC793A9175CCAAFC72F50",
+        "cases": [
+          "writesACanonicalNationPairOnlyOnce",
+          "delegatesDeletedNationCleanupToTheAtomicDiplomacyContract",
+          "authoritativeEventBusReceivesOneAllianceEvent"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.nation.relation.NationRelationManagerHostileTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6533433BA5631CB77878D7B2EC07810147C64DDF968C88086EBFA36BFCF31307",
+        "cases": [
+          "enemyCompatibilityPathCreatesHostilePairNotWar"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.nation.relation.NationRelationsTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B2A7F4AD7DCB52998F5797A325290FBF0E89EBC774FB6B12D05562250A075038",
+        "cases": [
+          "getNationId_returnsTheSetId",
+          "getEnemies_returnsUnmodifiableSet",
+          "addAlly_incrementsCountAndRemovesExistingEnemy",
+          "addAlly_doesNotAllowSelfReference",
+          "toString_containsExpectedFields",
+          "addEnemy_doesNotAllowSelfReference",
+          "getAllies_returnsUnmodifiableSet",
+          "addEnemy_incrementsCountAndRemovesExistingAlly",
+          "removeEnemy_decrementsCount",
+          "removeAlly_decrementsCount"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.NationRankCommandRegistrationContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "99EBC48775FA11F0D7C7B46840B9101CDC131312997DE7865C3B09F15C43B226",
+        "cases": [
+          "starCorePluginRegistersNationRankCommandExecutor",
+          "pluginYmlDeclaresNationRankCommand"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.NationRankPermissionInitializationContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E8BC80188742386238E60B6C2EDE4702E8B4702F6DBB214BFCFF630178E6B8D2",
+        "cases": [
+          "defaultRanksIncludeOfficerForNationRankAssignment",
+          "permissionUtilityInitializesAfterNationModulesAreEnabled"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.security.ClanCommandRoleMatrixTest",
+        "tests": 33,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C45EF13C8D6903E7F5DE471399073A1FA1DEF316B7394C66A500A783F11489B2",
+        "cases": [
+          "disbandClanRoleMatrix",
+          "leaveClanRoleMatrix",
+          "kickPlayerRoleMatrix",
+          "transferLeadershipRoleMatrix",
+          "tabCompletionProvidesSubcommandsAndOnlinePlayers",
+          "createClanRoleMatrix",
+          "invitePlayerRoleMatrix",
+          "withdrawAndDepositRoleMatrix",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[1]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[2]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[3]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[4]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[5]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[6]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[7]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[8]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[9]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[10]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[11]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[12]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[13]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[14]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[15]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[16]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[17]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[18]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[19]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[20]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[21]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[22]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[23]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[24]",
+          "consoleSenderCannotExecuteAnyClanCommands(String[])[25]"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.security.NationObjectBoundaryCommandTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8C7D1EA2BBA84AD5AB799C391B4BCBC81C9CF950B8D7C892B9F7B6031642CCCE",
+        "cases": [
+          "founderCanReachOwnNationWarServicePath",
+          "ordinaryMemberCannotExecuteAllianceWriteCommands",
+          "founderCanAcceptOwnNationAllianceInviteWithoutExternalPermissionNode",
+          "founderCanReachOwnNationAllianceInvitePath",
+          "playerCannotDeclareOrEndWarForAnotherNation"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.security.NationOfficerCustomRankPermissionTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "AAF1FCE06D20E22FAEFE856B34B7A84901572E2A93A6161F6540810C1A911221",
+        "cases": [
+          "actualOfficerAndCustomRankAreResolvedForTheCorrectPlayer"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.StarCorePluginDependencyFallbackContractTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0D96A9467D9502934DAF5E1906DEAB6F33AA39C385FE067D959EEA8F81091B3D",
+        "cases": [
+          "pluginSourceRegistersSelectedEconomyProviderAtServiceRegistryBoundary",
+          "serviceRegistryFindsRegisteredServiceAndReportsMissingService",
+          "serviceRegistrySnapshotContainsOnlyActualRegistrations",
+          "autoModeFallsBackToInternalWhenVaultIsUnavailable",
+          "serviceRegistryDoesNotResolveWhenRegistrationTypeAndLookupTypeDiffer",
+          "optionalModuleEnableFailureIsRecordedAndPartialServiceRegistrationIsRemoved",
+          "autoModeSelectsVaultWhenVaultIsAvailable",
+          "explicitVaultModeFailsClosedWhenVaultIsUnavailable",
+          "internalModeIsWiredToInternalProvider"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.StarCorePluginRegistrationTest",
+        "tests": 53,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "212E64EFF8C8793F0665C3A13E77313C339ED7660E0E6AB87268AE6CF75FCA23",
+        "cases": [
+          "registersEveryConcreteFeatureModule",
+          "registersOneMailModule",
+          "registersPlaceholderExpansionOnlyWhenPlaceholderApiIsEnabled",
+          "activeMysqlStoragesAvoidUnconditionalSqliteDmlAndDdl",
+          "mercenaryStorageAndMigrationUseMysqlCompatibleSql",
+          "doesNotAdvertiseUnwiredAiTrainingBot",
+          "pluginNavigationUsesRelationContractForDiplomacyAndWarGui",
+          "commandNamesAndAliasesAreGloballyUnique",
+          "shopStorageUsesPortableSchemaAndUpsert",
+          "achievementModuleRegistersItsGuiListener",
+          "nationMenusResolveTreasuryAfterDependencyStartup",
+          "duelHistoryPersistsKitSeriesAndScore",
+          "wiresTooltipFoundationIntoPluginLifecycle",
+          "essentialsBindingsAreDeclaredForPaperCommandResolution",
+          "vassalLegacyPackageIsNotReachable",
+          "bothAnvilProvidersClaimSessionsBeforeDispatchingCallbacks",
+          "declaresPacketEventsAsSoftDependencyForOptionalAnvilMenus",
+          "nationCoreMenusResolveLateServicesAfterDependencyStartup",
+          "diplomacyMenuResolvesSubmoduleServicesAfterDependencyStartup",
+          "socialStorageUsesAuthoritativeColumnsAndRepairsLegacySchema",
+          "nationPolicyUsesSingleReachableMenu",
+          "warSituationMenuExistsBeforeMainMenuListenerCapturesIt",
+          "nationModuleClosesOptionalAnvilProviderOnDisable",
+          "activeMysqlServicesCreateIndexesThroughMetadata",
+          "combatHistoryHasProductionWriterAndCommandStorage",
+          "mysqlMigrationsDoNotRecreateIndexes",
+          "nationStatusBarResolvesArmyAfterStartupAndDropsUnusedReputation",
+          "wrapperModulesRegisterTheirConcreteServices",
+          "businessStorageUsesPortableUpsert",
+          "warMenuDoesNotAdvertiseUnimplementedTreatyFlow",
+          "everyMapMarkerPermissionIsDeclared",
+          "tradeHistoryStorageUsesPortableIndexesAndUpsert",
+          "activeMailAndRentStoragesAvoidSqliteOnlyWrites",
+          "doesNotShipUnwiredAiMatchmaking",
+          "registersFederationAndAttachmentMailAsDistinctModules",
+          "disconnectedFoundationReliabilityDraftsAreRemoved",
+          "resourceModuleDoesNotShipUnwiredGuiFacade",
+          "bothAnvilTransferPathsSanitizePlayerInput",
+          "nationTechnologyUsesSingleReachableMenu",
+          "governmentMemberWritesAvoidMysqlOnlyUpserts",
+          "mysqlMigrationsAvoidSqliteOnlySyntax",
+          "triumphChestProviderDoesNotShipUnavailableSubmenuPlaceholder",
+          "everyFixedRuntimePermissionIsDeclared",
+          "doesNotAdvertiseUnwiredBattlePass",
+          "resourceMenuDoesNotNullOutRequiredServices",
+          "warMenuDoesNotMutateMissingItemLore",
+          "combatStorageUsesPortableIndexesAndUpsert",
+          "fallbackNationProvidersDoNotShipUnavailableSubmenuPlaceholder",
+          "everyDeclaredCommandHasAProductionBindingPoint",
+          "everyCommandPermissionIsDeclared",
+          "diplomacyMenuHasReachableCommandAndNetworkLifecycle",
+          "nationGovernmentMenuResolvesServiceAfterDependencyStartup",
+          "disconnectedLegacyMailAttachmentStorageIsRemoved"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.util.MessageUtilFormatTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D05419280076927B6BC3B14AFD72E51A1F34778032D132679C64F5A0953313DD",
+        "cases": [
+          "testNumberedItem",
+          "testFormatNumber",
+          "testFormatBoolean_false",
+          "testCreateProgressBar",
+          "testCreateHealthBar_zeroHealth",
+          "testFormatBoolean_true",
+          "testCreateHealthBar_fullHealth",
+          "testFormatTime_minutes",
+          "testFormatMoney",
+          "testKeyValue",
+          "testFormatPercentage",
+          "testCreateProgressBar_full",
+          "testFormatTime_seconds",
+          "testListItem"
+        ]
+      }
+    ]
+  },
+  "starsupply_actual_companion": {
+    "log": {
+      "path": "creation-companion-final-20261126.log",
+      "sha256": "5EE3036970AEA1CB530FF9CE6CDFC566685936C5354E8A1E1A2B47661857DC0A",
+      "bytes": 1128684
+    },
+    "completed_at": "2026-11-26T06:05:45+08:00",
+    "totals": {
+      "tests": 177,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": [
+      {
+        "suite": "dev.starsupply.bukkit.AsyncTasksTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "DB2D106B52568AB4ACEE3123A7A9578CC61810BD70C7B88759EA19122045D053",
+        "cases": [
+          "fatalWorkerFailureReleasesTheCallerAndStillDrainsAlreadyAcceptedTransactions",
+          "successfulTasksRetainTheirResultsIncludingNull",
+          "checkedAndLinkageFailuresCompleteWithoutEscapingTheTaskBoundary"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.EntityCallbacksTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "181C9FCF2ECD970300DF19CB8BD1EABAC690C49DFE97681DEA0075F909FF80FE",
+        "cases": [
+          "cancellingARunningFutureDoesNotAllowReenableDuringItsInventoryWrite",
+          "shutdownDoesNotCompleteAnInventoryWriteAlreadyInProgress",
+          "shutdownRacingTheSchedulerEitherCancelsOrFinishesEachOperation",
+          "pendingCallbacksKeepTheGenerationBusyUntilRetired",
+          "inlineCompletionChainsFinishBeforeTheGenerationBecomesIdle",
+          "retiredOrRejectedTasksCannotLaterBeClaimed",
+          "fatalCallbackFailureCompletesTheResultAndReleasesRunningStateBeforePropagating",
+          "oldCallbacksRemainCancelledWhenTheNextGenerationRegistersWork",
+          "shutdownFinishesQueuedOperationsAndReleasesTheInventoryGuard"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.InventoryTasksTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "78786CF960AA4FD09080EE5D6F4E41FBCFDE1DD35B13D21BF5A806B1BD77BB7A",
+        "cases": [
+          "originalPipelineFailureIsPreservedAndReleasesOwnershipBeforeObserversRun",
+          "synchronousStartupFailuresReleaseTheGuardAndKeepTheOriginalFailure",
+          "successReleasesOnlyItsPlayerBeforeCompletion",
+          "cancellingTheApiResultKeepsOwnershipUntilTheInventoryPipelineCompletes",
+          "completingTheApiResultEarlyCannotStrandTheGuardOnPipelineFailure"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.InventoryFingerprintTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D5248711BE77A3DFB224D2F28ADBD31D100E68A4DE4DEA45817B37F8AAE8A92E",
+        "cases": [
+          "ignoresMapInsertionOrderButRetainsInventoryChanges"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.PlayerDataReceiptTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6FF0CD6985C333EDACAEE275DF542C6CAC1604801665A79E9D13F81F3CA862A3",
+        "cases": [
+          "requiresExactOperationInCurrentPlayerSave",
+          "rejectsTruncatedAndDuplicateMarkersEvenWhenExpectedMarkerAppears"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.ResourceMappingConfigTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "02C2BE376EFE398C2D1D384B1776B9BC82D521AAB705017C29902196F5C276C9",
+        "cases": [
+          "defaultConfigurationMapsEveryStrategicResourceToAnAvailableVanillaItem"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.LifecycleGateTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "EF17CF9A2CB958B91738C439B3B7ED06C526EA05BA6E7A1A88156906A90D5EC4",
+        "cases": [
+          "rejectsCallbacksAfterDisableOrGenerationChange"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CampaignSiegeTargetTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9E81DB93A64C598444EC9CF62A76068BB740A224467534F1CCB36702CC2FFAB3",
+        "cases": [
+          "siegeInfluenceUsesTargetsNationWorldAndBoundedDistance"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CoreInsurancePaymentTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4AEA0DE3F55F919C6F276BE8EA47B5CDA2785C0385D4106AFA94CFDE31A05FFD",
+        "cases": [
+          "ambiguousPlayerPremiumDebitIsNotRepeatedAndConfirmedDebitFundsPremiumOnlyOnce",
+          "treasuryPremiumUncertaintyNeedsEvidenceBeforeCompensatingPlayerAndRefundNeverReplays"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePaymentTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "08CEA078F9CC8B70F8E0DA2E1488C87CA1D55FEE7CCDF9FB19B5381E0BCC9655",
+        "cases": [
+          "uncertainCreditStaysHeldUntilOperatorConfirmsApplied",
+          "insufficientTreasuryBalanceRejectsWithoutCreditingPlayer",
+          "uncertainCreditCanBeConfirmedUnpaidAndRefundedAfterRestart",
+          "paidSettlementDoesNotDebitOrCreditTwiceUnderConcurrencyAndRestart",
+          "lostNationalSpendResponseResumesFromAuthorityReceipt",
+          "nationalReserveIsReceiptBackedAndCanEitherReleaseOrPayOnlyOnce",
+          "operatorCanFundConfirmedUnpaidTariffWithoutRepeatingSellerCredit",
+          "falseResultAfterPossibleCommitNeverRefundsUntilReconciled",
+          "independentlyConfirmedUnpaidClaimCanRetryOriginalReserveWithoutNewNationalDebit",
+          "insufficientFundsStatusWithSufficientBalanceRetries",
+          "tariffWithholdsFromSellerOnlyAfterGrossTreasuryDebitAndRetriesWithoutDuplicateCredit",
+          "operatorCanConfirmFundedTariffAfterRestartWithoutFundingOrCreditingAgain",
+          "knownCreditFailureRefundsUsingSameNationalReceiptEvenAfterLostResponse"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePlayerMoneyTest",
+        "tests": 22,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2F5A0CF70FBED1240E6077E9BDCE1E826E80ED4BB5A6B9177612DE99DDB31E3E",
+        "cases": [
+          "markedIntentCannotDowngradeAndLegacyAmbiguityCannotUpgrade(boolean)[1]",
+          "markedIntentCannotDowngradeAndLegacyAmbiguityCannotUpgrade(boolean)[2]",
+          "taxUncertaintyStillFreezesAfterPlayerReceiptRecovery(boolean)[1]",
+          "taxUncertaintyStillFreezesAfterPlayerReceiptRecovery(boolean)[2]",
+          "operatorUnpaidCannotOverrideACommittedPlayerReceipt(boolean)[1]",
+          "operatorUnpaidCannotOverrideACommittedPlayerReceipt(boolean)[2]",
+          "rejectedCreditHasDurableProofBeforeNationRefund(boolean)[1]",
+          "rejectedCreditHasDurableProofBeforeNationRefund(boolean)[2]",
+          "reservedClaimRecoversAppliedReceiptInsteadOfRepeatingPayout(boolean)[1]",
+          "reservedClaimRecoversAppliedReceiptInsteadOfRepeatingPayout(boolean)[2]",
+          "premiumDebitAndRefundRecoverUsingOriginalIdentities(boolean)[1]",
+          "premiumDebitAndRefundRecoverUsingOriginalIdentities(boolean)[2]",
+          "transactionResultWriteFailureRecoversFromAuthoritativePlayerReceipt(boolean)[1]",
+          "transactionResultWriteFailureRecoversFromAuthoritativePlayerReceipt(boolean)[2]",
+          "legacyPremiumDebitIsNotUpgradedAndNewMarkedDebitCannotDowngrade(boolean)[1]",
+          "legacyPremiumDebitIsNotUpgradedAndNewMarkedDebitCannotDowngrade(boolean)[2]",
+          "insuranceLocalResultRollbackAndRestartDoNotRepeatPlayerDebit(boolean)[1]",
+          "insuranceLocalResultRollbackAndRestartDoNotRepeatPlayerDebit(boolean)[2]",
+          "interruptedPurchaseResumesAfterReopenWithoutPayingTwice(boolean)[1]",
+          "interruptedPurchaseResumesAfterReopenWithoutPayingTwice(boolean)[2]",
+          "mismatchedReceiptFreezesPaymentWithoutRefund(boolean)[1]",
+          "mismatchedReceiptFreezesPaymentWithoutRefund(boolean)[2]"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePremiumCreditTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8AC1C9DF6E6897740F207818B4D69EAA9DDD65E7B83437AD650557E9EC56520D",
+        "cases": [
+          "existingLegacyCallIsNeverReplayedUsingANewReceiptAfterUpgrade",
+          "receiptIdentityAndImmutableOperationDetailsAreCheckedEvenOnDuplicateCalls",
+          "lostLocalSqlResultRecoversInProcessAndAfterReopeningAllLedgers(boolean)[1]",
+          "lostLocalSqlResultRecoversInProcessAndAfterReopeningAllLedgers(boolean)[2]",
+          "losingReceiptServiceAfterIntentNeverFallsBackToOrdinaryTreasuryDeposit",
+          "missingReceiptCannotBeConfirmedAppliedAndOnlyOriginalContractCanRefund",
+          "realCoreTreasuryReceiptSurvivesRestartAndDoesNotCreditOrDebitAgain",
+          "receiptConflictingWithLocalCancellationFreezesBothCreditAndRefund",
+          "anotherShipmentOrPurchaseCannotReuseThePremiumDebit",
+          "failedTransactionFabricWriteRecoversTheCommittedCoreReceiptAfterRestart",
+          "lostResponseAfterRealCoreCommitRecoversWithOriginalReceipt",
+          "receiptTakesPrecedenceOverAnOperatorsUnappliedFlag",
+          "realSqlFailureBeforeCreditRetriesWithoutCancellingOrRefunding"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CoreTaxPaymentTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "744167E040D2E44931F57F33F5CB1136C86022B4622D0E8D76321CC88F295282",
+        "cases": [
+          "missingProviderAndConflictingQuoteCannotFallBack(boolean)[1]",
+          "missingProviderAndConflictingQuoteCannotFallBack(boolean)[2]",
+          "legacyFundingWindowNeverUpgradesAndExistingReviewStaysFrozen(boolean)[1]",
+          "legacyFundingWindowNeverUpgradesAndExistingReviewStaysFrozen(boolean)[2]",
+          "localTaxResultRollbackRecoversSameAuthorityReceipt(boolean)[1]",
+          "localTaxResultRollbackRecoversSameAuthorityReceipt(boolean)[2]",
+          "operatorFlagsCannotManufactureFundingOrRepeatAnAppliedTax(boolean)[1]",
+          "operatorFlagsCannotManufactureFundingOrRepeatAnAppliedTax(boolean)[2]",
+          "authorityUnavailableBeforeCreditRetainsOriginalPendingIntent(boolean)[1]",
+          "authorityUnavailableBeforeCreditRetainsOriginalPendingIntent(boolean)[2]",
+          "fabricWriteFailureAfterTaxCreditDoesNotFundTwice(boolean)[1]",
+          "fabricWriteFailureAfterTaxCreditDoesNotFundTwice(boolean)[2]",
+          "lostFundingReplyKeepsPurchasePendingAndReopenPaysAndStocksOnlyOnce(boolean)[1]",
+          "lostFundingReplyKeepsPurchasePendingAndReopenPaysAndStocksOnlyOnce(boolean)[2]",
+          "protocolIsSavedBeforeSqlFundingAndResumesIfSqlTransitionFails(boolean)[1]",
+          "protocolIsSavedBeforeSqlFundingAndResumesIfSqlTransitionFails(boolean)[2]",
+          "badAuthoritativeIdentityAndMissingTerminalReceiptStayFrozen(boolean)[1]",
+          "badAuthoritativeIdentityAndMissingTerminalReceiptStayFrozen(boolean)[2]"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.NativeSupplyBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "36A6829948BA622C4AED3604EFE9C37FFB0FB6F8F2CD361FAF81CDE2B26286F7",
+        "cases": [
+          "requiresReceiptCapableCoreAndValidatesTheAuthorityResponse",
+          "readsAndValidatesTheDurableReceiptForOperatorReconciliation",
+          "preservesFailureAndRequiresFreshPersistenceConfirmationOnEveryRetry"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.TemporaryMoraleBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C93D3A1E1FD616AFB51F98A4FC2977BB4D67D45B428908DCFDA7214234E5ADB1",
+        "cases": [
+          "publicRegistrationChangesAuthorityViewAndUnregisterIsIdempotent",
+          "missingOrIncompatiblePublicAuthorityContractFailsClosed",
+          "authorityRegistrationFailureIsNotSilentlyIgnored"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.route.RoutePlannerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2ECE7EFB7B60179E22BC22888A7B5F906CA2F4E77D2ADB7EC55FAD30EB109C08",
+        "cases": [
+          "routesAreDirectedAndMayBeUnreachable",
+          "findsDetourWhenRoadIsCutAndSwitchesBackWhenRestored",
+          "planOwnsImmutableCopiesOfTheRoute",
+          "rejectsNonFiniteAndInconsistentGraphData",
+          "excludesSelectedRoadsAndUsesRoadEfficiencyAndRisk"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.service.ArmySupplyRulesTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8987EED0518D7A9EFCFDA5BF2E0E9F27E24E7C61D948FD452FEA08E1CDA36101",
+        "cases": [
+          "allSixLogisticsCategoriesHaveDemandAndBoundedCombatEffects",
+          "shortageMoraleIsCurrentBoundedAndImmediatelyRecoversWithoutCompounding",
+          "nationalSupplyEfficiencyReducesTroopEquivalentDemandWithinBounds"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.service.CampaignRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C8DAAFD63FC688E22E8233E0C3243937BD6037BF716CCBF40FE575F3E570DA93",
+        "cases": [
+          "ceasefireStaleObservationsAndInvalidConfigurationCannotLeavePermanentPressure",
+          "winterAndContinuousSiegeAddBoundedCurrentDemandWithoutCompounding"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.service.CaravanInsuranceTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "AD0B7ED24C04695CC4472B47809F7AC141E9F9543CE87424066ACCDB466921EF",
+        "cases": [
+          "insuredPostingReleasesCollateralIfCarrierNeverDeparts",
+          "interruptedReleaseRecoversThroughItsOriginalAuthorityReceipt",
+          "onlyActualRouteRiskFailureClaimsAndSameCargoCannotInsureTwice",
+          "rejectedCargoCancellationCannotReleaseInsuranceMoneyOrDestroyRiskClaim",
+          "interruptedClaimRecoversThroughItsOriginalAuthorityReceipt",
+          "uncertainPremiumDebitFreezesShipmentUntilIndependentEvidenceAndNeverRecharges",
+          "upfrontPremiumAndReservedClaimRemainIdempotentAcrossCommandsAndRestart",
+          "premiumCreditWithLostLocalResultIsNotRepeatedBeforeRestart",
+          "legacyInsuranceSchemaMigratesActiveBoundaryWithoutActivatingUnfinishedPolicy",
+          "persistedRiskOutcomeBeforeDeadlineCanBeClaimedAfterLongRestart",
+          "confirmedUnfundedPremiumCreditRefundsOnlyItsConfirmedDebitBeforeReleasingReserve",
+          "failedClaimCreditRemainsFrozenAndResumesWithoutAnotherPremiumOrReservation",
+          "delayedPremiumReviewReceivesFullDepartureWindowFromActualActivationAcrossRestart",
+          "premiumRefundWithLostLocalResultIsNotRepeatedBeforeRestart",
+          "premiumDebitWithLostLocalResultIsNotRepeatedBeforeRestart",
+          "fatalPremiumFailureDoesNotReplayStartedCallInTheSameProcess",
+          "crashWithNonreceiptCallStartedDoesNotReplayItAfterDatabaseReopen",
+          "timeoutsCancellationsAndUnaffordableReservesNeverProduceInsuranceClaims",
+          "interruptedReserveRecoversThroughItsOriginalAuthorityReceipt"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.service.MarketRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0BED91B43DDF1C90DB2B6B0788C62DFAE8CF12C185220BB1EBD7E63F64F04A22",
+        "cases": [
+          "marketQuoteIsBoundedAndRejectsInvalidInputs",
+          "depotPriceRisesWithDemandAndFallsWithRealStock"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.service.TavernServiceTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5F8D2015A9D6FA27C895156E06A5C4A083A47FFAD380C3DF8841322A0E7C7F2D",
+        "cases": [
+          "activeReportCapExpiresNaturallyAndCannotBeResetByPublication",
+          "onlyAuthorizedNationManagersRegisterOwnedExactLocationsAndLimitsApply",
+          "restartDuplicatePublicationAndHubDeletionNeverExtendReportLifetime",
+          "reconnaissanceRequiresPhysicalObservationAndCapturesAuthoritativeImmutableRoute",
+          "publishedBoardsEnforceNationPresenceAndTerritoryAndContainOnlyOpenContracts"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.storage.CampaignPersistenceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E5549C09C048F4E4F2E923A6C2DB086A966A1071A650C6D8C012521F4947D700",
+        "cases": [
+          "shortRestartPreservesSiegeContinuityWhileGapLiftStaleAndClockRollbackResetIt"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.storage.SqlTransactionsTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0B86AADF0691F5E37F460C41749576C0501E8049845499763D5C5BF5DEC2870C",
+        "cases": [
+          "unclosedConnectionIsRetiredEvenWhenCloseFailsBeforeTakingEffect",
+          "lostCommitReceiptClosesConnectionAndLeavesOneDurableWrite",
+          "failedRollbackNeverEnablesAutoCommitOrCommitsPendingChanges",
+          "workFailureRollsBackBeforeRestoringAndRetainsOriginalFailure",
+          "errorsAlsoRollbackAndCloseFailuresRemainSuppressed",
+          "failedRestoreAfterRollbackClosesAndPreservesWorkFailure",
+          "failedBeginClosesAndNeverRunsWork",
+          "failedRestoreAfterCommitClosesWithoutHidingConfirmedWrite",
+          "successfulTransactionCommitsAndCanBeReused",
+          "failedCommitBeforeApplicationAlsoClosesWithoutRestoringAutoCommit"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.storage.SupplyLifecycleTest",
+        "tests": 33,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "53BE700AC6889C489E0E66CA65E520C556B7C792B73A5C2678BBC7D73B4EB643",
+        "cases": [
+          "carrierCannotEarnTheirOwnEscortRiskOrTravelBonus",
+          "persistsStarCoreTariffSnapshotAndHoldsRealStockUntilFundingIsResolved",
+          "logisticsEscortRequiresNationAndOriginAndPersistsProtectedRiskAcrossRestart",
+          "rejectedPaymentAndInterruptedReturnKeepExactlyOneRecoverablePhysicalBatch",
+          "lostDepotCannotBuyOrReceiveGoodsAndForwardRebindingDoesNotMoveStock",
+          "campaignDemandIsChargedOnceAndPeaceClearsTemporaryPressure",
+          "expiresOrCancelsShipmentsWithoutPayingOrLosingReservedItems",
+          "escortedHighRiskShipmentPersistsParticipantsAndReturnsCargoWithoutFee",
+          "crossNationSalesRejectMissingOrInsufficientAgreementTermsWithoutReservingInventory",
+          "wartimeExportControlsFollowExporterAuthorityAndDoNotBlockImportsOrInternalSupply",
+          "crossNationPhysicalLotsReserveStarCoreAgreementVolumeIdempotently",
+          "militaryResourceCategoriesMapToStarCoreStrategicResourceKeys",
+          "nativeSupplyReconciliationRequiresMatchingReceiptAndNeverReappliesIt",
+          "nativeSupplySurvivesLostResponseRestartPruningAndRebindingWithoutRepeatingFood",
+          "migratesLegacyDatabaseAndQuarantinesUncertainInventoryPerPlayer",
+          "invalidNativeRecipientIsHeldForReviewAndDoesNotBlockPhysicalStatus",
+          "routeRiskScansNarrowHostileTerritoryBeyondThirtyTwoSamples",
+          "crossNationSupplySalesRespectStarCoreResourceEmbargoes",
+          "rebindExistingFrontPreservesDeliveredLotsAndRejectsForeignOrDuplicateArmyBindings",
+          "capturedAndDistantFrontsPausePhysicalSupplyUntilControlAndRangeRecover",
+          "nativeCreditUsesOnlyActuallyConsumedFoodAndEmptyOrLegacyCyclesNeverCreateCredit",
+          "switchingEscortToCarrierKeepsOnlyIndependentGuardBonusesAcrossRestart",
+          "nativeCreditKeepsCycleLengthInItsStableIdentityAfterConsumptionPruning",
+          "restartsAtInventoryAndPaymentBoundariesThenDeliversAndConsumesExactlyOnce",
+          "regionalQuotesUseDepotPhysicalStockAndOpenItemDemand",
+          "migratesV10ConsumptionRowsWithoutChangingTheirIdempotency",
+          "reroutesAfterRoadClosureAndRechecksPermissionsAndTravelTime",
+          "reservesASingleSellerAndCourierUnderConcurrentAttempts",
+          "routeRiskAcceptsTheChunkScanLimitAndDisablesLegacyRoadsOverIt",
+          "reshippingTheSamePhysicalBatchCannotRerollConvoyRisk",
+          "consumptionSeparatesDifferentCycleLengthsThatShareTheSameSlot",
+          "safelyAbandonsAnUnappliedInventoryTransferAcrossRestart",
+          "starCoreTechnologyTransportBonusImprovesRouteCostWithoutChangingThreatRisk"
+        ]
+      }
+    ]
+  },
+  "creation_tests": 30,
+  "main_verify": {
+    "rerun": false,
+    "reason": "StarSupply production and tests unchanged",
+    "prior_evidence": "workspace-tax-funding-receipts-20261126.json",
+    "tests": 157
+  },
+  "compilation": {
+    "mode": "Changed production sources compiled into an empty output directory against retained complete Core dependencies; all changed tests recompiled",
+    "production_sources": 14,
+    "test_sources": 6,
+    "heap_mib": 192,
+    "formatted_changed_java_files": 20,
+    "core_full_repository_verify": false
+  },
+  "logs": [
+    {
+      "path": "creation-clean-compile.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0
+    },
+    {
+      "path": "creation-test-compile.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0
+    },
+    {
+      "path": "creation-format.log",
+      "sha256": "75E189FBE66F6A20377FDCE89EC197B3FD735678149624CF5607D79544EE3DC7",
+      "bytes": 1004
+    },
+    {
+      "path": "creation-package-final-20261126.log",
+      "sha256": "447628AAE27D33EA272F57ACEE09BF4FA8700F6B437703042C096DCF276C68A0",
+      "bytes": 1189
+    },
+    {
+      "path": "creation-sql-income-before.log",
+      "sha256": "8FDFC392563046E602D1223B7C503270613DA83B7563B24713339138AA07DDCC",
+      "bytes": 3337
+    },
+    {
+      "path": "creation-patch-reproduction-20261126.log",
+      "sha256": "8C19B20823C18090AB9569D2FADA7811EC62ECB0728E37401AEB014EA4C65254",
+      "bytes": 378
+    }
+  ],
+  "patch": {
+    "path": "docs/upstream/starcore-creation-recovery.patch",
+    "sha256": "DA2A447503C902459A6860943F30D97E9055A835F36E6E26BA3AD2EA18E6A815",
+    "base": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "apply_after": [
+      "starcore-folia-logistics.patch",
+      "starcore-player-money-receipts.patch",
+      "starcore-tax-funding-receipts.patch",
+      "starcore-folia-feedback.patch",
+      "starcore-hud-settings.patch",
+      "starcore-clan-closure.patch",
+      "starcore-religion-closure.patch",
+      "starcore-faith-closure.patch",
+      "starcore-navy-reliability.patch",
+      "starcore-budget-recovery.patch",
+      "starcore-exercise-recovery.patch"
+    ],
+    "reproduction": {
+      "patch": "starcore-creation-recovery.patch",
+      "sha256": "DA2A447503C902459A6860943F30D97E9055A835F36E6E26BA3AD2EA18E6A815",
+      "changed_files": 21,
+      "reverse_check_reapply_passed": true,
+      "complete_src_tree_files": 3582,
+      "complete_src_tree_matches": true,
+      "api_baseline_matches": true,
+      "reproduction_baseline": "380270f5e1df1fedbf2fbcfbb2d52b4d3d7b041c",
+      "source_files": [
+        "docs/api/starcore-api-v1.txt",
+        "src/main/java/dev/starcore/starcore/api/StarCoreApi.java",
+        "src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java",
+        "src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java",
+        "src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java",
+        "src/main/java/dev/starcore/starcore/module/nation/NationCreationOperation.java",
+        "src/main/java/dev/starcore/starcore/module/nation/NationCreationOperationCodec.java",
+        "src/main/java/dev/starcore/starcore/module/nation/NationCreationRecovery.java",
+        "src/main/java/dev/starcore/starcore/module/nation/NationCreationService.java",
+        "src/main/java/dev/starcore/starcore/module/nation/NationModule.java",
+        "src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java",
+        "src/main/java/dev/starcore/starcore/module/nation/NationSplitRecovery.java",
+        "src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java",
+        "src/main/java/dev/starcore/starcore/module/nation/PersistenceNationCreationJournal.java",
+        "src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java",
+        "src/test/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorageTest.java",
+        "src/test/java/dev/starcore/starcore/module/nation/NationCreationCoordinatorTest.java",
+        "src/test/java/dev/starcore/starcore/module/nation/NationCreationRecoveryTest.java",
+        "src/test/java/dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest.java",
+        "src/test/java/dev/starcore/starcore/module/nation/NationSplitJournalTest.java",
+        "src/test/java/dev/starcore/starcore/module/nation/command/NationCreationRecoveryCommandTest.java"
+      ]
+    },
+    "source_files": [
+      {
+        "path": "docs/api/starcore-api-v1.txt",
+        "sha256": "8F03FD4A6D2CC99027CA51B9843A277A0DCA9562730E45CE2575C10CD7A15F50"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/api/StarCoreApi.java",
+        "sha256": "21C08F7B189EE9FEEB8770E113B0D2C86FF09A92B2B6934C3934F621FE6A26A4"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java",
+        "sha256": "459A598BE591EBA0AE92164591211A53C8A45185EEDA3D72B9ACA1ED0DC7437B"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java",
+        "sha256": "EC940C546C30BF6D07551DB17C572AB317D927281ABE406030C7201E1412C0A7"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java",
+        "sha256": "E9A55DDEE024C57175803DCFC1F2AAC2FB470EEB26DCA2C6505CA023FFC66043"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/NationCreationOperation.java",
+        "sha256": "07401BDFA8E2826703DD1C43816DA227A194A2EF31C8A4F1E3FF2FE849F7B8B3"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/NationCreationOperationCodec.java",
+        "sha256": "50E2A0797D1BDBF96CC164AEB4E50C4CE753697B27CF927A86ED533D3F3E3EB8"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/NationCreationRecovery.java",
+        "sha256": "2739A3541EA5C9240F8A550D1888FC02D0C634110691DE1EEBD312382C81EF75"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/NationCreationService.java",
+        "sha256": "8137BB50358CB086C8A13FE519FAD2E50CC076104DC16E656E802AEF1EB35921"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/NationModule.java",
+        "sha256": "ACE72EE871D866A0BD569EF5EA64742360FC22AA5A6AF7131A94069DCEC68246"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java",
+        "sha256": "C3E24F22465528CAE15DD373BC0D27A1A36827BE1E39DAE05B27D0DA8E97BCA3"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/NationSplitRecovery.java",
+        "sha256": "56DA93E96F32C87EC062A32836962D616D16B197F0817DF8E00DD3B75CA5168B"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java",
+        "sha256": "96D928455B955224E35FEFEE6F20BAE7059F3B0E826F072FDBA30CAEC089F598"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/PersistenceNationCreationJournal.java",
+        "sha256": "A62A60484DCE0659F90046DCD0454D470CD41E68A8C31A2EC890D23536898BCC"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java",
+        "sha256": "8D542B50984003C9E3ACD67398EB3B848FB8E296E134BABBBD53BD00D97EFBD2"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorageTest.java",
+        "sha256": "37613845347415249019722CAFC08BDD14FD6C6F4EF5E6E0DA9E58D80B34ABBE"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/module/nation/NationCreationCoordinatorTest.java",
+        "sha256": "AFFEA0B6B6F479870FF7471753A80F44A5254D6C31E709550347C55A20712DDC"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/module/nation/NationCreationRecoveryTest.java",
+        "sha256": "2B4CABC218676438227F4F24579D9091251CF058D2A20A6A8C3A7B25DBAF45AC"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest.java",
+        "sha256": "2D7013AEB9623E841ED2C70C15004FC31353A10C6193A5743F24A4CEEAA23A0A"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/module/nation/NationSplitJournalTest.java",
+        "sha256": "8E22C602DFAFD26668D1451DA9E5EEFC1F851FC6941D03897545C4520EDCFF97"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/module/nation/command/NationCreationRecoveryCommandTest.java",
+        "sha256": "65E3161563DECC477A81FC13F487A29D416FD0AE56B13E5099F0EFBD33F7F7E3"
+      }
+    ]
+  },
+  "jar_validation": {
+    "jar_sha256": "F6B5BCF965CD2279B096A55D9961DDF00E3D1A5F5E428698293D8C12077DC91B",
+    "bytes": 19796345,
+    "compiled_class_entries": 21,
+    "resource_entries": [],
+    "all_compiled_entries_match": true,
+    "class_set_matches_fresh_compilation": true,
+    "removed_obsolete_classes": [],
+    "added_classes": [
+      "dev/starcore/starcore/foundation/economy/SqlBalanceStorage$Revision.class",
+      "dev/starcore/starcore/module/nation/NationCreationCoordinator.class",
+      "dev/starcore/starcore/module/nation/NationCreationOperation.class",
+      "dev/starcore/starcore/module/nation/NationCreationOperationCodec.class",
+      "dev/starcore/starcore/module/nation/NationCreationService$Receipt.class",
+      "dev/starcore/starcore/module/nation/NationCreationService$Request.class",
+      "dev/starcore/starcore/module/nation/NationCreationService$State.class",
+      "dev/starcore/starcore/module/nation/NationCreationService.class",
+      "dev/starcore/starcore/module/nation/NationStateCodec$Snapshot.class"
+    ],
+    "all_other_previous_entries_unchanged": true,
+    "production_folia_descriptor": false
+  },
+  "class_validation": {
+    "fresh_classes": 21,
+    "removed_stale_classes": [],
+    "compiled_output_matches": true
+  },
+  "ordinary_income_regression": {
+    "test": "NationCreationCoordinatorTest.ordinaryIncomeFromAnotherSqlWriterCannotBeErasedByCreation",
+    "initial_balance": 1000,
+    "other_instance_income": 100,
+    "creation_cost": 100,
+    "expected_balance": 1000,
+    "before_fix_balance": 900,
+    "after_fix_balance": 1000,
+    "real_sqlite": true
+  },
+  "mysql": {
+    "executed": false,
+    "sql_test_backend": "SQLite",
+    "reason": "Latest MySQL integration remains pending"
+  },
+  "live_server_started": false,
+  "production_folia_descriptor": false,
+  "folia_full_stack_verified": false,
+  "survival_save": {
+    "path": "C:\\tmp\\starsupply-folia-sqlite-retry-runtime-20261122\\starsupply-stage1-world\\playerdata\\904364cc-bf39-35a0-b688-6cc8a6d846c8.dat",
+    "sha256": "747194DCF7BBF6FAA52996FA9DA2A59939227354612FC69A0F05AC92D0BD24D0",
+    "unchanged": true
+  },
+  "coverage": [
+    "Real file money and nation authority: intent/final snapshot failure before/after save, lost debit/refund response, failed readback and restart",
+    "Immutable original request, rejected debit, free creation, city parent binding, retained terminal history after disband and unrelated ordinary income",
+    "Cancellation before/after debit, delayed creator rejection, explicit retry after authoritative refund rejection at maximum balance",
+    "Real SQLite independent nation and money writers, ordinary income preservation, account/snapshot stale revision rejection, no cached reread or legacy resurrection",
+    "Old queued snapshot cannot borrow a newer revision learned from authority reload",
+    "Module callback reentrancy, stopped references, console/admin cancellation confirmation, old split snapshot preservation and legacy creation evidence",
+    "Full retained 1238-test selection plus creation and extended InternalEconomy/SqlBalanceStorage regression; actual final JAR companion"
+  ],
+  "limitations": [
+    "One pending creation per nation catalog; permanent creation and money history need bounded archival and scale/latency work",
+    "Legacy creation without receipt does not get automatic balance-based refunds; independent reconciliation remains necessary",
+    "Claim payment is still ordinary debit and process-local compensation; full durable claim protocol is pending",
+    "Legacy split/disband journals remain separate files; guard and stale-snapshot rejection are not a complete shared-SQL lifecycle protocol",
+    "File ownership is single-process. SQL write-version tests do not certify arbitrary mixed-version writers or latest MySQL behavior",
+    "Legacy boolean economy methods retain their interface: cross-instance conflicts may reject and require caller retry; nonreceipted unknown commits cannot be made exactly-once retroactively",
+    "Unresolved capital worlds still prevent strict receipt snapshot loading; offline-world maintenance remains pending",
+    "Full Core clean verify and live Paper/Folia acceptance were not run"
+  ],
+  "pending": [
+    "Durable claim funding and full nation lifecycle cross-instance protocol",
+    "Navy real troop transfer and port supply, wounded replenishment, doctrine effects and payment recovery",
+    "Mercenary/social/mail remaining ownership and lifecycle audit",
+    "Budget old prepaid settlement, exercise missing recipient handling, receipt archival/capacity",
+    "Current Core clean verification, latest MySQL and live full optional-plugin/survival/visual acceptance"
+  ]
+}

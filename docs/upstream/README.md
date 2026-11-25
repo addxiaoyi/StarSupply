@@ -1,6 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-当前最新兼容包按顺序应用十一份补丁：后勤、玩家资金回执、税款回执、公共反馈、HUD 设置、[Clan 闭环](CLAN-CLOSURE.md)、[Religion 闭环](RELIGION-CLOSURE.md)、[国家 Faith 闭环](FAITH-CLOSURE.md)、[海军可靠性修复](NAVY-RELIABILITY.md)、[预算付款恢复](BUDGET-RECOVERY.md)、[演习与经验恢复](EXERCISE-RECOVERY.md)。第十一份保存演习、唯一结果与国家经验回执，修复权限、阵营统计、线程归属和启停，加入实验后勤 profile。1,238 项 Core 定向回归及实际成品下 StarSupply 177 项通过。建国创建费用恢复、海军真实运兵、伤兵、学说、预算/演习运维及归档仍待开发，详见[当前清单](../CODE-CLOSURE.md)。生产 Folia 声明继续关闭。
+当前最新兼容包按顺序应用十二份补丁，在下述十一份后追加 [建国与城邦恢复](CREATION-RECOVERY.md)（`starcore-creation-recovery.patch`）。新创建按原编号恢复付款/退款，并保留终态、提供管理入口；SQL 普通账户与回执快照共享版本，防止旧实例覆盖收入。1,322 项 Core 定向回归和实际最终 Core 下 StarSupply 177 项通过。圈地、完整国家生命周期跨实例协议及其他未闭环范围见[当前清单](../CODE-CLOSURE.md)。生产 Folia 声明继续关闭。
+
+
+此前演习兼容包按顺序应用十一份补丁：后勤、玩家资金回执、税款回执、公共反馈、HUD 设置、[Clan 闭环](CLAN-CLOSURE.md)、[Religion 闭环](RELIGION-CLOSURE.md)、[国家 Faith 闭环](FAITH-CLOSURE.md)、[海军可靠性修复](NAVY-RELIABILITY.md)、[预算付款恢复](BUDGET-RECOVERY.md)、[演习与经验恢复](EXERCISE-RECOVERY.md)。第十一份保存演习、唯一结果与国家经验回执，修复权限、阵营统计、线程归属和启停，加入实验后勤 profile。1,238 项 Core 定向回归及实际成品下 StarSupply 177 项通过。建国创建费用恢复、海军真实运兵、伤兵、学说、预算/演习运维及归档仍待开发，详见[当前清单](../CODE-CLOSURE.md)。生产 Folia 声明继续关闭。
 
 此前 HUD 兼容包按顺序应用五份补丁，在下述四份补丁后追加 [starcore-hud-settings.patch](starcore-hud-settings.patch)。个人设置持久化、真实重载、呼吸动画和彩色主题等 HUD 缺口已补齐；配置、命令、构建与验收范围见 [HUD-SETTINGS](HUD-SETTINGS.md)。
 

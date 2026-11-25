@@ -1,0 +1,2775 @@
+diff --git a/docs/api/starcore-api-v1.txt b/docs/api/starcore-api-v1.txt
+index 3b4fe8e..642b09a 100644
+--- a/docs/api/starcore-api-v1.txt
++++ b/docs/api/starcore-api-v1.txt
+@@ -64,6 +64,13 @@ FIELD dev.starcore.starcore.module.map.model.MapLayerType#TERRITORY type=dev.sta
+ FIELD dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status#CANCELLED type=dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status#CONFIRMED type=dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status#FAILED type=dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationCreationService$State#CANCELLED type=dev.starcore.starcore.module.nation.NationCreationService$State modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationCreationService$State#CREATED type=dev.starcore.starcore.module.nation.NationCreationService$State modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationCreationService$State#PREPARED type=dev.starcore.starcore.module.nation.NationCreationService$State modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationCreationService$State#REFUNDED type=dev.starcore.starcore.module.nation.NationCreationService$State modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationCreationService$State#REFUND_BLOCKED type=dev.starcore.starcore.module.nation.NationCreationService$State modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationCreationService$State#REFUND_PENDING type=dev.starcore.starcore.module.nation.NationCreationService$State modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationCreationService$State#REJECTED type=dev.starcore.starcore.module.nation.NationCreationService$State modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.module.nation.NationSplitOutcome$Status#FOUNDER_NOT_MEMBER type=dev.starcore.starcore.module.nation.NationSplitOutcome$Status modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.module.nation.NationSplitOutcome$Status#NAME_TAKEN type=dev.starcore.starcore.module.nation.NationSplitOutcome$Status modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.module.nation.NationSplitOutcome$Status#SOURCE_FOUNDER type=dev.starcore.starcore.module.nation.NationSplitOutcome$Status modifiers=public,static,final enumConstant=true
+@@ -244,6 +251,7 @@ METHOD dev.starcore.starcore.api.StarCoreApi#epochService typeParameters=<> para
+ METHOD dev.starcore.starcore.api.StarCoreApi#governmentService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.government.GovernmentService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#mapService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.map.MapService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#modules typeParameters=<> parameters=() returns=java.util.Collection<dev.starcore.starcore.core.module.ModuleDescriptor> modifiers=public,abstract
++METHOD dev.starcore.starcore.api.StarCoreApi#nationCreationService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.nation.NationCreationService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#nationService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.nation.NationService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#officerService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.officer.OfficerService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#policyService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.policy.PolicyService> modifiers=public default=true
+@@ -534,6 +542,30 @@ METHOD dev.starcore.starcore.module.map.model.WebClaimConfirmationResult#status
+ METHOD dev.starcore.starcore.module.map.model.WebClaimConfirmationResult#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
+ METHOD dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status#valueOf typeParameters=<> parameters=(java.lang.String) returns=dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status modifiers=public,static
+ METHOD dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status#values typeParameters=<> parameters=() returns=dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status[] modifiers=public,static
++METHOD dev.starcore.starcore.module.nation.NationCreationService#cancelCreation typeParameters=<> parameters=(java.util.UUID) returns=dev.starcore.starcore.module.nation.NationCreationService$Receipt modifiers=public,abstract
++METHOD dev.starcore.starcore.module.nation.NationCreationService#create typeParameters=<> parameters=(dev.starcore.starcore.module.nation.NationCreationService$Request) returns=dev.starcore.starcore.module.nation.NationCreationService$Receipt modifiers=public,abstract
++METHOD dev.starcore.starcore.module.nation.NationCreationService#creation typeParameters=<> parameters=(java.util.UUID) returns=java.util.Optional<dev.starcore.starcore.module.nation.NationCreationService$Receipt> modifiers=public,abstract
++METHOD dev.starcore.starcore.module.nation.NationCreationService#pendingCreations typeParameters=<> parameters=() returns=java.util.List<dev.starcore.starcore.module.nation.NationCreationService$Receipt> modifiers=public,abstract
++METHOD dev.starcore.starcore.module.nation.NationCreationService#recoverCreation typeParameters=<> parameters=(java.util.UUID) returns=dev.starcore.starcore.module.nation.NationCreationService$Receipt modifiers=public,abstract
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Receipt#cost typeParameters=<> parameters=() returns=java.math.BigDecimal modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Receipt#detail typeParameters=<> parameters=() returns=java.lang.String modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Receipt#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Receipt#hashCode typeParameters=<> parameters=() returns=int modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Receipt#nationId typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationId modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Receipt#request typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.NationCreationService$Request modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Receipt#state typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.NationCreationService$State modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Receipt#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Request#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Request#founderId typeParameters=<> parameters=() returns=java.util.UUID modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Request#founderName typeParameters=<> parameters=() returns=java.lang.String modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Request#hashCode typeParameters=<> parameters=() returns=int modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Request#kind typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationKind modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Request#name typeParameters=<> parameters=() returns=java.lang.String modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Request#operationId typeParameters=<> parameters=() returns=java.util.UUID modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$Request#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationCreationService$State#pending typeParameters=<> parameters=() returns=boolean modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationCreationService$State#valueOf typeParameters=<> parameters=(java.lang.String) returns=dev.starcore.starcore.module.nation.NationCreationService$State modifiers=public,static
++METHOD dev.starcore.starcore.module.nation.NationCreationService$State#values typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.NationCreationService$State[] modifiers=public,static
+ METHOD dev.starcore.starcore.module.nation.NationExperienceService$Grant#amount typeParameters=<> parameters=() returns=long modifiers=public
+ METHOD dev.starcore.starcore.module.nation.NationExperienceService$Grant#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
+ METHOD dev.starcore.starcore.module.nation.NationExperienceService$Grant#hashCode typeParameters=<> parameters=() returns=int modifiers=public,final
+@@ -1324,6 +1356,16 @@ RECORD_COMPONENT dev.starcore.starcore.module.map.model.WebClaimConfirmationResu
+ RECORD_COMPONENT dev.starcore.starcore.module.map.model.WebClaimConfirmationResult#price type=java.math.BigDecimal
+ RECORD_COMPONENT dev.starcore.starcore.module.map.model.WebClaimConfirmationResult#selection type=dev.starcore.starcore.foundation.territory.model.ChunkClaimSelection
+ RECORD_COMPONENT dev.starcore.starcore.module.map.model.WebClaimConfirmationResult#status type=dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationCreationService$Receipt#cost type=java.math.BigDecimal
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationCreationService$Receipt#detail type=java.lang.String
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationCreationService$Receipt#nationId type=dev.starcore.starcore.module.nation.model.NationId
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationCreationService$Receipt#request type=dev.starcore.starcore.module.nation.NationCreationService$Request
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationCreationService$Receipt#state type=dev.starcore.starcore.module.nation.NationCreationService$State
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationCreationService$Request#founderId type=java.util.UUID
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationCreationService$Request#founderName type=java.lang.String
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationCreationService$Request#kind type=dev.starcore.starcore.module.nation.model.NationKind
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationCreationService$Request#name type=java.lang.String
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationCreationService$Request#operationId type=java.util.UUID
+ RECORD_COMPONENT dev.starcore.starcore.module.nation.NationExperienceService$Grant#amount type=long
+ RECORD_COMPONENT dev.starcore.starcore.module.nation.NationExperienceService$Grant#nationId type=dev.starcore.starcore.module.nation.model.NationId
+ RECORD_COMPONENT dev.starcore.starcore.module.nation.NationExperienceService$Grant#transactionId type=java.lang.String
+@@ -1562,6 +1604,10 @@ TYPE dev.starcore.starcore.module.map.model.MapSnapshot kind=record modifiers=pu
+ TYPE dev.starcore.starcore.module.map.model.MapTerritoryPolygon kind=record modifiers=public,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.map.model.WebClaimConfirmationResult kind=record modifiers=public,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status kind=enum modifiers=public,static,final typeParameters=<> extends=java.lang.Enum<dev.starcore.starcore.module.map.model.WebClaimConfirmationResult$Status>
++TYPE dev.starcore.starcore.module.nation.NationCreationService kind=interface modifiers=public,abstract typeParameters=<>
++TYPE dev.starcore.starcore.module.nation.NationCreationService$Receipt kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
++TYPE dev.starcore.starcore.module.nation.NationCreationService$Request kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
++TYPE dev.starcore.starcore.module.nation.NationCreationService$State kind=enum modifiers=public,static,final typeParameters=<> extends=java.lang.Enum<dev.starcore.starcore.module.nation.NationCreationService$State>
+ TYPE dev.starcore.starcore.module.nation.NationExperienceService$Grant kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.nation.NationExperienceService$Receipt kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.nation.NationService kind=interface modifiers=public,abstract typeParameters=<>
+diff --git a/src/main/java/dev/starcore/starcore/api/StarCoreApi.java b/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
+index 9715ace..9bc8f7e 100644
+--- a/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
++++ b/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
+@@ -45,6 +45,11 @@ public interface StarCoreApi {
+     return service(NationService.class);
+   }
+ 
++  default Optional<dev.starcore.starcore.module.nation.NationCreationService>
++      nationCreationService() {
++    return service(dev.starcore.starcore.module.nation.NationCreationService.class);
++  }
++
+   default Optional<ClaimToolService> claimToolService() {
+     return service(ClaimToolService.class);
+   }
+diff --git a/src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java b/src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java
+index 874e1a4..7dccabe 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java
++++ b/src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java
+@@ -245,7 +245,14 @@ public final class InternalEconomyService implements EconomyService, PlayerMoney
+         if (duplicate != null) return requireSameMoneyRequest(duplicate, request);
+         // Drain and persist every previously accepted asynchronous balance change first.
+         // No older queued snapshot may follow an uncertain receipt write and overwrite it.
+-        storage.save(stateProperties());
++        try {
++          storage.save(stateProperties());
++        } catch (RuntimeException failure) {
++          // Another SQL writer may already have committed this operation. The preflush can fail
++          // before the new receipt write, so its failure must invalidate the cached absence too.
++          receiptStateUncertain = true;
++          throw failure;
++        }
+         BigDecimal before = normalize(balances.getOrDefault(request.accountId(), BigDecimal.ZERO));
+         BigDecimal after =
+             request.direction() == PlayerMoneyService.Direction.CREDIT
+@@ -990,7 +997,12 @@ public final class InternalEconomyService implements EconomyService, PlayerMoney
+       EconomyOperationTimingProbe.record(
+           EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+           System.nanoTime() - flushLockWaitStarted);
+-      storage.save(stateProperties());
++      try {
++        storage.save(stateProperties());
++      } catch (RuntimeException failure) {
++        receiptStateUncertain = true;
++        throw failure;
++      }
+     }
+   }
+ 
+@@ -1002,8 +1014,13 @@ public final class InternalEconomyService implements EconomyService, PlayerMoney
+           EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+           System.nanoTime() - flushLockWaitStarted);
+       BigDecimal currentBalance = balances.getOrDefault(accountId, BigDecimal.ZERO);
+-      if (!storage.saveAccount(accountId, normalize(currentBalance))) {
+-        storage.save(stateProperties());
++      try {
++        if (!storage.saveAccount(accountId, normalize(currentBalance))) {
++          storage.save(stateProperties());
++        }
++      } catch (RuntimeException failure) {
++        receiptStateUncertain = true;
++        throw failure;
+       }
+     }
+   }
+@@ -1021,8 +1038,13 @@ public final class InternalEconomyService implements EconomyService, PlayerMoney
+               normalize(balances.getOrDefault(firstAccountId, BigDecimal.ZERO)),
+               secondAccountId,
+               normalize(balances.getOrDefault(secondAccountId, BigDecimal.ZERO)));
+-      if (!storage.saveAccounts(accountBalances)) {
+-        storage.save(stateProperties());
++      try {
++        if (!storage.saveAccounts(accountBalances)) {
++          storage.save(stateProperties());
++        }
++      } catch (RuntimeException failure) {
++        receiptStateUncertain = true;
++        throw failure;
+       }
+     }
+   }
+diff --git a/src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java b/src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java
+index 1214df3..e68f27c 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java
++++ b/src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java
+@@ -41,17 +41,16 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+   private final Object saveLock = new Object();
+   private CompletableFuture<Void> pendingSave = CompletableFuture.completedFuture(null);
+   private Properties queuedSnapshot;
++  private long queuedAuthorityGeneration;
++  private volatile long authorityGeneration;
+   private boolean saveWorkerScheduled;
+   private boolean synchronousSaveInProgress;
+   private int consecutiveFailures;
+   private long retryGeneration;
+   private long asyncSaveVersion;
+ 
+-  /** E-028 修复: loadFromDatabase 加 30s LRU 缓存，避免高频 load() 重复扫全表。 */
+-  private volatile Properties cachedProperties = null;
+-
+-  private volatile long cacheTimestamp = 0L;
+-  private static final long CACHE_TTL_MS = 30_000L;
++  // Protected by this monitor. Every SQL mutation claims this revision in its transaction.
++  private long expectedRevision = -1;
+ 
+   SqlBalanceStorage(
+       DatabaseService databaseService, PersistenceService persistenceService, Logger logger) {
+@@ -90,21 +89,27 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+   }
+ 
+   @Override
+-  public Properties load() {
++  public synchronized Properties load() {
+     try (Connection connection = openConnection()) {
+       ensureTable(connection);
+-      Properties properties = loadFromDatabase(connection);
+-      if (!properties.isEmpty()) {
+-        return properties;
+-      }
+-      Properties legacy = copy(legacyPropertiesSupplier.get());
+-      if (legacy.isEmpty()) {
++      for (int attempt = 0; attempt < 8; attempt++) {
++        Revision before = revision(connection);
++        Properties properties = loadFromDatabase(connection);
++        Revision after = revision(connection);
++        if (!before.equals(after)) continue;
++        if (properties.isEmpty() && after.populated())
++          throw new SQLException("Missing published player money authority");
++        if (expectedRevision >= 0 && expectedRevision != after.value()) authorityGeneration++;
++        expectedRevision = after.value();
++        if (!properties.isEmpty() || expectedRevision > 0) return properties;
++        Properties legacy = copy(legacyPropertiesSupplier.get());
++        if (legacy.isEmpty()) return legacy;
++        writeSnapshot(connection, legacy);
++        logger.info(
++            "Imported " + legacy.size() + " legacy STARCORE player balances into SQL storage.");
+         return legacy;
+       }
+-      writeSnapshot(connection, legacy);
+-      logger.info(
+-          "Imported " + legacy.size() + " legacy STARCORE player balances into SQL storage.");
+-      return legacy;
++      throw new SQLException("Player money authority changed repeatedly while loading");
+     } catch (Exception exception) {
+       throw new IllegalStateException("Unable to load SQL economy balances", exception);
+     }
+@@ -113,7 +118,8 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+   @Override
+   public void save(Properties properties) {
+     Properties snapshot = copy(properties);
+-    saveSynchronously(() -> writeSnapshot(snapshot), true, Map.of());
++    long generation = authorityGeneration;
++    saveSynchronously(() -> writeSnapshot(snapshot, generation), true, Map.of());
+   }
+ 
+   @Override
+@@ -192,6 +198,7 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+     Properties snapshot = copy(properties);
+     synchronized (saveLock) {
+       queuedSnapshot = snapshot;
++      queuedAuthorityGeneration = authorityGeneration;
+       asyncSaveVersion++;
+       consecutiveFailures = 0;
+       retryGeneration++;
+@@ -226,6 +233,7 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+   private void drainPendingSaves(CompletableFuture<Void> save) {
+     while (true) {
+       Properties snapshot;
++      long generation;
+       synchronized (saveLock) {
+         if (synchronousSaveInProgress) {
+           saveWorkerScheduled = false;
+@@ -233,6 +241,7 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+           return;
+         }
+         snapshot = queuedSnapshot;
++        generation = queuedAuthorityGeneration;
+         queuedSnapshot = null;
+         if (snapshot == null) {
+           saveWorkerScheduled = false;
+@@ -243,7 +252,7 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+       }
+ 
+       try {
+-        writeSnapshot(snapshot);
++        writeSnapshot(snapshot, generation);
+       } catch (RuntimeException failure) {
+         logger.log(
+             Level.SEVERE, "Unable to save SQL economy balance snapshot asynchronously", failure);
+@@ -253,6 +262,7 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+             continue;
+           }
+           queuedSnapshot = snapshot;
++          queuedAuthorityGeneration = generation;
+           saveWorkerScheduled = false;
+           consecutiveFailures++;
+           if (!synchronousSaveInProgress && consecutiveFailures <= MAX_ASYNC_RETRIES) {
+@@ -291,12 +301,6 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+   }
+ 
+   private Properties loadFromDatabase(Connection connection) throws SQLException {
+-    // E-028 修复: 检查缓存是否有效（30s TTL），有效则直接返回，避免重复全表扫描。
+-    long now = System.currentTimeMillis();
+-    Properties cached = cachedProperties;
+-    if (cached != null && now - cacheTimestamp < CACHE_TTL_MS) {
+-      return copy(cached);
+-    }
+     Properties properties = new Properties();
+     try (PreparedStatement statement =
+             connection.prepareStatement(
+@@ -324,8 +328,6 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+         properties.setProperty(key, payload);
+       }
+     }
+-    cachedProperties = copy(properties);
+-    cacheTimestamp = now;
+     return properties;
+   }
+ 
+@@ -341,6 +343,15 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+                 + (sqlite ? "TEXT" : "DECIMAL(19,2)")
+                 + " NOT NULL)");
+         if (sqlite) migrateExactSqliteBalances(connection);
++        statement.execute(
++            "CREATE TABLE IF NOT EXISTS starcore_player_balance_revision (singleton INTEGER PRIMARY"
++                + " KEY, revision BIGINT NOT NULL, has_state INTEGER NOT NULL)");
++        statement.execute(
++            sqlite
++                ? "INSERT INTO starcore_player_balance_revision (singleton,revision,has_state)"
++                    + " VALUES (1,0,0) ON CONFLICT(singleton) DO NOTHING"
++                : "INSERT IGNORE INTO starcore_player_balance_revision"
++                    + " (singleton,revision,has_state) VALUES (1,0,0)");
+         statement.execute(
+             """
+             CREATE TABLE IF NOT EXISTS starcore_player_money_receipts (
+@@ -401,29 +412,29 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+       throw failure;
+     } finally {
+       if (safeToRestore) connection.setAutoCommit(previousAutoCommit);
+-      cachedProperties = null;
+     }
+   }
+ 
+-  private void writeSnapshot(Properties properties) {
++  private synchronized void writeSnapshot(Properties properties, long generation) {
++    if (generation != authorityGeneration)
++      throw new IllegalStateException("Queued player money snapshot predates authority reload");
+     try (Connection connection = openConnection()) {
+       ensureTable(connection);
+       writeSnapshot(connection, properties);
+     } catch (Exception exception) {
+       throw new IllegalStateException("Unable to save SQL economy balances", exception);
+-    } finally {
+-      // E-026 修复: 写入完成后 invalidate 缓存，下次 load 从 DB 重读保证新鲜。
+-      cachedProperties = null;
+     }
+   }
+ 
+-  private void writeAccounts(Map<String, String> accountBalances) {
++  private synchronized void writeAccounts(Map<String, String> accountBalances) {
+     try (Connection connection = openConnection()) {
+       ensureTable(connection);
+       long transactionSetupStartedAtNanos = System.nanoTime();
+       boolean previousAutoCommit = connection.getAutoCommit();
+       connection.setAutoCommit(false);
++      boolean safeToRestoreAutoCommit = false;
+       try (PreparedStatement upsert = connection.prepareStatement(upsertSql(connection))) {
++        long committedRevision = claimRevision(connection, !accountBalances.isEmpty());
+         EconomyOperationTimingProbe.record(
+             EconomyOperationTimingProbe.Phase.SQL_TRANSACTION_SETUP,
+             System.nanoTime() - transactionSetupStartedAtNanos);
+@@ -439,21 +450,26 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+         long commitStartedAtNanos = System.nanoTime();
+         try {
+           connection.commit();
++          expectedRevision = committedRevision;
++          safeToRestoreAutoCommit = true;
+         } finally {
+           EconomyOperationTimingProbe.record(
+               EconomyOperationTimingProbe.Phase.SQL_COMMIT,
+               System.nanoTime() - commitStartedAtNanos);
+         }
+       } catch (Exception exception) {
+-        connection.rollback();
++        try {
++          connection.rollback();
++          safeToRestoreAutoCommit = true;
++        } catch (SQLException rollbackFailure) {
++          exception.addSuppressed(rollbackFailure);
++        }
+         throw exception;
+       } finally {
+-        connection.setAutoCommit(previousAutoCommit);
++        if (safeToRestoreAutoCommit) connection.setAutoCommit(previousAutoCommit);
+       }
+     } catch (Exception exception) {
+       throw new IllegalStateException("Unable to save SQL economy account balances", exception);
+-    } finally {
+-      cachedProperties = null;
+     }
+   }
+ 
+@@ -469,6 +485,7 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+ 
+       Properties queued;
+       long saveVersion;
++      long generation;
+       synchronized (saveLock) {
+         queued = queuedSnapshot == null ? null : copy(queuedSnapshot);
+         if (queued == null) {
+@@ -478,12 +495,13 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+           continue;
+         }
+         saveVersion = asyncSaveVersion;
++        generation = queuedAuthorityGeneration;
+         synchronousSaveInProgress = true;
+       }
+ 
+       boolean persisted = false;
+       try {
+-        writeSnapshot(queued);
++        writeSnapshot(queued, generation);
+         persisted = true;
+       } catch (RuntimeException exception) {
+         logger.log(Level.SEVERE, "Unable to flush queued SQL economy balance snapshot", exception);
+@@ -511,6 +529,7 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+     connection.setAutoCommit(false);
+     boolean safeToRestoreAutoCommit = false;
+     try (PreparedStatement upsert = connection.prepareStatement(upsertSql(connection))) {
++      long committedRevision = claimRevision(connection, !properties.isEmpty());
+       try (PreparedStatement existing =
+               connection.prepareStatement(
+                   "SELECT operation_id, payload FROM starcore_player_money_receipts");
+@@ -557,6 +576,7 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+         }
+       }
+       connection.commit();
++      expectedRevision = committedRevision;
+       safeToRestoreAutoCommit = true;
+     } catch (Exception exception) {
+       try {
+@@ -568,10 +588,45 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+       throw exception;
+     } finally {
+       if (safeToRestoreAutoCommit) connection.setAutoCommit(previousAutoCommit);
+-      cachedProperties = null;
+     }
+   }
+ 
++  private record Revision(long value, boolean populated) {}
++
++  private Revision revision(Connection connection) throws SQLException {
++    try (Statement statement = connection.createStatement();
++        ResultSet rows =
++            statement.executeQuery(
++                "SELECT revision,has_state FROM starcore_player_balance_revision WHERE"
++                    + " singleton=1")) {
++      if (!rows.next()) throw new SQLException("Missing player money revision");
++      long value = rows.getLong(1);
++      int populated = rows.getInt(2);
++      if (value < 0 || value == Long.MAX_VALUE || (populated != 0 && populated != 1))
++        throw new SQLException("Invalid player money revision");
++      return new Revision(value, populated == 1);
++    }
++  }
++
++  private long claimRevision(Connection connection, boolean populated) throws SQLException {
++    if (expectedRevision < 0) {
++      Revision initial = revision(connection);
++      if (initial.value() != 0 || !loadFromDatabase(connection).isEmpty())
++        throw new SQLException("Load player money authority before writing");
++      expectedRevision = initial.value();
++    }
++    try (PreparedStatement update =
++        connection.prepareStatement(
++            "UPDATE starcore_player_balance_revision SET revision=revision+1,has_state=CASE WHEN"
++                + " ?=1 THEN 1 ELSE has_state END WHERE singleton=1 AND revision=?")) {
++      update.setInt(1, populated ? 1 : 0);
++      update.setLong(2, expectedRevision);
++      if (update.executeUpdate() != 1)
++        throw new SQLException("Stale player money snapshot revision");
++    }
++    return Math.addExact(expectedRevision, 1);
++  }
++
+   private String upsertSql(Connection connection) throws SQLException {
+     String database = connection.getMetaData().getDatabaseProductName();
+     if ("SQLite".equalsIgnoreCase(database)) {
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java b/src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java
+new file mode 100644
+index 0000000..81f15d9
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java
+@@ -0,0 +1,185 @@
++package dev.starcore.starcore.module.nation;
++
++import static dev.starcore.starcore.module.nation.NationCreationService.State.*;
++
++import dev.starcore.starcore.foundation.economy.PlayerMoneyService;
++import dev.starcore.starcore.module.nation.model.Nation;
++import dev.starcore.starcore.module.nation.model.NationKind;
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Locale;
++import java.util.Objects;
++import java.util.UUID;
++import java.util.function.Function;
++
++/**
++ * All intent and catalog writes share the nation storage revision. Money is keyed independently.
++ */
++final class NationCreationCoordinator {
++  private final NationStateStorage storage;
++  private final PlayerMoneyService money;
++  private final java.util.function.Consumer<NationStateCodec.Snapshot> publish;
++  private NationStateCodec.Snapshot snapshot;
++
++  NationCreationCoordinator(NationStateStorage storage, PlayerMoneyService money) {
++    this(storage, money, ignored -> {});
++  }
++
++  NationCreationCoordinator(
++      NationStateStorage storage,
++      PlayerMoneyService money,
++      java.util.function.Consumer<NationStateCodec.Snapshot> publish) {
++    this.storage = Objects.requireNonNull(storage);
++    this.money = Objects.requireNonNull(money);
++    this.publish = Objects.requireNonNull(publish);
++    snapshot = NationStateCodec.snapshot(storage.load());
++    publish.accept(snapshot);
++  }
++
++  NationCreationService.Receipt create(
++      NationCreationService.Request request,
++      Function<List<Nation>, NationCreationOperation> admission) {
++    var existing = snapshot.creations().get(request.operationId());
++    if (existing != null) {
++      if (!existing.request().equals(request))
++        throw new IllegalArgumentException("Conflicting creation request");
++      return advance(existing);
++    }
++    if (snapshot.creations().values().stream().anyMatch(op -> op.state().pending()))
++      throw new IllegalStateException(
++          "Nation creation recovery pending; retry its original operation ID");
++    var operation = admission.apply(snapshot.nations());
++    if (!operation.request().equals(request) || operation.state() != PREPARED)
++      throw new IllegalArgumentException("Invalid creation admission");
++    persist(operation, snapshot.nations());
++    return advance(operation);
++  }
++
++  NationCreationService.Receipt recover(UUID id, boolean retryBlocked) {
++    var operation = required(id);
++    if (operation.state() == REFUND_BLOCKED && retryBlocked) {
++      operation = operation.retryRefund();
++      persist(operation, snapshot.nations());
++    }
++    return advance(operation);
++  }
++
++  NationCreationService.Receipt cancel(UUID id) {
++    var operation = required(id);
++    if (!operation.state().pending()) return operation.receipt();
++    if (operation.state() == PREPARED) {
++      operation = operation.state(REFUND_PENDING, "cancelled-by-administrator");
++      persist(operation, snapshot.nations());
++    }
++    return advance(operation);
++  }
++
++  private NationCreationOperation required(UUID id) {
++    var operation = snapshot.creations().get(Objects.requireNonNull(id));
++    if (operation == null)
++      throw new IllegalArgumentException("Unknown nation creation operation " + id);
++    return operation;
++  }
++
++  private NationCreationService.Receipt advance(NationCreationOperation operation) {
++    if (!operation.state().pending() || operation.state() == REFUND_BLOCKED)
++      return operation.receipt();
++    // Even cancellation seals the original debit ID, so a delayed creator cannot charge later.
++    var debit = operation.cost().signum() == 0 ? null : settle(operation.debit());
++    if (debit != null && debit.status() != PlayerMoneyService.Status.APPLIED) {
++      var rejected =
++          operation.state(
++              operation.state() == PREPARED ? REJECTED : CANCELLED,
++              "debit-" + debit.status().name());
++      persist(rejected, snapshot.nations());
++      return rejected.receipt();
++    }
++    if (operation.state() == PREPARED) {
++      String conflict = conflict(operation, snapshot.nations());
++      if (conflict == null) {
++        var nations = new ArrayList<>(snapshot.nations());
++        nations.add(operation.candidate());
++        var created = operation.state(CREATED, "created");
++        persist(created, nations);
++        return created.receipt();
++      }
++      operation = operation.state(REFUND_PENDING, conflict);
++      persist(operation, snapshot.nations());
++    }
++    var refund = operation.cost().signum() == 0 ? null : settle(operation.refund());
++    var settled =
++        refund == null || refund.status() == PlayerMoneyService.Status.APPLIED
++            ? operation.state(REFUNDED, operation.detail())
++            : operation.state(REFUND_BLOCKED, "refund-" + refund.status().name());
++    persist(settled, snapshot.nations());
++    return settled.receipt();
++  }
++
++  private PlayerMoneyService.Receipt settle(PlayerMoneyService.Request request) {
++    var receipt = money.moneyReceipt(request.operationId());
++    if (receipt.isEmpty()) {
++      try {
++        money.applyMoney(request);
++      } catch (RuntimeException failure) {
++        try {
++          receipt = money.moneyReceipt(request.operationId());
++        } catch (RuntimeException readFailure) {
++          failure.addSuppressed(readFailure);
++          throw failure;
++        }
++        if (receipt.isEmpty()) throw failure;
++      }
++      if (receipt.isEmpty()) receipt = money.moneyReceipt(request.operationId());
++    }
++    var proof =
++        receipt.orElseThrow(() -> new IllegalStateException("Creation money receipt unavailable"));
++    if (!proof.request().equals(request))
++      throw new IllegalStateException("Conflicting creation money receipt");
++    return proof;
++  }
++
++  private void persist(NationCreationOperation operation, List<Nation> nations) {
++    var operations = new HashMap<>(snapshot.creations());
++    operations.put(operation.request().operationId(), operation);
++    var candidate = NationStateCodec.toProperties(nations, operations);
++    try {
++      storage.save(candidate);
++    } catch (RuntimeException failure) {
++      try {
++        var actual = storage.load();
++        snapshot = NationStateCodec.snapshot(actual);
++        publish.accept(snapshot);
++        if (candidate.equals(actual)) return;
++      } catch (RuntimeException readFailure) {
++        failure.addSuppressed(readFailure);
++      }
++      throw failure;
++    }
++    snapshot = NationStateCodec.snapshot(candidate);
++    publish.accept(snapshot);
++  }
++
++  private static String conflict(NationCreationOperation operation, List<Nation> nations) {
++    var request = operation.request();
++    String name = request.name().trim().toLowerCase(Locale.ROOT);
++    if (nations.stream()
++        .anyMatch(
++            n ->
++                n.id().equals(operation.nationId())
++                    || n.name().trim().toLowerCase(Locale.ROOT).equals(name)))
++      return "identity-conflict";
++    if (request.kind() == NationKind.NATION) {
++      if (nations.stream()
++          .anyMatch(n -> n.kind() == NationKind.NATION && n.hasMember(request.founderId())))
++        return "founder-already-in-nation";
++    } else if (nations.stream()
++        .noneMatch(
++            n ->
++                n.id().equals(operation.parentNationId())
++                    && n.kind() == NationKind.NATION
++                    && n.founderId().equals(request.founderId())
++                    && n.hasMember(request.founderId()))) return "parent-nation-changed";
++    return null;
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationCreationOperation.java b/src/main/java/dev/starcore/starcore/module/nation/NationCreationOperation.java
+new file mode 100644
+index 0000000..5126cc8
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationCreationOperation.java
+@@ -0,0 +1,91 @@
++package dev.starcore.starcore.module.nation;
++
++import dev.starcore.starcore.foundation.economy.PlayerMoneyService;
++import dev.starcore.starcore.module.government.model.GovernmentType;
++import dev.starcore.starcore.module.nation.model.Nation;
++import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.nation.model.NationKind;
++import java.math.BigDecimal;
++import java.math.RoundingMode;
++import java.nio.charset.StandardCharsets;
++import java.time.Instant;
++import java.util.Objects;
++import java.util.UUID;
++
++record NationCreationOperation(
++    NationCreationService.Request request,
++    NationId nationId,
++    NationId parentNationId,
++    Instant foundedAt,
++    BigDecimal cost,
++    NationCreationService.State state,
++    int refundAttempt,
++    String detail) {
++  NationCreationOperation {
++    Objects.requireNonNull(request);
++    Objects.requireNonNull(nationId);
++    Objects.requireNonNull(foundedAt);
++    Objects.requireNonNull(state);
++    Objects.requireNonNull(detail);
++    cost = Objects.requireNonNull(cost).setScale(2, RoundingMode.UNNECESSARY);
++    if (cost.signum() < 0
++        || cost.compareTo(PlayerMoneyService.MAX_BALANCE) > 0
++        || refundAttempt < 0
++        || detail.length() > 512
++        || (request.kind() == NationKind.CITY_STATE) != (parentNationId != null))
++      throw new IllegalArgumentException("Invalid nation creation operation");
++  }
++
++  Nation candidate() {
++    Nation nation =
++        new Nation(
++            nationId,
++            request.name(),
++            request.founderId(),
++            request.founderName(),
++            request.kind(),
++            parentNationId,
++            foundedAt);
++    if (request.kind() == NationKind.CITY_STATE) nation.setGovernmentType(GovernmentType.REPUBLIC);
++    return nation;
++  }
++
++  NationCreationOperation state(NationCreationService.State next, String reason) {
++    return new NationCreationOperation(
++        request, nationId, parentNationId, foundedAt, cost, next, refundAttempt, reason);
++  }
++
++  NationCreationOperation retryRefund() {
++    return new NationCreationOperation(
++        request,
++        nationId,
++        parentNationId,
++        foundedAt,
++        cost,
++        NationCreationService.State.REFUND_PENDING,
++        Math.addExact(refundAttempt, 1),
++        detail);
++  }
++
++  NationCreationService.Receipt receipt() {
++    return new NationCreationService.Receipt(request, nationId, cost, state, detail);
++  }
++
++  PlayerMoneyService.Request debit() {
++    return money("debit", PlayerMoneyService.Direction.DEBIT);
++  }
++
++  PlayerMoneyService.Request refund() {
++    return money("refund/" + refundAttempt, PlayerMoneyService.Direction.CREDIT);
++  }
++
++  private PlayerMoneyService.Request money(String suffix, PlayerMoneyService.Direction direction) {
++    String source = "nation-creation/" + request.operationId() + "/" + suffix;
++    return new PlayerMoneyService.Request(
++        UUID.nameUUIDFromBytes(source.getBytes(StandardCharsets.UTF_8)),
++        request.founderId(),
++        direction,
++        cost,
++        source);
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationCreationOperationCodec.java b/src/main/java/dev/starcore/starcore/module/nation/NationCreationOperationCodec.java
+new file mode 100644
+index 0000000..da00d1f
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationCreationOperationCodec.java
+@@ -0,0 +1,76 @@
++package dev.starcore.starcore.module.nation;
++
++import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.nation.model.NationKind;
++import java.math.BigDecimal;
++import java.time.Instant;
++import java.util.LinkedHashMap;
++import java.util.Map;
++import java.util.Properties;
++import java.util.UUID;
++
++final class NationCreationOperationCodec {
++  static final String PREFIX = "creationOperations.";
++
++  private NationCreationOperationCodec() {}
++
++  static void write(Properties p, Map<UUID, NationCreationOperation> operations) {
++    p.setProperty(PREFIX + "version", "1");
++    p.setProperty(PREFIX + "count", Integer.toString(operations.size()));
++    int i = 0;
++    for (var entry : operations.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
++      var op = entry.getValue();
++      if (!entry.getKey().equals(op.request().operationId()))
++        throw new IllegalArgumentException("Creation operation key mismatch");
++      String key = PREFIX + i++ + ".";
++      p.setProperty(key + "id", op.request().operationId().toString());
++      p.setProperty(key + "founderId", op.request().founderId().toString());
++      p.setProperty(key + "founderName", op.request().founderName());
++      p.setProperty(key + "name", op.request().name());
++      p.setProperty(key + "kind", op.request().kind().name());
++      p.setProperty(key + "nationId", op.nationId().toString());
++      if (op.parentNationId() != null)
++        p.setProperty(key + "parentId", op.parentNationId().toString());
++      p.setProperty(key + "foundedAt", op.foundedAt().toString());
++      p.setProperty(key + "cost", op.cost().toPlainString());
++      p.setProperty(key + "state", op.state().name());
++      p.setProperty(key + "refundAttempt", Integer.toString(op.refundAttempt()));
++      p.setProperty(key + "detail", op.detail());
++    }
++  }
++
++  static Map<UUID, NationCreationOperation> read(Properties p) {
++    if (!"1".equals(p.getProperty(PREFIX + "version")))
++      throw new IllegalArgumentException("Invalid nation creation authority version");
++    int count = Integer.parseInt(p.getProperty(PREFIX + "count"));
++    if (count < 1 || count > 100_000) throw new IllegalArgumentException("Invalid creation count");
++    Map<UUID, NationCreationOperation> result = new LinkedHashMap<>();
++    for (int i = 0; i < count; i++) {
++      String key = PREFIX + i + ".";
++      var request =
++          new NationCreationService.Request(
++              UUID.fromString(p.getProperty(key + "id")),
++              UUID.fromString(p.getProperty(key + "founderId")),
++              p.getProperty(key + "founderName"),
++              p.getProperty(key + "name"),
++              NationKind.valueOf(p.getProperty(key + "kind")));
++      String parent = p.getProperty(key + "parentId");
++      var op =
++          new NationCreationOperation(
++              request,
++              NationId.of(UUID.fromString(p.getProperty(key + "nationId"))),
++              parent == null ? null : NationId.of(UUID.fromString(parent)),
++              Instant.parse(p.getProperty(key + "foundedAt")),
++              new BigDecimal(p.getProperty(key + "cost")),
++              NationCreationService.State.valueOf(p.getProperty(key + "state")),
++              Integer.parseInt(p.getProperty(key + "refundAttempt")),
++              p.getProperty(key + "detail"));
++      if (result.putIfAbsent(request.operationId(), op) != null)
++        throw new IllegalArgumentException("Duplicate nation creation operation");
++    }
++    if (result.values().stream().filter(op -> op.state().pending()).count() > 1
++        || result.values().stream().map(NationCreationOperation::nationId).distinct().count()
++            != count) throw new IllegalArgumentException("Inconsistent nation creation history");
++    return Map.copyOf(result);
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationCreationRecovery.java b/src/main/java/dev/starcore/starcore/module/nation/NationCreationRecovery.java
+index 36eec08..7f77430 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationCreationRecovery.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationCreationRecovery.java
+@@ -1,7 +1,6 @@
+ package dev.starcore.starcore.module.nation;
+ 
+ import dev.starcore.starcore.foundation.economy.InternalEconomyService;
+-import java.math.BigDecimal;
+ import java.util.Objects;
+ import java.util.logging.Logger;
+ 
+@@ -32,30 +31,9 @@ final class NationCreationRecovery {
+       return;
+     }
+ 
+-    BigDecimal currentBalance = economyService.balance(transaction.founderId());
+-    BigDecimal expectedAfterCharge = transaction.balanceBefore().subtract(transaction.cost());
+-    if (currentBalance.compareTo(transaction.balanceBefore()) == 0) {
+-      journal.clear();
+-      logger.info("Cleared uncharged nation creation transaction " + transaction.transactionId());
+-      return;
+-    }
+-    if (currentBalance.compareTo(expectedAfterCharge) != 0) {
+-      throw new IllegalStateException(
+-          "Cannot safely recover nation creation payment "
+-              + transaction.transactionId()
+-              + ": expected balance "
+-              + transaction.balanceBefore()
+-              + " or "
+-              + expectedAfterCharge
+-              + " but found "
+-              + currentBalance);
+-    }
+-    if (!economyService.deposit(transaction.founderId(), transaction.cost(), true)) {
+-      throw new IllegalStateException(
+-          "Failed to refund interrupted nation creation transaction "
+-              + transaction.transactionId());
+-    }
+-    journal.clear();
+-    logger.info("Refunded interrupted nation creation transaction " + transaction.transactionId());
++    throw new IllegalStateException(
++        "Legacy nation creation payment requires independent evidence; balance cannot prove payment"
++            + " or refund: "
++            + transaction.transactionId());
+   }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationCreationService.java b/src/main/java/dev/starcore/starcore/module/nation/NationCreationService.java
+new file mode 100644
+index 0000000..b3ee3c6
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationCreationService.java
+@@ -0,0 +1,55 @@
++package dev.starcore.starcore.module.nation;
++
++import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.nation.model.NationKind;
++import java.math.BigDecimal;
++import java.util.List;
++import java.util.Objects;
++import java.util.Optional;
++import java.util.UUID;
++
++/** Durable nation creation. Callers authorize the founder and retain the original request ID. */
++public interface NationCreationService {
++  enum State {
++    PREPARED,
++    CREATED,
++    REJECTED,
++    REFUND_PENDING,
++    REFUND_BLOCKED,
++    REFUNDED,
++    CANCELLED;
++
++    public boolean pending() {
++      return this == PREPARED || this == REFUND_PENDING || this == REFUND_BLOCKED;
++    }
++  }
++
++  record Request(
++      UUID operationId, UUID founderId, String founderName, String name, NationKind kind) {
++    public Request {
++      Objects.requireNonNull(operationId);
++      Objects.requireNonNull(founderId);
++      Objects.requireNonNull(kind);
++      if (founderName == null
++          || founderName.isBlank()
++          || founderName.length() > 128
++          || name == null
++          || name.isBlank()
++          || name.length() > 128)
++        throw new IllegalArgumentException("Invalid nation creation name");
++    }
++  }
++
++  record Receipt(Request request, NationId nationId, BigDecimal cost, State state, String detail) {}
++
++  Receipt create(Request request);
++
++  Optional<Receipt> creation(UUID operationId);
++
++  List<Receipt> pendingCreations();
++
++  Receipt recoverCreation(UUID operationId);
++
++  /** Admin operation: durably decides cancellation before settling the original debit/refund. */
++  Receipt cancelCreation(UUID operationId);
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationModule.java b/src/main/java/dev/starcore/starcore/module/nation/NationModule.java
+index 67095c1..d629a7d 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationModule.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationModule.java
+@@ -79,7 +79,8 @@ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.scheduler.BukkitTask;
+ 
+-public final class NationModule implements StarCoreModule, NationService, NationExperienceService {
++public final class NationModule
++    implements StarCoreModule, NationService, NationExperienceService, NationCreationService {
+   private static final String FILE_NAME = "nations.properties";
+   private static final long CACHE_REFRESH_INTERVAL_TICKS = 6000L; // 5分钟刷新一次 (300秒)
+ 
+@@ -89,7 +90,11 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+           "国家核心",
+           ModuleLayer.MODULE,
+           List.of(),
+-          List.of(NationService.class, ClaimToolService.class, NationExperienceService.class),
++          List.of(
++              NationService.class,
++              ClaimToolService.class,
++              NationExperienceService.class,
++              NationCreationService.class),
+           "Owns nation membership, identity, and strategic state boundaries.");
+ 
+   private final Map<NationId, Nation> nationsById = new ConcurrentHashMap<>();
+@@ -104,6 +109,8 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+   private ExternalProtectionService externalProtectionService;
+   private NationStateStorage stateStorage;
+   private boolean experienceAuthorityUnavailable;
++  private boolean creationExecuting;
++  private final Map<UUID, NationCreationOperation> creations = new LinkedHashMap<>();
+   private NationSplitJournal splitJournal = NationSplitJournal.none();
+   private NationCreationJournal creationJournal = NationCreationJournal.none();
+   private NationDisbandJournal disbandJournal = NationDisbandJournal.none();
+@@ -170,6 +177,11 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+         context.serviceRegistry().require(OnlinePlayerDirectory.class);
+     MessageService messageService = context.serviceRegistry().require(MessageService.class);
+     this.messages = messageService;
++    NationCreationRecovery.recover(
++        stateStorage, creationJournal, economyService, context.plugin().getLogger());
++    NationSplitRecovery.recover(territoryService, stateStorage, splitJournal);
++    loadState();
++    recoverCreationOnStartup();
+     OptimizedMoveListener moveDispatcher =
+         context.serviceRegistry().find(OptimizedMoveListener.class).orElse(null);
+     if (moveDispatcher != null) {
+@@ -283,11 +295,6 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+     new NationStatusBarCommand(statusBarService, this, messageService, context.plugin());
+     context.plugin().getLogger().info("STARCORE Nation StatusBar initialized.");
+ 
+-    NationCreationRecovery.recover(
+-        stateStorage, creationJournal, economyService, context.plugin().getLogger());
+-    NationSplitRecovery.recover(territoryService, stateStorage, splitJournal);
+-    loadState();
+-
+     // 刷新所有国家的缓存数据
+     refreshAllNationCaches();
+ 
+@@ -342,6 +349,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+ 
+   @Override
+   public void disable(StarCoreContext context) {
++    if (lifecycleCommand != null) lifecycleCommand.shutdown();
+     // 停止定时缓存刷新任务
+     stopCacheRefreshTask();
+     if (territoryEnterListener != null) {
+@@ -376,7 +384,11 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+     }
+     synchronized (this) {
+       try {
+-        if (!experienceAuthorityUnavailable) flushState();
++        if (!experienceAuthorityUnavailable
++            && creations.values().stream().noneMatch(op -> op.state().pending())
++            && creationJournal.load().isEmpty()
++            && splitJournal.load().isEmpty()
++            && disbandJournal.load().isEmpty()) flushState();
+       } finally {
+         experienceAuthorityUnavailable = true;
+       }
+@@ -384,89 +396,190 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+   }
+ 
+   @Override
+-  public synchronized Nation createNation(UUID founderId, String founderName, String nationName) {
+-    playerProfiles.recordSeen(founderId, founderName);
+-    if (membership.containsKey(founderId)) {
+-      throw new IllegalStateException(msg("nation.service.already-in-nation-create"));
+-    }
+-    if (foundedCount(founderId, NationKind.NATION) >= configuration.maxNationsPerPlayer()) {
++  public synchronized Nation createNation(UUID founderId, String founderName, String name) {
++    return createLegacy(founderId, founderName, name, NationKind.NATION);
++  }
++
++  @Override
++  public synchronized Nation createCityState(UUID founderId, String founderName, String name) {
++    return createLegacy(founderId, founderName, name, NationKind.CITY_STATE);
++  }
++
++  private Nation createLegacy(UUID founderId, String founderName, String name, NationKind kind) {
++    requireCreationAuthority();
++    loadState();
++    UUID id =
++        creations.values().stream()
++            .filter(
++                op ->
++                    op.state().pending()
++                        && op.request().founderId().equals(founderId)
++                        && op.request().founderName().equals(founderName)
++                        && op.request().name().equals(name)
++                        && op.request().kind() == kind)
++            .map(op -> op.request().operationId())
++            .findFirst()
++            .orElseGet(UUID::randomUUID);
++    var result = create(new NationCreationService.Request(id, founderId, founderName, name, kind));
++    if (result.state() != NationCreationService.State.CREATED)
+       throw new IllegalStateException(
+-          msg("nation.service.max-nations", configuration.maxNationsPerPlayer()));
+-    }
+-    String normalized = normalizeNationName(nationName);
+-    if (names.containsKey(normalized)) {
+-      throw new IllegalStateException(msg("nation.service.duplicate-name"));
+-    }
++          "Nation creation " + result.request().operationId() + ": " + result.detail());
++    return nationById(result.nationId())
++        .orElseThrow(() -> new IllegalStateException("Previously created nation no longer exists"));
++  }
+ 
+-    Properties before = stateProperties();
+-    Nation nation =
+-        new Nation(NationId.random(), nationName, founderId, founderName, NationKind.NATION, null);
+-    NationCreationTransaction transaction =
+-        prepareCreationTransaction(nation, founderId, configuration.nationCreateCost());
++  @Override
++  public synchronized NationCreationService.Receipt create(NationCreationService.Request request) {
++    Objects.requireNonNull(request);
++    return creationAction(
++        coordinator -> coordinator.create(request, catalog -> admitCreation(request, catalog)));
++  }
++
++  private NationCreationOperation admitCreation(
++      NationCreationService.Request request, List<Nation> catalog) {
++    if (playerProfiles != null)
++      playerProfiles.recordSeen(request.founderId(), request.founderName());
++    String name = normalizeNationName(request.name());
++    if (catalog.stream().anyMatch(n -> normalizeNationName(n.name()).equals(name)))
++      throw new IllegalStateException(msg("nation.service.duplicate-name"));
++    Nation parent = null;
++    if (request.kind() == NationKind.NATION) {
++      if (catalog.stream()
++          .anyMatch(n -> n.kind() == NationKind.NATION && n.hasMember(request.founderId())))
++        throw new IllegalStateException(msg("nation.service.already-in-nation-create"));
++      if (catalog.stream()
++              .filter(
++                  n -> n.kind() == NationKind.NATION && n.founderId().equals(request.founderId()))
++              .count()
++          >= configuration.maxNationsPerPlayer())
++        throw new IllegalStateException(
++            msg("nation.service.max-nations", configuration.maxNationsPerPlayer()));
++    } else {
++      parent =
++          catalog.stream()
++              .filter(n -> n.kind() == NationKind.NATION && n.hasMember(request.founderId()))
++              .findFirst()
++              .orElseThrow(
++                  () -> new IllegalStateException(msg("nation.service.city-parent-required")));
++      if (!parent.founderId().equals(request.founderId()))
++        throw new IllegalStateException(msg("nation.service.leader-city-only"));
++      if (catalog.stream()
++              .filter(
++                  n ->
++                      n.kind() == NationKind.CITY_STATE
++                          && n.founderId().equals(request.founderId()))
++              .count()
++          >= configuration.maxCityStatesPerPlayer())
++        throw new IllegalStateException(
++            msg("nation.service.max-city-states-player", configuration.maxCityStatesPerPlayer()));
++      NationId parentId = parent.id();
++      if (catalog.stream().filter(n -> parentId.equals(n.parentNationId())).count()
++          >= configuration.maxCityStatesPerNation())
++        throw new IllegalStateException(
++            msg("nation.service.max-city-states-nation", configuration.maxCityStatesPerNation()));
++    }
++    BigDecimal cost =
++        request.kind() == NationKind.NATION
++            ? configuration.nationCreateCost()
++            : configuration.cityStateCreateCost();
++    return new NationCreationOperation(
++        request,
++        NationId.random(),
++        parent == null ? null : parent.id(),
++        java.time.Instant.ofEpochMilli(System.currentTimeMillis()),
++        cost == null ? BigDecimal.ZERO : cost,
++        NationCreationService.State.PREPARED,
++        0,
++        "prepared");
++  }
++
++  private NationCreationService.Receipt creationAction(
++      java.util.function.Function<NationCreationCoordinator, NationCreationService.Receipt>
++          action) {
++    requireCreationAuthority();
++    creationExecuting = true;
+     try {
+-      chargeCreation(transaction, msg("nation.service.action-create-nation"));
+-      nationsById.put(nation.id(), nation);
+-      names.put(normalized, nation.id());
+-      membership.put(founderId, nation.id());
+-      stateStorage.save(stateProperties());
+-      if (transaction != null) {
+-        creationJournal.clear();
++      return action.apply(
++          new NationCreationCoordinator(stateStorage, economyService, this::applySnapshot));
++    } finally {
++      try {
++        loadState();
++      } catch (RuntimeException failure) {
++        experienceAuthorityUnavailable = true;
++        throw failure;
++      } finally {
++        creationExecuting = false;
+       }
+-      return nation;
+-    } catch (RuntimeException failure) {
+-      recoverFailedCreation(before, transaction, failure);
+-      throw failure;
+     }
+   }
+ 
+   @Override
+-  public synchronized Nation createCityState(
+-      UUID founderId, String founderName, String cityStateName) {
+-    playerProfiles.recordSeen(founderId, founderName);
+-    Nation parentNation =
+-        nationOf(founderId)
+-            .orElseThrow(
+-                () -> new IllegalStateException(msg("nation.service.city-parent-required")));
+-    if (!parentNation.founderId().equals(founderId)) {
+-      throw new IllegalStateException(msg("nation.service.leader-city-only"));
+-    }
+-    if (foundedCount(founderId, NationKind.CITY_STATE) >= configuration.maxCityStatesPerPlayer()) {
+-      throw new IllegalStateException(
+-          msg("nation.service.max-city-states-player", configuration.maxCityStatesPerPlayer()));
+-    }
+-    if (cityStatesOf(parentNation.id()).size() >= configuration.maxCityStatesPerNation()) {
+-      throw new IllegalStateException(
+-          msg("nation.service.max-city-states-nation", configuration.maxCityStatesPerNation()));
+-    }
+-    String normalized = normalizeNationName(cityStateName);
+-    if (names.containsKey(normalized)) {
+-      throw new IllegalStateException(msg("nation.service.duplicate-name"));
+-    }
++  public synchronized Optional<NationCreationService.Receipt> creation(UUID id) {
++    requireCreationAuthority();
++    loadState();
++    return Optional.ofNullable(creations.get(Objects.requireNonNull(id)))
++        .map(NationCreationOperation::receipt);
++  }
+ 
+-    Properties before = stateProperties();
+-    Nation cityState =
+-        new Nation(
+-            NationId.random(),
+-            cityStateName,
+-            founderId,
+-            founderName,
+-            NationKind.CITY_STATE,
+-            parentNation.id());
+-    cityState.setGovernmentType(GovernmentType.REPUBLIC);
+-    NationCreationTransaction transaction =
+-        prepareCreationTransaction(cityState, founderId, configuration.cityStateCreateCost());
+-    try {
+-      chargeCreation(transaction, msg("nation.service.action-create-city-state"));
+-      nationsById.put(cityState.id(), cityState);
+-      names.put(normalized, cityState.id());
+-      stateStorage.save(stateProperties());
+-      if (transaction != null) {
+-        creationJournal.clear();
++  @Override
++  public synchronized List<NationCreationService.Receipt> pendingCreations() {
++    requireCreationAuthority();
++    loadState();
++    return creations.values().stream()
++        .filter(op -> op.state().pending())
++        .map(NationCreationOperation::receipt)
++        .toList();
++  }
++
++  @Override
++  public synchronized NationCreationService.Receipt recoverCreation(UUID id) {
++    return creationAction(coordinator -> coordinator.recover(id, true));
++  }
++
++  @Override
++  public synchronized NationCreationService.Receipt cancelCreation(UUID id) {
++    return creationAction(coordinator -> coordinator.cancel(id));
++  }
++
++  private void requireCreationAuthority() {
++    if (experienceAuthorityUnavailable
++        || creationExecuting
++        || stateStorage == null
++        || economyService == null)
++      throw new IllegalStateException("Nation creation authority unavailable");
++    requireLegacyRecoveryComplete();
++  }
++
++  private void requireLegacyRecoveryComplete() {
++    if (creationJournal.load().isPresent()
++        || splitJournal.load().isPresent()
++        || disbandJournal.load().isPresent())
++      throw new IllegalStateException("Legacy nation lifecycle recovery pending");
++  }
++
++  private void requireLifecycleReady() {
++    requireLegacyRecoveryComplete();
++    if (experienceAuthorityUnavailable
++        || creationExecuting
++        || creations.values().stream().anyMatch(op -> op.state().pending()))
++      throw new IllegalStateException("Nation lifecycle recovery pending");
++  }
++
++  private void recoverCreationOnStartup() {
++    if (creations.values().stream().noneMatch(op -> op.state().pending())) return;
++    for (UUID id : List.copyOf(creations.keySet())) {
++      if (!creations.get(id).state().pending()) continue;
++      try {
++        creationAction(coordinator -> coordinator.recover(id, false));
++      } catch (RuntimeException failure) {
++        context
++            .plugin()
++            .getLogger()
++            .log(
++                java.util.logging.Level.SEVERE,
++                "Nation creation recovery pending " + id + "; use /nation recovery",
++                failure);
+       }
+-      return cityState;
+-    } catch (RuntimeException failure) {
+-      recoverFailedCreation(before, transaction, failure);
+-      throw failure;
+     }
+   }
+ 
+@@ -494,6 +607,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+       String newNationName,
+       Collection<ChunkCoordinate> coordinates,
+       int minimumRemainingClaims) {
++    requireLifecycleReady();
+     if (territoryService == null || stateStorage == null) {
+       throw new IllegalStateException("Nation module is not ready for nation splits");
+     }
+@@ -506,7 +620,8 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+             splitJournal,
+             context == null
+                 ? java.util.logging.Logger.getLogger(NationSplitCoordinator.class.getName())
+-                : context.plugin().getLogger())
++                : context.plugin().getLogger(),
++            creations)
+         .split(sourceNationId, newFounderId, newNationName, coordinates, minimumRemainingClaims);
+   }
+ 
+@@ -525,7 +640,8 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+   }
+ 
+   @Override
+-  public boolean unclaimCurrentChunk(UUID playerId, String world, int x, int z) {
++  public synchronized boolean unclaimCurrentChunk(UUID playerId, String world, int x, int z) {
++    requireLifecycleReady();
+     Nation nation =
+         nationOf(playerId)
+             .orElseThrow(() -> new IllegalStateException(msg("nation.service.no-nation")));
+@@ -824,7 +940,9 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+   }
+ 
+   @Override
+-  public ClaimSelectionResult claimSelection(UUID playerId, ChunkClaimSelection selection) {
++  public synchronized ClaimSelectionResult claimSelection(
++      UUID playerId, ChunkClaimSelection selection) {
++    requireLifecycleReady();
+     ClaimSelectionPreview preview = previewClaimSelection(playerId, selection);
+     if (!preview.canSubmit()) {
+       throw new IllegalStateException(preview.message());
+@@ -882,6 +1000,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+ 
+   @Override
+   public synchronized boolean addMember(NationId nationId, UUID playerId, String playerName) {
++    requireLifecycleReady();
+     Nation nation = nationsById.get(nationId);
+     if (nation == null || membership.containsKey(playerId)) {
+       return false;
+@@ -902,6 +1021,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+ 
+   @Override
+   public synchronized boolean removeMember(NationId nationId, UUID playerId) {
++    requireLifecycleReady();
+     Nation nation = nationsById.get(nationId);
+     if (nation == null) {
+       return false;
+@@ -918,6 +1038,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+ 
+   @Override
+   public synchronized boolean setMemberRank(NationId nationId, UUID playerId, String rank) {
++    requireLifecycleReady();
+     Nation nation = nationsById.get(nationId);
+     if (nation == null || !nation.hasMember(playerId)) {
+       return false;
+@@ -930,6 +1051,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+ 
+   @Override
+   public synchronized boolean renameNation(NationId nationId, String newName) {
++    requireLifecycleReady();
+     Nation nation = nationsById.get(nationId);
+     if (nation == null) {
+       return false;
+@@ -950,6 +1072,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+   @Override
+   public synchronized boolean transferOwnership(
+       NationId nationId, UUID currentOwnerId, UUID newOwnerId, String newOwnerName) {
++    requireLifecycleReady();
+     Nation nation = nationsById.get(nationId);
+     if (nation == null) {
+       return false;
+@@ -1009,6 +1132,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+ 
+   @Override
+   public synchronized boolean addExperience(NationId nationId, long amount) {
++    requireLifecycleReady();
+     if (amount <= 0L) {
+       return false;
+     }
+@@ -1039,7 +1163,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+   }
+ 
+   @Override
+-  public synchronized Receipt grantExperience(Grant grant) {
++  public synchronized NationExperienceService.Receipt grantExperience(Grant grant) {
+     Objects.requireNonNull(grant);
+     if (experienceAuthorityUnavailable || stateStorage == null)
+       throw new IllegalStateException("Nation experience authority unavailable");
+@@ -1058,7 +1182,9 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+       throw new IllegalStateException(
+           "Nation lifecycle recovery must finish before new experience grants");
+     Properties before = stateProperties();
+-    var receipt = new Receipt(grant, java.time.Instant.ofEpochMilli(System.currentTimeMillis()));
++    var receipt =
++        new NationExperienceService.Receipt(
++            grant, java.time.Instant.ofEpochMilli(System.currentTimeMillis()));
+     nation.setExperience(Math.addExact(nation.experience(), grant.amount()));
+     nation.retainExperienceReceipt(receipt);
+     Properties candidate = stateProperties();
+@@ -1093,7 +1219,8 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+   }
+ 
+   @Override
+-  public synchronized Optional<Receipt> experienceReceipt(NationId nationId, String transactionId) {
++  public synchronized Optional<NationExperienceService.Receipt> experienceReceipt(
++      NationId nationId, String transactionId) {
+     if (experienceAuthorityUnavailable || stateStorage == null)
+       throw new IllegalStateException("Nation experience authority unavailable");
+     var nation = nationsById.get(Objects.requireNonNull(nationId));
+@@ -1164,6 +1291,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+ 
+   @Override
+   public synchronized void saveState() {
++    requireLifecycleReady();
+     if (stateStorage == null) {
+       return;
+     }
+@@ -1180,7 +1308,9 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+   private Properties stateProperties() {
+     if (experienceAuthorityUnavailable)
+       throw new IllegalStateException("Nation experience authority unavailable; reload required");
+-    return NationStateCodec.toProperties(nationsById.values());
++    if (creations.values().stream().anyMatch(op -> op.state().pending()))
++      throw new IllegalStateException("Nation creation recovery pending");
++    return NationStateCodec.toProperties(nationsById.values(), creations);
+   }
+ 
+   @Override
+@@ -1193,7 +1323,13 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+   }
+ 
+   private void applyState(Properties properties) {
+-    List<Nation> validated = NationStateCodec.fromProperties(properties);
++    applySnapshot(NationStateCodec.snapshot(properties));
++  }
++
++  private void applySnapshot(NationStateCodec.Snapshot snapshot) {
++    List<Nation> validated = snapshot.nations();
++    creations.clear();
++    creations.putAll(snapshot.creations());
+     nationsById.clear();
+     names.clear();
+     membership.clear();
+@@ -1243,52 +1379,6 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+     }
+   }
+ 
+-  private NationCreationTransaction prepareCreationTransaction(
+-      Nation nation, UUID founderId, BigDecimal cost) {
+-    if (cost == null || cost.signum() <= 0) {
+-      return null;
+-    }
+-    return new NationCreationTransaction(
+-        UUID.randomUUID(),
+-        nation.id(),
+-        nation.kind(),
+-        founderId,
+-        cost,
+-        economyService.balance(founderId));
+-  }
+-
+-  private void chargeCreation(NationCreationTransaction transaction, String actionName) {
+-    if (transaction == null) {
+-      return;
+-    }
+-    creationJournal.save(transaction);
+-    if (!economyService.withdraw(transaction.founderId(), transaction.cost(), true)) {
+-      creationJournal.clear();
+-      throw new IllegalStateException(
+-          msg("nation.service.insufficient-action-balance", actionName, transaction.cost()));
+-    }
+-  }
+-
+-  private void recoverFailedCreation(
+-      Properties before, NationCreationTransaction transaction, RuntimeException failure) {
+-    applyState(before);
+-    if (transaction == null) {
+-      return;
+-    }
+-    try {
+-      NationCreationRecovery.recover(
+-          stateStorage,
+-          creationJournal,
+-          economyService,
+-          context == null
+-              ? java.util.logging.Logger.getLogger(NationModule.class.getName())
+-              : context.plugin().getLogger());
+-      applyState(stateStorage.load());
+-    } catch (RuntimeException recoveryFailure) {
+-      failure.addSuppressed(recoveryFailure);
+-    }
+-  }
+-
+   private void commitCriticalState(Properties before) {
+     try {
+       stateStorage.save(stateProperties());
+@@ -1763,6 +1853,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+ 
+   private boolean disbandNationInternal(
+       NationId nationId, UUID disbanderId, boolean administrator) {
++    requireLifecycleReady();
+     Nation root = nationsById.get(nationId);
+     if (root == null) {
+       return false;
+@@ -2023,6 +2114,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+    * @param rate 税率 (0.0 - 1.0)
+    */
+   public synchronized void setTaxRate(NationId nationId, double rate) {
++    requireLifecycleReady();
+     Nation nation = nationsById.get(nationId);
+     if (nation != null) {
+       double clampedRate = Math.max(0.0, Math.min(1.0, rate));
+@@ -2044,6 +2136,7 @@ public final class NationModule implements StarCoreModule, NationService, Nation
+ 
+   @Override
+   public synchronized boolean updateGovernmentType(NationId nationId, GovernmentType type) {
++    requireLifecycleReady();
+     Nation nation = nationsById.get(nationId);
+     if (nation != null && type != null) {
+       Properties before = stateProperties();
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java b/src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java
+index 44918d1..2662160 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java
+@@ -28,6 +28,7 @@ final class NationSplitCoordinator {
+   private final NationStateStorage storage;
+   private final NationSplitJournal journal;
+   private final Logger logger;
++  private final Map<UUID, NationCreationOperation> creations;
+ 
+   NationSplitCoordinator(
+       Map<NationId, Nation> nations,
+@@ -56,6 +57,18 @@ final class NationSplitCoordinator {
+       NationStateStorage storage,
+       NationSplitJournal journal,
+       Logger logger) {
++    this(nations, names, membership, territories, storage, journal, logger, Map.of());
++  }
++
++  NationSplitCoordinator(
++      Map<NationId, Nation> nations,
++      Map<String, NationId> names,
++      Map<UUID, NationId> membership,
++      TerritoryService territories,
++      NationStateStorage storage,
++      NationSplitJournal journal,
++      Logger logger,
++      Map<UUID, NationCreationOperation> creations) {
+     this.nations = Objects.requireNonNull(nations, "nations");
+     this.names = Objects.requireNonNull(names, "names");
+     this.membership = Objects.requireNonNull(membership, "membership");
+@@ -63,6 +76,7 @@ final class NationSplitCoordinator {
+     this.storage = Objects.requireNonNull(storage, "storage");
+     this.journal = Objects.requireNonNull(journal, "journal");
+     this.logger = Objects.requireNonNull(logger, "logger");
++    this.creations = Map.copyOf(creations);
+   }
+ 
+   NationSplitOutcome split(
+@@ -82,6 +96,8 @@ final class NationSplitCoordinator {
+       throw new IllegalStateException(
+           "A previous nation split transaction still requires recovery");
+     }
++    if (creations.values().stream().anyMatch(op -> op.state().pending()))
++      throw new IllegalStateException("Nation creation recovery pending");
+ 
+     Nation source = nations.get(sourceId);
+     if (source == null) {
+@@ -119,9 +135,9 @@ final class NationSplitCoordinator {
+             previousMember.lastKnownName(),
+             NationKind.NATION,
+             null);
+-    Properties previousState = NationStateCodec.toProperties(nations.values());
++    Properties previousState = NationStateCodec.toProperties(nations.values(), creations);
+     applyCatalogChange(source, previousMember, created, normalizedName);
+-    Properties targetState = NationStateCodec.toProperties(nations.values());
++    Properties targetState = NationStateCodec.toProperties(nations.values(), creations);
+     restoreCatalog(source, previousMember, created, normalizedName);
+     NationSplitTransaction transaction =
+         NationSplitTransaction.prepared(
+@@ -160,7 +176,7 @@ final class NationSplitCoordinator {
+     }
+ 
+     try {
+-      storage.save(NationStateCodec.toProperties(nations.values()));
++      storage.save(NationStateCodec.toProperties(nations.values(), creations));
+     } catch (RuntimeException exception) {
+       compensateFailedSave(
+           source, previousMember, created, normalizedName, transfer, previousState, exception);
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationSplitRecovery.java b/src/main/java/dev/starcore/starcore/module/nation/NationSplitRecovery.java
+index cf85494..181578d 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationSplitRecovery.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationSplitRecovery.java
+@@ -1,40 +1,45 @@
+ package dev.starcore.starcore.module.nation;
+ 
+ import dev.starcore.starcore.foundation.territory.TerritoryService;
+-
+ import java.util.Objects;
+ 
+ final class NationSplitRecovery {
+-    private NationSplitRecovery() {
+-    }
++  private NationSplitRecovery() {}
+ 
+-    static void recover(
+-        TerritoryService territories,
+-        NationStateStorage storage,
+-        NationSplitJournal journal
+-    ) {
+-        Objects.requireNonNull(territories, "territories");
+-        Objects.requireNonNull(storage, "storage");
+-        Objects.requireNonNull(journal, "journal");
+-        NationSplitTransaction transaction = journal.load().orElse(null);
+-        if (transaction == null) {
+-            return;
+-        }
++  static void recover(
++      TerritoryService territories, NationStateStorage storage, NationSplitJournal journal) {
++    Objects.requireNonNull(territories, "territories");
++    Objects.requireNonNull(storage, "storage");
++    Objects.requireNonNull(journal, "journal");
++    NationSplitTransaction transaction = journal.load().orElse(null);
++    if (transaction == null) {
++      return;
++    }
+ 
+-        String sourceOwner = transaction.sourceNationId().toString();
+-        String targetOwner = transaction.targetNationId().toString();
+-        boolean allSource = transaction.coordinates().stream()
++    String sourceOwner = transaction.sourceNationId().toString();
++    String targetOwner = transaction.targetNationId().toString();
++    boolean allSource =
++        transaction.coordinates().stream()
+             .allMatch(coordinate -> territories.isOwnerOf(sourceOwner, coordinate));
+-        boolean allTarget = transaction.coordinates().stream()
++    boolean allTarget =
++        transaction.coordinates().stream()
+             .allMatch(coordinate -> territories.isOwnerOf(targetOwner, coordinate));
+-        if (!allSource && !allTarget) {
+-            throw new IllegalStateException(
+-                "Cannot recover nation split " + transaction.transactionId()
+-                    + ": territory ownership is mixed or belongs to a third party"
+-            );
+-        }
++    if (!allSource && !allTarget) {
++      throw new IllegalStateException(
++          "Cannot recover nation split "
++              + transaction.transactionId()
++              + ": territory ownership is mixed or belongs to a third party");
++    }
+ 
+-        storage.save(allTarget ? transaction.targetState() : transaction.previousState());
+-        journal.clear();
++    var current = storage.load();
++    if (!current.equals(transaction.previousState())
++        && !current.equals(transaction.targetState())) {
++      throw new IllegalStateException(
++          "Nation split recovery conflicts with a newer catalog; journal retained "
++              + transaction.transactionId());
+     }
++    var target = allTarget ? transaction.targetState() : transaction.previousState();
++    if (!current.equals(target)) storage.save(target);
++    journal.clear();
++  }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java b/src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java
+index 891612d..2622db6 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java
+@@ -95,6 +95,44 @@ final class NationStateCodec {
+   }
+ 
+   static List<Nation> fromProperties(Properties properties) {
++    return snapshot(properties).nations();
++  }
++
++  record Snapshot(List<Nation> nations, java.util.Map<UUID, NationCreationOperation> creations) {}
++
++  static Properties toProperties(
++      Collection<Nation> nations, java.util.Map<UUID, NationCreationOperation> creations) {
++    Properties result = toProperties(nations);
++    if (!creations.isEmpty()) {
++      NationCreationOperationCodec.write(result, creations);
++      result.setProperty(
++          "creationOperations.sha256", checksum(result, "creationOperations.sha256"));
++    }
++    return result;
++  }
++
++  static Snapshot snapshot(Properties properties) {
++    if (properties.stringPropertyNames().stream()
++        .noneMatch(k -> k.startsWith(NationCreationOperationCodec.PREFIX)))
++      return new Snapshot(legacyFromProperties(properties), java.util.Map.of());
++    if (!checksum(properties, "creationOperations.sha256")
++        .equals(properties.getProperty("creationOperations.sha256")))
++      throw new IllegalArgumentException("Nation creation snapshot checksum mismatch");
++    var operations = NationCreationOperationCodec.read(properties);
++    Properties catalog = new Properties();
++    properties.stringPropertyNames().stream()
++        .filter(k -> !k.startsWith(NationCreationOperationCodec.PREFIX))
++        .forEach(k -> catalog.setProperty(k, properties.getProperty(k)));
++    var nations = legacyFromProperties(catalog);
++    if (!toProperties(nations, operations).equals(properties)
++        || nations.stream().map(Nation::id).distinct().count() != nations.size()
++        || nations.stream().map(n -> n.name().trim().toLowerCase(Locale.ROOT)).distinct().count()
++            != nations.size())
++      throw new IllegalArgumentException("Incomplete nation creation authority");
++    return new Snapshot(nations, operations);
++  }
++
++  private static List<Nation> legacyFromProperties(Properties properties) {
+     boolean durable = properties.containsKey("experienceReceipts.version");
+     if (durable
+         && (!"1".equals(properties.getProperty("experienceReceipts.version"))
+@@ -226,11 +264,15 @@ final class NationStateCodec {
+   }
+ 
+   static String checksum(Properties properties) {
++    return checksum(properties, "experienceReceipts.sha256");
++  }
++
++  private static String checksum(Properties properties, String excluded) {
+     try {
+       var digest = java.security.MessageDigest.getInstance("SHA-256");
+       for (String key :
+           properties.stringPropertyNames().stream()
+-              .filter(k -> !k.equals("experienceReceipts.sha256"))
++              .filter(k -> !k.equals(excluded))
+               .sorted()
+               .toList()) {
+         for (String value : List.of(key, properties.getProperty(key))) {
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/PersistenceNationCreationJournal.java b/src/main/java/dev/starcore/starcore/module/nation/PersistenceNationCreationJournal.java
+index f9533a2..995db0d 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/PersistenceNationCreationJournal.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/PersistenceNationCreationJournal.java
+@@ -25,7 +25,8 @@ final class PersistenceNationCreationJournal implements NationCreationJournal {
+     Properties properties = persistence.loadProperties(namespace, FILE_NAME);
+     String transactionId = properties.getProperty("transactionId");
+     if (transactionId == null) {
+-      return Optional.empty();
++      if (properties.isEmpty()) return Optional.empty();
++      throw new IllegalStateException("Incomplete legacy nation creation journal");
+     }
+     try {
+       return Optional.of(
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java b/src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java
+index d5a0dab..b7cdae7 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java
+@@ -1,5 +1,6 @@
+ package dev.starcore.starcore.module.nation.command;
+ 
++import dev.starcore.starcore.module.nation.NationCreationService;
+ import dev.starcore.starcore.module.nation.NationService;
+ import dev.starcore.starcore.module.nation.model.Nation;
+ import dev.starcore.starcore.module.nation.model.NationMember;
+@@ -37,6 +38,11 @@ public final class NationLifecycleCommand implements CommandExecutor, TabComplet
+ 
+   private final Plugin plugin;
+   private final NationService nations;
++  private volatile boolean active = true;
++
++  public void shutdown() {
++    active = false;
++  }
+ 
+   public NationLifecycleCommand(Plugin plugin, NationService nations) {
+     this.plugin = plugin;
+@@ -46,10 +52,15 @@ public final class NationLifecycleCommand implements CommandExecutor, TabComplet
+   @Override
+   public boolean onCommand(
+       CommandSender sender, Command command, String label, String[] arguments) {
++    if (!active) {
++      sender.sendMessage("§c国家服务已停用。");
++      return true;
++    }
+     if (arguments.length == 0) {
+       return delegate(sender, new String[] {"menu"});
+     }
+     String subcommand = arguments[0].toLowerCase(Locale.ROOT);
++    if (subcommand.equals("recovery")) return recovery(sender, arguments);
+     if (!subcommand.equals("leave")
+         && !subcommand.equals("transfer")
+         && !subcommand.equals("disband")) {
+@@ -93,6 +104,64 @@ public final class NationLifecycleCommand implements CommandExecutor, TabComplet
+     return true;
+   }
+ 
++  private boolean recovery(CommandSender sender, String[] arguments) {
++    if (!sender.hasPermission("starcore.admin")) {
++      sender.sendMessage("§c需要 starcore.admin 权限。");
++      return true;
++    }
++    if (!(nations instanceof NationCreationService service)) {
++      sender.sendMessage("§c国家创建恢复服务不可用。");
++      return true;
++    }
++    try {
++      if (arguments.length == 1
++          || (arguments.length == 2 && arguments[1].equalsIgnoreCase("list"))) {
++        var pending = service.pendingCreations();
++        sender.sendMessage("§e待恢复创建: " + pending.size());
++        pending.forEach(
++            r ->
++                sender.sendMessage(
++                    r.request().operationId()
++                        + " "
++                        + r.request().name()
++                        + " "
++                        + r.state()
++                        + " "
++                        + r.cost()
++                        + " "
++                        + r.detail()));
++        return true;
++      }
++      if (arguments.length != 3 && arguments.length != 4) {
++        sender.sendMessage("§e/nation recovery <show|retry|cancel> <完整操作 UUID> [confirm]");
++        return true;
++      }
++      var id = java.util.UUID.fromString(arguments[2]);
++      String action = arguments[1].toLowerCase(Locale.ROOT);
++      if (action.equals("cancel")
++          && (arguments.length != 4 || !arguments[3].equalsIgnoreCase("confirm"))) {
++        sender.sendMessage(
++            "§e取消将按原编号核实扣款并退款，已完成创建不会撤销。执行 /nation recovery cancel " + id + " confirm");
++        return true;
++      }
++      NationCreationService.Receipt result =
++          switch (action) {
++            case "show" ->
++                service
++                    .creation(id)
++                    .orElseThrow(() -> new IllegalArgumentException("Unknown operation"));
++            case "retry" -> service.recoverCreation(id);
++            case "cancel" -> service.cancelCreation(id);
++            default -> throw new IllegalArgumentException("Use show, retry or cancel");
++          };
++      sender.sendMessage(
++          "§e" + result.request().operationId() + " " + result.state() + " " + result.detail());
++    } catch (RuntimeException failure) {
++      sender.sendMessage("§c创建恢复未完成: " + failure.getMessage());
++    }
++    return true;
++  }
++
+   private boolean transfer(Player player, String[] arguments) {
+     Nation nation = nations.nationOf(player.getUniqueId()).orElse(null);
+     if (nation == null) {
+@@ -163,9 +232,23 @@ public final class NationLifecycleCommand implements CommandExecutor, TabComplet
+   @Override
+   public List<String> onTabComplete(
+       CommandSender sender, Command command, String alias, String[] arguments) {
++    if (!active) return List.of();
+     if (arguments.length == 1) {
++      if (sender.hasPermission("starcore.admin")) {
++        var choices = new ArrayList<>(SUBCOMMANDS);
++        choices.add("recovery");
++        return prefixMatches(choices, arguments[0]);
++      }
+       return prefixMatches(SUBCOMMANDS, arguments[0]);
+     }
++    if (arguments[0].equalsIgnoreCase("recovery")) {
++      if (!sender.hasPermission("starcore.admin")) return List.of();
++      if (arguments.length == 2)
++        return prefixMatches(List.of("list", "show", "retry", "cancel"), arguments[1]);
++      if (arguments.length == 4 && arguments[1].equalsIgnoreCase("cancel"))
++        return prefixMatches(List.of("confirm"), arguments[3]);
++      return List.of();
++    }
+     if (arguments.length == 2
+         && arguments[0].equalsIgnoreCase("transfer")
+         && sender instanceof Player player) {
+diff --git a/src/test/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorageTest.java b/src/test/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorageTest.java
+index 3176e3c..ee7db1b 100644
+--- a/src/test/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorageTest.java
++++ b/src/test/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorageTest.java
+@@ -33,6 +33,97 @@ import org.sqlite.SQLiteDataSource;
+ class SqlBalanceStorageTest {
+   @TempDir Path tempDir;
+ 
++  @Test
++  void queuedSnapshotCannotUseRevisionLearnedFromLaterReload() {
++    SQLiteDataSource source = new SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + tempDir.resolve("queued-revision.db"));
++    var logger = Logger.getLogger("MoneyRevisionTest");
++    java.util.ArrayDeque<Runnable> tasks = new java.util.ArrayDeque<>();
++    var first =
++        new SqlBalanceStorage(() -> Optional.of(source), Properties::new, logger, tasks::add);
++    var second =
++        new SqlBalanceStorage(() -> Optional.of(source), Properties::new, logger, Runnable::run);
++    UUID account = UUID.randomUUID();
++    Properties initial = new Properties();
++    initial.setProperty(account.toString(), "100");
++    first.save(initial);
++    second.load();
++    Properties queued = new Properties();
++    queued.setProperty(account.toString(), "90");
++    first.saveAsync(queued);
++    second.saveAccount(account, new BigDecimal("120"));
++    assertThat(new BigDecimal(first.load().getProperty(account.toString())))
++        .isEqualByComparingTo("120");
++    tasks.remove().run();
++    assertThat(new BigDecimal(second.load().getProperty(account.toString())))
++        .isEqualByComparingTo("120");
++    Properties reconciled = first.load();
++    first.save(reconciled);
++    assertThat(new BigDecimal(second.load().getProperty(account.toString())))
++        .isEqualByComparingTo("120");
++  }
++
++  @Test
++  void staleSnapshotsAndAccountBatchesCannotOverwriteAnotherWriter() {
++    SQLiteDataSource source = new SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + tempDir.resolve("revision.db"));
++    var logger = Logger.getLogger("MoneyRevisionTest");
++    var first =
++        new SqlBalanceStorage(() -> Optional.of(source), Properties::new, logger, Runnable::run);
++    var second =
++        new SqlBalanceStorage(() -> Optional.of(source), Properties::new, logger, Runnable::run);
++    UUID account = UUID.randomUUID();
++    Properties initial = new Properties();
++    initial.setProperty(account.toString(), "100");
++    first.save(initial);
++    second.load();
++    second.saveAccount(account, new BigDecimal("120"));
++    assertThatThrownBy(() -> first.save(initial))
++        .hasRootCauseMessage("Stale player money snapshot revision");
++    assertThatThrownBy(() -> first.saveAccounts(Map.of(account, new BigDecimal("90"))))
++        .hasRootCauseMessage("Stale player money snapshot revision");
++    assertThat(new BigDecimal(first.load().getProperty(account.toString())))
++        .isEqualByComparingTo("120");
++    first.saveAccount(account, new BigDecimal("110"));
++    assertThat(new BigDecimal(second.load().getProperty(account.toString())))
++        .isEqualByComparingTo("110");
++  }
++
++  @Test
++  void missingPublishedBalancesCannotBeResurrectedFromLegacyFile() throws Exception {
++    SQLiteDataSource source = new SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + tempDir.resolve("missing-authority.db"));
++    Properties legacy = new Properties();
++    legacy.setProperty(UUID.randomUUID().toString(), "100");
++    var logger = Logger.getLogger("MoneyRevisionTest");
++    new SqlBalanceStorage(() -> Optional.of(source), () -> legacy, logger, Runnable::run).load();
++    try (var connection = source.getConnection();
++        var statement = connection.createStatement()) {
++      statement.executeUpdate("DELETE FROM starcore_player_balances");
++    }
++    assertThatThrownBy(
++            () ->
++                new SqlBalanceStorage(
++                        () -> Optional.of(source), () -> legacy, logger, Runnable::run)
++                    .load())
++        .hasRootCauseMessage("Missing published player money authority");
++  }
++
++  @Test
++  void publishedEmptyAuthorityDoesNotReimportLaterLegacyFile() {
++    SQLiteDataSource source = new SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + tempDir.resolve("empty-authority.db"));
++    var logger = Logger.getLogger("MoneyRevisionTest");
++    new SqlBalanceStorage(() -> Optional.of(source), Properties::new, logger, Runnable::run)
++        .save(new Properties());
++    Properties legacy = new Properties();
++    legacy.setProperty(UUID.randomUUID().toString(), "100");
++    assertThat(
++            new SqlBalanceStorage(() -> Optional.of(source), () -> legacy, logger, Runnable::run)
++                .load())
++        .isEmpty();
++  }
++
+   @Test
+   void updatesExistingBalanceInSqlite() {
+     SQLiteDataSource dataSource = new SQLiteDataSource();
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/NationCreationCoordinatorTest.java b/src/test/java/dev/starcore/starcore/module/nation/NationCreationCoordinatorTest.java
+new file mode 100644
+index 0000000..7aacfc4
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/nation/NationCreationCoordinatorTest.java
+@@ -0,0 +1,540 @@
++package dev.starcore.starcore.module.nation;
++
++import static dev.starcore.starcore.module.nation.NationCreationService.State.*;
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.core.scheduler.StarCoreScheduler;
++import dev.starcore.starcore.foundation.economy.InternalEconomyService;
++import dev.starcore.starcore.foundation.economy.PlayerMoneyService;
++import dev.starcore.starcore.module.nation.model.Nation;
++import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.nation.model.NationKind;
++import java.math.BigDecimal;
++import java.nio.file.Path;
++import java.time.Instant;
++import java.util.*;
++import java.util.logging.Logger;
++import org.bukkit.plugin.java.JavaPlugin;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.CsvSource;
++import org.junit.jupiter.params.provider.ValueSource;
++
++class NationCreationCoordinatorTest {
++  @TempDir Path directory;
++  final UUID founder = UUID.randomUUID();
++
++  @org.junit.jupiter.api.BeforeEach
++  void extensions() {
++    dev.starcore.starcore.core.extension.ExtensionRegistry.init(Logger.getLogger("CreationTest"));
++    dev.starcore.starcore.core.extension.ExtensionRegistry.getInstance().clear();
++  }
++
++  @Test
++  void sqliteWritersCannotReplaceCompletedCreationHistory() {
++    var fixture = fixture();
++    var source = new org.sqlite.SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + directory.resolve("nations.db"));
++    var logger = Logger.getLogger("CreationSqlTest");
++    var firstStorage = new SqlNationStateStorage(source, new Properties(), logger);
++    var staleStorage = new SqlNationStateStorage(source, new Properties(), logger);
++    var first = new NationCreationCoordinator(firstStorage, fixture.money);
++    var stale = new NationCreationCoordinator(staleStorage, fixture.money);
++    var operation = operation(founder, "First", NationKind.NATION, null);
++    var other = operation(UUID.randomUUID(), "Other", NationKind.NATION, null);
++    assertThat(first.create(operation.request(), ignored -> operation).state()).isEqualTo(CREATED);
++    assertThatThrownBy(() -> stale.create(other.request(), ignored -> other))
++        .isInstanceOf(NationStateConflictException.class);
++    var restarted =
++        new NationCreationCoordinator(
++            new SqlNationStateStorage(source, new Properties(), logger), fixture.money);
++    assertThat(restarted.recover(operation.request().operationId(), false).state())
++        .isEqualTo(CREATED);
++    assertThat(fixture.balance()).isEqualByComparingTo("900");
++    assertThat(fixture.money.moneyReceipt(other.debit().operationId())).isEmpty();
++  }
++
++  @Test
++  void separateSqlMoneyAuthoritiesSettleCancellationOnceAgainstLateCreator() {
++    var fixture = fixture();
++    var source = new org.sqlite.SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + directory.resolve("shared.db"));
++    var database = mock(dev.starcore.starcore.core.database.DatabaseService.class);
++    when(database.isRunning()).thenReturn(true);
++    when(database.dataSource()).thenReturn(Optional.of(source));
++    var logger = Logger.getLogger("CreationSharedSqlTest");
++    var firstMoney =
++        new InternalEconomyService(database, fixture.persistence, logger, Runnable::run);
++    firstMoney.start();
++    var secondMoney =
++        new InternalEconomyService(database, fixture.persistence, logger, Runnable::run);
++    secondMoney.start();
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    var storage = new SqlNationStateStorage(source, new Properties(), logger);
++    storage.load();
++    storage.save(
++        NationStateCodec.toProperties(
++            List.of(), Map.of(operation.request().operationId(), operation)));
++    var delayed =
++        new NationCreationCoordinator(
++            new SqlNationStateStorage(source, new Properties(), logger), firstMoney);
++    var canceller =
++        new NationCreationCoordinator(
++            new SqlNationStateStorage(source, new Properties(), logger), secondMoney);
++    assertThat(canceller.cancel(operation.request().operationId()).state()).isEqualTo(REFUNDED);
++    assertThatThrownBy(() -> delayed.recover(operation.request().operationId(), false))
++        .isInstanceOf(NationStateConflictException.class);
++    assertThat(firstMoney.moneyReceipt(operation.debit().operationId()))
++        .isEqualTo(secondMoney.moneyReceipt(operation.debit().operationId()));
++    assertThat(firstMoney.moneyReceipt(operation.refund().operationId()))
++        .isEqualTo(secondMoney.moneyReceipt(operation.refund().operationId()));
++    var reopened = new InternalEconomyService(database, fixture.persistence, logger, Runnable::run);
++    reopened.start();
++    assertThat(reopened.balance(founder)).isEqualByComparingTo("1000");
++    assertThat(NationStateCodec.snapshot(storage.load()).nations()).isEmpty();
++  }
++
++  @Test
++  void ordinaryIncomeFromAnotherSqlWriterCannotBeErasedByCreation() {
++    var fixture = fixture();
++    var source = new org.sqlite.SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + directory.resolve("income.db"));
++    var database = mock(dev.starcore.starcore.core.database.DatabaseService.class);
++    when(database.isRunning()).thenReturn(true);
++    when(database.dataSource()).thenReturn(Optional.of(source));
++    var logger = Logger.getLogger("CreationIncomeTest");
++    var firstMoney =
++        new InternalEconomyService(database, fixture.persistence, logger, Runnable::run);
++    firstMoney.start();
++    var otherMoney =
++        new InternalEconomyService(database, fixture.persistence, logger, Runnable::run);
++    otherMoney.start();
++    assertThat(otherMoney.deposit(founder, new BigDecimal("100"), true)).isTrue();
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    try {
++      new NationCreationCoordinator(fixture.storage(), firstMoney)
++          .create(operation.request(), ignored -> operation);
++    } catch (IllegalStateException conflict) {
++      /* a stale writer may require retry */
++    }
++    assertThat(
++            new NationCreationCoordinator(fixture.storage(), firstMoney)
++                .create(operation.request(), ignored -> operation)
++                .state())
++        .isEqualTo(CREATED);
++    var reopened = new InternalEconomyService(database, fixture.persistence, logger, Runnable::run);
++    reopened.start();
++    assertThat(reopened.balance(founder)).isEqualByComparingTo("1000");
++  }
++
++  @ParameterizedTest
++  @CsvSource({"1,false", "1,true", "2,false", "2,true"})
++  void everyCreationCatalogInterruptionReplaysOneCharge(int saveNumber, boolean after) {
++    var fixture = fixture();
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    var broken = new FaultStorage(fixture.storage());
++    broken.failAt = saveNumber;
++    broken.after = after;
++    broken.blockRead = true;
++    try {
++      new NationCreationCoordinator(broken, fixture.money)
++          .create(operation.request(), ignored -> operation);
++    } catch (IllegalStateException expected) {
++      /* restart is the recovery boundary */
++    }
++    var restarted = fixture.coordinator();
++    assertThat(restarted.create(operation.request(), ignored -> operation).state())
++        .isEqualTo(CREATED);
++    assertThat(fixture.balance()).isEqualByComparingTo("900");
++    assertThat(fixture.snapshot().nations()).hasSize(1);
++    assertThat(fixture.money.moneyReceipt(operation.debit().operationId())).isPresent();
++  }
++
++  @Test
++  void failedFinalWriteAndUnrelatedIncomeDoNotLosePaymentOrDoubleCharge() {
++    var fixture = fixture();
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    var broken = new FaultStorage(fixture.storage());
++    broken.failAt = 2;
++    assertThatThrownBy(
++            () ->
++                new NationCreationCoordinator(broken, fixture.money)
++                    .create(operation.request(), ignored -> operation))
++        .isInstanceOf(IllegalStateException.class);
++    fixture.money.deposit(founder, new BigDecimal("70.00"), true);
++    var restartedMoney = new InternalEconomyService(fixture.persistence);
++    restartedMoney.start();
++    assertThat(
++            new NationCreationCoordinator(fixture.storage(), restartedMoney)
++                .recover(operation.request().operationId(), false)
++                .state())
++        .isEqualTo(CREATED);
++    assertThat(restartedMoney.balance(founder)).isEqualByComparingTo("970");
++  }
++
++  @Test
++  void absentAndConflictingReceiptsCannotPublishNation() {
++    var fixture = fixture();
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    var absent = mock(PlayerMoneyService.class);
++    when(absent.moneyReceipt(any())).thenReturn(Optional.empty());
++    assertThatThrownBy(
++            () ->
++                new NationCreationCoordinator(fixture.storage(), absent)
++                    .create(operation.request(), ignored -> operation))
++        .hasMessageContaining("receipt unavailable");
++    assertThat(fixture.snapshot().nations()).isEmpty();
++    var wrong =
++        new PlayerMoneyService.Request(
++            operation.debit().operationId(),
++            UUID.randomUUID(),
++            PlayerMoneyService.Direction.CREDIT,
++            new BigDecimal("1"),
++            "other");
++    when(absent.moneyReceipt(any()))
++        .thenReturn(
++            Optional.of(
++                new PlayerMoneyService.Receipt(
++                    wrong, PlayerMoneyService.Status.APPLIED, BigDecimal.ZERO, BigDecimal.ONE, 1)));
++    assertThatThrownBy(
++            () ->
++                new NationCreationCoordinator(fixture.storage(), absent)
++                    .recover(operation.request().operationId(), false))
++        .hasMessageContaining("Conflicting");
++    assertThat(fixture.snapshot().nations()).isEmpty();
++    assertThat(fixture.snapshot().creations().get(operation.request().operationId()).state())
++        .isEqualTo(PREPARED);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void cancellationSealsOriginalDebitBeforeOrAfterItWasApplied(boolean charged) {
++    var fixture = fixture();
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    fixture.prepare(operation);
++    if (charged) fixture.money.applyMoney(operation.debit());
++    var delayed = fixture.coordinator();
++    assertThat(fixture.coordinator().cancel(operation.request().operationId()).state())
++        .isEqualTo(REFUNDED);
++    assertThat(fixture.balance()).isEqualByComparingTo("1000");
++    assertThatThrownBy(() -> delayed.create(operation.request(), ignored -> operation))
++        .isInstanceOf(NationStateConflictException.class);
++    assertThat(fixture.coordinator().create(operation.request(), ignored -> operation).state())
++        .isEqualTo(REFUNDED);
++    assertThat(fixture.coordinator().cancel(operation.request().operationId()).state())
++        .isEqualTo(REFUNDED);
++    assertThat(fixture.snapshot().nations()).isEmpty();
++    assertThat(fixture.balance()).isEqualByComparingTo("1000");
++  }
++
++  @ParameterizedTest
++  @CsvSource({"false,false", "false,true", "true,false", "true,true"})
++  void lostMoneyRepliesKeepOriginalDebitAndRefund(boolean refund, boolean readsUnavailable) {
++    var fixture = fixture();
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    fixture.prepare(operation);
++    var faulty =
++        new ReplyLossMoney(
++            fixture.money,
++            refund ? PlayerMoneyService.Direction.CREDIT : PlayerMoneyService.Direction.DEBIT);
++    faulty.blockReads = readsUnavailable;
++    var coordinator = new NationCreationCoordinator(fixture.storage(), faulty);
++    if (readsUnavailable) {
++      assertThatThrownBy(
++              () -> {
++                if (refund) coordinator.cancel(operation.request().operationId());
++                else coordinator.recover(operation.request().operationId(), false);
++              })
++          .isInstanceOf(IllegalStateException.class);
++    } else {
++      var result =
++          refund
++              ? coordinator.cancel(operation.request().operationId())
++              : coordinator.recover(operation.request().operationId(), false);
++      assertThat(result.state()).isEqualTo(refund ? REFUNDED : CREATED);
++    }
++    assertThat(fixture.coordinator().recover(operation.request().operationId(), false).state())
++        .isEqualTo(refund ? REFUNDED : CREATED);
++    assertThat(fixture.balance()).isEqualByComparingTo(refund ? "1000" : "900");
++  }
++
++  @Test
++  void retainedResultCannotResurrectDisbandedNationOrChargeAgain() {
++    var fixture = fixture();
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    fixture.coordinator().create(operation.request(), ignored -> operation);
++    var storage = fixture.storage();
++    var state = NationStateCodec.snapshot(storage.load());
++    storage.save(NationStateCodec.toProperties(List.of(), state.creations()));
++    assertThat(
++            fixture
++                .coordinator()
++                .create(
++                    operation.request(),
++                    ignored -> {
++                      throw new AssertionError();
++                    })
++                .state())
++        .isEqualTo(CREATED);
++    assertThat(fixture.snapshot().nations()).isEmpty();
++    assertThat(fixture.balance()).isEqualByComparingTo("900");
++  }
++
++  @Test
++  void rejectedDebitRemainsRejectedAfterNewIncome() {
++    var fixture = fixture();
++    fixture.money.withdraw(founder, new BigDecimal("1000"), true);
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    assertThat(fixture.coordinator().create(operation.request(), ignored -> operation).state())
++        .isEqualTo(REJECTED);
++    fixture.money.deposit(founder, new BigDecimal("1000"), true);
++    assertThat(fixture.coordinator().recover(operation.request().operationId(), true).state())
++        .isEqualTo(REJECTED);
++    assertThat(fixture.balance()).isEqualByComparingTo("1000");
++  }
++
++  @Test
++  void rejectedRefundNeedsExplicitNewAttemptAfterBalanceLimitClears() {
++    var fixture = fixture();
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    fixture.prepare(operation);
++    fixture.money.applyMoney(operation.debit());
++    fixture.money.deposit(
++        founder, PlayerMoneyService.MAX_BALANCE.subtract(fixture.balance()), true);
++    assertThat(fixture.coordinator().cancel(operation.request().operationId()).state())
++        .isEqualTo(REFUND_BLOCKED);
++    var blocked = fixture.snapshot().creations().get(operation.request().operationId());
++    assertThat(blocked.refundAttempt()).isZero();
++    fixture.money.withdraw(founder, new BigDecimal("100"), true);
++    assertThat(fixture.coordinator().recover(operation.request().operationId(), false).state())
++        .isEqualTo(REFUND_BLOCKED);
++    assertThat(fixture.coordinator().recover(operation.request().operationId(), true).state())
++        .isEqualTo(REFUNDED);
++    assertThat(fixture.balance()).isEqualByComparingTo(PlayerMoneyService.MAX_BALANCE);
++    assertThat(fixture.money.moneyReceipt(blocked.refund().operationId()).orElseThrow().status())
++        .isEqualTo(PlayerMoneyService.Status.BALANCE_LIMIT);
++    assertThat(
++            fixture.snapshot().creations().get(operation.request().operationId()).refundAttempt())
++        .isEqualTo(1);
++  }
++
++  @Test
++  void anotherWriterCannotOverwritePendingIntentOrChargeAnotherFounder() {
++    var fixture = fixture();
++    var first = operation(founder, "First", NationKind.NATION, null);
++    var second = operation(UUID.randomUUID(), "Second", NationKind.NATION, null);
++    var stale = fixture.coordinator();
++    fixture.prepare(first);
++    assertThatThrownBy(() -> stale.create(second.request(), ignored -> second))
++        .isInstanceOf(NationStateConflictException.class);
++    assertThat(fixture.money.moneyReceipt(second.debit().operationId())).isEmpty();
++    assertThat(fixture.snapshot().creations()).containsOnlyKeys(first.request().operationId());
++    assertThatThrownBy(() -> fixture.coordinator().create(second.request(), ignored -> second))
++        .hasMessageContaining("recovery pending");
++  }
++
++  @Test
++  void conflictingRequestCannotReuseOriginalOperationId() {
++    var fixture = fixture();
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    fixture.prepare(operation);
++    var different =
++        new NationCreationService.Request(
++            operation.request().operationId(), founder, "Founder", "Changed", NationKind.NATION);
++    assertThatThrownBy(() -> fixture.coordinator().create(different, ignored -> operation))
++        .hasMessageContaining("Conflicting");
++    assertThat(fixture.balance()).isEqualByComparingTo("1000");
++  }
++
++  @Test
++  void cityStateRestoresOriginalParentAndPriceAndPreservesExperienceReceipts() {
++    var fixture = fixture();
++    Nation parent = new Nation(NationId.random(), "Parent", founder, "Founder");
++    parent.addExperience(25);
++    parent.retainExperienceReceipt(
++        new NationExperienceService.Receipt(
++            new NationExperienceService.Grant("experience-original", parent.id(), 25),
++            Instant.ofEpochMilli(1000)));
++    var operation = operation(founder, "City", NationKind.CITY_STATE, parent.id());
++    var storage = fixture.storage();
++    storage.load();
++    storage.save(
++        NationStateCodec.toProperties(
++            List.of(parent), Map.of(operation.request().operationId(), operation)));
++    assertThat(fixture.coordinator().recover(operation.request().operationId(), false).state())
++        .isEqualTo(CREATED);
++    var snapshot = fixture.snapshot();
++    assertThat(snapshot.nations()).hasSize(2);
++    assertThat(
++            snapshot.nations().stream()
++                .filter(n -> n.id().equals(parent.id()))
++                .findFirst()
++                .orElseThrow()
++                .experienceReceipts())
++        .hasSize(1);
++    assertThat(
++            snapshot.nations().stream()
++                .filter(n -> n.id().equals(operation.nationId()))
++                .findFirst()
++                .orElseThrow()
++                .parentNationId())
++        .isEqualTo(parent.id());
++  }
++
++  @Test
++  void changedParentRefundsOriginalChargeWithoutCreatingOrphan() {
++    var fixture = fixture();
++    var operation = operation(founder, "City", NationKind.CITY_STATE, NationId.random());
++    fixture.prepare(operation);
++    assertThat(fixture.coordinator().recover(operation.request().operationId(), false).state())
++        .isEqualTo(REFUNDED);
++    assertThat(fixture.snapshot().nations()).isEmpty();
++    assertThat(fixture.balance()).isEqualByComparingTo("1000");
++  }
++
++  @Test
++  void freeCreationDoesNotCallMoneyAuthority() {
++    var fixture = fixture();
++    var priced = operation(founder, "Free", NationKind.NATION, null);
++    var free =
++        new NationCreationOperation(
++            priced.request(),
++            priced.nationId(),
++            null,
++            priced.foundedAt(),
++            BigDecimal.ZERO,
++            PREPARED,
++            0,
++            "prepared");
++    var money = mock(PlayerMoneyService.class);
++    assertThat(
++            new NationCreationCoordinator(fixture.storage(), money)
++                .create(free.request(), ignored -> free)
++                .state())
++        .isEqualTo(CREATED);
++    verifyNoInteractions(money);
++  }
++
++  @Test
++  void incompleteOrAlteredCreationSnapshotCannotLoad() {
++    var operation = operation(founder, "Nation", NationKind.NATION, null);
++    var properties =
++        NationStateCodec.toProperties(
++            List.of(), Map.of(operation.request().operationId(), operation));
++    assertThat(NationStateCodec.snapshot(properties).creations()).hasSize(1);
++    properties.remove("creationOperations.version");
++    assertThatThrownBy(() -> NationStateCodec.snapshot(properties))
++        .isInstanceOf(IllegalArgumentException.class);
++  }
++
++  private NationCreationOperation operation(
++      UUID owner, String name, NationKind kind, NationId parent) {
++    return new NationCreationOperation(
++        new NationCreationService.Request(UUID.randomUUID(), owner, "Founder", name, kind),
++        NationId.random(),
++        parent,
++        Instant.ofEpochMilli(1000),
++        new BigDecimal("100"),
++        PREPARED,
++        0,
++        "prepared");
++  }
++
++  private Fixture fixture() {
++    var plugin = mock(JavaPlugin.class);
++    when(plugin.getDataFolder()).thenReturn(directory.toFile());
++    when(plugin.getLogger()).thenReturn(Logger.getLogger("CreationTest"));
++    var persistence = new PersistenceService(plugin, mock(StarCoreScheduler.class));
++    persistence.start();
++    var money = new InternalEconomyService(persistence);
++    money.start();
++    money.deposit(founder, new BigDecimal("1000"), true);
++    return new Fixture(persistence, money);
++  }
++
++  private final class Fixture {
++    final PersistenceService persistence;
++    final InternalEconomyService money;
++
++    Fixture(PersistenceService persistence, InternalEconomyService money) {
++      this.persistence = persistence;
++      this.money = money;
++    }
++
++    NationStateStorage storage() {
++      return new PersistenceNationStateStorage("nation", persistence);
++    }
++
++    NationCreationCoordinator coordinator() {
++      return new NationCreationCoordinator(storage(), money);
++    }
++
++    BigDecimal balance() {
++      return money.balance(founder);
++    }
++
++    NationStateCodec.Snapshot snapshot() {
++      return NationStateCodec.snapshot(storage().load());
++    }
++
++    void prepare(NationCreationOperation operation) {
++      var storage = storage();
++      var before = NationStateCodec.snapshot(storage.load());
++      storage.save(
++          NationStateCodec.toProperties(
++              before.nations(), Map.of(operation.request().operationId(), operation)));
++    }
++  }
++
++  private static final class FaultStorage implements NationStateStorage {
++    final NationStateStorage delegate;
++    int saves, failAt;
++    boolean after, failed, blockRead;
++
++    FaultStorage(NationStateStorage delegate) {
++      this.delegate = delegate;
++    }
++
++    public Properties load() {
++      if (failed && blockRead) throw new IllegalStateException("read unavailable");
++      return delegate.load();
++    }
++
++    public void save(Properties state) {
++      boolean fail = ++saves == failAt;
++      if (!fail || after) delegate.save(state);
++      if (fail) {
++        failed = true;
++        throw new IllegalStateException("snapshot reply lost");
++      }
++    }
++  }
++
++  private static final class ReplyLossMoney implements PlayerMoneyService {
++    final PlayerMoneyService delegate;
++    final Direction direction;
++    boolean lost, blockReads;
++
++    ReplyLossMoney(PlayerMoneyService delegate, Direction direction) {
++      this.delegate = delegate;
++      this.direction = direction;
++    }
++
++    public Receipt applyMoney(Request request) {
++      var result = delegate.applyMoney(request);
++      if (!lost && request.direction() == direction) {
++        lost = true;
++        throw new IllegalStateException("money response lost");
++      }
++      return result;
++    }
++
++    public Optional<Receipt> moneyReceipt(UUID id) {
++      if (lost && blockReads) throw new IllegalStateException("money read unavailable");
++      return delegate.moneyReceipt(id);
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/NationCreationRecoveryTest.java b/src/test/java/dev/starcore/starcore/module/nation/NationCreationRecoveryTest.java
+index a9c4ef6..ccea5ff 100644
+--- a/src/test/java/dev/starcore/starcore/module/nation/NationCreationRecoveryTest.java
++++ b/src/test/java/dev/starcore/starcore/module/nation/NationCreationRecoveryTest.java
+@@ -39,51 +39,21 @@ class NationCreationRecoveryTest {
+     verify(economy, never()).deposit(founderId, COST, true);
+   }
+ 
+-  @Test
+-  void refundsExactlyOnceWhenChargeCommittedButNationStateDidNot() {
+-    UUID founderId = UUID.randomUUID();
+-    NationId nationId = NationId.random();
+-    RecordingJournal journal = journal(nationId, founderId);
+-    InternalEconomyService economy = mock(InternalEconomyService.class);
+-    when(economy.balance(founderId)).thenReturn(BEFORE.subtract(COST));
+-    when(economy.deposit(founderId, COST, true)).thenReturn(true);
+-
+-    NationCreationRecovery.recover(storage(new Properties()), journal, economy, logger());
+-    NationCreationRecovery.recover(storage(new Properties()), journal, economy, logger());
+-
+-    assertThat(journal.transaction).isNull();
+-    verify(economy).deposit(founderId, COST, true);
+-  }
+-
+-  @Test
+-  void clearsJournalWithoutRefundWhenChargeNeverCommitted() {
+-    UUID founderId = UUID.randomUUID();
+-    RecordingJournal journal = journal(NationId.random(), founderId);
+-    InternalEconomyService economy = mock(InternalEconomyService.class);
+-    when(economy.balance(founderId)).thenReturn(BEFORE);
+-
+-    NationCreationRecovery.recover(storage(new Properties()), journal, economy, logger());
+-
+-    assertThat(journal.transaction).isNull();
+-    verify(economy, never()).deposit(founderId, COST, true);
+-  }
+-
+-  @Test
+-  void refusesAmbiguousBalanceInsteadOfGuessingCompensation() {
++  @org.junit.jupiter.params.ParameterizedTest
++  @org.junit.jupiter.params.provider.ValueSource(strings = {"1000.00", "750.00", "900.00"})
++  void legacyBalanceCannotAuthorizeRefundOrDiscardEvidence(String current) {
+     UUID founderId = UUID.randomUUID();
+     RecordingJournal journal = journal(NationId.random(), founderId);
+     InternalEconomyService economy = mock(InternalEconomyService.class);
+-    when(economy.balance(founderId)).thenReturn(new BigDecimal("900.00"));
+-
++    when(economy.balance(founderId)).thenReturn(new BigDecimal(current));
+     assertThatThrownBy(
+             () ->
+                 NationCreationRecovery.recover(
+                     storage(new Properties()), journal, economy, logger()))
+         .isInstanceOf(IllegalStateException.class)
+-        .hasMessageContaining("Cannot safely recover nation creation payment");
+-
++        .hasMessageContaining("independent evidence");
+     assertThat(journal.transaction).isNotNull();
+-    verify(economy, never()).deposit(founderId, COST, true);
++    org.mockito.Mockito.verifyNoInteractions(economy);
+   }
+ 
+   private static RecordingJournal journal(NationId nationId, UUID founderId) {
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest.java b/src/test/java/dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest.java
+index be9ba06..788f398 100644
+--- a/src/test/java/dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest.java
++++ b/src/test/java/dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest.java
+@@ -44,6 +44,56 @@ class NationPlayerJourneyIntegrationTest {
+   private static final BigDecimal NATION_COST = new BigDecimal("500.00");
+   private static final BigDecimal CLAIM_COST = new BigDecimal("100.00");
+ 
++  @Test
++  void moneyCallbackCannotOverwriteIntentOrReenterCancellation() throws Exception {
++    UUID player = UUID.randomUUID();
++    var balances = new ConcurrentHashMap<UUID, BigDecimal>();
++    balances.put(player, new BigDecimal("1000"));
++    var economy = economy(balances);
++    var storage = new RecordingStorage();
++    var module =
++        module(
++            new InMemoryTerritoryService(new SilentPersistence()),
++            storage,
++            configuration(),
++            economy,
++            mock(PlayerProfileService.class));
++    var proofs =
++        new java.util.HashMap<
++            UUID, dev.starcore.starcore.foundation.economy.PlayerMoneyService.Receipt>();
++    when(economy.moneyReceipt(any()))
++        .thenAnswer(i -> java.util.Optional.ofNullable(proofs.get(i.getArgument(0))));
++    org.mockito.Mockito.doAnswer(
++            i -> {
++              var pending =
++                  NationStateCodec.snapshot(storage.load()).creations().values().iterator().next();
++              assertThatThrownBy(module::saveState).isInstanceOf(IllegalStateException.class);
++              assertThatThrownBy(() -> module.cancelCreation(pending.request().operationId()))
++                  .isInstanceOf(IllegalStateException.class);
++              assertThat(NationStateCodec.snapshot(storage.load()).creations())
++                  .containsKey(pending.request().operationId());
++              dev.starcore.starcore.foundation.economy.PlayerMoneyService.Request request =
++                  i.getArgument(0);
++              var proof =
++                  new dev.starcore.starcore.foundation.economy.PlayerMoneyService.Receipt(
++                      request,
++                      dev.starcore.starcore.foundation.economy.PlayerMoneyService.Status.APPLIED,
++                      new BigDecimal("1000"),
++                      new BigDecimal("500"),
++                      1);
++              proofs.put(request.operationId(), proof);
++              return proof;
++            })
++        .when(economy)
++        .applyMoney(any());
++    assertThat(module.createNation(player, "Founder", "Nation").name()).isEqualTo("Nation");
++    assertThat(NationStateCodec.snapshot(storage.load()).creations().values())
++        .allMatch(op -> op.state() == NationCreationService.State.CREATED);
++    module.disable(mock(StarCoreContext.class));
++    assertThatThrownBy(() -> module.createNation(UUID.randomUUID(), "Late", "Late"))
++        .isInstanceOf(IllegalStateException.class);
++  }
++
+   @Test
+   void threePlayerNationJourneySurvivesRestart() throws Exception {
+     Actor alice = new Actor(UUID.randomUUID(), "Alice");
+@@ -258,6 +308,40 @@ class NationPlayerJourneyIntegrationTest {
+               balances.merge(accountId, amount, BigDecimal::add);
+               return true;
+             });
++    var receipts =
++        new java.util.HashMap<
++            UUID, dev.starcore.starcore.foundation.economy.PlayerMoneyService.Receipt>();
++    when(economy.moneyReceipt(any(UUID.class)))
++        .thenAnswer(i -> java.util.Optional.ofNullable(receipts.get(i.getArgument(0))));
++    when(economy.applyMoney(any()))
++        .thenAnswer(
++            i -> {
++              dev.starcore.starcore.foundation.economy.PlayerMoneyService.Request r =
++                  i.getArgument(0);
++              if (receipts.containsKey(r.operationId())) return receipts.get(r.operationId());
++              BigDecimal before = balances.getOrDefault(r.accountId(), BigDecimal.ZERO);
++              boolean debit =
++                  r.direction()
++                      == dev.starcore.starcore.foundation.economy.PlayerMoneyService.Direction
++                          .DEBIT;
++              var status =
++                  debit && before.compareTo(r.amount()) < 0
++                      ? dev.starcore.starcore.foundation.economy.PlayerMoneyService.Status
++                          .INSUFFICIENT_FUNDS
++                      : dev.starcore.starcore.foundation.economy.PlayerMoneyService.Status.APPLIED;
++              BigDecimal after =
++                  status
++                          != dev.starcore.starcore.foundation.economy.PlayerMoneyService.Status
++                              .APPLIED
++                      ? before
++                      : debit ? before.subtract(r.amount()) : before.add(r.amount());
++              var proof =
++                  new dev.starcore.starcore.foundation.economy.PlayerMoneyService.Receipt(
++                      r, status, before, after, 1);
++              receipts.put(r.operationId(), proof);
++              balances.put(r.accountId(), after);
++              return proof;
++            });
+     return economy;
+   }
+ 
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/NationSplitJournalTest.java b/src/test/java/dev/starcore/starcore/module/nation/NationSplitJournalTest.java
+index f09617f..37f6229 100644
+--- a/src/test/java/dev/starcore/starcore/module/nation/NationSplitJournalTest.java
++++ b/src/test/java/dev/starcore/starcore/module/nation/NationSplitJournalTest.java
+@@ -275,6 +275,24 @@ class NationSplitJournalTest {
+     assertThat(journal.load()).isPresent();
+   }
+ 
++  @Test
++  void oldSplitSnapshotCannotEraseLaterRename() {
++    Nation source = nation("Source");
++    Nation target = nation("Target");
++    MemoryJournal journal = journal(source, target);
++    target.rename("Renamed after split");
++    Properties later = NationStateCodec.toProperties(List.of(source, target));
++    RecordingStorage storage = new RecordingStorage(later);
++    InMemoryTerritoryService territories = new InMemoryTerritoryService(new SilentPersistence());
++    territories.claim(target.id().toString(), first);
++    territories.claim(target.id().toString(), second);
++    assertThatIllegalStateException()
++        .isThrownBy(() -> NationSplitRecovery.recover(territories, storage, journal))
++        .withMessageContaining("newer catalog");
++    assertThat(storage.load()).isEqualTo(later);
++    assertThat(journal.load()).isPresent();
++  }
++
+   private MemoryJournal journal(Nation source, Nation target) {
+     MemoryJournal journal = new MemoryJournal();
+     journal.save(
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/command/NationCreationRecoveryCommandTest.java b/src/test/java/dev/starcore/starcore/module/nation/command/NationCreationRecoveryCommandTest.java
+new file mode 100644
+index 0000000..4c295de
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/nation/command/NationCreationRecoveryCommandTest.java
+@@ -0,0 +1,49 @@
++package dev.starcore.starcore.module.nation.command;
++
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.module.nation.NationCreationService;
++import dev.starcore.starcore.module.nation.NationService;
++import java.util.List;
++import java.util.UUID;
++import org.bukkit.command.CommandSender;
++import org.bukkit.plugin.Plugin;
++import org.junit.jupiter.api.Test;
++
++class NationCreationRecoveryCommandTest {
++  @Test
++  void permissionsProtectConsoleQueriesAndCancellation() {
++    var nations =
++        mock(NationService.class, withSettings().extraInterfaces(NationCreationService.class));
++    var service = (NationCreationService) nations;
++    var sender = mock(CommandSender.class);
++    var command = new NationLifecycleCommand(mock(Plugin.class), nations);
++    var id = UUID.randomUUID().toString();
++    command.onCommand(sender, null, "nation", new String[] {"recovery", "cancel", id, "confirm"});
++    verifyNoInteractions(nations);
++    when(sender.hasPermission("starcore.admin")).thenReturn(true);
++    command.onCommand(sender, null, "nation", new String[] {"recovery", "cancel", id});
++    verifyNoInteractions(nations);
++    when(service.pendingCreations()).thenReturn(List.of());
++    command.onCommand(sender, null, "nation", new String[] {"recovery", "list"});
++    verify(service).pendingCreations();
++    command.onCommand(sender, null, "nation", new String[] {"recovery", "retry", id});
++    verify(service).recoverCreation(UUID.fromString(id));
++    command.onCommand(sender, null, "nation", new String[] {"recovery", "cancel", id, "confirm"});
++    verify(service).cancelCreation(UUID.fromString(id));
++  }
++
++  @Test
++  void retiredCommandCannotRecoverOrForward() {
++    var nations =
++        mock(NationService.class, withSettings().extraInterfaces(NationCreationService.class));
++    var plugin = mock(Plugin.class);
++    var command = new NationLifecycleCommand(plugin, nations);
++    var sender = mock(CommandSender.class);
++    when(sender.hasPermission("starcore.admin")).thenReturn(true);
++    command.shutdown();
++    command.onCommand(sender, null, "nation", new String[] {"recovery", "list"});
++    command.onCommand(sender, null, "nation", new String[] {"create", "New"});
++    verifyNoInteractions(nations, plugin);
++  }
++}

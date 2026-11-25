@@ -2,11 +2,17 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
+## 2026-11-26 建国恢复与 SQL 资金版本检查点
+
+第十二份[建国/城邦补丁](upstream/CREATION-RECOVERY.md)实现原编号付款、取消/退款、终态记录和管理恢复入口；旧分裂快照拒绝覆盖新目录，SQL 普通收支与回执使用共同事务版本。1,322 项 Core 定向回归及实际最终 Core 下 StarSupply 177 项通过。圈地、完整国家生命周期跨实例协调、全仓干净 Core、最新 MySQL 和实服仍待验，生产 Folia 声明继续关闭，profile 未扩大。详见[证据](verification/workspace-creation-recovery-20261126.json)。
+
+当前 Core SHA-256：`F6B5BCF965CD2279B096A55D9961DDF00E3D1A5F5E428698293D8C12077DC91B`。世界和玩家存档未改动。下方为历史检查点。
+
 ## 2026-11-26 演习结算与经验恢复检查点
 
 第十一份[演习补丁](upstream/EXERCISE-RECOVERY.md)补齐保存、唯一结果、取消/超时/自动终止和国家经验回执恢复，修复命令权限、阵营统计与玩家实体线程。已加入实验后勤 profile，海军仍不在其中。1,238 项 Core 定向回归（演习/经验 87 项）及实际最终 Core 下 177 项配套测试通过；完整 Core 干净构建、MySQL 和实服多区域仍待验。没有启动服务器或改动世界/玩家存档，生产 Folia 声明继续关闭。详见[验证证据](verification/workspace-exercise-recovery-20261126.json)及[未闭环清单](CODE-CLOSURE.md)。
 
-当前 Core SHA-256：`B2B19F1F5EEDA9FC81A4085CC026A45C6A563427F42121282FB9E2DFA1BE48EA`。下方为此前构建的历史记录。
+演习检查点 Core SHA-256：`B2B19F1F5EEDA9FC81A4085CC026A45C6A563427F42121282FB9E2DFA1BE48EA`。下方为此前构建的历史记录。
 
 ## 2026-11-26 预算付款恢复检查点
 
