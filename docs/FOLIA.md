@@ -2,11 +2,17 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
+## 2026-11-26 圈地资金与领土回执检查点
+
+第十三份[圈地恢复补丁](upstream/CLAIM-RECOVERY.md)完成新圈地原报价/选区意图、资金原编号、整批领土原子回执、取消与退款恢复。1,666 项 Core 定向测试及实际最终 Core 下 StarSupply 177 项通过，详见[证据](verification/workspace-claim-recovery-20261126.json)。完整分裂/解散跨实例协议、圈地耐久通知、全仓干净 Core、最新 MySQL 和实服仍待验。生产 Folia 声明继续关闭，profile 未扩大，世界和玩家存档未改动。
+
+当前 Core SHA-256：`D5CBFE11C94883C098F1E768608DF0C41C8FA7B12CD99F8093CFDD22301A4DB0`。以下为历史检查点。
+
 ## 2026-11-26 建国恢复与 SQL 资金版本检查点
 
 第十二份[建国/城邦补丁](upstream/CREATION-RECOVERY.md)实现原编号付款、取消/退款、终态记录和管理恢复入口；旧分裂快照拒绝覆盖新目录，SQL 普通收支与回执使用共同事务版本。1,322 项 Core 定向回归及实际最终 Core 下 StarSupply 177 项通过。圈地、完整国家生命周期跨实例协调、全仓干净 Core、最新 MySQL 和实服仍待验，生产 Folia 声明继续关闭，profile 未扩大。详见[证据](verification/workspace-creation-recovery-20261126.json)。
 
-当前 Core SHA-256：`F6B5BCF965CD2279B096A55D9961DDF00E3D1A5F5E428698293D8C12077DC91B`。世界和玩家存档未改动。下方为历史检查点。
+创建恢复检查点 Core SHA-256：`F6B5BCF965CD2279B096A55D9961DDF00E3D1A5F5E428698293D8C12077DC91B`。世界和玩家存档未改动。下方为历史检查点。
 
 ## 2026-11-26 演习结算与经验恢复检查点
 
