@@ -1,0 +1,718 @@
+{
+  "recorded_date": "2026-11-25",
+  "kind": "workspace-development-and-regression-only",
+  "source_base_commit": "d066c731c27098bf2f4d10c6568b766267680463",
+  "scope": "Durable player credits/debits/refunds and automatic recovery for newly marked StarSupply transactions",
+  "artifacts": {
+    "starsupply": {
+      "path": "target/starsupply-0.1.0.jar",
+      "sha256": "9181545840F9900A92D00005B826EC4F6B9E58BE9785474E00495DC5559EE69F",
+      "bytes": 14688586
+    },
+    "core_companion": {
+      "path": "target/starcore-1.0.0.jar",
+      "sha256": "541E85710872D79FEF5F77F661A1259429CB71D72F0B4D724857E46D3429AB63",
+      "bytes": 19571323
+    }
+  },
+  "main_verify": {
+    "command": ".\\mvnw.cmd -o -B -ntp -DforkCount=0 verify",
+    "heap_mib": 192,
+    "completed_at": "2026-11-25T23:31:31+08:00",
+    "totals": {
+      "tests": 148,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": [
+      {
+        "suite": "dev.starsupply.bukkit.AsyncTasksTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B9760106F7589EF455325213AFC897C317E721552D8C3DABD4D75F67674D989E"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.EntityCallbacksTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ED734C970F166FA03B1334F85858B9C07EB318CEFAF7428D2BF6C8813378D1F6"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.InventoryTasksTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9C7DEA54A930DFC4C417B0650F0AF4F81F4A28E00FD86F22C21FC07FC969EBE3"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.InventoryFingerprintTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5B8D05B28F4765BD0CB63FF08DA25C1FCFC3A4C489B5B641BF93CC97D5E96E1D"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.PlayerDataReceiptTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F0B27D522C29ECA50837E787CF02724539CC647AA78BF62C7C1B37D0A7921A43"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.ResourceMappingConfigTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "80FC1EDA4AF9B354EAA26C2B5CEA03F36CEB6B5A8F0576DE6407546B7B7A8FD2"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.LifecycleGateTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "99834857230013F6F4F6528D84BD8172ED0765DC3B8B1150BE7DEC780195F2C7"
+      },
+      {
+        "suite": "dev.starsupply.integration.CampaignSiegeTargetTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "FBCC7CD6B31F62AB3C201740CB53E5C74089ECE8367D68D3E458D98C4DD81DED"
+      },
+      {
+        "suite": "dev.starsupply.integration.CoreInsurancePaymentTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D9BC9C3A541B06F890F2D24E49E37EB82DF9A08F144BB69EB3B2E28B56AAA4F3"
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePaymentTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "AE011AECE148EC2CB97F570C99186B1E6BA42F4D77C8163B7E8DC2FDD4875B98"
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePlayerMoneyTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8B869F11A3F28EB9FC55205A7F9DC153FC9093EC9EF8BF59E9F2C76B3ABA37ED"
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePremiumCreditTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "CFBC3113D58FF2A7C207C3E6AA39418DC7213EAB94AD16A2CDA4DBC0E29265EE"
+      },
+      {
+        "suite": "dev.starsupply.integration.NativeSupplyBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C74812947F261BAC003E42C11D8C4D2E3B4A5FBC1D8EB692825105017AF7F49D"
+      },
+      {
+        "suite": "dev.starsupply.integration.TemporaryMoraleBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "919CE9D436B8BCF0617258F37251E1B3C0B25E7FF828959124909F91F14B9836"
+      },
+      {
+        "suite": "dev.starsupply.route.RoutePlannerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C2BB300B4DCF9A088E75EA59931590585311C4AA78B07BF48E2F3D50558A8BF1"
+      },
+      {
+        "suite": "dev.starsupply.service.ArmySupplyRulesTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "704EB6AB0C7D26644B8DBACC0DF014F66FF6CB4F6A72C32B6C08905441C61A3F"
+      },
+      {
+        "suite": "dev.starsupply.service.CampaignRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "288D5F980B24238728785C84254F15E38E320292A94594E81679EC8B3342EE6D"
+      },
+      {
+        "suite": "dev.starsupply.service.CaravanInsuranceTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4B666516280576E8BBD7269CBC932F75349A99176BB5058E618DB881DDA487B5"
+      },
+      {
+        "suite": "dev.starsupply.service.MarketRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "27D8DBBB23800DD81AC8F1D15CEDA75562A4D08ADBD7E8C77FAF36272FFFB271"
+      },
+      {
+        "suite": "dev.starsupply.service.TavernServiceTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D6324B4118CD1077C474B0A4356161C6F5411687D773F8B0FC17CCBC5C58A0A0"
+      },
+      {
+        "suite": "dev.starsupply.storage.CampaignPersistenceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4FFB5DBDF458740392F443F2EA0895C80BE4A305ECFAC48C95BA842B9A390B27"
+      },
+      {
+        "suite": "dev.starsupply.storage.SqlTransactionsTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9E83B594D5D4C82F8FF5ADF95C1A80843C703E51B48067F81853CF3F73E79F74"
+      },
+      {
+        "suite": "dev.starsupply.storage.SupplyLifecycleTest",
+        "tests": 33,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C88F9093C18F4F8EC0D46CE66D4CDBE7773F943E09BCD69F5955F2EBF8C99ED7"
+      }
+    ]
+  },
+  "companion_regression": {
+    "command": ".\\tools\\test-player-money.ps1 -StarCoreJar <final-companion> -JavaHome <jdk21> -Offline",
+    "completed_at": "2026-11-25T23:40:31+08:00",
+    "actual_player_scenarios": 11,
+    "all_suite_count_includes_actual_and_fixture_authorities": true,
+    "pinned_maven_core_excluded": true,
+    "maven_repository_modified": false,
+    "totals": {
+      "tests": 159,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": [
+      {
+        "suite": "dev.starsupply.bukkit.AsyncTasksTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "77F6675350C7214C37C602C4B9EBFB041BB3D2AD877C363F4A5210C659D7A56B"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.EntityCallbacksTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "714DD3C6B225FD439AC59D065D175053B941BC529252483B97C2A3636F3522C5"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.InventoryTasksTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9C493285FD2177746BCE59BFD12CE1715AD3E1BA0C2609B0E56E381BFC1096BA"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.InventoryFingerprintTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "E3BCC201B6D08592690642253CB25C2EB5D406E6D36FE0A0745C658F5952D281"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.PlayerDataReceiptTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "24211CA5A409CFF23CA8AC7D966C982389E75DD414AF1D09ABD0B0005804D1A8"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.ResourceMappingConfigTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B848E116A8F6083D3F2484F45DE6D05BDA91FD034770DAE4DB02C74A86555BCA"
+      },
+      {
+        "suite": "dev.starsupply.bukkit.LifecycleGateTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "BCED7EA5479AF01AE480003736056946A9BD89E907B00BAE7726EEC9EAA757E5"
+      },
+      {
+        "suite": "dev.starsupply.integration.CampaignSiegeTargetTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "62FCCA8B07BF5E2CEEA221AC101DD4C17B95C4F01923767D980A25A6CDE2EADA"
+      },
+      {
+        "suite": "dev.starsupply.integration.CoreInsurancePaymentTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "DE7011A496E198E547C73B00FA450CF521B12401B3BA18460E787A7A8EDBD39F"
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePaymentTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A8338C9110031E011DEE43CE7233787B854189C46252ACFC6F6EFC5AFAC10F4A"
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePlayerMoneyTest",
+        "tests": 22,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "F7F901BDF2B81071B595A99EAB6D84DC0139D355D6A2F8144F6A055D66D4ABE0"
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePremiumCreditTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "52785C823203D9B88E6AFEB48A1ECA892618B824F50BEA770686FC5319577D45"
+      },
+      {
+        "suite": "dev.starsupply.integration.NativeSupplyBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "700F750C857A0D44E08AC00D3673C3AA15109EB70074D41DC323CEBD15BF639E"
+      },
+      {
+        "suite": "dev.starsupply.integration.TemporaryMoraleBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C9DAE59A09069B54B7FA06BCA6A9397EBDEDC9F5ABA3FF0BA707B9A1AC22586D"
+      },
+      {
+        "suite": "dev.starsupply.route.RoutePlannerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5BFB52B4DFF1B86276A694411D2550C9521F38EADFFD8F7B6671BFCE94CC0467"
+      },
+      {
+        "suite": "dev.starsupply.service.ArmySupplyRulesTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "CDCB5A51AAB1521FCD6C4244B16DBD39D2A2E6394F78830B57189FEAF7532047"
+      },
+      {
+        "suite": "dev.starsupply.service.CampaignRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0DB4B1F11BC22D6C9E185C65B43B408C9AEA91D77C3F2BEF34EB621492B369F0"
+      },
+      {
+        "suite": "dev.starsupply.service.CaravanInsuranceTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "FF625673E4700EC8C66E9972774DAF216F55E6A0465F15B098E34DDED8C762D9"
+      },
+      {
+        "suite": "dev.starsupply.service.MarketRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "CC30EF7329F38098723B7C1ED78FD34050E0F5D9DE7B89F0AC127ABB79BE4ABE"
+      },
+      {
+        "suite": "dev.starsupply.service.TavernServiceTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B5BB2A9110FCEAB316C9D0015906860E1FA27879C0D1B69D7A89B42CDE6D3FC4"
+      },
+      {
+        "suite": "dev.starsupply.storage.CampaignPersistenceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "22A2E545AC708F152C3E4B6BE148762D00AAF277CD8C7E6A8BA833E764A46610"
+      },
+      {
+        "suite": "dev.starsupply.storage.SqlTransactionsTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "49A239F1930AB1587EB4F591042E0F8E66843CB76279588DA703BDBB3552C4F0"
+      },
+      {
+        "suite": "dev.starsupply.storage.SupplyLifecycleTest",
+        "tests": 33,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2EA5854112259DADD0DF9DDABEA77C5DFD81A8DCCECFAB343D29F48C2DFB388E"
+      }
+    ]
+  },
+  "core_validation": {
+    "selected_selector": "PlayerMoneyReceiptTest,InternalEconomy*Test,SqlBalanceStorageTest,DatabaseAwareBalanceStorageTest,PublicApiCompatibilityTest",
+    "new_player_receipt_invocations": 17,
+    "completed_at": "2026-11-25T23:19:50+08:00",
+    "totals": {
+      "tests": 77,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": [
+      {
+        "suite": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "CBAB1F14792B1BE009E797B3D57E405D3A2F8A120831B4FED848541468D7B1AD"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.DatabaseAwareBalanceStorageTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "31FBAD117C1CAA45ED4E1610522769EEDDAA1FED500B05A9BB9E9BBA3B285502"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyAccountFailureTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D8B558C96131AA3BC910DA6ADC8568208EE2EF36A09E283AD246EFBDE90117DB"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyAsyncFailureTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1B77C981F71AE14BEEDA18826DE1B1014366C1C840339CA4E3F232C109C89AA2"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyDiagnosticsTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "43D402F14872147ECF5679C0B2FD90B7CE1D67217127934898C1EA0B3E21AB37"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyExtensionFailureDiagnosticsTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D82827AB0D90C65E7214EF33E1BF5FD4B2287C56E1D0E49BAD26F4C92E35C4BD"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyObservabilityTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5D616A9D7E8B4AA886FA66159507BB4F62B7B6FA2D2BC15A9BF14796D4735503"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyServiceTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "DD2A38D64E31A1E1999D4B86AC9E668C4282752EF106DB9DD4CF18EBFB2ACB37"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomySyncFailureTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "383D940E49EB09B2EB350D3510875CB916314CFF44FF9E8DA4EB70AF8B1EEA8B"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.InternalEconomyValidationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "67EFF07383C1DC810C18B6CC8FEC90568274A2DE707B6F843535B54703801344"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.PlayerMoneyReceiptTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C5FDFC895A29DA97D38515490DE813998A188738A22F62DD680CAAD1A8E9D84B"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.SqlBalanceStorageTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "38D291FD8E24E0C8775D30DE222FDF569692D9EBA7C9D32F2D1F238855DCDAB8"
+      }
+    ],
+    "compile": {
+      "maven_verify": "Native-memory allocation failure during production compilation; not a successful verify",
+      "recovery": "Standalone javac: all 2238 production Java sources, 256 MiB heap, one processor, SerialGC; new test compiled separately with 192 MiB",
+      "full_core_verify": false
+    },
+    "format": "Six changed Java files formatted and passed targeted Spotless",
+    "package_command": "mvnw.cmd -o -B -ntp -Dmaven.jar.forceCreation=true jar:jar shade:shade@minimize shade:shade@restore-reflective-runtime",
+    "discarded_intermediate": "Direct default shade omitted reflective runtime dependencies; rebuilt using both configured executions before final tests",
+    "missing_previous_runtime_entries": []
+  },
+  "patch_reproduction": {
+    "base_commit": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "order": [
+      "docs/upstream/starcore-folia-logistics.patch",
+      "docs/upstream/starcore-player-money-receipts.patch"
+    ],
+    "new_patch_check": "Applied on original baseline plus existing logistics patch; reverse application and git apply --check passed",
+    "six_sources_match_tested_checkout": true
+  },
+  "protocol": {
+    "marker": "playerMoneyProtocol=1",
+    "atomic_storage": [
+      "SQLite balance and receipt in one SQL transaction",
+      "file properties balance and receipt in one PersistenceService atomic snapshot"
+    ],
+    "request_identity": [
+      "operation UUID",
+      "player UUID",
+      "CREDIT/DEBIT",
+      "exact amount",
+      "immutable source metadata"
+    ],
+    "terminal_rejections_are_durable": true,
+    "sql_receipts_are_immutable": true,
+    "sqlite_balance_migration": "NUMERIC/DECIMAL to TEXT retains current values, indexes and triggers; does not recover historic precision loss",
+    "uncertain_storage": "Reload authority before any further mutations or receipt reads; never infer nonpayment from exception",
+    "events": "Existing post-commit events are not a durable/replayable outbox"
+  },
+  "preserved_boundaries": [
+    "Unmarked legacy uncertainty and existing REVIEW are not automatically migrated or unfrozen",
+    "Marked operations never fall back when the receipt API is missing",
+    "Applied player receipts cannot be overridden by an unpaid operator flag",
+    "Authoritative player rejection is required before national compensation",
+    "Tax funding remains separately frozen until independent verification",
+    "Receipt storage has one owning server instance; backups must include balances, receipts, treasury, transaction records and StarSupply databases"
+  ],
+  "remaining": [
+    "Atomic tax funding and recoverable tax authority",
+    "Full Folia module and optional-plugin scope",
+    "Six-resource survival production, logistics and restart live acceptance",
+    "Current complete optional-plugin combination and graphical resource-pack acceptance",
+    "MySQL receipt-storage integration and history-scale performance"
+  ],
+  "live_server_started": false,
+  "folia_full_stack_verified": false,
+  "mysql_tested": false,
+  "unchanged_acceptance_tools": {
+    "rerun_this_iteration": false,
+    "previous_node_tests": 107,
+    "previous_syntax_checks": 39,
+    "previous_powershell_restoration_checks": 7
+  },
+  "main_source_files": [
+    {
+      "path": "src/main/java/dev/starsupply/integration/CoreInsurancePayment.java",
+      "sha256": "FDC75802A8D2AFF1EB0A315D6699CE4ADBD22337A8269D06F8E580A697BC5751",
+      "bytes": 22184
+    },
+    {
+      "path": "src/main/java/dev/starsupply/integration/CorePayment.java",
+      "sha256": "2B77BA695E724B8ECED52B27F53B8552C70A47124A00085D47D858112304B7ED",
+      "bytes": 26599
+    },
+    {
+      "path": "src/main/java/dev/starsupply/integration/PlayerMoneyBridge.java",
+      "sha256": "EE5B4283104634CDAD517AFC5594AF3A7D1390E345B54D9E8E0BF2C42DDEE211",
+      "bytes": 8809
+    },
+    {
+      "path": "src/main/java/dev/starsupply/integration/StarCoreGateway.java",
+      "sha256": "6BDE28500DB398BC7ED19A4EEADCD6EAA786A05F1FD4362136B973D0E6EB3E4D",
+      "bytes": 27018
+    },
+    {
+      "path": "src/main/java/dev/starsupply/storage/InsuranceStore.java",
+      "sha256": "DF97E1EB75994F5BBE75E9A4773148487551D06199A33F17AFA29AE143FD8681",
+      "bytes": 9788
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/foundation/economy/ReceiptPlayerFixture.java",
+      "sha256": "75B95B8482A2C14BEE135FF975930AC304B540E98FAA11475A00A47DDFF30FA9",
+      "bytes": 1072
+    },
+    {
+      "path": "src/test/java/dev/starsupply/integration/CorePlayerMoneyTest.java",
+      "sha256": "4363E0B850F7B406BB8CE3FF315DA686463959C573AF36FB3A90120A7981368F",
+      "bytes": 24041
+    }
+  ],
+  "core_source_files": [
+    {
+      "path": "src/main/java/dev/starcore/starcore/StarCorePlugin.java",
+      "sha256": "BF3733B50E2C0767CA965BF195FB558CB9CA1001ED5708F18AAE276CCDDC5A7A",
+      "bytes": 111172
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java",
+      "sha256": "54DDC78554C43B810ACBB3CD4921A8A19353D566D7EB5F2D3DDCCFF90AED09E4",
+      "bytes": 39822
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java",
+      "sha256": "054E51C7B663E4D4ECDA75C79EBDCE06C53BE1D879895B374F6E835BB68923A6",
+      "bytes": 23273
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/economy/PlayerMoneyService.java",
+      "sha256": "72E6AAE1FD1D976EEA0F09FDEAD49B2A6241A922C2AAB06EB1AFBA44573E340E",
+      "bytes": 2962
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/economy/PlayerMoneyReceiptCodec.java",
+      "sha256": "BEB6DDFFEA9235B6F60CB6B3825DC01274C0CABFAA42209386D9527735053A43",
+      "bytes": 2330
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/foundation/economy/PlayerMoneyReceiptTest.java",
+      "sha256": "2EFD381964E9BF591EE5A1F6EFFED2CBDAAAC47D0751A47ECBC5454000A2E7F3",
+      "bytes": 22364
+    }
+  ],
+  "portable_files": [
+    {
+      "path": "tools/test-player-money.ps1",
+      "sha256": "D69C7553B896D5AF2F35B3A74EEE2339D397E1144D7C501394D0461D95AB567B",
+      "bytes": 4339
+    },
+    {
+      "path": "tools/package-review.ps1",
+      "sha256": "193A350FFF3A684DA50F6CF5285D9A4B38C3D31CB17906F8972F8EEC0E03CC49",
+      "bytes": 7131
+    },
+    {
+      "path": "docs/upstream/starcore-player-money-receipts.patch",
+      "sha256": "0F5CCEDA3139950799C1227B0FBCA56506AAFF6C4037F36B9A45BFDB0C2D731F",
+      "bytes": 55309
+    }
+  ],
+  "local_logs": [
+    {
+      "path": "target/player-money-verify-20261125.log",
+      "sha256": "FEA4EA5E334EFF4D9D085269B088C40888F8C542BBE3F2852B5D4C034E45B226",
+      "bytes": 499952
+    },
+    {
+      "path": "target/player-money-companion-final-20261125.log",
+      "sha256": "C1BA570CCEA9F016449AE25BABBA91E59CF8FFDA9B1D999270DDBAC6A7C4F218",
+      "bytes": 726588
+    },
+    {
+      "path": "target/player-money-helper-validation-20261125.log",
+      "sha256": "724AEA0A3D6509E00F602C1E8B1E8246791181535D0ED3A924BE5236836E95A7",
+      "bytes": 726937
+    },
+    {
+      "path": "target/player-money-receipt-verify-20261125.log",
+      "sha256": "30A4F3E650D16AB8317049703936FE3DE5C6910BB2B86E2C2DE7E8EBB751B01C",
+      "bytes": 1498
+    },
+    {
+      "path": "target/player-money-all-main-javac-20261125.log",
+      "sha256": "76D09AF5B57A59B1B2FCD910EC13D3BCDBB85CB87791E7A386C59272343EFA74",
+      "bytes": 336
+    },
+    {
+      "path": "target/player-money-test-javac-20261125.log",
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "bytes": 0
+    },
+    {
+      "path": "target/player-money-receipt-final-tests-20261125.log",
+      "sha256": "02101AAA2F65C4EBDFF39CCA6EF7679279F9989F4FF27251665F8F89A7E1FBBA",
+      "bytes": 43373
+    },
+    {
+      "path": "target/player-money-format-20261125.log",
+      "sha256": "6E417B548A595716E2ECC821153270AD9C90F99E8F9B4103A3622C10C07AFF45",
+      "bytes": 1803
+    },
+    {
+      "path": "target/player-money-package-final-20261125.log",
+      "sha256": "562929D107826D82D7FAC8BFBA423E11CE928AFD2CEA720F7AA3FE16D2AC1544",
+      "bytes": 1189
+    }
+  ]
+}

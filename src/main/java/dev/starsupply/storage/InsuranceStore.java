@@ -52,10 +52,8 @@ public final class InsuranceStore implements AutoCloseable {
                 return null;
             });
         }
-        // Player legs lack an authority receipt. Treasury credits remain STARTED until the
-        // adapter inspects their persisted protocol; legacy credits still need review.
-        update("UPDATE insurance_money SET state='REVIEW' WHERE state='STARTED' "
-                + "AND leg IN ('PREMIUM_DEBIT','PREMIUM_REFUND')");
+        // STARTED premium legs are inspected by the economy adapter before resuming.
+        // Only persisted receipt protocols may replay; unmarked legacy legs enter REVIEW.
     }
 
     public synchronized Policy create(Quote quote, UUID carrier, long now) throws SQLException {

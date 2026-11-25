@@ -26,6 +26,8 @@ try {
 } finally { $archiveReader.Dispose() }
 $runtimePatch = 'docs/upstream/starcore-folia-logistics.patch'
 $patchSha = (Get-FileHash -LiteralPath (Join-Path $root $runtimePatch) -Algorithm SHA256).Hash
+$playerMoneyPatch = 'docs/upstream/starcore-player-money-receipts.patch'
+$playerMoneyPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $playerMoneyPatch) -Algorithm SHA256).Hash
 $companionSha = $null
 if ($StarCoreJar) {
     $StarCoreJar = (Resolve-Path -LiteralPath $StarCoreJar).Path
@@ -101,6 +103,8 @@ $manifest = [ordered]@{
     folia_full_stack_verified = $false
     starcore_runtime_patch = $runtimePatch
     starcore_runtime_patch_sha256 = $patchSha
+    starcore_player_money_patch = $playerMoneyPatch
+    starcore_player_money_patch_sha256 = $playerMoneyPatchSha
     starcore_companion_jar_sha256 = $companionSha
 }
 $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $release 'manifest.json') -Encoding utf8

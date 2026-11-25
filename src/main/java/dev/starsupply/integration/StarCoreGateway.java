@@ -135,7 +135,7 @@ public final class StarCoreGateway implements CoreGateway {
         payments = new CorePayment(require(api, NationSpendingService.class),
                 require(api, TransactionFabric.class),
                 (id, amount) -> internal.deposit(id, amount, true, true, "starsupply:payment"),
-                this::nationExists, logger);
+                this::nationExists, logger, PlayerMoneyBridge.bindOptional(internal));
     }
 
     private static <T> T require(StarCoreApi api, Class<T> type) {

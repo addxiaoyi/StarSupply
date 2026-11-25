@@ -9,13 +9,13 @@ StarSupply 对接 StarCore 1.0.0 的提交 `f769e62799e769a18fe51305b545869a17f8
 | 军队与战争 | `ArmyService.getArmy`、`getNationArmies` 和 `WarService.activeWarsOf`、`getWar`。实际战斗状态取自 `WarStatus.isCombatAllowed()` |
 | 原生补给线 | `BattlefieldService.getSupplyLine` 提供位置、状态、容量和效率。补给路线绑定已有 ID，读取战争参与方并跟随 StarCore 的损毁和修复状态 |
 | 国库扣款与补偿 | `NationSpendingService.spend`、`spendingReceipt`、`refund`。金额和唯一凭证由 StarCore 一起持久化 |
-| 玩家入账与事务记录 | `InternalEconomyService.deposit` 同步持久化并发布经济事件。`TransactionFabric` 以结算 ID 记录经济请求与各阶段结果 |
+| 玩家资金与事务记录 | 新兼容补丁提供公开 `PlayerMoneyService.applyMoney/moneyReceipt`，余额与回执一起提交；`TransactionFabric` 保存原业务键与协议。旧 `deposit/withdraw` 仍保留保守路径 |
 | 战略贸易协定与禁运 | `ResourceTradeService.getTradeAgreements`、`isEmbargoed`。跨国供应合同须有匹配出口国、进口国和 StarCore 资源 ID 的有效协定，并遵守协定资源额度 |
 | 战时出口管制 | 读取 `WarService.activeWarsOf` 与当前战争 `WarStatus.isCombatAllowed()`，暂停配置资源从参战出口国向其他国家供货；不另建战争或禁运账本 |
 | StarCore 抽象资源价格与税务 | `ResourcePriceService` 与 `TradeTaxService` 管理 StarCore 抽象资源账目；不将抽象资源库存或价格冒充 Minecraft 实物批次与价格 |
 | 战斗影响 | `BattleCalculator` 经过 `army_combat` 扩展点时，StarSupply 提供当前军队的后勤倍率。退出参战、停火或卸载插件后回到 StarCore 自有计算 |
 | 冬季与围城 | `SeasonService.getSeason(World)`、`isEnabled()`，以及 `SiegeService.getNationSieges`、`getWall`。在服务线程把可变对象复制为不可变条件，再计算有上限的临时需求 |
-| 承运收入保险 | `NationSpendingService` 预留/释放赔款，`InternalEconomyService.withdraw` 支付保费，新国库入账使用 `NationCreditService.credit/creditReceipt`；`TransactionFabric` 保存原操作身份与回执协议。未标记的旧交易保留 `TreasuryService.tryDeposit` 的保守复核路径。实际赔付继续使用原准备金编号 |
+| 承运收入保险 | `NationSpendingService` 预留/释放赔款，新 `PlayerMoneyService` 支付/返还保费，新国库入账使用 `NationCreditService.credit/creditReceipt`；`TransactionFabric` 保存原操作身份与回执协议。未标记的旧交易保留 `TreasuryService.tryDeposit` 的保守复核路径。实际赔付继续使用原准备金编号 |
 
 原生补给线在 StarCore 中创建、截断和修复。StarSupply 路径计算读取 `SupplyLine`，库存与货物批次保存在 StarSupply 自己的 SQL 数据库。进入路线时使用国家领地查询判断敌对控制，补给效果只匹配活跃战争的敌对双方。StarSupply 战略补给应用有限的战斗伤害倍率和可撤销的临时士气贡献，不写入永久士气状态。公开 `registerTemporaryMoraleModifier` 返回注销句柄，`effectiveMorale` 是 StarCore 权威查询；反射桥仅查找公开方法，不访问私有状态或另建军队。`ArmyCombatExtensionPoint` 采用最高贡献值，同一服务器其他战斗贡献者可能覆盖原后勤倍率；士气部分在原生战斗计算中独立应用，单独限制在 ±10% 伤害变化。
 
@@ -41,16 +41,16 @@ StarSupply 还会读取 StarCore 当前有效国策和已解锁科技，用它�
 
 冬季远征和持续围城共用同一补给周期。StarSupply 每 5 秒在 Paper 服务线程读取 StarCore 季节与攻城快照，只有可战斗战争中的敌方器械围攻匹配本国前线附近的存活城墙时才累积压力。信息 15 秒过期后使用普通需求；持续性记录保存在 StarSupply v7 的 `campaign_siege`。当周期已经消费时，SQL 保存的需求不可变，中途季节、兵力或政策变化要到下个周期才改变消耗。效果与限幅见 [战役补给](CAMPAIGNS.md)。
 
-保险使用 StarSupply 独立产品与 `insurance.db`，不把上游依赖其他交易处理器的 `InsuranceService` 冒充本插件运输保险。赔款先用 StarCore 权威收据从国库真实预留；新保费入国库使用固定提交已经提供的 `NationCreditService` 耐久回执，无需增加上游 API。没有可重放收据的玩家保费扣款、返还、赔付及未标记的旧国库入账在结果不明时冻结，要求独立账务证据核对。StarSupply 不直接修改 StarCore 数据库。具体合同、退保和恢复规则见 [承运收入险](INSURANCE.md)。
+保险使用 StarSupply 独立产品与 `insurance.db`，不把上游依赖其他交易处理器的 `InsuranceService` 冒充本插件运输保险。赔款先用 StarCore 权威收据从国库真实预留；新保费入国库使用固定提交已经提供的 `NationCreditService` 耐久回执，无需增加上游 API。追加[玩家资金补丁](upstream/PLAYER-MONEY.md)后，新保费扣款、返还、赔付也通过余额和回执的原子提交恢复。旧无协议标记的玩家资金及国库入账仍要求独立账务证据核对，已有 REVIEW 不自动解冻。StarSupply 不直接修改 StarCore 数据库。具体合同、退保和恢复规则见 [承运收入险](INSURANCE.md)。
 
 ## 国库与玩家之间的结算
 
 StarSupply 先在本地 SQL 记下需支付的货物或交付工作，随后用其中的 UUID 作为 `starsupply:payment:<uuid>` 向 StarCore 发起支付。网络或进程故障后的重试使用同一个 UUID 和原始金额、国家与收款人。
 
 1. `NationSpendingService.spend` 使用唯一键扣款。重复调用会返回原始国库收据。国库余额不足时本次结算被明确拒绝。
-2. 把国库收据已确认写入 `TransactionFabric`，并在调用 `InternalEconomyService.deposit` 前把 `starsupply:payment:<uuid>:player` 持久化为 `RESERVED`。玩家账户以 UUID 标识，断线不阻断入账。
-3. 正常返回且已同步持久化的玩家入账可以重放本地确认，StarCore 不再重复付款。当前 InternalEconomyService.deposit 仅返回布尔值；false 同时涵盖校验/扩展拒绝与存储故障，存储异常不能证明数据库未提交，因此 false 和异常都会进入人工核对，绝不据此自动退款。
-4. 如果玩家记录仍为 RESERVED（包括存款异常、返回 false 或重启），玩家余额写入的结果无法仅凭现有 StarCore API 推断。结算进入复核，库存与支付都暂停推进。操作员应根据经济审计与事故记录查实玩家是否入账。有独立证据确认入账时记录成功，有证据确认未入账时对原凭证执行退款。无法确认时保留待复核状态。单独比较当前余额无法证明是否入账，因为其他交易也会影响余额。
+2. `TransactionFabric` 持久化玩家入账意图；新协议保存 `playerMoneyProtocol=1`，按原结算键派生操作 UUID 并绑定收款人、方向、净额及不可变业务元数据。
+3. 新 `PlayerMoneyService` 原子提交余额与终态回执；响应丢失、事务记录落盘失败或重启后均查询/重试同一请求。匹配成功回执只补本地确认；匹配拒绝回执才允许国库退款。查询失败、字段冲突或接口缺失保持冻结。
+4. 旧无标记交易继续使用原布尔接口的保守恢复规则。false 可表示存储失败，不能证明未到账；操作员须有独立证据才能确认。新协议下 paid/unpaid 不覆盖权威回执，税款仍按单独阶段处理。
 
 生产部署保留 StarCore 的国库、玩家经济、TransactionFabric 和 StarSupply SQL 数据。恢复备份时使用同一个停服快照中的四份数据，避免从不同时间点恢复后丢失关联凭证。
 

@@ -16,21 +16,23 @@
 
 2026-11-25 最新代码已接通按来源补产：示例计划启用 `traceProduction`，六阶段按已记录来源的库存计算缺口，正常停服后由独立读取器重算配方与存档链。生产日志保存跨阶段余额与待完成运行，支持结果已落盘而日志尚未推进时的恢复；旧库存不自动获得证明，旧熔炉内容先正常收回再补产。顺带修正打开箱子/熔炉时读取滞后背包副本的问题。107 项 Node、39 项语法检查及 7 项 PowerShell 恢复检查通过，生产 Java 未变，未启动实服。详见[来源补产验证](verification/workspace-survival-traced-production-20261125.json)。
 
-随后新保费入国库已接入原固定 StarCore 的 `NationCreditService`，按保单原键和持久协议标记恢复；旧普通入账不自动换协议。新增 13 项回执测试使用真实国库、SQLite 与 TransactionFabric，验证响应丢失、各层结果写回失败、同进程/重启恢复和冲突隔离；全量 137 项 Java 测试通过。玩家经济仍无业务回执，税收认领也不等于国库到账。本轮未启动实服，详见[保费回执记录](verification/workspace-premium-credit-receipts-20261125.json)。
+随后新保费入国库已接入原固定 StarCore 的 `NationCreditService`，按保单原键和持久协议标记恢复；旧普通入账不自动换协议。新增 13 项回执测试使用真实国库、SQLite 与 TransactionFabric，验证响应丢失、各层结果写回失败、同进程/重启恢复和冲突隔离；全量 137 项 Java 测试通过。该检查点当时尚无玩家业务回执；税收认领也不等于国库到账。本轮未启动实服，详见[保费回执记录](verification/workspace-premium-credit-receipts-20261125.json)。
+
+最新补齐玩家资金耐久回执：Core 将余额与业务 UUID 一起提交，StarSupply 新采购款、运费、理赔、保费扣款/返还按原编号恢复。148 项完整 Java verify、最终 Core 兼容包下的 159 项回归及上游 77 项定向测试通过；旧无标记交易和税款不明仍保守冻结，当前组合未实服验证。见[玩家资金回执记录](verification/workspace-player-money-receipts-20261125.json)及[上游接口与构建说明](upstream/PLAYER-MONEY.md)。
 
 | 阶段 | 当前结果 | 后续工作 |
 | --- | --- | --- |
 | 核心后勤与经济 | 六类资源、国家仓库/前线、采购托管、运输护送、道路风险、区域市场、协定/禁运/关税、战时出口控制、保险、GUI/API 已实现；有 Paper 和指定 Folia 构建的真实闭环记录 | 新设备恢复构建，按需求表回归当前组合 |
 | 战役与原生补给 | 冬季/围城需求、临时战力/士气、实际 FOOD 消费结转 StarCore 耐久回执、重启重放已实现；既有 Folia 记录覆盖六个消费周期和士气恢复 | 继续以六类生存自产物资完成持续作战验收 |
-| 一致性与中断恢复 | 主库 v11、酒馆 v1、保险 v2；库存指纹兼容、SQL 不确定提交隔离、停用/重启屏障、实体回调退役、保险结果写回中断、调用方取消 future 的库存锁清理均已加固；新保费国库回执恢复、137 项 Java 测试通过 | 玩家扣款/入账/退款、旧保费入账和税款不明仍需复核；当前 JAR 未实服复测 |
+| 一致性与中断恢复 | 主库 v11、酒馆 v1、保险 v2；库存指纹兼容、SQL 不确定提交隔离、停用/重启屏障、实体回调退役、保险结果写回中断、调用方取消 future 的库存锁清理均已加固；新保费国库与玩家资金回执恢复、148 项 Java verify 和 159 项兼容回归通过 | 旧无协议标记的玩家资金/保费入账和税款不明仍需复核；当前 JAR 未实服复测 |
 | Folia 区域恢复 | 此前 124 项测试构建实际验证实体 scheduler 退役、未执行回调清理、区块卸载/区域消失、重连新区域；未扣物撤销和已保存回执恰好一次结算均通过 | 夹具固定了故障边界，尚不代表当前新 JAR、整个售货入口随机中断、世界整体卸载 API 或完整插件组合 |
 | 六类生存生产 | 六阶段脚本入口已实现；实际存档有 6 煤、6 粗铁、146 圆石、铁镐，生命/饥饿各 20；之前真实 Cookery 军粮生产只验证 1 FOOD/1 周期 | 完成烧炼/瓶子、地表工具、种植面包、采蜜、脚手架、烟花；再采购、运输、持续消费。六阶段目前未通过整体验收 |
 | 完整组合与交付 | 旧九插件 Folia 组合已启动，Music 键盘/MIDI/停止/断线清理有记录；可移植 StarCore 补丁、构建和验收工具在仓库 | 当前完整可选插件组合、相关 Core 路径的生产 Folia 认证、图形客户端资源包渲染仍未完成；生产 `plugin.yml` 仍不声明 Folia 支持 |
 
 ## 最新构建与验证
 
-- Java 21；Maven Wrapper 3.9.16；Paper API 1.21.11。当前生产 JAR 大小 14,681,187 字节，SHA-256 `2CC18DA52942D03AD07813DA19398ABCB34BD01044E00D0A55C293404186B941`。
-- `mvnw.cmd -B -ntp -DforkCount=0 verify`：137 项测试，0 失败/错误/跳过；另外替换为实际兼容 Core JAR 的 13 项保费回执专项测试通过，未改动本地 Maven 依赖。新增保费回执恢复见 [构建记录](verification/workspace-premium-credit-receipts-20261125.json)。当前 JAR 未在 Paper/Folia 实服运行。
+- Java 21；Maven Wrapper 3.9.16；Paper API 1.21.11。当前生产 JAR 大小 14,688,586 字节，SHA-256 `9181545840F9900A92D00005B826EC4F6B9E58BE9785474E00495DC5559EE69F`。
+- `mvnw.cmd -o -B -ntp -DforkCount=0 verify`：148 项测试，0 失败/错误/跳过；实际最终 Core 兼容包下全套 159 项回归通过，未改动本地 Maven 依赖。Core 上游另有 77 项定向测试通过（含 17 项玩家回执用例），完整生产源码由独立 javac 低内存编译，不宣称 Core 全仓 verify。见[构建记录](verification/workspace-player-money-receipts-20261125.json)。当前两份 JAR 均未在 Paper/Folia 实服运行。
 - 验收器：当前 107 项 Node 测试通过；39 个 Node 脚本语法检查通过，7 项 PowerShell 恢复检查复跑通过。最新来源补产、容器库存读取和日志恢复见[来源补产验证](verification/workspace-survival-traced-production-20261125.json)。需求探针已用 Java 21 编译；此前数量计划见 [数量计划记录](verification/workspace-survival-demand-planning-20261125.json)，恢复和证据串联见 [恢复记录](verification/workspace-survival-recovery-evidence-20261125.json)。
 - 此前 87487098 构建的独立 Folia 区域恢复：两种库存边界、实际退役异常栈、唯一付款、重复恢复不变、停服玩家 NBT 和六库完整性均通过。见 [区域恢复记录](verification/folia-region-retirement-20261125.json)。
 - 最后实服运行 `2026-11-25T07-52-02-144Z`：Core/Supply/服务器均启用；Mineflayer 进程因内存分配失败退出 134，阶段未通过。服务器随后经 RCON 正常保存退出，两个端口关闭，全部插件按哈希恢复。玩家存档仍保留前述材料。
@@ -41,7 +43,7 @@
 
 | 缺口 | 当前处理 | 完成条件 |
 | --- | --- | --- |
-| 玩家扣款、入账及退款的自动恢复 | `InternalEconomyService` 没有业务 UUID 回执；采购款、运费、理赔、保费扣款/返还的不明结果保持 `REVIEW` | 在 Core 权威存储中原子提交余额与操作回执，再接入 StarSupply；覆盖提交前/后故障及重启，不可仅增加本地标记 |
+| 玩家资金恢复的部署与旧账处理 | 新回执协议代码与自动化故障测试已完成；旧无标记交易不迁移，已有 REVIEW 不自动解冻 | 部署两份兼容补丁后进行实服验收；旧账继续按独立证据核对。MySQL 存储与大规模历史回执性能仍未验证 |
 | 税收的原子入账与回执 | `fundTax` 的 `FundedTaxLedger` 认领和国库存款分开提交；不能用认领记录证明到账 | Core 提供可重放的完整税务结果，或使税务身份与国库耐久入账关联并能可靠恢复，再接入税款自动恢复 |
 | 完整 Folia 支持范围 | 现有兼容补丁限于后勤 profile；生产描述符仍未声明支持 | 完成目标模块/可选插件的线程归属与生命周期适配，并对明确组合验收；不能只改描述符 |
 
@@ -65,7 +67,7 @@ $env:JAVA_HOME = 'C:\path\to\jdk-21'
 .\tools\build.ps1 -StarCoreRoot ..\starsupply-starcore-api -JavaHome $env:JAVA_HOME
 ```
 
-运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 应用 `starcore-folia-logistics.patch`；这个组合补丁已包含攻城补丁，不能再重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。旧设备的兼容 Core 成品 SHA-256 为 `6BB059707AEDCFE3E7D65BAD768329E891BA7144C6DA6B1B9A1C30790E8A4B0A`，不同构建需登记自己的哈希。
+运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch` 和 `starcore-player-money-receipts.patch`；这个组合补丁已包含攻城补丁，不能再重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。本轮兼容 Core 成品 SHA-256 为 `541E85710872D79FEF5F77F661A1259429CB71D72F0B4D724857E46D3429AB63`，不同构建需登记自己的哈希。
 
 依赖已安装时，低内存构建命令为：
 

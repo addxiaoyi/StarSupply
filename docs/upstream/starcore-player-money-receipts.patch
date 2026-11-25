@@ -1,0 +1,1235 @@
+diff --git a/src/main/java/dev/starcore/starcore/StarCorePlugin.java b/src/main/java/dev/starcore/starcore/StarCorePlugin.java
+index d57ec33..5445a4b 100644
+--- a/src/main/java/dev/starcore/starcore/StarCorePlugin.java
++++ b/src/main/java/dev/starcore/starcore/StarCorePlugin.java
+@@ -1146,6 +1146,11 @@ public final class StarCorePlugin extends JavaPlugin {
+         .serviceRegistry()
+         .register(InternalPermissionService.class, context.permissionService());
+     context.serviceRegistry().register(InternalEconomyService.class, context.economyService());
++    context
++        .serviceRegistry()
++        .register(
++            dev.starcore.starcore.foundation.economy.PlayerMoneyService.class,
++            context.economyService());
+ 
+     PerformanceMetricsService performanceMetrics =
+         context.serviceRegistry().find(PerformanceMetricsService.class).orElse(null);
+diff --git a/src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java b/src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java
+index 958f7ba..874e1a4 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java
++++ b/src/main/java/dev/starcore/starcore/foundation/economy/InternalEconomyService.java
+@@ -8,8 +8,10 @@ import dev.starcore.starcore.foundation.economy.event.EconomyEvent;
+ import dev.starcore.starcore.foundation.economy.extension.EconomyTransactionExtensionPoint;
+ import java.math.BigDecimal;
+ import java.math.RoundingMode;
++import java.util.HashMap;
+ import java.util.Map;
+ import java.util.Objects;
++import java.util.Optional;
+ import java.util.Properties;
+ import java.util.UUID;
+ import java.util.concurrent.CompletableFuture;
+@@ -23,7 +25,7 @@ import java.util.function.Consumer;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ 
+-public final class InternalEconomyService implements EconomyService {
++public final class InternalEconomyService implements EconomyService, PlayerMoneyService {
+   private static final int SCALE = 2;
+   private static final String NAMESPACE = "economy";
+   private static final String FILE_NAME = "player-balances.properties";
+@@ -56,6 +58,9 @@ public final class InternalEconomyService implements EconomyService {
+   /** Coordinates balance mutations with full snapshots and persistence rollbacks. */
+   private final Object flushLock = new Object();
+ 
++  private final Map<UUID, PlayerMoneyService.Receipt> moneyReceipts = new HashMap<>();
++  private boolean receiptStateUncertain;
++
+   /** Serializes balance mutation with its persistence rollback for one account. */
+   private final ConcurrentMap<UUID, Object> accountLocks = new ConcurrentHashMap<>();
+ 
+@@ -139,20 +144,184 @@ public final class InternalEconomyService implements EconomyService {
+   }
+ 
+   public void start() {
+-    Properties properties = storage.load();
+-    balances.clear();
++    synchronized (flushLock) {
++      receiptStateUncertain = true;
++      restoreReceiptState(storage.load());
++    }
++  }
++
++  private void restoreReceiptState(Properties properties) {
++    Map<UUID, BigDecimal> loadedBalances = new HashMap<>();
++    Map<UUID, PlayerMoneyService.Receipt> loadedReceipts = new HashMap<>();
+     for (String key : properties.stringPropertyNames()) {
++      if (key.startsWith(PlayerMoneyReceiptCodec.PREFIX)) {
++        var receipt = PlayerMoneyReceiptCodec.decode(key, properties.getProperty(key));
++        loadedReceipts.put(receipt.request().operationId(), receipt);
++      }
++    }
++    for (String key : properties.stringPropertyNames()) {
++      if (key.startsWith(PlayerMoneyReceiptCodec.PREFIX)) continue;
+       try {
+         UUID accountId = UUID.fromString(key);
+         BigDecimal balance = normalize(new BigDecimal(properties.getProperty(key)));
+         // audit B-005/B-006: 保留 0 余额账户，让 hasAccount 在重启后仍为 true；
+         // balances contain zero entries as 存在性标记，余额查询时仍返回 0。
+-        balances.put(accountId, balance);
++        loadedBalances.put(accountId, balance);
+       } catch (RuntimeException e) {
++        if (!loadedReceipts.isEmpty())
++          throw new IllegalStateException("Invalid balance in receipted economy snapshot", e);
+         parseFailureCount++;
+         logWarning("Failed to parse balance for account: " + key + " - " + e.getMessage());
+       }
+     }
++    for (var receipt : loadedReceipts.values()) {
++      if (receipt.status() == PlayerMoneyService.Status.APPLIED
++          && !loadedBalances.containsKey(receipt.request().accountId())) {
++        throw new IllegalStateException("Player receipt has no balance account");
++      }
++    }
++    balances.clear();
++    balances.putAll(loadedBalances);
++    moneyReceipts.clear();
++    moneyReceipts.putAll(loadedReceipts);
++    receiptStateUncertain = false;
++  }
++
++  /** Called under flushLock before any mutation, snapshot or authoritative receipt read. */
++  private void ensureReceiptState() {
++    if (receiptStateUncertain) restoreReceiptState(storage.load());
++  }
++
++  private Properties stateProperties() {
++    Properties properties = toProperties(balances);
++    moneyReceipts
++        .values()
++        .forEach(
++            receipt ->
++                properties.setProperty(
++                    PlayerMoneyReceiptCodec.key(receipt), PlayerMoneyReceiptCodec.encode(receipt)));
++    return properties;
++  }
++
++  @Override
++  public Optional<PlayerMoneyService.Receipt> moneyReceipt(UUID operationId) {
++    Objects.requireNonNull(operationId, "operationId");
++    synchronized (flushLock) {
++      ensureReceiptState();
++      return Optional.ofNullable(moneyReceipts.get(operationId));
++    }
++  }
++
++  @Override
++  public PlayerMoneyService.Receipt applyMoney(PlayerMoneyService.Request request) {
++    Objects.requireNonNull(request, "request");
++    var existing = moneyReceipt(request.operationId());
++    if (existing.isPresent()) return requireSameMoneyRequest(existing.get(), request);
++    // Providers run outside account/flush locks, as in the ordinary economy entry points.
++    // A provider failure cannot authorize either the payment or compensation.
++    EconomyTransactionExtensionPoint.TransactionResult extension =
++        ExtensionRegistry.getInstance()
++            .execute(
++                "economy_transaction",
++                new EconomyTransactionExtensionPoint.TransactionContext(
++                    request.accountId(),
++                    null,
++                    request.amount(),
++                    request.direction() == PlayerMoneyService.Direction.CREDIT
++                        ? EconomyTransactionExtensionPoint.TransactionType.DEPOSIT
++                        : EconomyTransactionExtensionPoint.TransactionType.WITHDRAW,
++                    balance(request.accountId()),
++                    request.source()));
++    boolean approved =
++        extension == null
++            || (extension.approved()
++                && (extension.modifiedAmount() == null
++                    || extension.modifiedAmount().compareTo(request.amount()) == 0));
++    PlayerMoneyService.Receipt committed;
++    synchronized (lockForAccount(request.accountId())) {
++      synchronized (flushLock) {
++        ensureReceiptState();
++        var duplicate = moneyReceipts.get(request.operationId());
++        if (duplicate != null) return requireSameMoneyRequest(duplicate, request);
++        // Drain and persist every previously accepted asynchronous balance change first.
++        // No older queued snapshot may follow an uncertain receipt write and overwrite it.
++        storage.save(stateProperties());
++        BigDecimal before = normalize(balances.getOrDefault(request.accountId(), BigDecimal.ZERO));
++        BigDecimal after =
++            request.direction() == PlayerMoneyService.Direction.CREDIT
++                ? before.add(request.amount())
++                : before.subtract(request.amount());
++        PlayerMoneyService.Status status =
++            !approved
++                ? PlayerMoneyService.Status.EXTENSION_REJECTED
++                : after.signum() < 0
++                    ? PlayerMoneyService.Status.INSUFFICIENT_FUNDS
++                    : after.compareTo(PlayerMoneyService.MAX_BALANCE) > 0
++                        ? PlayerMoneyService.Status.BALANCE_LIMIT
++                        : PlayerMoneyService.Status.APPLIED;
++        if (status != PlayerMoneyService.Status.APPLIED) after = before;
++        var receipt =
++            new PlayerMoneyService.Receipt(
++                request, status, before, after, System.currentTimeMillis());
++        Properties next = stateProperties();
++        if (status == PlayerMoneyService.Status.APPLIED)
++          next.setProperty(request.accountId().toString(), after.toPlainString());
++        next.setProperty(
++            PlayerMoneyReceiptCodec.key(receipt), PlayerMoneyReceiptCodec.encode(receipt));
++        receiptStateUncertain = true;
++        try {
++          storage.save(next);
++          if (status == PlayerMoneyService.Status.APPLIED) balances.put(request.accountId(), after);
++          moneyReceipts.put(request.operationId(), receipt);
++          receiptStateUncertain = false;
++          committed = receipt;
++        } catch (RuntimeException failure) {
++          try {
++            ensureReceiptState();
++          } catch (RuntimeException unavailable) {
++            failure.addSuppressed(unavailable);
++            throw failure;
++          }
++          var recovered = moneyReceipts.get(request.operationId());
++          if (recovered == null) throw failure;
++          committed = requireSameMoneyRequest(recovered, request);
++        }
++      }
++    }
++    if (committed.status() == PlayerMoneyService.Status.APPLIED) {
++      publishEvent(
++          request.direction() == PlayerMoneyService.Direction.CREDIT
++              ? new EconomyEvent.Deposit(
++                  request.accountId(),
++                  request.amount(),
++                  committed.balanceAfter(),
++                  committed.recordedAt())
++              : new EconomyEvent.Withdraw(
++                  request.accountId(),
++                  request.amount(),
++                  committed.balanceAfter(),
++                  committed.recordedAt()));
++    }
++    return committed;
++  }
++
++  private static PlayerMoneyService.Receipt requireSameMoneyRequest(
++      PlayerMoneyService.Receipt receipt, PlayerMoneyService.Request request) {
++    if (!receipt.request().equals(request))
++      throw new IllegalArgumentException("Player money ID is bound to another request");
++    return receipt;
++  }
++
++  /** Public bridge for callers compiled against the original Core API. */
++  public PlayerMoneyService.Receipt applyMoney(
++      UUID operationId, UUID accountId, String direction, BigDecimal amount, String source) {
++    return applyMoney(
++        new PlayerMoneyService.Request(
++            operationId,
++            accountId,
++            PlayerMoneyService.Direction.valueOf(direction),
++            amount,
++            source));
+   }
+ 
+   public void stop() {
+@@ -167,7 +336,10 @@ public final class InternalEconomyService implements EconomyService {
+     if (accountId == null) {
+       return BigDecimal.ZERO.setScale(SCALE, RoundingMode.DOWN);
+     }
+-    return balances.getOrDefault(accountId, BigDecimal.ZERO).setScale(SCALE, RoundingMode.DOWN);
++    synchronized (flushLock) {
++      ensureReceiptState();
++      return balances.getOrDefault(accountId, BigDecimal.ZERO).setScale(SCALE, RoundingMode.DOWN);
++    }
+   }
+ 
+   @Override
+@@ -301,6 +473,7 @@ public final class InternalEconomyService implements EconomyService {
+     BigDecimal newBalance;
+     long flushLockWaitStarted = System.nanoTime();
+     synchronized (flushLock) {
++      ensureReceiptState();
+       EconomyOperationTimingProbe.record(
+           EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+           System.nanoTime() - flushLockWaitStarted);
+@@ -387,6 +560,7 @@ public final class InternalEconomyService implements EconomyService {
+         BigDecimal normalized = normalize(amount);
+         long flushLockWaitStarted = System.nanoTime();
+         synchronized (flushLock) {
++          ensureReceiptState();
+           EconomyOperationTimingProbe.record(
+               EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+               System.nanoTime() - flushLockWaitStarted);
+@@ -522,6 +696,7 @@ public final class InternalEconomyService implements EconomyService {
+       BigDecimal[] balanceAfter = {BigDecimal.ZERO};
+       long flushLockWaitStarted = System.nanoTime();
+       synchronized (flushLock) {
++        ensureReceiptState();
+         EconomyOperationTimingProbe.record(
+             EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+             System.nanoTime() - flushLockWaitStarted);
+@@ -572,7 +747,10 @@ public final class InternalEconomyService implements EconomyService {
+   }
+ 
+   public Map<UUID, BigDecimal> snapshot() {
+-    return Map.copyOf(balances);
++    synchronized (flushLock) {
++      ensureReceiptState();
++      return Map.copyOf(balances);
++    }
+   }
+ 
+   @Override
+@@ -585,7 +763,10 @@ public final class InternalEconomyService implements EconomyService {
+     if (playerId == null) {
+       return false;
+     }
+-    return balances.containsKey(playerId);
++    synchronized (flushLock) {
++      ensureReceiptState();
++      return balances.containsKey(playerId);
++    }
+   }
+ 
+   @Override
+@@ -606,6 +787,7 @@ public final class InternalEconomyService implements EconomyService {
+     synchronized (lockForAccount(playerId)) {
+       long flushLockWaitStarted = System.nanoTime();
+       synchronized (flushLock) {
++        ensureReceiptState();
+         EconomyOperationTimingProbe.record(
+             EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+             System.nanoTime() - flushLockWaitStarted);
+@@ -744,6 +926,7 @@ public final class InternalEconomyService implements EconomyService {
+       synchronized (lockForAccount(secondId)) {
+         long flushLockWaitStarted = System.nanoTime();
+         synchronized (flushLock) {
++          ensureReceiptState();
+           EconomyOperationTimingProbe.record(
+               EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+               System.nanoTime() - flushLockWaitStarted);
+@@ -803,22 +986,24 @@ public final class InternalEconomyService implements EconomyService {
+     // audit B-007: 加同步锁避免并发 flushNow/flushAsync 写入旧快照覆盖新快照导致回档
+     long flushLockWaitStarted = System.nanoTime();
+     synchronized (flushLock) {
++      ensureReceiptState();
+       EconomyOperationTimingProbe.record(
+           EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+           System.nanoTime() - flushLockWaitStarted);
+-      storage.save(toProperties(snapshot()));
++      storage.save(stateProperties());
+     }
+   }
+ 
+   private void flushAccount(UUID accountId) {
+     long flushLockWaitStarted = System.nanoTime();
+     synchronized (flushLock) {
++      ensureReceiptState();
+       EconomyOperationTimingProbe.record(
+           EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+           System.nanoTime() - flushLockWaitStarted);
+       BigDecimal currentBalance = balances.getOrDefault(accountId, BigDecimal.ZERO);
+       if (!storage.saveAccount(accountId, normalize(currentBalance))) {
+-        storage.save(toProperties(snapshot()));
++        storage.save(stateProperties());
+       }
+     }
+   }
+@@ -826,6 +1011,7 @@ public final class InternalEconomyService implements EconomyService {
+   private void flushAccounts(UUID firstAccountId, UUID secondAccountId) {
+     long flushLockWaitStarted = System.nanoTime();
+     synchronized (flushLock) {
++      ensureReceiptState();
+       EconomyOperationTimingProbe.record(
+           EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+           System.nanoTime() - flushLockWaitStarted);
+@@ -836,7 +1022,7 @@ public final class InternalEconomyService implements EconomyService {
+               secondAccountId,
+               normalize(balances.getOrDefault(secondAccountId, BigDecimal.ZERO)));
+       if (!storage.saveAccounts(accountBalances)) {
+-        storage.save(toProperties(snapshot()));
++        storage.save(stateProperties());
+       }
+     }
+   }
+@@ -845,10 +1031,11 @@ public final class InternalEconomyService implements EconomyService {
+     // audit B-007: 加同步锁避免与 flushNow 互相覆盖
+     long flushLockWaitStarted = System.nanoTime();
+     synchronized (flushLock) {
++      ensureReceiptState();
+       EconomyOperationTimingProbe.record(
+           EconomyOperationTimingProbe.Phase.ECONOMY_FLUSH_LOCK_WAIT,
+           System.nanoTime() - flushLockWaitStarted);
+-      storage.saveAsync(toProperties(snapshot()));
++      storage.saveAsync(stateProperties());
+     }
+   }
+ 
+diff --git a/src/main/java/dev/starcore/starcore/foundation/economy/PlayerMoneyReceiptCodec.java b/src/main/java/dev/starcore/starcore/foundation/economy/PlayerMoneyReceiptCodec.java
+new file mode 100644
+index 0000000..eeff00e
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/foundation/economy/PlayerMoneyReceiptCodec.java
+@@ -0,0 +1,61 @@
++package dev.starcore.starcore.foundation.economy;
++
++import java.math.BigDecimal;
++import java.nio.charset.StandardCharsets;
++import java.util.Base64;
++import java.util.UUID;
++
++/** Same versioned payload in the atomic file snapshot and SQL receipt table. */
++final class PlayerMoneyReceiptCodec {
++  static final String PREFIX = "money-receipt:";
++
++  private PlayerMoneyReceiptCodec() {}
++
++  static String key(PlayerMoneyService.Receipt receipt) {
++    return PREFIX + receipt.request().operationId();
++  }
++
++  static String encode(PlayerMoneyService.Receipt receipt) {
++    var request = receipt.request();
++    return String.join(
++        ";",
++        "1",
++        request.accountId().toString(),
++        request.direction().name(),
++        request.amount().toPlainString(),
++        receipt.status().name(),
++        receipt.balanceBefore().toPlainString(),
++        receipt.balanceAfter().toPlainString(),
++        Long.toString(receipt.recordedAt()),
++        Base64.getUrlEncoder()
++            .withoutPadding()
++            .encodeToString(request.source().getBytes(StandardCharsets.UTF_8)));
++  }
++
++  static PlayerMoneyService.Receipt decode(String key, String payload) {
++    if (!key.startsWith(PREFIX)) throw new IllegalArgumentException("Invalid player receipt key");
++    UUID operationId = UUID.fromString(key.substring(PREFIX.length()));
++    if (!key.equals(PREFIX + operationId))
++      throw new IllegalArgumentException("Noncanonical player receipt key");
++    String[] parts = payload.split(";", -1);
++    if (parts.length != 9 || !parts[0].equals("1"))
++      throw new IllegalArgumentException("Invalid player receipt format");
++    var request =
++        new PlayerMoneyService.Request(
++            operationId,
++            UUID.fromString(parts[1]),
++            PlayerMoneyService.Direction.valueOf(parts[2]),
++            new BigDecimal(parts[3]),
++            new String(Base64.getUrlDecoder().decode(parts[8]), StandardCharsets.UTF_8));
++    var receipt =
++        new PlayerMoneyService.Receipt(
++            request,
++            PlayerMoneyService.Status.valueOf(parts[4]),
++            new BigDecimal(parts[5]),
++            new BigDecimal(parts[6]),
++            Long.parseLong(parts[7]));
++    if (!encode(receipt).equals(payload))
++      throw new IllegalArgumentException("Noncanonical player receipt payload");
++    return receipt;
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/foundation/economy/PlayerMoneyService.java b/src/main/java/dev/starcore/starcore/foundation/economy/PlayerMoneyService.java
+new file mode 100644
+index 0000000..8fc43f5
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/foundation/economy/PlayerMoneyService.java
+@@ -0,0 +1,88 @@
++package dev.starcore.starcore.foundation.economy;
++
++import java.math.BigDecimal;
++import java.math.RoundingMode;
++import java.util.Objects;
++import java.util.Optional;
++import java.util.UUID;
++
++/**
++ * Durable, business-keyed player money operations. Reuse the complete original request on retry.
++ */
++public interface PlayerMoneyService {
++  BigDecimal MAX_BALANCE = new BigDecimal("99999999999999999.99");
++
++  enum Direction {
++    CREDIT,
++    DEBIT
++  }
++
++  enum Status {
++    APPLIED,
++    INSUFFICIENT_FUNDS,
++    EXTENSION_REJECTED,
++    BALANCE_LIMIT
++  }
++
++  record Request(
++      UUID operationId, UUID accountId, Direction direction, BigDecimal amount, String source) {
++    public Request {
++      Objects.requireNonNull(operationId, "operationId");
++      Objects.requireNonNull(accountId, "accountId");
++      Objects.requireNonNull(direction, "direction");
++      amount = Objects.requireNonNull(amount, "amount").setScale(2, RoundingMode.UNNECESSARY);
++      if (amount.signum() <= 0 || amount.compareTo(MAX_BALANCE) > 0) {
++        throw new IllegalArgumentException("Unsupported money amount");
++      }
++      if (source == null || source.isBlank() || source.length() > 512) {
++        throw new IllegalArgumentException("Money source must contain 1-512 characters");
++      }
++    }
++  }
++
++  /**
++   * Terminal result persisted together with the balance; rejected requests also consume their ID.
++   */
++  record Receipt(
++      Request request,
++      Status status,
++      BigDecimal balanceBefore,
++      BigDecimal balanceAfter,
++      long recordedAt) {
++    public Receipt {
++      Objects.requireNonNull(request, "request");
++      Objects.requireNonNull(status, "status");
++      balanceBefore =
++          Objects.requireNonNull(balanceBefore, "balanceBefore")
++              .setScale(2, RoundingMode.UNNECESSARY);
++      balanceAfter =
++          Objects.requireNonNull(balanceAfter, "balanceAfter")
++              .setScale(2, RoundingMode.UNNECESSARY);
++      if (balanceBefore.signum() < 0 || balanceAfter.signum() < 0 || recordedAt <= 0) {
++        throw new IllegalArgumentException("Invalid money receipt");
++      }
++      BigDecimal expected =
++          status != Status.APPLIED
++              ? balanceBefore
++              : request.direction() == Direction.CREDIT
++                  ? balanceBefore.add(request.amount())
++                  : balanceBefore.subtract(request.amount());
++      if (expected.compareTo(balanceAfter) != 0
++          || (status == Status.APPLIED && balanceAfter.compareTo(MAX_BALANCE) > 0)) {
++        throw new IllegalArgumentException("Money receipt does not match its balance change");
++      }
++    }
++  }
++
++  /**
++   * Returns only a durable terminal receipt; storage uncertainty throws and must not authorize
++   * compensation.
++   */
++  Receipt applyMoney(Request request);
++
++  /**
++   * Absence is authoritative only when this method returns normally. Never infer absence from an
++   * exception.
++   */
++  Optional<Receipt> moneyReceipt(UUID operationId);
++}
+diff --git a/src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java b/src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java
+index 416174f..1214df3 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java
++++ b/src/main/java/dev/starcore/starcore/foundation/economy/SqlBalanceStorage.java
+@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
+ import java.sql.ResultSet;
+ import java.sql.SQLException;
+ import java.sql.Statement;
++import java.util.ArrayList;
++import java.util.List;
+ import java.util.Map;
+ import java.util.Objects;
+ import java.util.Optional;
+@@ -305,7 +307,21 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+                 """);
+         ResultSet rows = statement.executeQuery()) {
+       while (rows.next()) {
+-        properties.setProperty(rows.getString("account_id"), rows.getString("balance"));
++        properties.setProperty(
++            rows.getString("account_id"),
++            new BigDecimal(rows.getString("balance")).stripTrailingZeros().toPlainString());
++      }
++    }
++    try (PreparedStatement statement =
++            connection.prepareStatement(
++                "SELECT operation_id, payload FROM starcore_player_money_receipts ORDER BY"
++                    + " operation_id");
++        ResultSet rows = statement.executeQuery()) {
++      while (rows.next()) {
++        String key = PlayerMoneyReceiptCodec.PREFIX + rows.getString("operation_id");
++        String payload = rows.getString("payload");
++        PlayerMoneyReceiptCodec.decode(key, payload);
++        properties.setProperty(key, payload);
+       }
+     }
+     cachedProperties = copy(properties);
+@@ -317,11 +333,19 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+     long startedAtNanos = System.nanoTime();
+     try {
+       try (Statement statement = connection.createStatement()) {
++        boolean sqlite =
++            "SQLite".equalsIgnoreCase(connection.getMetaData().getDatabaseProductName());
++        statement.execute(
++            "CREATE TABLE IF NOT EXISTS starcore_player_balances (account_id VARCHAR(64) PRIMARY"
++                + " KEY, balance "
++                + (sqlite ? "TEXT" : "DECIMAL(19,2)")
++                + " NOT NULL)");
++        if (sqlite) migrateExactSqliteBalances(connection);
+         statement.execute(
+             """
+-            CREATE TABLE IF NOT EXISTS starcore_player_balances (
+-                account_id VARCHAR(64) PRIMARY KEY,
+-                balance DECIMAL(19,2) NOT NULL
++            CREATE TABLE IF NOT EXISTS starcore_player_money_receipts (
++                operation_id VARCHAR(36) PRIMARY KEY,
++                payload TEXT NOT NULL
+             )
+             """);
+       }
+@@ -331,6 +355,56 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+     }
+   }
+ 
++  /**
++   * SQLite NUMERIC affinity converts large decimal strings to lossy doubles. Preserve cents as
++   * text.
++   */
++  private void migrateExactSqliteBalances(Connection connection) throws SQLException {
++    try (Statement statement = connection.createStatement();
++        ResultSet columns = statement.executeQuery("PRAGMA table_info(starcore_player_balances)")) {
++      while (columns.next()) {
++        if ("balance".equals(columns.getString("name"))
++            && "TEXT".equalsIgnoreCase(columns.getString("type"))) return;
++      }
++    }
++    List<String> dependentSchema = new ArrayList<>();
++    try (PreparedStatement statement =
++            connection.prepareStatement(
++                "SELECT sql FROM sqlite_master WHERE tbl_name='starcore_player_balances' AND type"
++                    + " IN ('index','trigger') AND sql IS NOT NULL");
++        ResultSet rows = statement.executeQuery()) {
++      while (rows.next()) dependentSchema.add(rows.getString(1));
++    }
++    boolean previousAutoCommit = connection.getAutoCommit();
++    connection.setAutoCommit(false);
++    boolean safeToRestore = false;
++    try (Statement statement = connection.createStatement()) {
++      statement.execute(
++          "CREATE TABLE starcore_player_balances_exact (account_id VARCHAR(64) PRIMARY KEY, balance"
++              + " TEXT NOT NULL)");
++      statement.execute(
++          "INSERT INTO starcore_player_balances_exact SELECT account_id,CAST(balance AS TEXT) FROM"
++              + " starcore_player_balances");
++      statement.execute("DROP TABLE starcore_player_balances");
++      statement.execute(
++          "ALTER TABLE starcore_player_balances_exact RENAME TO starcore_player_balances");
++      for (String sql : dependentSchema) statement.execute(sql);
++      connection.commit();
++      safeToRestore = true;
++    } catch (Exception failure) {
++      try {
++        connection.rollback();
++        safeToRestore = true;
++      } catch (SQLException rollbackFailure) {
++        failure.addSuppressed(rollbackFailure);
++      }
++      throw failure;
++    } finally {
++      if (safeToRestore) connection.setAutoCommit(previousAutoCommit);
++      cachedProperties = null;
++    }
++  }
++
+   private void writeSnapshot(Properties properties) {
+     try (Connection connection = openConnection()) {
+       ensureTable(connection);
+@@ -432,25 +506,69 @@ final class SqlBalanceStorage implements InternalEconomyService.BalanceStorage {
+   }
+ 
+   private void writeSnapshot(Connection connection, Properties properties) throws SQLException {
+-    // E-024 修复: 使用 INSERT ON DUPLICATE KEY UPDATE 而非 DELETE+INSERT 全表替换。
+-    // 原审计担忧批量 INSERT 中途抛 SQLException 导致全表已空——ON DUPLICATE KEY UPDATE
+-    // 每行独立原子，不存在全表清空风险，无需事务回滚。若某行 accountId 超长（VARCHAR(64)
+-    // 限制），PreparedStatement 会在该行抛 SQLException，事务回滚可恢复，其他行正常写入。
++    // All balance updates and immutable receipt inserts commit or roll back together.
+     boolean previousAutoCommit = connection.getAutoCommit();
+     connection.setAutoCommit(false);
++    boolean safeToRestoreAutoCommit = false;
+     try (PreparedStatement upsert = connection.prepareStatement(upsertSql(connection))) {
++      try (PreparedStatement existing =
++              connection.prepareStatement(
++                  "SELECT operation_id, payload FROM starcore_player_money_receipts");
++          ResultSet rows = existing.executeQuery()) {
++        while (rows.next()) {
++          String key = PlayerMoneyReceiptCodec.PREFIX + rows.getString("operation_id");
++          if (!rows.getString("payload").equals(properties.getProperty(key))) {
++            throw new SQLException("Stale snapshot omits or changes player money receipt " + key);
++          }
++        }
++      }
+       for (String accountId : properties.stringPropertyNames()) {
++        if (accountId.startsWith(PlayerMoneyReceiptCodec.PREFIX)) continue;
+         upsert.setString(1, accountId);
+         upsert.setString(2, properties.getProperty(accountId));
+         upsert.addBatch();
+       }
+       upsert.executeBatch();
++      // Append immutable receipts in the same transaction as the balances. A duplicate ID
++      // with another payload is corruption/conflict, never an upsert that replaces evidence.
++      try (PreparedStatement lookup =
++              connection.prepareStatement(
++                  "SELECT payload FROM starcore_player_money_receipts WHERE operation_id=?");
++          PreparedStatement insert =
++              connection.prepareStatement(
++                  "INSERT INTO starcore_player_money_receipts (operation_id,payload) VALUES"
++                      + " (?,?)")) {
++        for (String key : properties.stringPropertyNames()) {
++          if (!key.startsWith(PlayerMoneyReceiptCodec.PREFIX)) continue;
++          String payload = properties.getProperty(key);
++          var receipt = PlayerMoneyReceiptCodec.decode(key, payload);
++          String operationId = receipt.request().operationId().toString();
++          lookup.setString(1, operationId);
++          try (ResultSet rows = lookup.executeQuery()) {
++            if (rows.next()) {
++              if (!payload.equals(rows.getString(1)))
++                throw new SQLException("Conflicting player money receipt " + operationId);
++              continue;
++            }
++          }
++          insert.setString(1, operationId);
++          insert.setString(2, payload);
++          insert.executeUpdate();
++        }
++      }
+       connection.commit();
++      safeToRestoreAutoCommit = true;
+     } catch (Exception exception) {
+-      connection.rollback();
++      try {
++        connection.rollback();
++        safeToRestoreAutoCommit = true;
++      } catch (SQLException rollbackFailure) {
++        exception.addSuppressed(rollbackFailure);
++      }
+       throw exception;
+     } finally {
+-      connection.setAutoCommit(previousAutoCommit);
++      if (safeToRestoreAutoCommit) connection.setAutoCommit(previousAutoCommit);
++      cachedProperties = null;
+     }
+   }
+ 
+diff --git a/src/test/java/dev/starcore/starcore/foundation/economy/PlayerMoneyReceiptTest.java b/src/test/java/dev/starcore/starcore/foundation/economy/PlayerMoneyReceiptTest.java
+new file mode 100644
+index 0000000..2f46956
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/foundation/economy/PlayerMoneyReceiptTest.java
+@@ -0,0 +1,505 @@
++package dev.starcore.starcore.foundation.economy;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.database.DatabaseService;
++import dev.starcore.starcore.core.extension.ExtensionRegistry;
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.core.scheduler.StarCoreScheduler;
++import dev.starcore.starcore.foundation.economy.extension.EconomyTransactionExtensionPoint;
++import java.lang.reflect.InvocationTargetException;
++import java.lang.reflect.Proxy;
++import java.math.BigDecimal;
++import java.nio.file.Path;
++import java.sql.Connection;
++import java.sql.SQLException;
++import java.util.Map;
++import java.util.Optional;
++import java.util.Properties;
++import java.util.UUID;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.Executors;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicInteger;
++import java.util.logging.Logger;
++import org.bukkit.plugin.java.JavaPlugin;
++import org.junit.jupiter.api.BeforeEach;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++import org.sqlite.SQLiteDataSource;
++
++class PlayerMoneyReceiptTest {
++  @TempDir Path directory;
++  private final UUID player = UUID.randomUUID();
++  private static final Logger LOG = Logger.getLogger(PlayerMoneyReceiptTest.class.getName());
++
++  @BeforeEach
++  void extensions() {
++    ExtensionRegistry.init(LOG);
++    ExtensionRegistry.getInstance().clear();
++  }
++
++  private SQLiteDataSource source() {
++    SQLiteDataSource source = new SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + directory.resolve("balances.db"));
++    return source;
++  }
++
++  private SqlBalanceStorage storage(SQLiteDataSource source) {
++    return new SqlBalanceStorage(() -> Optional.of(source), Properties::new, LOG, Runnable::run);
++  }
++
++  private InternalEconomyService economy(SQLiteDataSource source) {
++    var economy = new InternalEconomyService(storage(source), LOG);
++    economy.start();
++    return economy;
++  }
++
++  private PlayerMoneyService.Request request(
++      PlayerMoneyService.Direction direction, String amount) {
++    return new PlayerMoneyService.Request(
++        UUID.randomUUID(), player, direction, new BigDecimal(amount), "starsupply:test;测试");
++  }
++
++  @Test
++  void creditDebitAndRejectedReceiptsSurviveRestartAndOrdinaryMutations() {
++    var source = source();
++    var service = economy(source);
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "12.50");
++    var debit = request(PlayerMoneyService.Direction.DEBIT, "2.50");
++    var rejected = request(PlayerMoneyService.Direction.DEBIT, "20.00");
++    var creditReceipt = service.applyMoney(credit);
++    assertThat(service.applyMoney(debit).status()).isEqualTo(PlayerMoneyService.Status.APPLIED);
++    assertThat(service.applyMoney(rejected).status())
++        .isEqualTo(PlayerMoneyService.Status.INSUFFICIENT_FUNDS);
++    assertThat(service.deposit(player, new BigDecimal("40"))).isTrue();
++    assertThat(service.applyMoney(rejected).status())
++        .isEqualTo(PlayerMoneyService.Status.INSUFFICIENT_FUNDS);
++    assertThat(service.applyMoney(credit)).isEqualTo(creditReceipt);
++    assertThat(service.balance(player)).isEqualByComparingTo("50.00");
++    UUID recipient = UUID.randomUUID();
++    assertThat(service.transfer(player, recipient, new BigDecimal("5"))).isTrue();
++    service.stop();
++    var restarted = economy(source);
++    assertThat(restarted.applyMoney(credit)).isEqualTo(creditReceipt);
++    assertThat(restarted.applyMoney(debit).status()).isEqualTo(PlayerMoneyService.Status.APPLIED);
++    assertThat(restarted.applyMoney(rejected).status())
++        .isEqualTo(PlayerMoneyService.Status.INSUFFICIENT_FUNDS);
++    assertThat(restarted.balance(player)).isEqualByComparingTo("45.00");
++    assertThat(restarted.balance(recipient)).isEqualByComparingTo("5.00");
++  }
++
++  @Test
++  void duplicateBusinessIdCannotChangeAccountDirectionAmountOrSource() {
++    var service = economy(source());
++    var original = request(PlayerMoneyService.Direction.CREDIT, "10.00");
++    service.applyMoney(original);
++    for (var changed :
++        new PlayerMoneyService.Request[] {
++          new PlayerMoneyService.Request(
++              original.operationId(),
++              UUID.randomUUID(),
++              original.direction(),
++              original.amount(),
++              original.source()),
++          new PlayerMoneyService.Request(
++              original.operationId(),
++              player,
++              PlayerMoneyService.Direction.DEBIT,
++              original.amount(),
++              original.source()),
++          new PlayerMoneyService.Request(
++              original.operationId(),
++              player,
++              original.direction(),
++              new BigDecimal("11"),
++              original.source()),
++          new PlayerMoneyService.Request(
++              original.operationId(), player, original.direction(), original.amount(), "other")
++        }) {
++      assertThatThrownBy(() -> service.applyMoney(changed))
++          .isInstanceOf(IllegalArgumentException.class);
++    }
++    assertThat(service.balance(player)).isEqualByComparingTo("10");
++  }
++
++  @Test
++  void receiptInsertRollbackAlsoRollsBackBalanceAndOriginalIdCanRetry() throws Exception {
++    var source = source();
++    var service = economy(source);
++    assertThat(service.setBalance(player, new BigDecimal("30"))).isTrue();
++    var debit = request(PlayerMoneyService.Direction.DEBIT, "4.20");
++    sql(
++        source,
++        "CREATE TRIGGER reject_receipt BEFORE INSERT ON starcore_player_money_receipts BEGIN SELECT"
++            + " RAISE(ABORT,'no receipt'); END");
++    assertThatThrownBy(() -> service.applyMoney(debit)).isInstanceOf(IllegalStateException.class);
++    assertThat(service.balance(player)).isEqualByComparingTo("30");
++    assertThat(service.moneyReceipt(debit.operationId())).isEmpty();
++    assertThat(economy(source).balance(player)).isEqualByComparingTo("30");
++    sql(source, "DROP TRIGGER reject_receipt");
++    assertThat(service.applyMoney(debit).status()).isEqualTo(PlayerMoneyService.Status.APPLIED);
++    assertThat(economy(source).balance(player)).isEqualByComparingTo("25.80");
++  }
++
++  @Test
++  void commitResponseLossIsResolvedFromActualSqlReceipt() {
++    FaultSource source = faultSource();
++    var service = economy(source);
++    service.setBalance(player, new BigDecimal("10"));
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "3.50");
++    source.failCommitNumber.set(2); // First commit drains prior snapshots; second commits receipt.
++    assertThat(service.applyMoney(credit).status()).isEqualTo(PlayerMoneyService.Status.APPLIED);
++    assertThat(service.balance(player)).isEqualByComparingTo("13.50");
++    assertThat(service.applyMoney(credit).balanceAfter()).isEqualByComparingTo("13.50");
++    assertThat(economy(source).balance(player)).isEqualByComparingTo("13.50");
++  }
++
++  @Test
++  void unknownCommitBlocksOrdinaryWritesUntilAuthoritativeReload() {
++    FaultSource source = faultSource();
++    var service = economy(source);
++    service.setBalance(player, new BigDecimal("10"));
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "3.50");
++    source.failCommitNumber.set(2);
++    source.blockReadsAfterCommit = true;
++    assertThatThrownBy(() -> service.applyMoney(credit)).isInstanceOf(IllegalStateException.class);
++    assertThat(service.setBalance(player, new BigDecimal("1"))).isFalse();
++    assertThatThrownBy(service::flushNow).isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(() -> service.moneyReceipt(credit.operationId()))
++        .isInstanceOf(IllegalStateException.class);
++    source.unavailable.set(false);
++    assertThat(service.applyMoney(credit).status()).isEqualTo(PlayerMoneyService.Status.APPLIED);
++    assertThat(service.deposit(player, new BigDecimal("2"))).isTrue();
++    service.stop();
++    assertThat(economy(source).balance(player)).isEqualByComparingTo("15.50");
++  }
++
++  @Test
++  void oldSnapshotCannotEraseReceiptOrOverwriteItsBalance() {
++    var source = source();
++    var store = storage(source);
++    var service = new InternalEconomyService(store, LOG);
++    service.start();
++    service.setBalance(player, new BigDecimal("5"));
++    var oldSnapshot = store.load();
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "2");
++    service.applyMoney(credit);
++    assertThatThrownBy(() -> store.save(oldSnapshot)).isInstanceOf(IllegalStateException.class);
++    assertThat(economy(source).balance(player)).isEqualByComparingTo("7");
++    assertThat(service.moneyReceipt(credit.operationId())).isPresent();
++  }
++
++  @Test
++  void concurrentDuplicateCreditChangesBalanceOnce() throws Exception {
++    var source = source();
++    var service = economy(source);
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "6");
++    var start = new CountDownLatch(1);
++    try (var workers = Executors.newFixedThreadPool(2)) {
++      var first =
++          workers.submit(
++              () -> {
++                start.await();
++                return service.applyMoney(credit);
++              });
++      var second =
++          workers.submit(
++              () -> {
++                start.await();
++                return service.applyMoney(credit);
++              });
++      start.countDown();
++      assertThat(first.get(5, TimeUnit.SECONDS)).isEqualTo(second.get(5, TimeUnit.SECONDS));
++    }
++    assertThat(economy(source).balance(player)).isEqualByComparingTo("6");
++  }
++
++  @Test
++  void fileSnapshotAndDatabaseMigrationPreserveReceipts() throws Exception {
++    JavaPlugin plugin = mock(JavaPlugin.class);
++    when(plugin.getDataFolder()).thenReturn(directory.toFile());
++    when(plugin.getLogger()).thenReturn(LOG);
++    PersistenceService persistence = new PersistenceService(plugin, mock(StarCoreScheduler.class));
++    persistence.start();
++    var file = new InternalEconomyService(persistence);
++    file.start();
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "7.25");
++    file.applyMoney(credit);
++    file.stop();
++    var reopenedFile = new InternalEconomyService(persistence);
++    reopenedFile.start();
++    assertThat(reopenedFile.applyMoney(credit).balanceAfter()).isEqualByComparingTo("7.25");
++    var source = source();
++    var database = mock(DatabaseService.class);
++    when(database.isRunning()).thenReturn(false);
++    when(database.dataSource()).thenReturn(Optional.of(source));
++    var migrated = new InternalEconomyService(database, persistence, LOG, Runnable::run);
++    migrated.start();
++    when(database.isRunning()).thenReturn(true);
++    var debit = request(PlayerMoneyService.Direction.DEBIT, "1.25");
++    migrated.applyMoney(debit);
++    migrated.stop();
++    var reopenedSql = economy(source);
++    assertThat(reopenedSql.applyMoney(credit).balanceAfter()).isEqualByComparingTo("7.25");
++    assertThat(reopenedSql.applyMoney(debit).status()).isEqualTo(PlayerMoneyService.Status.APPLIED);
++    assertThat(reopenedSql.balance(player)).isEqualByComparingTo("6");
++  }
++
++  @Test
++  void corruptReceiptStopsLoadingAndCannotBeTreatedAsAbsent() throws Exception {
++    var source = source();
++    var service = economy(source);
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "7");
++    service.applyMoney(credit);
++    sql(source, "UPDATE starcore_player_money_receipts SET payload='broken'");
++    assertThatThrownBy(() -> economy(source)).isInstanceOf(IllegalStateException.class);
++  }
++
++  @Test
++  void rejectedRequestOnNewAccountRemainsRejectedAfterFundingAndRestart() {
++    var source = source();
++    var service = economy(source);
++    var debit = request(PlayerMoneyService.Direction.DEBIT, "7");
++    assertThat(service.applyMoney(debit).status())
++        .isEqualTo(PlayerMoneyService.Status.INSUFFICIENT_FUNDS);
++    var restarted = economy(source);
++    assertThat(restarted.hasAccount(player)).isFalse();
++    restarted.deposit(player, new BigDecimal("20"));
++    assertThat(restarted.applyMoney(debit).status())
++        .isEqualTo(PlayerMoneyService.Status.INSUFFICIENT_FUNDS);
++    assertThat(restarted.balance(player)).isEqualByComparingTo("20");
++  }
++
++  @Test
++  void largeSqliteBalancesRetainEveryCentAcrossReceiptsAndOrdinaryWrites() {
++    var source = source();
++    var service = economy(source);
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "99999999999999999.97");
++    service.applyMoney(credit);
++    var reopened = economy(source);
++    assertThat(reopened.balance(player)).isEqualByComparingTo("99999999999999999.97");
++    reopened.applyMoney(request(PlayerMoneyService.Direction.DEBIT, "0.01"));
++    assertThat(reopened.deposit(player, new BigDecimal("0.01"))).isTrue();
++    reopened.stop();
++    var finalService = economy(source);
++    assertThat(finalService.balance(player)).isEqualByComparingTo("99999999999999999.97");
++    assertThat(finalService.applyMoney(credit).balanceAfter())
++        .isEqualByComparingTo("99999999999999999.97");
++    assertThat(
++            finalService.applyMoney(request(PlayerMoneyService.Direction.CREDIT, "0.03")).status())
++        .isEqualTo(PlayerMoneyService.Status.BALANCE_LIMIT);
++  }
++
++  @Test
++  void legacySqliteMigrationPreservesStoredBalanceIndexesAndTriggers() throws Exception {
++    var source = source();
++    sql(
++        source,
++        "CREATE TABLE starcore_player_balances (account_id VARCHAR(64) PRIMARY KEY,balance"
++            + " DECIMAL(19,2) NOT NULL)");
++    sql(source, "INSERT INTO starcore_player_balances VALUES ('" + player + "',12.50)");
++    sql(source, "CREATE INDEX balance_lookup ON starcore_player_balances(balance)");
++    sql(
++        source,
++        "CREATE TRIGGER protect_balance BEFORE UPDATE ON starcore_player_balances BEGIN SELECT"
++            + " RAISE(ABORT,'protected'); END");
++    var service = economy(source);
++    assertThat(service.balance(player)).isEqualByComparingTo("12.50");
++    assertThat(service.setBalance(player, new BigDecimal("90"))).isFalse();
++    try (var connection = source.getConnection();
++        var query = connection.createStatement();
++        var rows =
++            query.executeQuery(
++                "SELECT count(*) FROM sqlite_master WHERE name IN"
++                    + " ('balance_lookup','protect_balance')")) {
++      assertThat(rows.next()).isTrue();
++      assertThat(rows.getInt(1)).isEqualTo(2);
++    }
++    sql(source, "DROP TRIGGER protect_balance");
++    service.applyMoney(request(PlayerMoneyService.Direction.CREDIT, "0.01"));
++    assertThat(economy(source).balance(player)).isEqualByComparingTo("12.51");
++  }
++
++  @Test
++  void receiptWaitsForOldAsyncSnapshotAndFutureSnapshotsKeepItsEvidence() throws Exception {
++    var source = source();
++    var releaseIo = new CountDownLatch(1);
++    var ioStarted = new CountDownLatch(1);
++    var io = Executors.newSingleThreadExecutor();
++    var caller = Executors.newSingleThreadExecutor();
++    try {
++      io.submit(
++          () -> {
++            ioStarted.countDown();
++            releaseIo.await();
++            return null;
++          });
++      assertThat(ioStarted.await(5, TimeUnit.SECONDS)).isTrue();
++      var store = new SqlBalanceStorage(() -> Optional.of(source), Properties::new, LOG, io);
++      var service = new InternalEconomyService(store, LOG);
++      service.start();
++      assertThat(service.deposit(player, new BigDecimal("7"), false)).isTrue();
++      var credit = request(PlayerMoneyService.Direction.CREDIT, "2");
++      var entered = new CountDownLatch(1);
++      var receipt =
++          caller.submit(
++              () -> {
++                entered.countDown();
++                return service.applyMoney(credit);
++              });
++      assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
++      assertThatThrownBy(() -> receipt.get(50, TimeUnit.MILLISECONDS))
++          .isInstanceOf(java.util.concurrent.TimeoutException.class);
++      releaseIo.countDown();
++      assertThat(receipt.get(5, TimeUnit.SECONDS).balanceAfter()).isEqualByComparingTo("9");
++      assertThat(service.deposit(player, new BigDecimal("1"), false)).isTrue();
++      service.stop();
++      var reopened = economy(source);
++      assertThat(reopened.balance(player)).isEqualByComparingTo("10");
++      assertThat(reopened.applyMoney(credit).balanceAfter()).isEqualByComparingTo("9");
++    } finally {
++      releaseIo.countDown();
++      io.shutdownNow();
++      caller.shutdownNow();
++      assertThat(io.awaitTermination(5, TimeUnit.SECONDS)).isTrue();
++      assertThat(caller.awaitTermination(5, TimeUnit.SECONDS)).isTrue();
++    }
++  }
++
++  @Test
++  void fatalInterruptionAfterCommitStillRequiresReloadBeforeAnotherWrite() {
++    var source = source();
++    var delegate = storage(source);
++    var interrupt = new AtomicBoolean(true);
++    var service =
++        new InternalEconomyService(
++            new InternalEconomyService.BalanceStorage() {
++              @Override
++              public Properties load() {
++                return delegate.load();
++              }
++
++              @Override
++              public void save(Properties properties) {
++                delegate.save(properties);
++                if (properties.stringPropertyNames().stream()
++                        .anyMatch(k -> k.startsWith(PlayerMoneyReceiptCodec.PREFIX))
++                    && interrupt.getAndSet(false))
++                  throw new AssertionError("interrupted after commit");
++              }
++            });
++    service.start();
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "7");
++    assertThatThrownBy(() -> service.applyMoney(credit)).isInstanceOf(AssertionError.class);
++    assertThat(service.deposit(player, new BigDecimal("1"))).isTrue();
++    assertThat(service.applyMoney(credit).balanceAfter()).isEqualByComparingTo("7");
++    assertThat(economy(source).balance(player)).isEqualByComparingTo("8");
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void fileWriteFailureBeforeOrAfterReplacementKeepsBalanceAndReceiptTogether(boolean afterCommit) {
++    JavaPlugin plugin = mock(JavaPlugin.class);
++    when(plugin.getDataFolder()).thenReturn(directory.toFile());
++    when(plugin.getLogger()).thenReturn(LOG);
++    var armed = new AtomicBoolean(true);
++    PersistenceService persistence =
++        new PersistenceService(plugin, mock(StarCoreScheduler.class)) {
++          @Override
++          public void saveProperties(String namespace, String fileName, Properties properties) {
++            boolean fail =
++                properties.stringPropertyNames().stream()
++                        .anyMatch(k -> k.startsWith(PlayerMoneyReceiptCodec.PREFIX))
++                    && armed.getAndSet(false);
++            if (fail && !afterCommit)
++              throw new IllegalStateException("write failed before replace");
++            super.saveProperties(namespace, fileName, properties);
++            if (fail) throw new IllegalStateException("reply lost after replace");
++          }
++        };
++    persistence.start();
++    var service = new InternalEconomyService(persistence);
++    service.start();
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "7.25");
++    if (afterCommit)
++      assertThat(service.applyMoney(credit).status()).isEqualTo(PlayerMoneyService.Status.APPLIED);
++    else {
++      assertThatThrownBy(() -> service.applyMoney(credit))
++          .isInstanceOf(IllegalStateException.class);
++      assertThat(service.balance(player)).isEqualByComparingTo("0");
++      assertThat(service.moneyReceipt(credit.operationId())).isEmpty();
++    }
++    var reopened = new InternalEconomyService(persistence);
++    reopened.start();
++    assertThat(reopened.applyMoney(credit).status()).isEqualTo(PlayerMoneyService.Status.APPLIED);
++    assertThat(reopened.balance(player)).isEqualByComparingTo("7.25");
++  }
++
++  @Test
++  void providerCannotSilentlyChangeAmountAndDeniedReceiptDoesNotReinvokeIt() {
++    var source = source();
++    var service = economy(source);
++    var credit = request(PlayerMoneyService.Direction.CREDIT, "8");
++    var registry = mock(ExtensionRegistry.class);
++    when(registry.execute(eq("economy_transaction"), any()))
++        .thenReturn(
++            new EconomyTransactionExtensionPoint.TransactionResult(
++                true, new BigDecimal("7"), "changed", Map.of()));
++    try (var mocked = mockStatic(ExtensionRegistry.class)) {
++      mocked.when(ExtensionRegistry::getInstance).thenReturn(registry);
++      var receipt = service.applyMoney(credit);
++      assertThat(receipt.status()).isEqualTo(PlayerMoneyService.Status.EXTENSION_REJECTED);
++      assertThat(service.applyMoney(credit)).isEqualTo(receipt);
++      verify(registry, times(1)).execute(eq("economy_transaction"), any());
++    }
++    assertThat(economy(source).balance(player)).isEqualByComparingTo("0");
++  }
++
++  private FaultSource faultSource() {
++    FaultSource source = new FaultSource();
++    source.setUrl("jdbc:sqlite:" + directory.resolve("balances.db"));
++    return source;
++  }
++
++  private static class FaultSource extends SQLiteDataSource {
++    final AtomicInteger failCommitNumber = new AtomicInteger();
++    final AtomicBoolean unavailable = new AtomicBoolean();
++    boolean blockReadsAfterCommit;
++
++    @Override
++    public Connection getConnection() throws SQLException {
++      if (unavailable.get()) throw new SQLException("connection unavailable");
++      Connection delegate = super.getConnection();
++      return (Connection)
++          Proxy.newProxyInstance(
++              Connection.class.getClassLoader(),
++              new Class<?>[] {Connection.class},
++              (proxy, method, args) -> {
++                try {
++                  Object result = method.invoke(delegate, args);
++                  if (method.getName().equals("commit")
++                      && failCommitNumber.get() > 0
++                      && failCommitNumber.decrementAndGet() == 0) {
++                    unavailable.set(blockReadsAfterCommit);
++                    throw new SQLException("response lost after actual commit");
++                  }
++                  return result;
++                } catch (InvocationTargetException failure) {
++                  throw failure.getCause();
++                }
++              });
++    }
++  }
++
++  private static void sql(SQLiteDataSource source, String query) throws SQLException {
++    try (var connection = source.getConnection();
++        var statement = connection.createStatement()) {
++      statement.execute(query);
++    }
++  }
++}

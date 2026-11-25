@@ -31,6 +31,7 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
     private final BiPredicate<UUID, BigDecimal> refundPremium;
     private final Logger logger;
     private final NationCreditService nationalCredits;
+    private final PlayerMoneyBridge playerMoney;
 
     public CoreInsurancePayment(CorePayment payments, StarCoreApi api, Logger logger) {
         this.payments = Objects.requireNonNull(payments);
@@ -42,6 +43,7 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
         }
         TreasuryService treasury = api.service(TreasuryService.class).orElseThrow();
         this.nationalCredits = api.service(NationCreditService.class).orElse(null);
+        this.playerMoney = PlayerMoneyBridge.bindOptional(internal);
         this.hasBalance = internal::has;
         this.withdrawPremium = (id, amount) -> internal.withdraw(id, amount, true, true);
         this.depositPremium = (id, amount) -> treasury.tryDeposit(NationId.of(id), amount);
@@ -62,6 +64,15 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
                          BiPredicate<UUID, BigDecimal> withdrawPremium,
                          BiPredicate<UUID, BigDecimal> depositPremium,
                          BiPredicate<UUID, BigDecimal> refundPremium, Logger logger, NationCreditService nationalCredits) {
+        this(payments, ledger, hasBalance, withdrawPremium, depositPremium, refundPremium, logger, nationalCredits, null);
+    }
+
+    CoreInsurancePayment(CorePayment payments, TransactionFabric ledger,
+                         BiPredicate<UUID, BigDecimal> hasBalance,
+                         BiPredicate<UUID, BigDecimal> withdrawPremium,
+                         BiPredicate<UUID, BigDecimal> depositPremium,
+                         BiPredicate<UUID, BigDecimal> refundPremium, Logger logger,
+                         NationCreditService nationalCredits, PlayerMoneyBridge playerMoney) {
         this.payments = Objects.requireNonNull(payments);
         this.ledger = Objects.requireNonNull(ledger);
         this.hasBalance = Objects.requireNonNull(hasBalance);
@@ -70,6 +81,7 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
         this.refundPremium = Objects.requireNonNull(refundPremium);
         this.logger = Objects.requireNonNull(logger);
         this.nationalCredits = nationalCredits;
+        this.playerMoney = playerMoney;
     }
 
     @Override public synchronized MoneyResult execute(MoneyOperation op) {
@@ -115,6 +127,11 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
     }
 
     @Override public synchronized boolean canReplay(MoneyOperation op) {
+        if (op.leg() == MoneyLeg.PREMIUM_DEBIT || op.leg() == MoneyLeg.PREMIUM_REFUND) {
+            if (playerMoney == null) return false;
+            TransactionRecord record = ledger.findByIdempotencyKey(key(op)).orElse(null);
+            return record == null || PlayerMoneyBridge.VERSION.equals(record.metadata().get(PlayerMoneyBridge.PROTOCOL));
+        }
         if (op.leg() != MoneyLeg.PREMIUM_CREDIT || nationalCredits == null) return false;
         TransactionRecord record = ledger.findByIdempotencyKey(key(op)).orElse(null);
         if (record == null) return true; // Both protocols persist their intent before calling treasury.
@@ -176,6 +193,13 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
     }
 
     private MoneyResult premium(MoneyOperation op, BooleanSupplier action) {
+        if (op.leg() == MoneyLeg.PREMIUM_DEBIT || op.leg() == MoneyLeg.PREMIUM_REFUND) {
+            TransactionRecord existing = ledger.findByIdempotencyKey(key(op)).orElse(null);
+            if ((existing == null && playerMoney != null)
+                    || (existing != null && existing.metadata().containsKey(PlayerMoneyBridge.PROTOCOL))) {
+                return playerPremium(op);
+            }
+        }
         TransactionRecord record = ledger.begin(request(op));
         if (record.state() == COMMITTED) return MoneyResult.APPLIED;
         if (record.state() == CANCELLED) return MoneyResult.REJECTED;
@@ -200,6 +224,25 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
         return commit(record);
     }
 
+    private MoneyResult playerPremium(MoneyOperation op) {
+        if (playerMoney == null) return MoneyResult.REVIEW;
+        try {
+            TransactionRequest legacy = request(op);
+            Map<String, String> metadata = new java.util.HashMap<>(legacy.metadata());
+            metadata.put(PlayerMoneyBridge.PROTOCOL, PlayerMoneyBridge.VERSION);
+            TransactionRecord record = playerMoney.advance(ledger, new TransactionRequest(legacy.accountId(), legacy.amount(),
+                    legacy.owner(), legacy.type(), legacy.reason(), legacy.idempotencyKey(), Map.copyOf(metadata)),
+                    op.leg() == MoneyLeg.PREMIUM_DEBIT ? "DEBIT" : "CREDIT");
+            return record.state() == COMMITTED ? MoneyResult.APPLIED : record.state() == CANCELLED ? MoneyResult.REJECTED : MoneyResult.REVIEW;
+        } catch (IllegalArgumentException conflict) {
+            logger.log(Level.WARNING, "Insurance player receipt conflict: " + op.id(), conflict);
+            return MoneyResult.REVIEW;
+        } catch (RuntimeException unavailable) {
+            logger.log(Level.WARNING, "Insurance player receipt will retry original operation: " + op.id(), unavailable);
+            return MoneyResult.RETRY;
+        }
+    }
+
     private MoneyResult commit(TransactionRecord record) {
         if (record.state() == DEBITED) record = ledger.transition(record.transactionId(), DELIVERED,
                 "insurance money confirmed");
@@ -222,6 +265,10 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
             if (op.leg() != MoneyLeg.PREMIUM_DEBIT && op.leg() != MoneyLeg.PREMIUM_CREDIT
                     && op.leg() != MoneyLeg.PREMIUM_REFUND) return MoneyResult.REVIEW;
             TransactionRecord record = ledger.findByIdempotencyKey(key(op)).orElseThrow();
+            if (record.metadata().containsKey(PlayerMoneyBridge.PROTOCOL)) {
+                if (op.leg() != MoneyLeg.PREMIUM_DEBIT && op.leg() != MoneyLeg.PREMIUM_REFUND) return MoneyResult.REVIEW;
+                return execute(op); // Operator flags cannot override or manufacture authoritative player receipts.
+            }
             boolean receiptBacked = record.metadata().containsKey(CREDIT_PROTOCOL);
             // begin validates the original amount, account and immutable policy metadata.
             ledger.begin(request(op, receiptBacked));

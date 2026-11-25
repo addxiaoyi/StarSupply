@@ -29,15 +29,23 @@ public final class CorePayment {
     private final BiPredicate<UUID, BigDecimal> depositPlayer;
     private final Predicate<UUID> nationExists;
     private final Logger logger;
+    private final PlayerMoneyBridge playerMoney;
 
     public CorePayment(NationSpendingService spending, TransactionFabric ledger,
                 BiPredicate<UUID, BigDecimal> depositPlayer, Predicate<UUID> nationExists,
                 Logger logger) {
+        this(spending, ledger, depositPlayer, nationExists, logger, null);
+    }
+
+    CorePayment(NationSpendingService spending, TransactionFabric ledger,
+                BiPredicate<UUID, BigDecimal> depositPlayer, Predicate<UUID> nationExists,
+                Logger logger, PlayerMoneyBridge playerMoney) {
         this.spending = spending;
         this.ledger = ledger;
         this.depositPlayer = depositPlayer;
         this.nationExists = nationExists;
         this.logger = logger;
+        this.playerMoney = playerMoney;
     }
 
     public synchronized PaymentResult pay(UUID settlementId, UUID nationId, UUID playerId,
@@ -154,6 +162,7 @@ public final class CorePayment {
                     || receipt(transaction) != OptionalSpend.APPLIED) return PaymentResult.REVIEW;
             TransactionRecord credit = ledger.findByIdempotencyKey(creditKey(transaction))
                     .orElseThrow(() -> new IllegalArgumentException("No interrupted player credit"));
+            if (credit.metadata().containsKey(PlayerMoneyBridge.PROTOCOL)) return reconcile(settlementId, false);
             if (credit.state() == RESERVED) {
                 credit = move(credit, DEBIT_FAILED, "operator proved player credit unapplied; retry authorized");
             }
@@ -239,9 +248,13 @@ public final class CorePayment {
         if (reserveOnly) return PaymentResult.PAID;
 
         UUID playerId = UUID.fromString(transaction.metadata().get("playerId"));
-        TransactionRecord credit = ledger.begin(new TransactionRequest(
-                playerId, playerAmount, RefundOwner.WAR, TransactionType.TRADE,
-                "StarSupply player credit", creditKey(transaction), transaction.metadata()));
+        TransactionRequest creditRequest = creditRequest(transaction, playerAmount);
+        TransactionRecord credit = ledger.begin(creditRequest);
+        if (credit.metadata().containsKey(PlayerMoneyBridge.PROTOCOL)) {
+            if (playerMoney == null || receipt(transaction) != OptionalSpend.APPLIED) return PaymentResult.REVIEW;
+            credit = playerMoney.advance(ledger, creditRequest, "CREDIT");
+            return finishCredit(transaction, credit, tax, fundTax);
+        }
 
         // The player API has no durable receipt. A restarted RESERVED credit must never be retried.
         if (credit.state() == RESERVED) {
@@ -307,6 +320,12 @@ public final class CorePayment {
     }
 
     private PaymentResult refund(TransactionRecord transaction) {
+        TransactionRecord credit = ledger.findByIdempotencyKey(creditKey(transaction)).orElse(null);
+        if (credit != null && credit.metadata().containsKey(PlayerMoneyBridge.PROTOCOL)) {
+            if (playerMoney == null) return PaymentResult.REVIEW;
+            credit = playerMoney.advance(ledger, creditRequest(transaction, credit.amount()), "CREDIT");
+            if (credit.state() != CANCELLED) return PaymentResult.REVIEW;
+        }
         if (transaction.state() == DELIVERY_FAILED) {
             transaction = move(transaction, REFUND_PENDING, "refund requested for national debit");
         }
@@ -329,6 +348,12 @@ public final class CorePayment {
                     .orElseThrow(() -> new IllegalArgumentException("Unknown StarSupply settlement"));
             TransactionRecord credit = ledger.findByIdempotencyKey(creditKey(transaction))
                     .orElseThrow(() -> new IllegalArgumentException("No player credit started"));
+            if (credit.metadata().containsKey(PlayerMoneyBridge.PROTOCOL) && transaction.state() == DEBITED) {
+                if (playerMoney == null || receipt(transaction) != OptionalSpend.APPLIED) return PaymentResult.REVIEW;
+                credit = playerMoney.advance(ledger, creditRequest(transaction, credit.amount()), "CREDIT");
+                if (credit.state() == COMMITTED && transaction.metadata().containsKey("taxType")) return PaymentResult.REVIEW;
+                return finishCredit(transaction, credit, null, null);
+            }
             if (transaction.state() != DEBITED || credit.state() != RESERVED) {
                 if (transaction.metadata().containsKey("taxType")) return PaymentResult.REVIEW;
                 return advance(transaction);
@@ -345,6 +370,9 @@ public final class CorePayment {
                 return PaymentResult.REVIEW;
             }
             return finishCredit(transaction, credit, null, null);
+        } catch (IllegalArgumentException conflict) {
+            logger.log(Level.WARNING, "StarSupply player receipt conflicts with payment " + settlementId, conflict);
+            return PaymentResult.REVIEW;
         } catch (RuntimeException unavailable) {
             logger.log(Level.WARNING, "StarSupply could not reconcile payment " + settlementId, unavailable);
             return PaymentResult.RETRY;
@@ -363,6 +391,10 @@ public final class CorePayment {
             }
             TransactionRecord credit = ledger.findByIdempotencyKey(creditKey(transaction))
                     .orElseThrow(() -> new IllegalArgumentException("No player credit exists"));
+            if (credit.metadata().containsKey(PlayerMoneyBridge.PROTOCOL)) {
+                if (playerMoney == null) return PaymentResult.REVIEW;
+                credit = playerMoney.advance(ledger, creditRequest(transaction, tax.netAmount()), "CREDIT");
+            }
             if (credit.state() != COMMITTED) return PaymentResult.REVIEW;
             if (!alreadyFunded && (fundTax == null || !fundTax.test(tax))) return PaymentResult.REVIEW;
             move(transaction, DELIVERED, alreadyFunded ? "tariff confirmed by operator" : "tariff funded after review");
@@ -414,6 +446,23 @@ public final class CorePayment {
 
     private static String creditKey(TransactionRecord transaction) {
         return transaction.idempotencyKey() + ":player";
+    }
+
+    private TransactionRequest creditRequest(TransactionRecord transaction, BigDecimal netAmount) {
+        TransactionRecord existing = ledger.findByIdempotencyKey(creditKey(transaction)).orElse(null);
+        Map<String, String> metadata = new java.util.HashMap<>(transaction.metadata());
+        boolean marked = existing != null && existing.metadata().containsKey(PlayerMoneyBridge.PROTOCOL);
+        if (marked && !PlayerMoneyBridge.VERSION.equals(existing.metadata().get(PlayerMoneyBridge.PROTOCOL))) {
+            throw new IllegalArgumentException("Unknown player payment protocol");
+        }
+        if (marked || (existing == null && playerMoney != null)) metadata.put(PlayerMoneyBridge.PROTOCOL, PlayerMoneyBridge.VERSION);
+        // Include the paying nation and gross amount in the authority's identity as well as the local request.
+        if (metadata.containsKey(PlayerMoneyBridge.PROTOCOL)) {
+            metadata.put("paymentNation", transaction.accountId().toString());
+            metadata.put("paymentGross", transaction.amount().toPlainString());
+        }
+        return new TransactionRequest(UUID.fromString(transaction.metadata().get("playerId")), netAmount,
+                RefundOwner.WAR, TransactionType.TRADE, "StarSupply player credit", creditKey(transaction), Map.copyOf(metadata));
     }
 
     private enum OptionalSpend { ABSENT, APPLIED, REFUNDED, CONFLICT }

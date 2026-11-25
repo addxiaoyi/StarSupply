@@ -4,7 +4,7 @@
 
 ## 2026-11-25 续接开发与待验状态
 
-最新保费回执构建通过 137 项 Java 测试，生产 JAR SHA-256 为 `2CC18DA52942D03AD07813DA19398ABCB34BD01044E00D0A55C293404186B941`。新保费国库入账恢复使用真实 Core/SQLite 自动化测试，未启动 Folia；下方实服结果仍属于各自历史构建。来源补产验收器已有 107 项 Node 测试，但六类完整生存链与当前组合仍待验。见 [保费回执构建](verification/workspace-premium-credit-receipts-20261125.json) 和 [来源补产记录](verification/workspace-survival-traced-production-20261125.json)。
+最新玩家资金回执构建通过 148 项 Java verify 与最终 Core 兼容包下 159 项测试，生产 JAR SHA-256 为 `9181545840F9900A92D00005B826EC4F6B9E58BE9785474E00495DC5559EE69F`。新玩家资金恢复使用真实 Core/SQLite 自动化测试，未启动 Folia；下方实服结果仍属于各自历史构建。来源补产验收器已有 107 项 Node 测试，但六类完整生存链与当前组合仍待验。见[玩家回执构建](verification/workspace-player-money-receipts-20261125.json)和[来源补产记录](verification/workspace-survival-traced-production-20261125.json)。
 
 本次重新构建通过 124 项 Java 测试并复现当前生产 JAR 哈希；生存验收器已修复熔炉部分批次、燃料耗尽续烧和放置确认，47 项 Node 测试与 7 项 PowerShell 恢复检查通过。玩家存档只读核对与交接记录一致。本机可用内存不足，用户选择先完成可运行的开发测试，实服验收保留待办，因此这些新脚本尚未在 Folia 现场运行。六类生产、后续持续补给、当前完整组合和图形资源包仍未通过整体验收。详见 [本次记录](verification/workspace-survival-resume-20261125.json)。
 

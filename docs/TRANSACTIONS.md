@@ -8,7 +8,7 @@ StarSupply 只把授权国家、军队、领土、战况和资金操作交给 St
 
 重新启用还必须等待旧 SQL 线程完全停止、执行中的实体回调返回，以及完整库存异步流程释放占用。结果对象已完成或被取消，不等于实体回调及其同步完成链已经退出。SQL 提交固定本次生命周期和线程池，避免提交途中改投新线程池。实体和 SQL 任务遇到 `Error` 时也先结束结果、释放依赖占用，再把致命错误交给宿主；线程池随后继续处理已接收队列。同步启动库存流程抛出 `Error` 同样释放占用。关闭步骤逐项隔离普通异常与链接错误，并在 `finally` 中停止和排空 SQL 线程。新增回归包含取消执行中结果、完成链内重启屏障、致命异常传播及失败线程退出后的队列收尾；112 项完整构建测试和适用边界见 [生命周期加固记录](verification/workspace-lifecycle-hardening-20261125.json)。
 
-保险恢复在同一进程内也检查遗留的 `STARTED`。带 `nationCreditProtocol=1` 标记的新国库保费通过 StarCore `NationCreditService` 原键回执恢复；无回执的玩家扣款、返还和旧国库入账先转入 `REVIEW`。已有标记的交易不能在服务缺失时降级为普通入账，权威回执与取消状态冲突时也不能返还保费。准备金、理赔和释放继续按原编号推进，理赔的玩家入账不明仍须独立证据。137 项全量测试通过；新增 13 项使用真实 Core 国库、SQLite 和事务记录，玩家经济仍为替身。详见 [保费回执](verification/workspace-premium-credit-receipts-20261125.json)、[此前中断保护](verification/workspace-insurance-interruption-20261125.json) 和 [保险规则](INSURANCE.md)。
+保险恢复在同一进程内也检查遗留 STARTED。带 `nationCreditProtocol=1` 的国库保费，以及配合新 Core 补丁的 `playerMoneyProtocol=1` 玩家扣款/返还，均按权威回执恢复；新理赔、采购款和运费也接入玩家回执。旧无标记玩家阶段和旧国库入账继续 REVIEW，已有 REVIEW 不自动解冻。已标记交易不能降级，冲突回执不能授权退款。148 项全量 verify 与最终 Core 兼容包下 159 项测试通过，详见[玩家资金记录](verification/workspace-player-money-receipts-20261125.json)及[保险规则](INSURANCE.md)。
 
 | 步骤 | 成功条件 | 失败后的归属 |
 | --- | --- | --- |
@@ -23,7 +23,7 @@ StarSupply 只把授权国家、军队、领土、战况和资金操作交给 St
 | 战役额外需求 | 服务线程采样 StarCore 冬季与围城状态，工作线程记录连续性，再使用同一库存消费事务。 | 已消费周期的需求快照不变；停战、围城解除、过期观察或时间回退停止压力。 |
 | 承运收入保险 | 独立保单先通过 StarCore 真实预留赔款，再收保费并记入国库，全部确认才激活。 | 不确定经济阶段冻结保单及运输；只对持久化 `RISK` 原因的实际遭袭触发理赔，超时、取消或普通运费拒绝不赔。 |
 
-StarCore 的 `NationSpendingService` 提供幂等的国库扣款和退款凭证。玩家内部经济的发款接口没有可直接重放的持久凭证，因此适配器先写入发款开始记录。重新启动后，如果只能确认调用已经开始，就将该笔转人工核对。管理员应核对 StarCore 操作凭证、玩家账目和时间，再使用 `/supply reconcile <结算UUID> <paid|unpaid>`。确认未到账时会按照同一个扣款凭证退款。
+StarCore 的 `NationSpendingService` 提供幂等的国库扣款和退款凭证。应用[玩家资金补丁](upstream/PLAYER-MONEY.md)后，玩家余额与不可变操作回执由 Core 一起提交；新采购款、运费和理赔按原键恢复，仅权威拒绝才能触发国库退款。旧 Core 布尔接口和升级前的无协议交易仍须独立核对。`/supply reconcile <结算UUID> <paid|unpaid>` 对新协议服从权威回执，人工 unpaid 不能推翻已到账事实；税款阶段保持独立冻结。
 
 StarCore 的 `INSUFFICIENT_FUNDS` 结果不总能单独证明余额不足。付款适配器同时收到足额 `balanceAfter` 时把本次结果视为可重试的国库写入冲突，不取消采购、不退款，也不生成新结算。真实余额不足仍按拒绝路径处理。v11 Paper 玩家回归观察到两笔 5.00 采购各结算一次并拒绝重复售货，但没有现场触发重试；回归分支由 `CorePaymentTest` 覆盖，运行证据见 [Paper v11 付款回归记录](verification/paper-v11-payment-retry-20261122.json)。
 
