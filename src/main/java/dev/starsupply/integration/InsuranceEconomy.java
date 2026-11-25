@@ -7,6 +7,9 @@ import dev.starsupply.api.InsuranceApi.MoneyResult;
 public interface InsuranceEconomy {
     MoneyResult execute(MoneyOperation operation);
 
+    /** True only when this exact operation can be retried through an independent durable receipt. */
+    default boolean canReplay(MoneyOperation operation) { return false; }
+
     /** Operator-confirmed evidence, never a guess based on present balances. */
     MoneyResult reconcile(MoneyOperation operation, boolean applied);
 }

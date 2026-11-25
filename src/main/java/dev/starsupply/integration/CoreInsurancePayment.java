@@ -6,6 +6,7 @@ import dev.starcore.starcore.foundation.economy.InternalEconomyService;
 import dev.starcore.starcore.foundation.economy.transaction.*;
 import dev.starcore.starcore.module.nation.model.NationId;
 import dev.starcore.starcore.module.treasury.TreasuryService;
+import dev.starcore.starcore.module.treasury.NationCreditService;
 import dev.starsupply.api.InsuranceApi.*;
 import java.util.Map;
 import java.util.Objects;
@@ -18,8 +19,10 @@ import java.util.logging.Logger;
 
 import static dev.starcore.starcore.foundation.economy.transaction.EconomyTransactionState.*;
 
-/** Premium debit/credit evidence is conservative; existing receipt-backed payments hold claim funds. */
+/** Uses national credit receipts for new premiums and preserves review for unreceipted player legs. */
 public final class CoreInsurancePayment implements InsuranceEconomy {
+    private static final String CREDIT_PROTOCOL = "nationCreditProtocol";
+    private static final String CREDIT_PROTOCOL_V1 = "1";
     private final CorePayment payments;
     private final TransactionFabric ledger;
     private final BiPredicate<UUID, BigDecimal> hasBalance;
@@ -27,6 +30,7 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
     private final BiPredicate<UUID, BigDecimal> depositPremium;
     private final BiPredicate<UUID, BigDecimal> refundPremium;
     private final Logger logger;
+    private final NationCreditService nationalCredits;
 
     public CoreInsurancePayment(CorePayment payments, StarCoreApi api, Logger logger) {
         this.payments = Objects.requireNonNull(payments);
@@ -37,6 +41,7 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
             throw new IllegalStateException("Freight insurance requires StarCore internal economy");
         }
         TreasuryService treasury = api.service(TreasuryService.class).orElseThrow();
+        this.nationalCredits = api.service(NationCreditService.class).orElse(null);
         this.hasBalance = internal::has;
         this.withdrawPremium = (id, amount) -> internal.withdraw(id, amount, true, true);
         this.depositPremium = (id, amount) -> treasury.tryDeposit(NationId.of(id), amount);
@@ -49,6 +54,14 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
                          BiPredicate<UUID, BigDecimal> withdrawPremium,
                          BiPredicate<UUID, BigDecimal> depositPremium,
                          BiPredicate<UUID, BigDecimal> refundPremium, Logger logger) {
+        this(payments, ledger, hasBalance, withdrawPremium, depositPremium, refundPremium, logger, null);
+    }
+
+    CoreInsurancePayment(CorePayment payments, TransactionFabric ledger,
+                         BiPredicate<UUID, BigDecimal> hasBalance,
+                         BiPredicate<UUID, BigDecimal> withdrawPremium,
+                         BiPredicate<UUID, BigDecimal> depositPremium,
+                         BiPredicate<UUID, BigDecimal> refundPremium, Logger logger, NationCreditService nationalCredits) {
         this.payments = Objects.requireNonNull(payments);
         this.ledger = Objects.requireNonNull(ledger);
         this.hasBalance = Objects.requireNonNull(hasBalance);
@@ -56,6 +69,7 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
         this.depositPremium = Objects.requireNonNull(depositPremium);
         this.refundPremium = Objects.requireNonNull(refundPremium);
         this.logger = Objects.requireNonNull(logger);
+        this.nationalCredits = nationalCredits;
     }
 
     @Override public synchronized MoneyResult execute(MoneyOperation op) {
@@ -71,11 +85,25 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
                 case PREMIUM_DEBIT -> premium(op, () -> withdrawPremium.test(op.carrierId(), op.amount()));
                 case PREMIUM_CREDIT -> {
                     requireSibling(op, MoneyLeg.PREMIUM_DEBIT, COMMITTED);
-                    yield premium(op, () -> depositPremium.test(op.nationId(), op.amount()));
+                    TransactionRecord existing = ledger.findByIdempotencyKey(key(op)).orElse(null);
+                    if (existing != null && existing.metadata().containsKey(CREDIT_PROTOCOL)) {
+                        yield CREDIT_PROTOCOL_V1.equals(existing.metadata().get(CREDIT_PROTOCOL)) && nationalCredits != null
+                                ? creditPremium(op) : MoneyResult.REVIEW;
+                    }
+                    // Never replay an older ordinary tryDeposit under the new receipt identity.
+                    yield existing == null && nationalCredits != null ? creditPremium(op)
+                            : premium(op, () -> depositPremium.test(op.nationId(), op.amount()));
                 }
                 case PREMIUM_REFUND -> {
                     requireSibling(op, MoneyLeg.PREMIUM_DEBIT, COMMITTED);
-                    requireSibling(op, MoneyLeg.PREMIUM_CREDIT, CANCELLED);
+                    TransactionRecord credit = requireSibling(op, MoneyLeg.PREMIUM_CREDIT, CANCELLED);
+                    if (credit.metadata().containsKey(CREDIT_PROTOCOL)) {
+                        if (!CREDIT_PROTOCOL_V1.equals(credit.metadata().get(CREDIT_PROTOCOL))
+                                || nationalCredits == null) yield MoneyResult.REVIEW;
+                        synchronized (nationalCredits) {
+                            if (nationalCredits.creditReceipt(credit.idempotencyKey()).isPresent()) yield MoneyResult.REVIEW;
+                        }
+                    }
                     // This restores a confirmed withdrawal that never reached the treasury.
                     yield premium(op, () -> refundPremium.test(op.carrierId(), op.amount()));
                 }
@@ -84,6 +112,67 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
             logger.log(Level.WARNING, "Insurance money needs review: " + op.id() + " " + op.leg(), failure);
             return MoneyResult.REVIEW;
         }
+    }
+
+    @Override public synchronized boolean canReplay(MoneyOperation op) {
+        if (op.leg() != MoneyLeg.PREMIUM_CREDIT || nationalCredits == null) return false;
+        TransactionRecord record = ledger.findByIdempotencyKey(key(op)).orElse(null);
+        if (record == null) return true; // Both protocols persist their intent before calling treasury.
+        return CREDIT_PROTOCOL_V1.equals(record.metadata().get(CREDIT_PROTOCOL));
+    }
+
+    private MoneyResult creditPremium(MoneyOperation op) {
+        try {
+            TransactionRecord record = ledger.begin(request(op, true));
+            if (record.state() == MANUAL_REVIEW) return MoneyResult.REVIEW;
+            if (record.state() == CREATED) record = ledger.transition(record.transactionId(), RESERVED,
+                    "treasury premium requested with durable national credit receipt");
+            // TreasuryModule serializes credits on its own monitor. Hold that same monitor
+            // while inspecting receipts so its tentative in-memory receipt is never accepted.
+            synchronized (nationalCredits) {
+                NationCreditService.CreditRequest request = creditRequest(op);
+                var receipt = nationalCredits.creditReceipt(request.transactionId());
+                if (record.state() == CANCELLED || record.state() == DEBIT_FAILED) {
+                    if (receipt.isPresent()) return MoneyResult.REVIEW;
+                } else {
+                    if (receipt.isEmpty() && record.state() == RESERVED) {
+                        var result = nationalCredits.credit(request);
+                        if (result == null || !request.transactionId().equals(result.transactionId())) return MoneyResult.REVIEW;
+                        receipt = nationalCredits.creditReceipt(request.transactionId());
+                        // REJECTED can include a persistence failure. It cannot authorize a refund.
+                        if (receipt.isEmpty()) return MoneyResult.RETRY;
+                    }
+                    if (receipt.isEmpty() || !matches(receipt.get(), request)) return MoneyResult.REVIEW;
+                }
+            }
+            if (record.state() == CANCELLED) return MoneyResult.REJECTED;
+            if (record.state() == DEBIT_FAILED) {
+                ledger.transition(record.transactionId(), CANCELLED, "confirmed unapplied treasury premium closed");
+                return MoneyResult.REJECTED;
+            }
+            if (record.state() == RESERVED) record = ledger.transition(record.transactionId(), DEBITED,
+                    "national premium credit receipt confirmed");
+            return commit(record);
+        } catch (IllegalArgumentException conflict) {
+            logger.log(Level.WARNING, "Treasury premium identity needs review: " + op.id(), conflict);
+            return MoneyResult.REVIEW;
+        } catch (RuntimeException unavailable) {
+            logger.log(Level.WARNING, "Treasury premium will retry its original credit receipt: " + op.id(), unavailable);
+            return MoneyResult.RETRY;
+        }
+    }
+
+    private static NationCreditService.CreditRequest creditRequest(MoneyOperation op) {
+        return new NationCreditService.CreditRequest(key(op), NationId.of(op.nationId()), op.amount(),
+                NationCreditService.CreditCategory.OTHER,
+                "StarSupply insurance premium policy=" + op.policyId() + " shipment=" + op.shipmentId()
+                        + " purchase=" + op.purchaseId() + " carrier=" + op.carrierId() + " money=" + op.id());
+    }
+
+    private static boolean matches(NationCreditService.CreditReceipt receipt, NationCreditService.CreditRequest request) {
+        return receipt.transactionId().equals(request.transactionId()) && receipt.nationId().equals(request.nationId())
+                && receipt.amount().compareTo(request.amount()) == 0 && receipt.category() == request.category()
+                && receipt.description().equals(request.description());
     }
 
     private MoneyResult premium(MoneyOperation op, BooleanSupplier action) {
@@ -133,8 +222,27 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
             if (op.leg() != MoneyLeg.PREMIUM_DEBIT && op.leg() != MoneyLeg.PREMIUM_CREDIT
                     && op.leg() != MoneyLeg.PREMIUM_REFUND) return MoneyResult.REVIEW;
             TransactionRecord record = ledger.findByIdempotencyKey(key(op)).orElseThrow();
+            boolean receiptBacked = record.metadata().containsKey(CREDIT_PROTOCOL);
             // begin validates the original amount, account and immutable policy metadata.
-            ledger.begin(request(op));
+            ledger.begin(request(op, receiptBacked));
+            if (receiptBacked) {
+                if (op.leg() != MoneyLeg.PREMIUM_CREDIT || !CREDIT_PROTOCOL_V1.equals(record.metadata().get(CREDIT_PROTOCOL))
+                        || nationalCredits == null) return MoneyResult.REVIEW;
+                java.util.Optional<NationCreditService.CreditReceipt> receipt;
+                synchronized (nationalCredits) {
+                    receipt = nationalCredits.creditReceipt(key(op));
+                }
+                if (receipt.isPresent()) {
+                    if (record.state() == CANCELLED || record.state() == DEBIT_FAILED) return MoneyResult.REVIEW;
+                    return matches(receipt.get(), creditRequest(op)) ? execute(op) : MoneyResult.REVIEW;
+                }
+                if (applied) return MoneyResult.REVIEW; // An operator flag cannot manufacture the missing receipt.
+                if (record.state() != RESERVED && record.state() != DEBIT_FAILED && record.state() != CANCELLED) {
+                    return MoneyResult.REVIEW;
+                }
+                // Independent evidence of no credit may close an interrupted request. A known
+                // receipt above always wins over an operator's "unapplied" flag.
+            }
             if (record.state() == COMMITTED) return MoneyResult.APPLIED;
             if (record.state() == CANCELLED) return MoneyResult.REJECTED;
             if (record.state() == DEBITED || record.state() == DELIVERED) return commit(record);
@@ -163,23 +271,32 @@ public final class CoreInsurancePayment implements InsuranceEconomy {
         }
     }
 
-    private void requireSibling(MoneyOperation op, MoneyLeg sibling, EconomyTransactionState state) {
+    private TransactionRecord requireSibling(MoneyOperation op, MoneyLeg sibling, EconomyTransactionState state) {
         String siblingKey = "starsupply:insurance:" + op.policyId() + ":" + sibling;
         TransactionRecord record = ledger.findByIdempotencyKey(siblingKey).orElseThrow();
         if (record.state() != state || record.amount().compareTo(op.amount()) != 0
                 || !op.policyId().toString().equals(record.metadata().get("policy"))
+                || !op.shipmentId().toString().equals(record.metadata().get("shipment"))
+                || !op.purchaseId().toString().equals(record.metadata().get("purchase"))
                 || !op.nationId().toString().equals(record.metadata().get("nation"))
                 || !op.carrierId().toString().equals(record.metadata().get("carrier"))) {
             throw new IllegalStateException("Insurance premium evidence mismatch");
         }
+        return record;
     }
 
     private static TransactionRequest request(MoneyOperation op) {
+        return request(op, false);
+    }
+
+    private static TransactionRequest request(MoneyOperation op, boolean receiptBacked) {
+        Map<String, String> metadata = new java.util.HashMap<>(Map.of("policy", op.policyId().toString(),
+                "shipment", op.shipmentId().toString(), "purchase", op.purchaseId().toString(),
+                "nation", op.nationId().toString(), "carrier", op.carrierId().toString(), "moneyId", op.id().toString()));
+        if (receiptBacked) metadata.put(CREDIT_PROTOCOL, CREDIT_PROTOCOL_V1);
         return new TransactionRequest(op.leg() == MoneyLeg.PREMIUM_CREDIT ? op.nationId() : op.carrierId(),
                 op.amount(), RefundOwner.WAR, TransactionType.OTHER, "StarSupply freight insurance " + op.leg(), key(op),
-                Map.of("policy", op.policyId().toString(), "shipment", op.shipmentId().toString(),
-                        "purchase", op.purchaseId().toString(), "nation", op.nationId().toString(),
-                        "carrier", op.carrierId().toString(), "moneyId", op.id().toString()));
+                Map.copyOf(metadata));
     }
 
     private static String key(MoneyOperation op) { return "starsupply:insurance:" + op.policyId() + ":" + op.leg(); }

@@ -52,9 +52,10 @@ public final class InsuranceStore implements AutoCloseable {
                 return null;
             });
         }
-        // These legs lack an authority receipt. Calling again after a crash could debit/credit twice.
+        // Player legs lack an authority receipt. Treasury credits remain STARTED until the
+        // adapter inspects their persisted protocol; legacy credits still need review.
         update("UPDATE insurance_money SET state='REVIEW' WHERE state='STARTED' "
-                + "AND leg IN ('PREMIUM_DEBIT','PREMIUM_CREDIT','PREMIUM_REFUND')");
+                + "AND leg IN ('PREMIUM_DEBIT','PREMIUM_REFUND')");
     }
 
     public synchronized Policy create(Quote quote, UUID carrier, long now) throws SQLException {

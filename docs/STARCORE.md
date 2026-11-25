@@ -15,7 +15,7 @@ StarSupply 对接 StarCore 1.0.0 的提交 `f769e62799e769a18fe51305b545869a17f8
 | StarCore 抽象资源价格与税务 | `ResourcePriceService` 与 `TradeTaxService` 管理 StarCore 抽象资源账目；不将抽象资源库存或价格冒充 Minecraft 实物批次与价格 |
 | 战斗影响 | `BattleCalculator` 经过 `army_combat` 扩展点时，StarSupply 提供当前军队的后勤倍率。退出参战、停火或卸载插件后回到 StarCore 自有计算 |
 | 冬季与围城 | `SeasonService.getSeason(World)`、`isEnabled()`，以及 `SiegeService.getNationSieges`、`getWall`。在服务线程把可变对象复制为不可变条件，再计算有上限的临时需求 |
-| 承运收入保险 | `NationSpendingService` 预留/释放赔款，`InternalEconomyService.withdraw` 支付保费，`TreasuryService.tryDeposit` 接收保费，`TransactionFabric` 保存各笔操作身份和开始证据。实际赔付继续使用原准备金编号 |
+| 承运收入保险 | `NationSpendingService` 预留/释放赔款，`InternalEconomyService.withdraw` 支付保费，新国库入账使用 `NationCreditService.credit/creditReceipt`；`TransactionFabric` 保存原操作身份与回执协议。未标记的旧交易保留 `TreasuryService.tryDeposit` 的保守复核路径。实际赔付继续使用原准备金编号 |
 
 原生补给线在 StarCore 中创建、截断和修复。StarSupply 路径计算读取 `SupplyLine`，库存与货物批次保存在 StarSupply 自己的 SQL 数据库。进入路线时使用国家领地查询判断敌对控制，补给效果只匹配活跃战争的敌对双方。StarSupply 战略补给应用有限的战斗伤害倍率和可撤销的临时士气贡献，不写入永久士气状态。公开 `registerTemporaryMoraleModifier` 返回注销句柄，`effectiveMorale` 是 StarCore 权威查询；反射桥仅查找公开方法，不访问私有状态或另建军队。`ArmyCombatExtensionPoint` 采用最高贡献值，同一服务器其他战斗贡献者可能覆盖原后勤倍率；士气部分在原生战斗计算中独立应用，单独限制在 ±10% 伤害变化。
 
@@ -41,7 +41,7 @@ StarSupply 还会读取 StarCore 当前有效国策和已解锁科技，用它�
 
 冬季远征和持续围城共用同一补给周期。StarSupply 每 5 秒在 Paper 服务线程读取 StarCore 季节与攻城快照，只有可战斗战争中的敌方器械围攻匹配本国前线附近的存活城墙时才累积压力。信息 15 秒过期后使用普通需求；持续性记录保存在 StarSupply v7 的 `campaign_siege`。当周期已经消费时，SQL 保存的需求不可变，中途季节、兵力或政策变化要到下个周期才改变消耗。效果与限幅见 [战役补给](CAMPAIGNS.md)。
 
-保险使用 StarSupply 独立产品与 `insurance.db`，不把上游依赖其他交易处理器的 `InsuranceService` 冒充本插件运输保险。赔款先用 StarCore 权威收据从国库真实预留；没有可重放收据的保费扣款、入国库或玩家赔付在结果不明时冻结，要求独立账务证据核对。StarSupply 不直接修改 StarCore 数据库。具体合同、退保和恢复规则见 [承运收入险](INSURANCE.md)。
+保险使用 StarSupply 独立产品与 `insurance.db`，不把上游依赖其他交易处理器的 `InsuranceService` 冒充本插件运输保险。赔款先用 StarCore 权威收据从国库真实预留；新保费入国库使用固定提交已经提供的 `NationCreditService` 耐久回执，无需增加上游 API。没有可重放收据的玩家保费扣款、返还、赔付及未标记的旧国库入账在结果不明时冻结，要求独立账务证据核对。StarSupply 不直接修改 StarCore 数据库。具体合同、退保和恢复规则见 [承运收入险](INSURANCE.md)。
 
 ## 国库与玩家之间的结算
 

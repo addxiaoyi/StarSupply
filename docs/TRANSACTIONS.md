@@ -1,6 +1,6 @@
 # 库存、运输与付款恢复
 
-库存操作锁绑定实际内部流程，而不是调用方持有的返回 future。取消、设置超时或手工完成公开结果不会撤销已受理的物理操作；真实流程结束（成功或失败）后才清理锁，防止重叠扣物或永久卡住。此行为有修复前两项失败、修复后五项通过的回归证据，并在当前构建的 Folia 实体退役、区块卸载/区域重建及持久回执恢复验收后核对停服存档。见 [构建记录](verification/workspace-inventory-cancellation-20261125.json) 与 [运行记录](verification/folia-region-retirement-20261125.json)。
+库存操作锁绑定实际内部流程，而不是调用方持有的返回 future。取消、设置超时或手工完成公开结果不会撤销已受理的物理操作；真实流程结束（成功或失败）后才清理锁，防止重叠扣物或永久卡住。此行为有修复前两项失败、修复后五项通过的回归证据，并在此前 124 项测试构建的 Folia 实体退役、区块卸载/区域重建及持久回执恢复验收后核对停服存档。见 [构建记录](verification/workspace-inventory-cancellation-20261125.json) 与 [运行记录](verification/folia-region-retirement-20261125.json)。
 
 StarSupply 只把授权国家、军队、领土、战况和资金操作交给 StarCore。主 SQLite `supply.db` 保存合同、实物批次和交接、消耗及待结算记录；`insurance.db` 保存保险的独立经济阶段，`tavern.db` 保存集合点与观察。一个服务器实例拥有这组 SQLite 和同一份玩家存档目录。备份或还原时应成组处理三个 StarSupply 数据库、StarCore 和世界玩家数据。
 
@@ -8,7 +8,7 @@ StarSupply 只把授权国家、军队、领土、战况和资金操作交给 St
 
 重新启用还必须等待旧 SQL 线程完全停止、执行中的实体回调返回，以及完整库存异步流程释放占用。结果对象已完成或被取消，不等于实体回调及其同步完成链已经退出。SQL 提交固定本次生命周期和线程池，避免提交途中改投新线程池。实体和 SQL 任务遇到 `Error` 时也先结束结果、释放依赖占用，再把致命错误交给宿主；线程池随后继续处理已接收队列。同步启动库存流程抛出 `Error` 同样释放占用。关闭步骤逐项隔离普通异常与链接错误，并在 `finally` 中停止和排空 SQL 线程。新增回归包含取消执行中结果、完成链内重启屏障、致命异常传播及失败线程退出后的队列收尾；112 项完整构建测试和适用边界见 [生命周期加固记录](verification/workspace-lifecycle-hardening-20261125.json)。
 
-保险恢复在同一进程内也检查遗留的 `STARTED`：无独立回执的保费扣款、国库入账和返还先转入 `REVIEW`，不能因结果写回回滚就再次调用。准备金、理赔和释放继续按原持久编号恢复。真实 SQLite 故障注入覆盖结果写入失败与复核写入失败，完整 119 项构建通过；外部经济调用使用测试替身，详见 [保险中断恢复](verification/workspace-insurance-interruption-20261125.json) 和 [保险规则](INSURANCE.md)。
+保险恢复在同一进程内也检查遗留的 `STARTED`。带 `nationCreditProtocol=1` 标记的新国库保费通过 StarCore `NationCreditService` 原键回执恢复；无回执的玩家扣款、返还和旧国库入账先转入 `REVIEW`。已有标记的交易不能在服务缺失时降级为普通入账，权威回执与取消状态冲突时也不能返还保费。准备金、理赔和释放继续按原编号推进，理赔的玩家入账不明仍须独立证据。137 项全量测试通过；新增 13 项使用真实 Core 国库、SQLite 和事务记录，玩家经济仍为替身。详见 [保费回执](verification/workspace-premium-credit-receipts-20261125.json)、[此前中断保护](verification/workspace-insurance-interruption-20261125.json) 和 [保险规则](INSURANCE.md)。
 
 | 步骤 | 成功条件 | 失败后的归属 |
 | --- | --- | --- |
@@ -35,7 +35,7 @@ StarCore 的 `INSUFFICIENT_FUNDS` 结果不总能单独证明余额不足。付�
 
 `SupplyConsumptionEvent` 在首次消费提交后异步通知，包含本次需求和实际消耗；唯一 ID 由军队 UUID、周期 slot 和周期长度确定。消费记录负责幂等，事件本身不保证在提交后崩溃时可靠重发。监听器异常不会回滚已经提交的真实消费，不能依靠事件是否收到决定再次扣库存。
 
-含非零税额的订单把阶段保存在 `settlement_tax`：`QUOTED` 表示快照已保存，`FUNDING` 表示正在调用 StarCore，确认后为 `FUNDED`；异常或返回不确定时转 `REVIEW`。StarCore 当前 `TaxationService.fundTax` 对重复税务 ID 返回 0，且没有按交易 ID 查询税收回执的公开接口。卖家已收款而税额结果不明时，不能再支付卖家或仅凭余额推断税款状态；订单与实物批次保持冻结。管理员须从独立 StarCore 账务证据确认 `funded`，或确认未缴后通过保存的同一报价补缴，再执行对应的 `reconcile-tax` 选项。
+含非零税额的订单把阶段保存在 `settlement_tax`：`QUOTED` 表示快照已保存，`FUNDING` 表示正在调用 StarCore，确认后为 `FUNDED`；异常或返回不确定时转 `REVIEW`。StarCore 当前 `TaxationService.fundTax` 对重复税务 ID 返回 0，且没有按交易 ID 查询税收回执的公开接口。内部 `FundedTaxLedger` 先认领税务 ID，再另行调用国库入账，两者并非同一原子提交；认领记录不能证明钱已到账。卖家已收款而税额结果不明时，不能再支付卖家或仅凭余额推断税款状态；订单与实物批次保持冻结。管理员须从独立 StarCore 账务证据确认 `funded`，或确认未缴后通过保存的同一报价补缴，再执行对应的 `reconcile-tax` 选项。
 
 运输遭袭在解除实物预留的同一个 SQL 事务中保存 `failure_reason=RISK` 与 `failed_at`，超时保存 `EXPIRED`。保险根据这个原始发生时间判断理赔，不以重启后的当前时间猜测，也不把所有 `FAILED` 当成遭袭。保险与主货物数据库分别提交时，维护轮询会重新连接保单和最终运输状态；确认过的款项不会因这次连接重放。保单经济阶段及 `/supply reconcile-insurance` 的证据要求见 [保险恢复](INSURANCE.md)。
 

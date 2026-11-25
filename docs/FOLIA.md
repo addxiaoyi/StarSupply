@@ -4,6 +4,8 @@
 
 ## 2026-11-25 续接开发与待验状态
 
+最新保费回执构建通过 137 项 Java 测试，生产 JAR SHA-256 为 `2CC18DA52942D03AD07813DA19398ABCB34BD01044E00D0A55C293404186B941`。新保费国库入账恢复使用真实 Core/SQLite 自动化测试，未启动 Folia；下方实服结果仍属于各自历史构建。来源补产验收器已有 107 项 Node 测试，但六类完整生存链与当前组合仍待验。见 [保费回执构建](verification/workspace-premium-credit-receipts-20261125.json) 和 [来源补产记录](verification/workspace-survival-traced-production-20261125.json)。
+
 本次重新构建通过 124 项 Java 测试并复现当前生产 JAR 哈希；生存验收器已修复熔炉部分批次、燃料耗尽续烧和放置确认，47 项 Node 测试与 7 项 PowerShell 恢复检查通过。玩家存档只读核对与交接记录一致。本机可用内存不足，用户选择先完成可运行的开发测试，实服验收保留待办，因此这些新脚本尚未在 Folia 现场运行。六类生产、后续持续补给、当前完整组合和图形资源包仍未通过整体验收。详见 [本次记录](verification/workspace-survival-resume-20261125.json)。
 
 随后补齐仅使用已有玩家物资的 `logistics` 阶段，连接普通采购/运输命令、三个连续完整消费周期、只读 SQL 核对和正常停服后的背包扣减。11 项新增 SQLite 夹具测试通过，Node 总数达到 58；旧仓库中的历史库存会被拒绝，防止把其他库存消费归入本次生存批次。该实现没有启动 Folia，生产来源、Core 回执重启重放和完整组合仍需分别验收。见 [物流阶段自动化证据](verification/workspace-survival-logistics-20261125.json)。
@@ -18,7 +20,7 @@
 
 ## 2026-11-25 实体退役、区域卸载与重建
 
-当前构建 `87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980` 通过完整 `mvnw.cmd -B -ntp -DforkCount=0 verify`：124 项测试，0 失败、0 错误、0 跳过；20 项验收器测试通过。修复 API 调用方取消或提前完成返回 future 后库存锁无法清理的问题，锁仍由实际库存流程持有，结束后再释放。见 [构建记录](verification/workspace-inventory-cancellation-20261125.json)。
+该次构建 `87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980` 通过完整 `mvnw.cmd -B -ntp -DforkCount=0 verify`：124 项测试，0 失败、0 错误、0 跳过；20 项验收器测试通过。修复 API 调用方取消或提前完成返回 future 后库存锁无法清理的问题，锁仍由实际库存流程持有，结束后再释放。见 [构建记录](verification/workspace-inventory-cancellation-20261125.json)。
 
 独立 Folia 1.21.11-14 副本使用 384 MiB 堆、当前 StarSupply、兼容 StarCore 后勤 profile 和验收插件。两次分别在 SQL 已 PREPARED、玩家尚未扣物，以及玩家已扣物并保存回执但 SQL 尚未确认时退出。生产回调的异常栈均包含实际 `EntityScheduler.retire`，回调主体执行零次、库存锁释放、回调表排空，对已退役 Player 的后续提交也正常结束。目标区块触发卸载后 `isChunkLoaded` 为 false，Folia 区域查询为 null；重连观察到新的区域 ID。
 

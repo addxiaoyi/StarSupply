@@ -1,0 +1,334 @@
+{
+  "recorded_on": "2026-11-25",
+  "recorded_at": "2026-11-25T19:55:24.4470412+08:00",
+  "result": "passed",
+  "purpose": "Recover new insurance treasury premium credits with the existing durable NationCreditService receipt, preserving review for legacy and unreceipted player operations.",
+  "environment": {
+    "java": "21.0.13.1",
+    "maven": "3.9.16",
+    "git_base": "116304c21c20cd4e64ba10f141a2d9731da12963",
+    "working_tree_has_uncommitted_changes": true,
+    "maven_opts": "-Xms32m -Xmx256m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC"
+  },
+  "build": {
+    "command": ".\\mvnw.cmd -B -ntp -DforkCount=0 verify",
+    "completed_at": "2026-11-25T19:47:22+08:00",
+    "tests": 137,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 22,
+    "log": "target/premium-credit-verify-20261125.log",
+    "log_sha256": "E8EBA5450A2682495FE2232027FFAF89111BDEB55C198B22D1ED46B036AE6135"
+  },
+  "artifact": {
+    "path": "target/starsupply-0.1.0.jar",
+    "bytes": 14681187,
+    "sha256": "2CC18DA52942D03AD07813DA19398ABCB34BD01044E00D0A55C293404186B941",
+    "main_schema": 11,
+    "insurance_schema": 2,
+    "folia_supported_descriptor": false,
+    "bundled_starcore_classes": 0,
+    "bundled_test_fixture_classes": 0
+  },
+  "core": {
+    "pinned_source_commit": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "tested_maven_dependency_path": "C:\\Users\\Administrator\\.m2\\repository\\dev\\starcore\\starcore\\1.0.0\\starcore-1.0.0.jar",
+    "tested_maven_dependency_sha256": "953F926F12384E0CFAFAE6F55D266A10C7156468E7E28BE75518C3F7B413884B",
+    "companion_path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\starcore-1.0.0.jar",
+    "companion_sha256": "6BB059707AEDCFE3E7D65BAD768329E891BA7144C6DA6B1B9A1C30790E8A4B0A",
+    "inspected_class_comparison": [
+      {
+        "path": "dev/starcore/starcore/module/treasury/TreasuryModule.class",
+        "tested_dependency_sha256": "A227C16CC15D64C4D73B06AECE460C07383C48BD2E3BBB9EFF855A3CA8974C5D",
+        "companion_sha256": "D9313398CEC136862C967721E8A0E7951F69D39CB0BF0AA9741D7420E945C10D",
+        "identical": false
+      },
+      {
+        "path": "dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.class",
+        "tested_dependency_sha256": "E66A86017E707071813F7B5880D376CF9D34BD92FE23DE4412AF5512D4BEDECB",
+        "companion_sha256": "A02C573371F6B5E14A805EE459B2FEAA7D119E404856E97B935E152E7D0A013F",
+        "identical": false
+      },
+      {
+        "path": "dev/starcore/starcore/module/treasury/NationCreditService.class",
+        "tested_dependency_sha256": "7BDDF95447223F74B91F6F5137008DE619FAA903FD3A4802DA22C65F10A09782",
+        "companion_sha256": "7BDDF95447223F74B91F6F5137008DE619FAA903FD3A4802DA22C65F10A09782",
+        "identical": true
+      },
+      {
+        "path": "dev/starcore/starcore/foundation/economy/transaction/TransactionFabric.class",
+        "tested_dependency_sha256": "5BBA35668B6DCABB7DCC9A03917DF4A03EE929B6E60A2F3D37FF007BD762F938",
+        "companion_sha256": "5BBA35668B6DCABB7DCC9A03917DF4A03EE929B6E60A2F3D37FF007BD762F938",
+        "identical": true
+      }
+    ],
+    "upstream_changed_this_iteration": false
+  },
+  "premium_receipt": {
+    "suite": "CorePremiumCreditTest",
+    "invocations": 13,
+    "protocol_metadata": "nationCreditProtocol=1",
+    "receipt_key": "starsupply:insurance:<policyUUID>:PREMIUM_CREDIT",
+    "receipt_category": "OTHER",
+    "checks": [
+      "TransactionFabric binds account, amount and immutable policy/shipment/purchase/nation/carrier/money UUID metadata.",
+      "National receipt binds transaction key, nation, amount, category and the complete immutable operation description.",
+      "Existing unmarked legacy operations never replay as a new receipt-backed credit. Missing provider never falls back for marked operations.",
+      "Sibling debit and credit must bind the same shipment and purchase.",
+      "A matching receipt overrides an operator unapplied flag; an applied flag cannot manufacture an absent receipt.",
+      "A receipt conflicting with local cancellation freezes both credit and premium refund."
+    ]
+  },
+  "real_storage_tests": [
+    "Actual dependency TreasuryModule and SqlTreasuryStateStorage on SQLite; repeat credit after reopening does not increase treasury twice.",
+    "Lost response after authoritative Core commit; original receipt recovers after restart.",
+    "SQLite BEFORE INSERT trigger aborts treasury snapshot; balance and receipt remain unchanged, then original request succeeds.",
+    "TransactionFabric temporary-file path is made unwritable by an empty directory after Core commit; retry after reopening uses persisted RESERVED intent and existing Core receipt.",
+    "Insurance SQLite BEFORE UPDATE trigger aborts APPLIED result after Core success; same-process and full ledger reopen paths each activate once with the proper activatedAt."
+  ],
+  "source_files": [
+    {
+      "path": "src/main/java/dev/starsupply/integration/CoreInsurancePayment.java",
+      "sha256": "DD1BA8DB80A66E63376D38DB204C6AE6AA20A417FD0D821185655AFE814ED7A5"
+    },
+    {
+      "path": "src/main/java/dev/starsupply/integration/InsuranceEconomy.java",
+      "sha256": "D289151895D84BAA51700CBF3BFED896CC251C74B09342379AF7C2956D0C9990"
+    },
+    {
+      "path": "src/main/java/dev/starsupply/service/CaravanInsurance.java",
+      "sha256": "A8B12CCED9718F2A5A21ECD7D703412E1BDF9B9A8C60F70CEC80BE09FBB71519"
+    },
+    {
+      "path": "src/main/java/dev/starsupply/storage/InsuranceStore.java",
+      "sha256": "9E98CBD984530654654FFDD50B6300A0DFB4634EF673D43AD448D82906F38227"
+    },
+    {
+      "path": "src/test/java/dev/starsupply/integration/CorePremiumCreditTest.java",
+      "sha256": "D81AC183A0D8C0DA879B55C80318B1A55BE5B650890B04E6D1B3B0CA68547677"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/treasury/ReceiptTreasuryFixture.java",
+      "sha256": "21E6EFD0F2E18174D3D069DA2457CE938AE8C4F635F41469B91255BC3BA05ED4"
+    }
+  ],
+  "test_suites": [
+    {
+      "name": "dev.starsupply.bukkit.AsyncTasksTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "F4DF0CBBEE5EC943C02CE4756FCE82232EBBC0E57D9FF58BC29F46B4499BC58D"
+    },
+    {
+      "name": "dev.starsupply.bukkit.EntityCallbacksTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "939AB9D2AA9A64332FA130DBFBCED50D9FBE1390967A3386510BE60FA437D0D8"
+    },
+    {
+      "name": "dev.starsupply.bukkit.InventoryTasksTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "AB1E789AADED5EFC85C6D117E8C8A1345F09A7A6B84AA3EBF64BCB03C8F4455F"
+    },
+    {
+      "name": "dev.starsupply.bukkit.item.InventoryFingerprintTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "E7130207B9F32A6F5830E7321BD0ABD00BA7A0DE29F921234F4659DC27FF9C08"
+    },
+    {
+      "name": "dev.starsupply.bukkit.item.PlayerDataReceiptTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "4AAC9B81035FD3490E36586BF1ACDA8A06EB76584AF13E731F05380A5EFB2685"
+    },
+    {
+      "name": "dev.starsupply.bukkit.item.ResourceMappingConfigTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2370FADE86ABEB18C4D92AABBC95FA2AAA8191D6913A2F24EDFAF0DD1FDE9A9E"
+    },
+    {
+      "name": "dev.starsupply.bukkit.LifecycleGateTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8BAFAABE67616A18B3E96CD54C8FB33E1D95C6E242CC2B1B3DA88D2FDF5DBF08"
+    },
+    {
+      "name": "dev.starsupply.integration.CampaignSiegeTargetTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "27CCE04B5D0DD1A87CA3FE142C3932A2443299EAED5D454B59688AAA7FD8A587"
+    },
+    {
+      "name": "dev.starsupply.integration.CoreInsurancePaymentTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8630F39239853DAC374DEB09A025FF98474FAC476FCED73BA242F5E252E0AAB1"
+    },
+    {
+      "name": "dev.starsupply.integration.CorePaymentTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "0DDF994CAD8F07B6958A0FFDAA0C7BC126FE3CE3C7B2B44C7F041112AE046C45"
+    },
+    {
+      "name": "dev.starsupply.integration.CorePremiumCreditTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "6F55C57E437561A8E4D134C8F032B1FCDE6EE2C2A072CD349871E9EEA22A2B7E"
+    },
+    {
+      "name": "dev.starsupply.integration.NativeSupplyBridgeTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "55756A5C48CACCF58690A5F0341DF9B7A212F6D1BE98E9D281A6B3B404C98F94"
+    },
+    {
+      "name": "dev.starsupply.integration.TemporaryMoraleBridgeTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8586579ACE82AAA1D8E3308502CEF68A62111445DBA9AE279FC531947A07D44C"
+    },
+    {
+      "name": "dev.starsupply.route.RoutePlannerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "8882EA45BAF795D34B00430FB54AEF43E327A43EC5D5A3B09E11EA5759747570"
+    },
+    {
+      "name": "dev.starsupply.service.ArmySupplyRulesTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "6CECB4C6E1FCED5F488A6545D78E594DDFCA392948A22067C0380AC98D332BD9"
+    },
+    {
+      "name": "dev.starsupply.service.CampaignRulesTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "21C15FC07FACF00253C400525FA85141A8FF6ACA12C3459C587602D466C72B1F"
+    },
+    {
+      "name": "dev.starsupply.service.CaravanInsuranceTest",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "C87CD3E5B9EE19874FCBAD96CE5D9DA4953C75F56AEEA3A4BA4E29CD63E1CFF1"
+    },
+    {
+      "name": "dev.starsupply.service.MarketRulesTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "6F93F5BB2388373ED1EF4831B004723FA8527DC023F2CFD5015ABCEAC7082961"
+    },
+    {
+      "name": "dev.starsupply.service.TavernServiceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "44D38B70EFD170BABF9F636C7DE25BB612BC8F608A3F872BC7F70ABC62A31D52"
+    },
+    {
+      "name": "dev.starsupply.storage.CampaignPersistenceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "0CDFA08BDDFEF7BAA42EC9CF9391F163CCF9B0AD50843CBBD62770A2AADC28CB"
+    },
+    {
+      "name": "dev.starsupply.storage.SqlTransactionsTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "33D0F134507C41F3E259F4FEF3146404B2A25C1339585FE52FBAC16AAA144395"
+    },
+    {
+      "name": "dev.starsupply.storage.SupplyLifecycleTest",
+      "tests": 33,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "2000481C511BD23124D764721A96EB83878C79FA0106A73CD41BF7F48F08E574"
+    }
+  ],
+  "limits": [
+    "No Paper or Folia server was started; prior runtime evidence belongs to its recorded JAR hashes.",
+    "The full 137-test build executes the Maven dependency. A separate 13-test CorePremiumCreditTest run replaces only that dependency with the actual companion JAR; it is not a full compatible-Core build or a server run.",
+    "Player debit/refund callbacks are test doubles; the insurance integration scenarios seed the reserve as APPLIED to isolate the premium boundary.",
+    "No business-UUID receipt exists for InternalEconomyService player credit/debit/refund; ambiguous results still require review.",
+    "TaxationService claims FundedTaxLedger before a separate treasury deposit. That claim is not an atomic funding receipt; tax uncertainty remains review.",
+    "Legacy unmarked premiums and existing REVIEW states do not automatically unquarantine. Preflight/provider failures and receipt conflicts can still require review.",
+    "The unchanged survival acceptance tools were not rerun: their last independent evidence has 107 Node tests, 39 syntax checks and 7 PowerShell restoration checks.",
+    "Six-resource survival logistics, current complete Folia stack, world unload API and graphical resource-pack rendering remain pending. Production Folia support is not declared."
+  ],
+  "companion_targeted_test": {
+    "command": ".\\mvnw.cmd -B -ntp -f target/premium-credit-companion-pom.xml -DforkCount=0 -Dtest=CorePremiumCreditTest surefire:test",
+    "completed_at": "2026-11-25T19:53:36+08:00",
+    "tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "isolated_core_classpath": [
+      "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\starcore-1.0.0.jar"
+    ],
+    "core_sha256": "6BB059707AEDCFE3E7D65BAD768329E891BA7144C6DA6B1B9A1C30790E8A4B0A",
+    "temporary_pom": "target/premium-credit-companion-pom.xml",
+    "temporary_pom_sha256": "A53DA13CF14CF68A7265AC582DD974B4768E02B1E4936944E5440F94F3DF5CA7",
+    "configuration": {
+      "base": "pom.xml",
+      "classesDirectory": "target/classes (absolute)",
+      "testClassesDirectory": "target/test-classes (absolute)",
+      "reportsDirectory": "target/premium-credit-companion-reports (absolute)",
+      "classpathDependencyExcludes": [
+        "dev.starcore:starcore"
+      ],
+      "additionalClasspathElements": [
+        "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\starcore-1.0.0.jar"
+      ],
+      "operation": "Append this Surefire configuration to a temporary copy of the POM; run surefire:test against already compiled production/test classes, preserving the primary 137-test reports and Maven dependency."
+    },
+    "log": "target/premium-credit-companion-20261125.log",
+    "log_sha256": "EBF4EA603009BB9CA25C486AA73918D569BF67052BE3773636DDACFEF7BEE229",
+    "report_sha256": "67C3984DBD0757907B5364FA7F2E4E0350F291EB2C24891A81DFB7669DA5AD3C"
+  }
+}

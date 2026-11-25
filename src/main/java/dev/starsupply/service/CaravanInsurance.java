@@ -196,8 +196,10 @@ public final class CaravanInsurance {
         if (current == MoneyState.APPLIED) return MoneyResult.APPLIED;
         if (current == MoneyState.REJECTED) return MoneyResult.REJECTED;
         if (current == MoneyState.REVIEW) return MoneyResult.REVIEW;
+        MoneyOperation operation = store.operation(policy, leg);
         if (current == MoneyState.STARTED && (leg == MoneyLeg.PREMIUM_DEBIT
-                || leg == MoneyLeg.PREMIUM_CREDIT || leg == MoneyLeg.PREMIUM_REFUND)) {
+                || leg == MoneyLeg.PREMIUM_CREDIT || leg == MoneyLeg.PREMIUM_REFUND)
+                && !economy.canReplay(operation)) {
             // The external call may have succeeded before the local result write rolled back.
             // This can happen without a process restart; only receipt-backed legs are replayable.
             store.money(policy.id(), leg, MoneyState.REVIEW, now);
@@ -205,7 +207,7 @@ public final class CaravanInsurance {
         }
         store.money(policy.id(), leg, MoneyState.STARTED, now);
         MoneyResult result;
-        try { result = economy.execute(store.operation(policy, leg)); }
+        try { result = economy.execute(operation); }
         catch (RuntimeException ambiguous) { result = MoneyResult.REVIEW; }
         saveResult(policy.id(), leg, result, now);
         return result;
