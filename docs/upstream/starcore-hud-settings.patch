@@ -1,0 +1,2422 @@
+diff --git a/src/main/java/dev/starcore/starcore/foundation/hud/GlassPaneStyle.java b/src/main/java/dev/starcore/starcore/foundation/hud/GlassPaneStyle.java
+index 2cd8cf7..0306ff9 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/hud/GlassPaneStyle.java
++++ b/src/main/java/dev/starcore/starcore/foundation/hud/GlassPaneStyle.java
+@@ -1,197 +1,213 @@
+ package dev.starcore.starcore.foundation.hud;
+ 
+-import net.kyori.adventure.text.Component;
+ import net.kyori.adventure.text.format.NamedTextColor;
+ import net.kyori.adventure.text.format.TextColor;
+ import org.bukkit.Material;
+ 
+-/**
+- * HUD 毛玻璃样式枚举
+- * 提供多种渐变色玻璃板组合来模拟毛玻璃效果
+- */
++/** HUD 毛玻璃样式枚举 提供多种渐变色玻璃板组合来模拟毛玻璃效果 */
+ public enum GlassPaneStyle {
+-    /**
+-     * 夜幕风格 - 深蓝紫色调
+-     */
+-    NIGHTMARE(
+-        new GlassColor(0, 25, 51, 0),      // 深蓝背景
+-        new GlassColor(25, 25, 112, 1),    // 午夜蓝边框
+-        new GlassColor(138, 43, 226, 2),   // 蓝紫色装饰
+-        NamedTextColor.DARK_BLUE,
+-        NamedTextColor.AQUA
+-    ),
+-
+-    /**
+-     * 水晶风格 - 透明冰蓝色调
+-     */
+-    CRYSTAL(
+-        new GlassColor(173, 216, 230, 0),  // 浅蓝色背景
+-        new GlassColor(0, 191, 255, 1),    // 深天蓝边框
+-        new GlassColor(135, 206, 250, 2),  // 淡蓝色装饰
+-        NamedTextColor.AQUA,
+-        NamedTextColor.WHITE
+-    ),
+-
+-    /**
+-     * 森林风格 - 自然绿色调
+-     */
+-    FOREST(
+-        new GlassColor(34, 139, 34, 0),    // 森林绿背景
+-        new GlassColor(0, 100, 0, 1),      // 深绿边框
+-        new GlassColor(144, 238, 144, 2),  // 浅绿装饰
+-        NamedTextColor.DARK_GREEN,
+-        NamedTextColor.GREEN
+-    ),
+-
+-    /**
+-     * 烈焰风格 - 火红橙色调
+-     */
+-    INFERNO(
+-        new GlassColor(139, 0, 0, 0),      // 深红背景
+-        new GlassColor(255, 69, 0, 1),     // 橙红色边框
+-        new GlassColor(255, 140, 0, 2),    // 深橙色装饰
+-        NamedTextColor.DARK_RED,
+-        NamedTextColor.GOLD
+-    ),
+-
+-    /**
+-     * 皇家风格 - 金色紫色调
+-     */
+-    ROYAL(
+-        new GlassColor(75, 0, 130, 0),     // 靛蓝背景
+-        new GlassColor(148, 0, 211, 1),    // 紫色边框
+-        new GlassColor(255, 215, 0, 2),    // 金色装饰
+-        NamedTextColor.DARK_PURPLE,
+-        NamedTextColor.GOLD
+-    ),
+-
+-    /**
+-     * 极光风格 - 霓虹色调
+-     */
+-    AURORA(
+-        new GlassColor(0, 128, 128, 0),    // 青色背景
+-        new GlassColor(255, 0, 255, 1),    // 品红边框
+-        new GlassColor(0, 255, 255, 2),    // 青色装饰
+-        NamedTextColor.DARK_AQUA,
+-        NamedTextColor.LIGHT_PURPLE
+-    ),
+-
+-    /**
+-     * 经典风格 - 中性灰白色调
+-     */
+-    CLASSIC(
+-        new GlassColor(64, 64, 64, 0),     // 深灰背景
+-        new GlassColor(128, 128, 128, 1),  // 中灰边框
+-        new GlassColor(192, 192, 192, 2),  // 浅灰装饰
+-        NamedTextColor.GRAY,
+-        NamedTextColor.WHITE
+-    ),
+-
+-    /**
+-     * 彩虹风格 - 动态彩色（需配合动画）
+-     */
+-    RAINBOW(
+-        new GlassColor(255, 0, 0, 0),      // 红色背景（会被动画覆盖）
+-        new GlassColor(255, 127, 0, 1),    // 橙色边框
+-        new GlassColor(255, 255, 0, 2),    // 黄色装饰
+-        NamedTextColor.RED,
+-        NamedTextColor.YELLOW
+-    );
+-
+-    private final GlassColor background;
+-    private final GlassColor border;
+-    private final GlassColor accent;
+-    private final TextColor titleColor;
+-    private final TextColor highlightColor;
+-
+-    GlassPaneStyle(GlassColor background, GlassColor border, GlassColor accent,
+-                   TextColor titleColor, TextColor highlightColor) {
+-        this.background = background;
+-        this.border = border;
+-        this.accent = accent;
+-        this.titleColor = titleColor;
+-        this.highlightColor = highlightColor;
++  /** 夜幕风格 - 深蓝紫色调 */
++  NIGHTMARE(
++      new GlassColor(0, 25, 51, 0), // 深蓝背景
++      new GlassColor(25, 25, 112, 1), // 午夜蓝边框
++      new GlassColor(138, 43, 226, 2), // 蓝紫色装饰
++      NamedTextColor.DARK_BLUE,
++      NamedTextColor.AQUA),
++
++  /** 水晶风格 - 透明冰蓝色调 */
++  CRYSTAL(
++      new GlassColor(173, 216, 230, 0), // 浅蓝色背景
++      new GlassColor(0, 191, 255, 1), // 深天蓝边框
++      new GlassColor(135, 206, 250, 2), // 淡蓝色装饰
++      NamedTextColor.AQUA,
++      NamedTextColor.WHITE),
++
++  /** 森林风格 - 自然绿色调 */
++  FOREST(
++      new GlassColor(34, 139, 34, 0), // 森林绿背景
++      new GlassColor(0, 100, 0, 1), // 深绿边框
++      new GlassColor(144, 238, 144, 2), // 浅绿装饰
++      NamedTextColor.DARK_GREEN,
++      NamedTextColor.GREEN),
++
++  /** 烈焰风格 - 火红橙色调 */
++  INFERNO(
++      new GlassColor(139, 0, 0, 0), // 深红背景
++      new GlassColor(255, 69, 0, 1), // 橙红色边框
++      new GlassColor(255, 140, 0, 2), // 深橙色装饰
++      NamedTextColor.DARK_RED,
++      NamedTextColor.GOLD),
++
++  /** 皇家风格 - 金色紫色调 */
++  ROYAL(
++      new GlassColor(75, 0, 130, 0), // 靛蓝背景
++      new GlassColor(148, 0, 211, 1), // 紫色边框
++      new GlassColor(255, 215, 0, 2), // 金色装饰
++      NamedTextColor.DARK_PURPLE,
++      NamedTextColor.GOLD),
++
++  /** 极光风格 - 霓虹色调 */
++  AURORA(
++      new GlassColor(0, 128, 128, 0), // 青色背景
++      new GlassColor(255, 0, 255, 1), // 品红边框
++      new GlassColor(0, 255, 255, 2), // 青色装饰
++      NamedTextColor.DARK_AQUA,
++      NamedTextColor.LIGHT_PURPLE),
++
++  /** 经典风格 - 中性灰白色调 */
++  CLASSIC(
++      new GlassColor(64, 64, 64, 0), // 深灰背景
++      new GlassColor(128, 128, 128, 1), // 中灰边框
++      new GlassColor(192, 192, 192, 2), // 浅灰装饰
++      NamedTextColor.GRAY,
++      NamedTextColor.WHITE),
++
++  /** 彩虹风格 - 动态彩色（需配合动画） */
++  RAINBOW(
++      new GlassColor(255, 0, 0, 0), // 红色背景（会被动画覆盖）
++      new GlassColor(255, 127, 0, 1), // 橙色边框
++      new GlassColor(255, 255, 0, 2), // 黄色装饰
++      NamedTextColor.RED,
++      NamedTextColor.YELLOW);
++
++  private final GlassColor background;
++  private final GlassColor border;
++  private final GlassColor accent;
++  private final TextColor titleColor;
++  private final TextColor highlightColor;
++
++  GlassPaneStyle(
++      GlassColor background,
++      GlassColor border,
++      GlassColor accent,
++      TextColor titleColor,
++      TextColor highlightColor) {
++    this.background = background;
++    this.border = border;
++    this.accent = accent;
++    this.titleColor = titleColor;
++    this.highlightColor = highlightColor;
++  }
++
++  public GlassColor getBackground() {
++    return background;
++  }
++
++  public GlassColor getBorder() {
++    return border;
++  }
++
++  public GlassColor getAccent() {
++    return accent;
++  }
++
++  public TextColor getTitleColor() {
++    return titleColor;
++  }
++
++  public TextColor getHighlightColor() {
++    return highlightColor;
++  }
++
++  /** 获取背景玻璃材质 */
++  public Material getBackgroundMaterial() {
++    return background.material;
++  }
++
++  /** 获取边框玻璃材质 */
++  public Material getBorderMaterial() {
++    return border.material;
++  }
++
++  /** 获取装饰玻璃材质 */
++  public Material getAccentMaterial() {
++    return accent.material;
++  }
++
++  /** 玻璃颜色配置 */
++  public static class GlassColor {
++    private final int r, g, b;
++    private final int layer;
++    private final Material material;
++
++    public GlassColor(int r, int g, int b, int layer) {
++      this.r = r;
++      this.g = g;
++      this.b = b;
++      this.layer = layer;
++      this.material = determineMaterial(r, g, b);
+     }
+ 
+-    public GlassColor getBackground() { return background; }
+-    public GlassColor getBorder() { return border; }
+-    public GlassColor getAccent() { return accent; }
+-    public TextColor getTitleColor() { return titleColor; }
+-    public TextColor getHighlightColor() { return highlightColor; }
+-
+-    /**
+-     * 获取背景玻璃材质
+-     */
+-    public Material getBackgroundMaterial() {
+-        return background.material;
++    private Material determineMaterial(int r, int g, int b) {
++      int red = Math.clamp(r, 0, 255);
++      int green = Math.clamp(g, 0, 255);
++      int blue = Math.clamp(b, 0, 255);
++      Material closest = Material.WHITE_STAINED_GLASS_PANE;
++      int distance = Integer.MAX_VALUE;
++      for (int i = 0; i < DYE_RGB.length; i++) {
++        int rgb = DYE_RGB[i];
++        int dr = red - (rgb >> 16 & 255);
++        int dg = green - (rgb >> 8 & 255);
++        int db = blue - (rgb & 255);
++        int candidate = dr * dr + dg * dg + db * db;
++        if (candidate < distance) {
++          distance = candidate;
++          closest = DYE_MATERIALS[i];
++        }
++      }
++      return closest;
+     }
+ 
+-    /**
+-     * 获取边框玻璃材质
+-     */
+-    public Material getBorderMaterial() {
+-        return border.material;
++    private static final int[] DYE_RGB = {
++      0xF9FFFE, 0xF9801D, 0xC74EBD, 0x3AB3DA, 0xFED83D, 0x80C71F, 0xF38BAA, 0x474F52, 0x9D9D97,
++      0x169C9C, 0x8932B8, 0x3C44AA, 0x835432, 0x5E7C16, 0xB02E26, 0x1D1D21
++    };
++    private static final Material[] DYE_MATERIALS = {
++      Material.WHITE_STAINED_GLASS_PANE, Material.ORANGE_STAINED_GLASS_PANE,
++      Material.MAGENTA_STAINED_GLASS_PANE, Material.LIGHT_BLUE_STAINED_GLASS_PANE,
++      Material.YELLOW_STAINED_GLASS_PANE, Material.LIME_STAINED_GLASS_PANE,
++      Material.PINK_STAINED_GLASS_PANE, Material.GRAY_STAINED_GLASS_PANE,
++      Material.LIGHT_GRAY_STAINED_GLASS_PANE, Material.CYAN_STAINED_GLASS_PANE,
++      Material.PURPLE_STAINED_GLASS_PANE, Material.BLUE_STAINED_GLASS_PANE,
++      Material.BROWN_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE,
++      Material.RED_STAINED_GLASS_PANE, Material.BLACK_STAINED_GLASS_PANE
++    };
++
++    public int getR() {
++      return r;
+     }
+ 
+-    /**
+-     * 获取装饰玻璃材质
+-     */
+-    public Material getAccentMaterial() {
+-        return accent.material;
++    public int getG() {
++      return g;
+     }
+ 
+-    /**
+-     * 玻璃颜色配置
+-     */
+-    public static class GlassColor {
+-        private final int r, g, b;
+-        private final int layer;
+-        private final Material material;
+-
+-        public GlassColor(int r, int g, int b, int layer) {
+-            this.r = r;
+-            this.g = g;
+-            this.b = b;
+-            this.layer = layer;
+-            this.material = determineMaterial(r, g, b);
+-        }
++    public int getB() {
++      return b;
++    }
+ 
+-        private Material determineMaterial(int r, int g, int b) {
+-            // 根据颜色确定最接近的染色玻璃板
+-            // 黑色到白色的灰度
+-            int avg = (r + g + b) / 3;
+-            if (avg < 32) return Material.BLACK_STAINED_GLASS_PANE;
+-            if (avg < 96) return Material.GRAY_STAINED_GLASS_PANE;
+-            if (avg < 160) return Material.LIGHT_GRAY_STAINED_GLASS_PANE;
+-            if (avg < 224) return Material.WHITE_STAINED_GLASS_PANE;
+-            return Material.WHITE_STAINED_GLASS_PANE;
+-        }
++    public int getLayer() {
++      return layer;
++    }
+ 
+-        public int getR() { return r; }
+-        public int getG() { return g; }
+-        public int getB() { return b; }
+-        public int getLayer() { return layer; }
+-        public Material getMaterial() { return material; }
+-
+-        /**
+-         * 获取十六进制颜色代码
+-         */
+-        public String toHex() {
+-            return String.format("#%02X%02X%02X", r, g, b);
+-        }
++    public Material getMaterial() {
++      return material;
+     }
+ 
+-    /**
+-     * 获取所有样式
+-     */
+-    public static GlassPaneStyle[] valuesExcludingRainbow() {
+-        GlassPaneStyle[] styles = new GlassPaneStyle[values().length - 1];
+-        int index = 0;
+-        for (GlassPaneStyle style : values()) {
+-            if (style != RAINBOW) {
+-                styles[index++] = style;
+-            }
+-        }
+-        return styles;
++    /** 获取十六进制颜色代码 */
++    public String toHex() {
++      return String.format("#%02X%02X%02X", r, g, b);
++    }
++  }
++
++  /** 获取所有样式 */
++  public static GlassPaneStyle[] valuesExcludingRainbow() {
++    GlassPaneStyle[] styles = new GlassPaneStyle[values().length - 1];
++    int index = 0;
++    for (GlassPaneStyle style : values()) {
++      if (style != RAINBOW) {
++        styles[index++] = style;
++      }
+     }
+-}
+\ No newline at end of file
++    return styles;
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/foundation/hud/HudCommand.java b/src/main/java/dev/starcore/starcore/foundation/hud/HudCommand.java
+index 9f0cd3b..699f220 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/hud/HudCommand.java
++++ b/src/main/java/dev/starcore/starcore/foundation/hud/HudCommand.java
+@@ -7,6 +7,9 @@ import dev.starcore.starcore.module.nation.NationProtection;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.List;
++import java.util.Locale;
++import java.util.concurrent.CompletableFuture;
++import java.util.function.Supplier;
+ import java.util.stream.Collectors;
+ import net.kyori.adventure.text.Component;
+ import net.kyori.adventure.text.event.ClickEvent;
+@@ -45,13 +48,24 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+       return true;
+     }
+ 
++    ModernHudListener listener = ModernHudListener.getInstance();
++    String[] arguments = args.clone();
++    listener.execute(
++        player,
++        () -> {
++          if (player.isOnline()) executeCommand(player, arguments);
++        });
++    return true;
++  }
++
++  private void executeCommand(Player player, String[] args) {
+     if (args.length == 0) {
+       // 打开主菜单
+       openMainMenu(player);
+-      return true;
++      return;
+     }
+ 
+-    String subCommand = args[0].toLowerCase();
++    String subCommand = args[0].toLowerCase(Locale.ROOT);
+ 
+     switch (subCommand) {
+       case "main", "menu" -> openMainMenu(player);
+@@ -72,6 +86,11 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+       case "particles" -> toggleParticles(player);
+       case "breathing" -> toggleBreathing(player);
+       case "reload" -> reloadHudConfig(player);
++      case "settings" -> showSettings(player);
++      case "reset" ->
++          changeSettings(
++              player,
++              () -> ModernHudListener.getInstance().preferences().reset(player.getUniqueId()));
+       case "list" -> listStyles(player);
+       case "preview" -> {
+         if (args.length > 1) {
+@@ -82,8 +101,6 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+       }
+       default -> showHelp(player);
+     }
+-
+-    return true;
+   }
+ 
+   /** 打开主菜单 */
+@@ -115,21 +132,18 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+     // 创建并打开主菜单
+     MainMenuHud hud = MainMenuHud.create(player, plugin);
+     hud.setNationInfo(nationInfo);
+-    hud.setParticlesEnabled(ModernHudListener.getInstance().isGlobalParticlesEnabled());
++    hud.usePreferences(
++        ModernHudListener.getInstance().preferences().settings(player.getUniqueId()));
+     hud.open();
+   }
+ 
+   /** 更改菜单样式 */
+   private void changeStyle(Player player, String styleName) {
+     try {
+-      GlassPaneStyle style = GlassPaneStyle.valueOf(styleName.toUpperCase());
+-      player.sendMessage(
+-          Component.text()
+-              .content("✓ 样式已更改: ")
+-              .color(NamedTextColor.GREEN)
+-              .append(Component.text(style.name()).color(NamedTextColor.GOLD)));
+-      // 重新打开菜单以应用新样式
+-      openMainMenu(player);
++      GlassPaneStyle style = GlassPaneStyle.valueOf(styleName.toUpperCase(Locale.ROOT));
++      changeSettings(
++          player,
++          () -> ModernHudListener.getInstance().preferences().style(player.getUniqueId(), style));
+     } catch (IllegalArgumentException e) {
+       player.sendMessage(
+           Component.text()
+@@ -144,13 +158,10 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+   private void changeParticle(Player player, String particleName) {
+     try {
+       ModernHudListener.ParticleType type =
+-          ModernHudListener.ParticleType.valueOf(particleName.toUpperCase());
+-      ModernHudListener.getInstance().setParticleType(type);
+-      player.sendMessage(
+-          Component.text()
+-              .content("✓ 粒子效果已更改: ")
+-              .color(NamedTextColor.GREEN)
+-              .append(Component.text(type.getDisplayName()).color(NamedTextColor.AQUA)));
++          ModernHudListener.ParticleType.valueOf(particleName.toUpperCase(Locale.ROOT));
++      changeSettings(
++          player,
++          () -> ModernHudListener.getInstance().preferences().particle(player.getUniqueId(), type));
+     } catch (IllegalArgumentException e) {
+       player.sendMessage(
+           Component.text()
+@@ -160,32 +171,92 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+     }
+   }
+ 
+-  /** 切换粒子效果 */
++  /** Personal overrides are persisted off the owner thread before feedback is sent. */
+   private void toggleParticles(Player player) {
+-    ModernHudListener listener = ModernHudListener.getInstance();
+-    boolean current = listener.isGlobalParticlesEnabled();
+-    listener.setGlobalParticlesEnabled(!current);
+-
+-    player.sendMessage(
+-        Component.text()
+-            .content("粒子效果: ")
+-            .color(NamedTextColor.GRAY)
+-            .append(
+-                Component.text(!current ? "启用" : "禁用")
+-                    .color(!current ? NamedTextColor.GREEN : NamedTextColor.RED)));
++    changeSettings(
++        player,
++        () -> ModernHudListener.getInstance().preferences().toggleParticles(player.getUniqueId()));
+   }
+ 
+-  /** 切换呼吸灯效果 */
+   private void toggleBreathing(Player player) {
+-    player.sendMessage(Component.text("呼吸灯效果切换", NamedTextColor.YELLOW));
+-    // 重新打开菜单以应用新设置
+-    openMainMenu(player);
++    changeSettings(
++        player,
++        () -> ModernHudListener.getInstance().preferences().toggleBreathing(player.getUniqueId()));
++  }
++
++  private void changeSettings(
++      Player player, Supplier<CompletableFuture<HudPreferences.Settings>> change) {
++    ModernHudListener listener = ModernHudListener.getInstance();
++    ModernHudMenu expected = ModernHudListener.getMenu(player);
++    change
++        .get()
++        .whenComplete(
++            (settings, failure) ->
++                listener.execute(
++                    player,
++                    () -> {
++                      if (!player.isOnline()) return;
++                      if (failure != null) {
++                        plugin.getLogger().warning("HUD preference save failed: " + failure);
++                        player.sendMessage(
++                            Component.text("HUD 设置保存失败，原设置保留，请稍后重试。", NamedTextColor.RED));
++                        return;
++                      }
++                      listener.refreshPreferences(player, expected);
++                      player.sendMessage(Component.text("✓ 个人 HUD 设置已保存", NamedTextColor.GREEN));
++                      showSettings(player);
++                    }));
+   }
+ 
+-  /** 重新加载HUD配置 */
+   private void reloadHudConfig(Player player) {
+-    player.sendMessage(Component.text("✓ HUD 配置已重新加载", NamedTextColor.GREEN));
+-    openMainMenu(player);
++    if (!player.hasPermission("starcore.hud.reload")) {
++      player.sendMessage(Component.text("你没有重载 HUD 配置的权限。", NamedTextColor.RED));
++      return;
++    }
++    ModernHudListener listener = ModernHudListener.getInstance();
++    listener
++        .preferences()
++        .reload()
++        .whenComplete(
++            (ignored, failure) -> {
++              if (failure == null) listener.refreshPreferences();
++              else plugin.getLogger().warning("HUD reload failed: " + failure);
++              listener.execute(
++                  player,
++                  () -> {
++                    if (player.isOnline())
++                      player.sendMessage(
++                          Component.text(
++                              failure == null ? "✓ HUD 配置已重新加载，个人设置已保留" : "HUD 配置重载失败，仍使用原配置。",
++                              failure == null ? NamedTextColor.GREEN : NamedTextColor.RED));
++                  });
++            });
++  }
++
++  private void showSettings(Player player) {
++    HudPreferences.Settings settings =
++        ModernHudListener.getInstance().preferences().settings(player.getUniqueId());
++    player.sendMessage(
++        Component.text(
++            "个人 HUD · 样式 "
++                + settings.style().name()
++                + " · 粒子 "
++                + (settings.particles() ? settings.particleType().getDisplayName() : "关闭")
++                + " · 呼吸灯 "
++                + (settings.breathing() ? "开启" : "关闭"),
++            NamedTextColor.AQUA));
++    player.sendMessage(
++        Component.text("[选择样式] ", NamedTextColor.GOLD)
++            .clickEvent(ClickEvent.runCommand("/hud list"))
++            .append(
++                Component.text("[切换粒子] ", NamedTextColor.GREEN)
++                    .clickEvent(ClickEvent.runCommand("/hud particles")))
++            .append(
++                Component.text("[切换呼吸灯] ", NamedTextColor.GREEN)
++                    .clickEvent(ClickEvent.runCommand("/hud breathing")))
++            .append(
++                Component.text("[恢复默认]", NamedTextColor.GRAY)
++                    .clickEvent(ClickEvent.runCommand("/hud reset"))));
+   }
+ 
+   /** 列出所有样式 */
+@@ -198,7 +269,8 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+       Component styleName =
+           Component.text(style.name())
+               .color(NamedTextColor.AQUA)
+-              .clickEvent(ClickEvent.runCommand("/hud style " + style.name().toLowerCase()))
++              .clickEvent(
++                  ClickEvent.runCommand("/hud style " + style.name().toLowerCase(Locale.ROOT)))
+               .hoverEvent(HoverEvent.showText(Component.text("点击切换到 " + style.name())));
+ 
+       player.sendMessage(
+@@ -211,7 +283,7 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+   /** 预览样式 */
+   private void previewStyle(Player player, String styleName) {
+     try {
+-      GlassPaneStyle style = GlassPaneStyle.valueOf(styleName.toUpperCase());
++      GlassPaneStyle style = GlassPaneStyle.valueOf(styleName.toUpperCase(Locale.ROOT));
+ 
+       MainMenuHud hud = MainMenuHud.create(player, plugin, style);
+       hud.setParticlesEnabled(false); // 预览时不显示粒子
+@@ -265,7 +337,11 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+     player.sendMessage(Component.text("/hud particles - 切换粒子效果", NamedTextColor.WHITE));
+     player.sendMessage(Component.text("/hud list - 列出所有样式", NamedTextColor.WHITE));
+     player.sendMessage(Component.text("/hud preview <样式> - 预览样式", NamedTextColor.WHITE));
+-    player.sendMessage(Component.text("/hud reload - 重新加载配置", NamedTextColor.WHITE));
++    player.sendMessage(Component.text("/hud settings - 查看个人设置", NamedTextColor.WHITE));
++    player.sendMessage(Component.text("/hud breathing - 切换呼吸灯", NamedTextColor.WHITE));
++    player.sendMessage(Component.text("/hud reset - 恢复服务器默认设置", NamedTextColor.WHITE));
++    if (player.hasPermission("starcore.hud.reload"))
++      player.sendMessage(Component.text("/hud reload - 重新加载配置", NamedTextColor.WHITE));
+   }
+ 
+   @Override
+@@ -274,6 +350,7 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+       @NotNull Command command,
+       @NotNull String alias,
+       @NotNull String[] args) {
++    if (args.length == 0) return List.of();
+     List<String> completions = new ArrayList<>();
+ 
+     if (args.length == 1) {
+@@ -285,25 +362,27 @@ public class HudCommand implements CommandExecutor, TabCompleter {
+               "particle",
+               "particles",
+               "breathing",
+-              "reload",
++              "settings",
++              "reset",
+               "list",
+               "preview"));
+     } else if (args.length == 2) {
+-      String sub = args[0].toLowerCase();
++      String sub = args[0].toLowerCase(Locale.ROOT);
+       if (sub.equals("style") || sub.equals("preview")) {
+         completions.addAll(
+             Arrays.stream(GlassPaneStyle.values())
+-                .map(s -> s.name().toLowerCase())
++                .map(s -> s.name().toLowerCase(Locale.ROOT))
+                 .collect(Collectors.toList()));
+       } else if (sub.equals("particle")) {
+         completions.addAll(
+             Arrays.stream(ModernHudListener.ParticleType.values())
+-                .map(t -> t.name().toLowerCase())
++                .map(t -> t.name().toLowerCase(Locale.ROOT))
+                 .collect(Collectors.toList()));
+       }
+     }
+ 
+-    String current = args[args.length - 1].toLowerCase();
++    if (args.length == 1 && sender.hasPermission("starcore.hud.reload")) completions.add("reload");
++    String current = args[args.length - 1].toLowerCase(Locale.ROOT);
+     return completions.stream()
+         .filter(s -> s.startsWith(current))
+         .sorted()
+diff --git a/src/main/java/dev/starcore/starcore/foundation/hud/HudPreferences.java b/src/main/java/dev/starcore/starcore/foundation/hud/HudPreferences.java
+new file mode 100644
+index 0000000..39735bf
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/foundation/hud/HudPreferences.java
+@@ -0,0 +1,300 @@
++package dev.starcore.starcore.foundation.hud;
++
++import dev.starcore.starcore.core.persistence.AtomicFilePersistence;
++import java.io.IOException;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.function.BiFunction;
++import java.util.logging.Logger;
++import org.bukkit.configuration.ConfigurationSection;
++import org.bukkit.configuration.InvalidConfigurationException;
++import org.bukkit.configuration.file.YamlConfiguration;
++
++/** Immutable HUD snapshots; admitted changes are serialized and acknowledged after durable save. */
++final class HudPreferences implements AutoCloseable {
++  record Settings(
++      GlassPaneStyle style,
++      boolean particles,
++      ModernHudListener.ParticleType particleType,
++      boolean breathing) {}
++
++  record Overrides(
++      GlassPaneStyle style,
++      Boolean particles,
++      ModernHudListener.ParticleType particleType,
++      Boolean breathing) {
++    static final Overrides EMPTY = new Overrides(null, null, null, null);
++
++    Settings resolve(Settings defaults) {
++      return new Settings(
++          style == null ? defaults.style() : style,
++          particles == null ? defaults.particles() : particles,
++          particleType == null ? defaults.particleType() : particleType,
++          breathing == null ? defaults.breathing() : breathing);
++    }
++  }
++
++  private record Snapshot(Settings defaults, Map<UUID, Overrides> players) {}
++
++  @FunctionalInterface
++  interface Writer {
++    void write(Path file, String content) throws IOException;
++  }
++
++  private static final Settings DEFAULTS =
++      new Settings(GlassPaneStyle.NIGHTMARE, true, ModernHudListener.ParticleType.SPARKLE, true);
++  private static final Set<String> KEYS =
++      Set.of("style", "particles", "particle-type", "breathing");
++  private final Path configFile;
++  private final Path playerFile;
++  private final Logger logger;
++  private final ExecutorService io;
++  private final Writer writer;
++  private final Set<CompletableFuture<?>> pending = ConcurrentHashMap.newKeySet();
++  private volatile Snapshot snapshot = new Snapshot(DEFAULTS, Map.of());
++  private volatile boolean closed;
++  private boolean ready;
++
++  HudPreferences(Path directory, Logger logger) {
++    this(
++        directory,
++        logger,
++        new ThreadPoolExecutor(
++            1,
++            1,
++            0L,
++            TimeUnit.MILLISECONDS,
++            new ArrayBlockingQueue<>(128),
++            runnable -> {
++              Thread thread = new Thread(runnable, "StarCore-HUD-settings");
++              thread.setDaemon(true);
++              return thread;
++            },
++            new ThreadPoolExecutor.AbortPolicy()),
++        (path, text) -> AtomicFilePersistence.replace(path, temp -> Files.writeString(temp, text)));
++  }
++
++  HudPreferences(Path directory, Logger logger, ExecutorService io, Writer writer) {
++    this.configFile = directory.resolve("hud.yml");
++    this.playerFile = directory.resolve("hud-players.yml");
++    this.logger = Objects.requireNonNull(logger);
++    this.io = io;
++    this.writer = writer;
++    try {
++      if (!Files.exists(configFile)) {
++        YamlConfiguration config = new YamlConfiguration();
++        config.set("version", 1);
++        writeValues(
++            config.createSection("defaults"),
++            new Overrides(
++                DEFAULTS.style(),
++                DEFAULTS.particles(),
++                DEFAULTS.particleType(),
++                DEFAULTS.breathing()));
++        writer.write(configFile, config.saveToString());
++      }
++      load();
++    } catch (IOException | IllegalArgumentException failure) {
++      logger.warning(
++          "HUD settings unavailable; changes disabled until a successful /hud reload: "
++              + failure.getMessage());
++    }
++  }
++
++  Settings settings(UUID player) {
++    Snapshot current = snapshot;
++    return current.players().getOrDefault(player, Overrides.EMPTY).resolve(current.defaults());
++  }
++
++  CompletableFuture<Settings> style(UUID player, GlassPaneStyle style) {
++    Objects.requireNonNull(style);
++    return change(
++        player,
++        (current, old) ->
++            new Overrides(style, old.particles(), old.particleType(), old.breathing()));
++  }
++
++  CompletableFuture<Settings> particle(UUID player, ModernHudListener.ParticleType type) {
++    Objects.requireNonNull(type);
++    return change(
++        player,
++        (current, old) -> new Overrides(old.style(), old.particles(), type, old.breathing()));
++  }
++
++  CompletableFuture<Settings> toggleParticles(UUID player) {
++    return change(
++        player,
++        (current, old) ->
++            new Overrides(old.style(), !current.particles(), old.particleType(), old.breathing()));
++  }
++
++  CompletableFuture<Settings> toggleBreathing(UUID player) {
++    return change(
++        player,
++        (current, old) ->
++            new Overrides(old.style(), old.particles(), old.particleType(), !current.breathing()));
++  }
++
++  CompletableFuture<Settings> reset(UUID player) {
++    return change(player, (current, old) -> Overrides.EMPTY);
++  }
++
++  private CompletableFuture<Settings> change(
++      UUID player, BiFunction<Settings, Overrides, Overrides> update) {
++    Objects.requireNonNull(player);
++    return submit(
++        () -> {
++          if (!ready) throw new IOException("HUD 配置无效，请修复后重载");
++          Snapshot before = snapshot;
++          Overrides old = before.players().getOrDefault(player, Overrides.EMPTY);
++          Overrides next = update.apply(old.resolve(before.defaults()), old);
++          Map<UUID, Overrides> changed = new HashMap<>(before.players());
++          if (Overrides.EMPTY.equals(next)) changed.remove(player);
++          else changed.put(player, next);
++          YamlConfiguration yaml = new YamlConfiguration();
++          yaml.set("version", 1);
++          ConfigurationSection players = yaml.createSection("players");
++          changed.entrySet().stream()
++              .sorted(Map.Entry.comparingByKey())
++              .forEach(
++                  entry ->
++                      writeValues(
++                          players.createSection(entry.getKey().toString()), entry.getValue()));
++          writer.write(playerFile, yaml.saveToString());
++          snapshot = new Snapshot(before.defaults(), Map.copyOf(changed));
++          return next.resolve(before.defaults());
++        });
++  }
++
++  CompletableFuture<Void> reload() {
++    return submit(
++        () -> {
++          load();
++          return null;
++        });
++  }
++
++  private void load() throws IOException {
++    // A failed reload may expose a corrupt player file. Never overwrite it with stale memory.
++    ready = false;
++    YamlConfiguration config = read(configFile);
++    requireKeys(config, Set.of("version", "defaults"));
++    Settings defaults = readValues(requireSection(config, "defaults")).resolve(DEFAULTS);
++    Map<UUID, Overrides> players = new HashMap<>();
++    if (Files.exists(playerFile)) {
++      YamlConfiguration yaml = read(playerFile);
++      requireKeys(yaml, Set.of("version", "players"));
++      ConfigurationSection section = requireSection(yaml, "players");
++      for (String id : section.getKeys(false)) {
++        UUID uuid = UUID.fromString(id);
++        if (!uuid.toString().equals(id)) throw new IOException("Invalid HUD player UUID: " + id);
++        players.put(uuid, readValues(requireSection(section, id)));
++      }
++    }
++    snapshot = new Snapshot(defaults, Map.copyOf(players));
++    ready = true;
++  }
++
++  private static YamlConfiguration read(Path file) throws IOException {
++    YamlConfiguration yaml = new YamlConfiguration();
++    try {
++      yaml.loadFromString(Files.readString(file));
++    } catch (InvalidConfigurationException invalid) {
++      throw new IOException("Invalid HUD YAML: " + file.getFileName(), invalid);
++    }
++    if (!(yaml.get("version") instanceof Integer version) || version != 1)
++      throw new IOException("Unsupported HUD settings version: " + file.getFileName());
++    return yaml;
++  }
++
++  private static ConfigurationSection requireSection(ConfigurationSection parent, String key)
++      throws IOException {
++    ConfigurationSection section = parent.getConfigurationSection(key);
++    if (section == null) throw new IOException("Missing HUD section: " + key);
++    return section;
++  }
++
++  private static void requireKeys(ConfigurationSection section, Set<String> allowed)
++      throws IOException {
++    for (String key : section.getKeys(false))
++      if (!allowed.contains(key)) throw new IOException("Unknown HUD option: " + key);
++  }
++
++  private static Overrides readValues(ConfigurationSection section) throws IOException {
++    requireKeys(section, KEYS);
++    return new Overrides(
++        enumValue(section, "style", GlassPaneStyle.class),
++        booleanValue(section, "particles"),
++        enumValue(section, "particle-type", ModernHudListener.ParticleType.class),
++        booleanValue(section, "breathing"));
++  }
++
++  private static Boolean booleanValue(ConfigurationSection section, String key) throws IOException {
++    Object value = section.get(key);
++    if (value == null) return null;
++    if (value instanceof Boolean flag) return flag;
++    throw new IOException("HUD " + key + " must be true or false");
++  }
++
++  private static <T extends Enum<T>> T enumValue(
++      ConfigurationSection section, String key, Class<T> type) throws IOException {
++    Object value = section.get(key);
++    if (value == null) return null;
++    try {
++      if (value instanceof String name) return Enum.valueOf(type, name.toUpperCase(Locale.ROOT));
++    } catch (IllegalArgumentException invalid) {
++      throw new IOException("Unknown HUD " + key + ": " + value, invalid);
++    }
++    throw new IOException("HUD " + key + " must be a name");
++  }
++
++  private static void writeValues(ConfigurationSection section, Overrides values) {
++    if (values.style() != null) section.set("style", values.style().name());
++    if (values.particles() != null) section.set("particles", values.particles());
++    if (values.particleType() != null) section.set("particle-type", values.particleType().name());
++    if (values.breathing() != null) section.set("breathing", values.breathing());
++  }
++
++  private <T> CompletableFuture<T> submit(Callable<T> action) {
++    CompletableFuture<T> result = new CompletableFuture<>();
++    pending.add(result);
++    result.whenComplete((ignored, failure) -> pending.remove(result));
++    if (closed) {
++      result.completeExceptionally(new IllegalStateException("HUD 已停用"));
++      return result;
++    }
++    try {
++      io.execute(
++          () -> {
++            try {
++              result.complete(action.call());
++            } catch (Exception failure) {
++              result.completeExceptionally(failure);
++            }
++          });
++    } catch (RejectedExecutionException busy) {
++      result.completeExceptionally(new IllegalStateException("HUD 设置繁忙或已停用，请稍后重试", busy));
++    }
++    // Cancelling the caller's observation cannot cancel an admitted durable change.
++    return result.copy();
++  }
++
++  @Override
++  public void close() {
++    closed = true;
++    io.shutdown();
++    try {
++      if (!io.awaitTermination(5, TimeUnit.SECONDS)) {
++        io.shutdownNow();
++        logger.warning("HUD settings writer did not drain before shutdown");
++      }
++    } catch (InterruptedException interrupted) {
++      io.shutdownNow();
++      Thread.currentThread().interrupt();
++    } finally {
++      pending.forEach(future -> future.completeExceptionally(new IllegalStateException("HUD 已停用")));
++    }
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/foundation/hud/MainMenuHud.java b/src/main/java/dev/starcore/starcore/foundation/hud/MainMenuHud.java
+index f835fe3..caf05d4 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/hud/MainMenuHud.java
++++ b/src/main/java/dev/starcore/starcore/foundation/hud/MainMenuHud.java
+@@ -137,6 +137,45 @@ public class MainMenuHud extends ModernHudMenu {
+     buildQuickActions();
+     buildModuleGrid();
+     buildFooter();
++    gateUnavailableModules();
++  }
++
++  private void gateUnavailableModules() {
++    if (!(plugin instanceof dev.starcore.starcore.StarCorePlugin core) || core.context() == null)
++      return;
++    java.util.Map<Integer, String> required =
++        java.util.Map.ofEntries(
++            java.util.Map.entry(12, "officer"),
++            java.util.Map.entry(13, "diplomacy"),
++            java.util.Map.entry(14, "army"),
++            java.util.Map.entry(20, "storage"),
++            java.util.Map.entry(21, "technology"),
++            java.util.Map.entry(22, "policy"),
++            java.util.Map.entry(23, "officer"),
++            java.util.Map.entry(24, "treasury"),
++            java.util.Map.entry(28, "city"),
++            java.util.Map.entry(29, "resolution"),
++            java.util.Map.entry(30, "resource"),
++            java.util.Map.entry(31, "resource"),
++            java.util.Map.entry(32, "blueprint"),
++            java.util.Map.entry(33, "combat"),
++            java.util.Map.entry(37, "quest"),
++            java.util.Map.entry(38, "achievement"),
++            java.util.Map.entry(39, "social"),
++            java.util.Map.entry(41, "weather"),
++            java.util.Map.entry(42, "tournament"));
++    required.forEach(
++        (slot, module) -> {
++          // The first row has different actions for players without a nation.
++          if (slot < 18 && (nationInfo == null || !nationInfo.hasNation)) return;
++          if (!core.context().configuration().moduleEnabled(module, true))
++            setButton(
++                slot,
++                Material.GRAY_STAINED_GLASS_PANE,
++                Component.text("功能未启用").color(NamedTextColor.DARK_GRAY),
++                List.of(Component.text("服务器当前未开放此功能").color(NamedTextColor.GRAY)),
++                null);
++        });
+   }
+ 
+   /** 构建标题栏 */
+@@ -358,10 +397,10 @@ public class MainMenuHud extends ModernHudMenu {
+         row * 9 + 2,
+         Material.CHEST,
+         Component.text("仓库管理").color(NamedTextColor.WHITE),
+-        List.of(Component.text("访问国家仓库").color(NamedTextColor.GRAY)),
++        List.of(Component.text("打开个人物品仓库").color(NamedTextColor.GRAY)),
+         p -> {
+           p.closeInventory();
+-          openRoute(p, "sc treasury gui", "sc treasury status");
++          p.performCommand("warehouse open");
+         });
+ 
+     // 科技
+@@ -383,7 +422,7 @@ public class MainMenuHud extends ModernHudMenu {
+         List.of(Component.text("制定和管理国家政策").color(NamedTextColor.GRAY)),
+         p -> {
+           p.closeInventory();
+-          openRoute(p, "sc government gui", "sc government info");
++          p.performCommand("sc policy status");
+         });
+ 
+     // 官职
+@@ -569,7 +608,7 @@ public class MainMenuHud extends ModernHudMenu {
+         List.of(Component.text("个性化菜单样式").color(NamedTextColor.GRAY)),
+         p -> {
+           p.closeInventory();
+-          p.performCommand("language");
++          p.performCommand("hud settings");
+         });
+ 
+     // 排行榜
+diff --git a/src/main/java/dev/starcore/starcore/foundation/hud/ModernHudListener.java b/src/main/java/dev/starcore/starcore/foundation/hud/ModernHudListener.java
+index 04e80f5..7fe4256 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/hud/ModernHudListener.java
++++ b/src/main/java/dev/starcore/starcore/foundation/hud/ModernHudListener.java
+@@ -22,6 +22,7 @@ public class ModernHudListener implements org.bukkit.event.Listener {
+   private static volatile ModernHudListener instance;
+   private final Plugin plugin;
+   private final AnimationTaskTracker tasks;
++  private final HudPreferences preferences;
+   private final java.util.concurrent.atomic.AtomicBoolean stopped =
+       new java.util.concurrent.atomic.AtomicBoolean();
+   private OptimizedMoveListener dispatcher;
+@@ -57,9 +58,33 @@ public class ModernHudListener implements org.bukkit.event.Listener {
+     subscription = null;
+   }
+ 
+-  private ModernHudListener(Plugin plugin) {
++  private ModernHudListener(Plugin plugin, HudPreferences preferences) {
+     this.plugin = plugin;
+     this.tasks = new AnimationTaskTracker(plugin);
++    this.preferences = preferences;
++  }
++
++  HudPreferences preferences() {
++    return preferences;
++  }
++
++  void refreshPreferences(Player player, ModernHudMenu expected) {
++    if (expected == null) return;
++    execute(
++        player,
++        () -> {
++          if (openMenus.get(player.getUniqueId()) != expected
++              || expected.getPlayer() != player
++              || !expected.usesPreferences()
++              || !expected.isOpen()
++              || !player.isOnline()) return;
++          expected.applyPreferences(preferences.settings(player.getUniqueId()));
++          startParticleEffect(player);
++        });
++  }
++
++  void refreshPreferences() {
++    openMenus.values().forEach(menu -> refreshPreferences(menu.getPlayer(), menu));
+   }
+ 
+   void execute(Player player, Runnable action) {
+@@ -79,12 +104,18 @@ public class ModernHudListener implements org.bukkit.event.Listener {
+   public static synchronized ModernHudListener initialize(Plugin plugin) {
+     if (instance != null && instance.plugin != plugin) instance.shutdown();
+     if (instance == null) {
+-      instance = new ModernHudListener(plugin);
+-      plugin.getServer().getPluginManager().registerEvents(instance, plugin);
++      initialize(plugin, new HudPreferences(plugin.getDataFolder().toPath(), plugin.getLogger()));
+     }
+     return instance;
+   }
+ 
++  static synchronized ModernHudListener initialize(Plugin plugin, HudPreferences preferences) {
++    if (instance != null) instance.shutdown();
++    instance = new ModernHudListener(plugin, preferences);
++    plugin.getServer().getPluginManager().registerEvents(instance, plugin);
++    return instance;
++  }
++
+   /** 获取实例 */
+   public static ModernHudListener getInstance() {
+     ModernHudListener current = instance;
+@@ -102,7 +133,10 @@ public class ModernHudListener implements org.bukkit.event.Listener {
+         player,
+         () -> {
+           ModernHudMenu previous = listener.openMenus.put(player.getUniqueId(), menu);
+-          if (previous != null && previous != menu) previous.handleClose();
++          if (previous != null && previous != menu) {
++            listener.stopParticleEffect(player);
++            previous.handleClose();
++          }
+         });
+   }
+ 
+@@ -203,8 +237,9 @@ public class ModernHudListener implements org.bukkit.event.Listener {
+           if (menu != null
+               && menu.getPlayer() == player
+               && menu.isOpen()
++              && menu.particlesEnabled()
+               && globalParticlesEnabled) {
+-            spawnMenuParticles(player, particleDensity * 2);
++            spawnMenuParticles(player, menu.particleType(particleType), particleDensity * 2);
+           }
+         });
+   }
+@@ -213,10 +248,13 @@ public class ModernHudListener implements org.bukkit.event.Listener {
+     execute(
+         player,
+         () -> {
+-          if (!globalParticlesEnabled) return;
+           ModernHudMenu menu = openMenus.get(player.getUniqueId());
+           if (menu == null || menu.getPlayer() != player || !menu.isOpen()) return;
+           stopParticleEffect(player);
++          if (!menu.breathingEnabled()
++              && (!globalParticlesEnabled
++                  || !menu.particlesEnabled()
++                  || menu.particleType(particleType) == ParticleType.NONE)) return;
+           UUID id = player.getUniqueId();
+           ParticleSession session = new ParticleSession(menu);
+           particleTasks.put(id, session);
+@@ -230,22 +268,26 @@ public class ModernHudListener implements org.bukkit.event.Listener {
+                               if (particleTasks.get(id) != session
+                                   || openMenus.get(id) != menu
+                                   || !player.isOnline()
+-                                  || !menu.isOpen()
+-                                  || !globalParticlesEnabled) {
++                                  || !menu.isOpen()) {
+                                 current.cancel();
+                                 particleTasks.remove(id, session);
+                                 return;
+                               }
+                               try {
+-                                spawnMenuParticles(player, particleDensity);
++                                menu.animateBackground();
++                                if (globalParticlesEnabled && menu.particlesEnabled())
++                                  spawnMenuParticles(
++                                      player, menu.particleType(particleType), particleDensity);
+                               } catch (RuntimeException | Error failure) {
+                                 particleTasks.remove(id, session);
+                                 throw failure;
+                               }
+                             }),
+                     () -> {
+-                      if (particleTasks.remove(id, session) && openMenus.remove(id, menu))
++                      if (particleTasks.remove(id, session) && openMenus.remove(id, menu)) {
+                         menu.abandon();
++                        MainMenuHud.clearCache(id);
++                      }
+                     },
+                     1L,
+                     3L);
+@@ -278,11 +320,12 @@ public class ModernHudListener implements org.bukkit.event.Listener {
+   };
+ 
+   /** 生成菜单粒子效果 */
+-  private void spawnMenuParticles(Player player, int count) {
++  private void spawnMenuParticles(Player player, ParticleType type, int count) {
++    if (type == ParticleType.NONE) return;
+     // 关键优化：使用一个共享 Location 配合 add()，而不是循环里 loc.clone() 反复分配
+     Location sharedLoc = player.getLocation().add(0, 1.5, 0);
+ 
+-    switch (particleType) {
++    switch (type) {
+       case SPARKLE -> spawnSparkleParticles(player, sharedLoc, count);
+       case FIREFLY -> spawnFireflyParticles(player, sharedLoc, count);
+       case AURORA -> spawnAuroraParticles(player, sharedLoc, count);
+@@ -407,15 +450,12 @@ public class ModernHudListener implements org.bukkit.event.Listener {
+     tasks.runIfOpen(
+         () -> {
+           globalParticlesEnabled = enabled;
+-          if (!enabled) {
+-            particleTasks.values().forEach(session -> tasks.cancelTask(session.task));
+-            particleTasks.clear();
+-          }
++          openMenus.values().forEach(menu -> startParticleEffect(menu.getPlayer()));
+         });
+   }
+ 
+   public void setParticleType(ParticleType type) {
+-    this.particleType = type;
++    this.particleType = Objects.requireNonNull(type);
+   }
+ 
+   public void setParticleSpeed(double speed) {
+@@ -439,6 +479,7 @@ public class ModernHudListener implements org.bukkit.event.Listener {
+   public void shutdown() {
+     if (!stopped.compareAndSet(false, true)) return;
+     tasks.shutdown();
++    preferences.close();
+     unsubscribe(dispatcher);
+     HandlerList.unregisterAll(this);
+     particleTasks.clear();
+diff --git a/src/main/java/dev/starcore/starcore/foundation/hud/ModernHudMenu.java b/src/main/java/dev/starcore/starcore/foundation/hud/ModernHudMenu.java
+index f8c7b23..41473f6 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/hud/ModernHudMenu.java
++++ b/src/main/java/dev/starcore/starcore/foundation/hud/ModernHudMenu.java
+@@ -33,6 +33,18 @@ public class ModernHudMenu implements InventoryHolder {
+   private GlassPaneStyle style;
+   private boolean particlesEnabled;
+   private boolean breathingEnabled;
++  private ModernHudListener.ParticleType particleType;
++  private boolean usesPreferences;
++
++  private enum Pane {
++    BACKGROUND,
++    BORDER,
++    ACCENT,
++    INNER
++  }
++
++  private final Map<Integer, Pane> decorativeSlots = new HashMap<>();
++  private final Map<Integer, ItemStack> displayedDecorations = new HashMap<>();
+ 
+   // 点击处理器 - 使用ConcurrentHashMap保证线程安全
+   private final Map<Integer, Consumer<Player>> clickHandlers = new ConcurrentHashMap<>();
+@@ -92,25 +104,80 @@ public class ModernHudMenu implements InventoryHolder {
+   // ==================== 配置方法 ====================
+ 
+   public ModernHudMenu setStyle(GlassPaneStyle style) {
+-    this.style = style != null ? style : GlassPaneStyle.NIGHTMARE;
++    updateAppearance(() -> this.style = style != null ? style : GlassPaneStyle.NIGHTMARE);
+     return this;
+   }
+ 
+   public ModernHudMenu setParticlesEnabled(boolean enabled) {
+-    this.particlesEnabled = enabled;
++    updateAppearance(() -> this.particlesEnabled = enabled);
+     return this;
+   }
+ 
+   public ModernHudMenu setBreathingEnabled(boolean enabled) {
+-    this.breathingEnabled = enabled;
++    updateAppearance(() -> this.breathingEnabled = enabled);
+     return this;
+   }
+ 
++  private void updateAppearance(Runnable update) {
++    if (!isOpen) {
++      update.run();
++      return;
++    }
++    ModernHudListener listener = ModernHudListener.getInstance();
++    listener.execute(
++        player,
++        () -> {
++          update.run();
++          if (isOpen) {
++            paintDecorations();
++            listener.startParticleEffect(player);
++          }
++        });
++  }
++
+   public ModernHudMenu setOnClose(Runnable callback) {
+     this.onCloseCallback = callback;
+     return this;
+   }
+ 
++  void usePreferences(HudPreferences.Settings settings) {
++    usesPreferences = true;
++    applyPreferences(settings);
++  }
++
++  void applyPreferences(HudPreferences.Settings settings) {
++    if (!usesPreferences) return;
++    style = settings.style();
++    particlesEnabled = settings.particles();
++    particleType = settings.particleType();
++    breathingEnabled = settings.breathing();
++    animationTick = 0;
++    if (inventory != null) paintDecorations();
++  }
++
++  boolean usesPreferences() {
++    return usesPreferences;
++  }
++
++  boolean particlesEnabled() {
++    return particlesEnabled;
++  }
++
++  boolean breathingEnabled() {
++    return breathingEnabled;
++  }
++
++  ModernHudListener.ParticleType particleType(ModernHudListener.ParticleType fallback) {
++    return particleType == null ? fallback : particleType;
++  }
++
++  /** Called only by the player's entity timer; never rebuilds or opens an inventory. */
++  void animateBackground() {
++    if (!breathingEnabled || !isOpen) return;
++    animationTick++;
++    paintDecorations();
++  }
++
+   // ==================== 菜单操作 ====================
+ 
+   public void open() {
+@@ -124,7 +191,7 @@ public class ModernHudMenu implements InventoryHolder {
+           if (player.getOpenInventory().getTopInventory() != inventory) return;
+           isOpen = true;
+           ModernHudListener.register(player, this);
+-          if (particlesEnabled) startParticleAnimation();
++          startParticleAnimation();
+         });
+   }
+ 
+@@ -168,6 +235,8 @@ public class ModernHudMenu implements InventoryHolder {
+     clickHandlers.clear();
+     conditionHandlers.clear();
+     buttonItems.clear();
++    decorativeSlots.clear();
++    displayedDecorations.clear();
+ 
+     // 填充毛玻璃背景
+     fillFrostedGlassBackground();
+@@ -177,18 +246,10 @@ public class ModernHudMenu implements InventoryHolder {
+ 
+     // 添加底部导航栏
+     buildNavigationBar();
+-
+-    animationTick++;
+   }
+ 
+   /** 填充毛玻璃背景 - 核心视觉效果 使用多层半透明玻璃板叠加形成毛玻璃效果 */
+   private void fillFrostedGlassBackground() {
+-    // 计算呼吸灯透明度（0.85 - 0.95 之间变化）
+-    double breathingFactor = breathingEnabled ? 0.85 + 0.1 * Math.sin(animationTick * 0.1) : 0.9;
+-
+-    // 选择背景材质
+-    Material bgMaterial = getBreathingMaterial(style.getBackgroundMaterial(), breathingFactor);
+-
+     // 填充背景（排除边框）
+     for (int i = 0; i < size; i++) {
+       int row = i / 9;
+@@ -198,14 +259,14 @@ public class ModernHudMenu implements InventoryHolder {
+       if (row == 0 || row == (size / 9 - 1) || col == 0 || col == 8) {
+         if (isCorner(i)) {
+           // 角落 - 使用装饰色
+-          inventory.setItem(i, createFrostedPane(style.getAccentMaterial(), " ", true));
++          decorate(i, Pane.ACCENT);
+         } else {
+           // 边框 - 使用边框样式
+-          inventory.setItem(i, createFrostedPane(style.getBorderMaterial(), " ", true));
++          decorate(i, Pane.BORDER);
+         }
+       } else {
+         // 内容区域 - 使用背景样式
+-        inventory.setItem(i, createFrostedPane(bgMaterial, " ", false));
++        decorate(i, Pane.BACKGROUND);
+       }
+     }
+ 
+@@ -233,41 +294,49 @@ public class ModernHudMenu implements InventoryHolder {
+     return item;
+   }
+ 
+-  /** 根据呼吸灯因子获取材质 通过不同的染色玻璃板模拟透明度变化 */
+-  private Material getBreathingMaterial(Material base, double factor) {
+-    // 在呼吸周期内切换微妙的材质
+-    if (factor > 0.92) {
+-      return Material.WHITE_STAINED_GLASS_PANE;
+-    } else if (factor > 0.88) {
+-      return Material.LIGHT_GRAY_STAINED_GLASS_PANE;
+-    } else {
+-      return Material.GRAY_STAINED_GLASS_PANE;
+-    }
++  private Material paneMaterial(Pane pane) {
++    return switch (pane) {
++      case ACCENT -> style.getAccentMaterial();
++      case BORDER -> style.getBorderMaterial();
++      case INNER -> style.getBorderMaterial();
++      case BACKGROUND ->
++          breathingEnabled && Math.sin(animationTick * 0.25) > 0.5
++              ? style.getAccentMaterial()
++              : style.getBackgroundMaterial();
++    };
+   }
+ 
+-  /** 添加内边框装饰 */
+-  private void addInnerBorder() {
+-    int rows = size / 9;
+-
+-    // 顶部内边框（第9-17槽）
+-    for (int i = 9; i < 18; i++) {
+-      if (inventory.getItem(i) != null) {
+-        inventory.setItem(
+-            i,
+-            createFrostedPane(
+-                style.getAccentMaterial().equals(Material.WHITE_STAINED_GLASS_PANE)
+-                    ? Material.LIGHT_GRAY_STAINED_GLASS_PANE
+-                    : Material.GRAY_STAINED_GLASS_PANE,
+-                " ",
+-                true));
++  private void decorate(int slot, Pane pane) {
++    ItemStack item = createFrostedPane(paneMaterial(pane), " ", pane != Pane.BACKGROUND);
++    inventory.setItem(slot, item);
++    decorativeSlots.put(slot, pane);
++    displayedDecorations.put(slot, item);
++  }
++
++  private void paintDecorations() {
++    Iterator<Map.Entry<Integer, Pane>> slots = decorativeSlots.entrySet().iterator();
++    while (slots.hasNext()) {
++      var slot = slots.next();
++      ItemStack previous = displayedDecorations.get(slot.getKey());
++      // Subclasses and integrations can also set inventory slots directly. Preserve their content.
++      if (!Objects.equals(previous, inventory.getItem(slot.getKey()))) {
++        slots.remove();
++        displayedDecorations.remove(slot.getKey());
++        continue;
+       }
++      Material material = paneMaterial(slot.getValue());
++      if (previous != null && previous.getType() == material) continue;
++      ItemStack item = createFrostedPane(material, " ", slot.getValue() != Pane.BACKGROUND);
++      inventory.setItem(slot.getKey(), item);
++      displayedDecorations.put(slot.getKey(), item);
+     }
++  }
+ 
+-    // 底部内边框
+-    for (int i = size - 18; i < size - 9; i++) {
+-      if (inventory.getItem(i) != null) {
+-        inventory.setItem(i, createFrostedPane(Material.GRAY_STAINED_GLASS_PANE, " ", true));
+-      }
++  /** 添加内边框装饰 */
++  private void addInnerBorder() {
++    for (int i = 9; i < size - 9; i++) {
++      if (i % 9 != 0 && i % 9 != 8 && (i / 9 == 1 || i / 9 == size / 9 - 2))
++        decorate(i, Pane.INNER);
+     }
+   }
+ 
+@@ -387,6 +456,10 @@ public class ModernHudMenu implements InventoryHolder {
+ 
+     inventory.setItem(slot, item);
+     buttonItems.put(slot, item);
++    decorativeSlots.remove(slot);
++    displayedDecorations.remove(slot);
++    clickHandlers.remove(slot);
++    conditionHandlers.remove(slot);
+ 
+     if (onClick != null) {
+       clickHandlers.put(slot, onClick);
+@@ -430,6 +503,10 @@ public class ModernHudMenu implements InventoryHolder {
+ 
+     inventory.setItem(slot, head);
+     buttonItems.put(slot, head);
++    decorativeSlots.remove(slot);
++    displayedDecorations.remove(slot);
++    clickHandlers.remove(slot);
++    conditionHandlers.remove(slot);
+ 
+     if (onClick != null) {
+       clickHandlers.put(slot, onClick);
+@@ -476,7 +553,7 @@ public class ModernHudMenu implements InventoryHolder {
+     Predicate<Player> condition = conditionHandlers.get(slot);
+     if (condition != null && !condition.test(clicker)) {
+       // 播放失败音效
+-      clicker.playSound(clicker.getLocation(), org.bukkit.Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
++      clicker.playSound(clicker.getLocation(), "minecraft:entity.villager.no", 1.0f, 1.0f);
+       return true;
+     }
+ 
+@@ -484,7 +561,7 @@ public class ModernHudMenu implements InventoryHolder {
+     Consumer<Player> handler = clickHandlers.get(slot);
+     if (handler != null) {
+       // 播放成功音效
+-      clicker.playSound(clicker.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
++      clicker.playSound(clicker.getLocation(), "minecraft:ui.button.click", 0.5f, 1.0f);
+ 
+       handler.accept(clicker);
+       return true;
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+index 7369117..81c39f0 100644
+--- a/src/main/resources/plugin.yml
++++ b/src/main/resources/plugin.yml
+@@ -85,7 +85,7 @@ commands:
+   # 现代HUD菜单
+   hud:
+     description: 打开现代毛玻璃风格HUD菜单
+-    usage: /hud [menu|style|particle|particles|list|preview]
++    usage: /hud [menu|settings|style|particle|particles|breathing|list|preview|reset|reload]
+     aliases: [hudmenu, 现代菜单]
+ 
+   # 社交系统
+@@ -1140,6 +1140,10 @@ permissions:
+       starcore.region.reload: true
+ 
+   # 高级管理权限
++  starcore.hud.reload:
++    description: 重载 HUD 默认配置和个人设置
++    default: op
++
+   starcore.admin:
+     description: 高级管理员权限
+     default: op
+@@ -1151,6 +1155,7 @@ permissions:
+       starcore.unjail: true
+       starcore.stresstest: true
+       starcore.admin.debug: true
++      starcore.hud.reload: true
+ 
+   # 调试命令权限（DebugCommandHandler 使用）
+   starcore.admin.debug:
+diff --git a/src/test/java/dev/starcore/starcore/foundation/hud/HudPreferencesTest.java b/src/test/java/dev/starcore/starcore/foundation/hud/HudPreferencesTest.java
+new file mode 100644
+index 0000000..170c4b8
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/foundation/hud/HudPreferencesTest.java
+@@ -0,0 +1,183 @@
++package dev.starcore.starcore.foundation.hud;
++
++import static org.junit.jupiter.api.Assertions.*;
++
++import dev.starcore.starcore.core.persistence.AtomicFilePersistence;
++import java.io.IOException;
++import java.nio.file.*;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.logging.Logger;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++
++class HudPreferencesTest {
++  @TempDir Path directory;
++  private final Logger logger = Logger.getAnonymousLogger();
++  private final UUID first = UUID.randomUUID();
++  private final UUID second = UUID.randomUUID();
++
++  @Test
++  void personalOverridesSurviveRestartAndDefaultsReloadWithoutAffectingOtherPlayers()
++      throws Exception {
++    try (var store = new HudPreferences(directory, logger)) {
++      await(store.style(first, GlassPaneStyle.FOREST));
++      await(store.toggleParticles(first));
++      await(store.particle(first, ModernHudListener.ParticleType.FIREFLY));
++      assertEquals(GlassPaneStyle.NIGHTMARE, store.settings(second).style());
++      assertTrue(store.settings(second).particles());
++      defaults("ROYAL", false);
++      await(store.reload());
++      assertEquals(GlassPaneStyle.FOREST, store.settings(first).style());
++      assertFalse(store.settings(first).breathing(), "untouched fields inherit new defaults");
++      assertEquals(GlassPaneStyle.ROYAL, store.settings(second).style());
++    }
++    try (var restarted = new HudPreferences(directory, logger)) {
++      assertEquals(GlassPaneStyle.FOREST, restarted.settings(first).style());
++      assertFalse(restarted.settings(first).particles());
++      assertEquals(
++          ModernHudListener.ParticleType.FIREFLY, restarted.settings(first).particleType());
++      await(restarted.reset(first));
++      assertEquals(restarted.settings(second), restarted.settings(first));
++    }
++    try (var again = new HudPreferences(directory, logger)) {
++      assertEquals(GlassPaneStyle.ROYAL, again.settings(first).style());
++    }
++  }
++
++  @Test
++  void invalidReloadRetainsEntireSnapshotAndDoesNotRewriteAdministratorsFile() throws Exception {
++    try (var store = new HudPreferences(directory, logger)) {
++      await(store.style(first, GlassPaneStyle.FOREST));
++      var before = store.settings(first);
++      String malformed = "version: 1\ndefaults:\n  style: ROYAL\n  breathing: perhaps\n";
++      Files.writeString(directory.resolve("hud.yml"), malformed);
++      assertThrows(ExecutionException.class, () -> await(store.reload()));
++      assertEquals(before, store.settings(first));
++      assertEquals(GlassPaneStyle.NIGHTMARE, store.settings(second).style());
++      assertEquals(malformed, Files.readString(directory.resolve("hud.yml")));
++    }
++  }
++
++  @Test
++  void failedAtomicSaveLeavesMemoryAndPreviouslyAcknowledgedFileUnchanged() throws Exception {
++    AtomicBoolean fail = new AtomicBoolean();
++    try (var store =
++        new HudPreferences(
++            directory,
++            logger,
++            Executors.newSingleThreadExecutor(),
++            (path, value) ->
++                AtomicFilePersistence.replace(
++                    path,
++                    temp -> {
++                      Files.writeString(temp, value);
++                      if (fail.get()) throw new IOException("Injected failure before replace");
++                    }))) {
++      await(store.style(first, GlassPaneStyle.FOREST));
++      byte[] saved = Files.readAllBytes(directory.resolve("hud-players.yml"));
++      fail.set(true);
++      assertThrows(ExecutionException.class, () -> await(store.toggleParticles(first)));
++      assertTrue(store.settings(first).particles());
++      assertArrayEquals(saved, Files.readAllBytes(directory.resolve("hud-players.yml")));
++      fail.set(false);
++      await(store.toggleParticles(first));
++      assertFalse(store.settings(first).particles());
++    }
++  }
++
++  @Test
++  void rapidTogglesAreSerializedAndDoNotLoseAnotherPlayersChanges() throws Exception {
++    try (var store = new HudPreferences(directory, logger)) {
++      List<CompletableFuture<?>> changes = new ArrayList<>();
++      for (int i = 0; i < 15; i++) {
++        changes.add(store.toggleParticles(first));
++        changes.add(store.toggleBreathing(second));
++      }
++      await(CompletableFuture.allOf(changes.toArray(CompletableFuture[]::new)));
++      assertFalse(store.settings(first).particles());
++      assertTrue(store.settings(first).breathing());
++      assertFalse(store.settings(second).breathing());
++      assertTrue(store.settings(second).particles());
++    }
++  }
++
++  @Test
++  void shutdownDrainsAdmittedChangesAndRefusesNewWrites() throws Exception {
++    var store = new HudPreferences(directory, logger);
++    var saved = store.style(first, GlassPaneStyle.INFERNO);
++    store.close();
++    assertEquals(GlassPaneStyle.INFERNO, await(saved).style());
++    assertThrows(ExecutionException.class, () -> await(store.reset(first)));
++    try (var restarted = new HudPreferences(directory, logger)) {
++      assertEquals(GlassPaneStyle.INFERNO, restarted.settings(first).style());
++    }
++  }
++
++  @Test
++  void cancellingObservationDoesNotCancelAdmittedPreference() throws Exception {
++    try (var store = new HudPreferences(directory, logger)) {
++      store.style(first, GlassPaneStyle.CRYSTAL).cancel(false);
++      await(store.toggleParticles(second)); // Serial queue barrier.
++      assertEquals(GlassPaneStyle.CRYSTAL, store.settings(first).style());
++    }
++    try (var restarted = new HudPreferences(directory, logger)) {
++      assertEquals(GlassPaneStyle.CRYSTAL, restarted.settings(first).style());
++    }
++  }
++
++  @Test
++  void corruptExistingPlayerFileIsNotOverwrittenAndCanBeRepairedWithReload() throws Exception {
++    String corrupt = "version: 1\nplayers:\n  broken-uuid: {}\n";
++    Files.writeString(directory.resolve("hud-players.yml"), corrupt);
++    try (var store = new HudPreferences(directory, logger)) {
++      assertThrows(ExecutionException.class, () -> await(store.toggleParticles(first)));
++      assertEquals(corrupt, Files.readString(directory.resolve("hud-players.yml")));
++      Files.writeString(directory.resolve("hud-players.yml"), "version: 1\nplayers: {}\n");
++      await(store.reload());
++      assertFalse(await(store.toggleParticles(first)).particles());
++    }
++  }
++
++  @Test
++  void brokenPlayerReloadDoesNotPublishNewDefaults() throws Exception {
++    try (var store = new HudPreferences(directory, logger)) {
++      await(store.style(first, GlassPaneStyle.FOREST));
++      defaults("ROYAL", false);
++      Files.writeString(directory.resolve("hud-players.yml"), "version: 1\nplayers: [oops]\n");
++      assertThrows(ExecutionException.class, () -> await(store.reload()));
++      assertEquals(GlassPaneStyle.FOREST, store.settings(first).style());
++      assertEquals(GlassPaneStyle.NIGHTMARE, store.settings(second).style());
++      assertThrows(ExecutionException.class, () -> await(store.toggleParticles(first)));
++      assertEquals(
++          "version: 1\nplayers: [oops]\n", Files.readString(directory.resolve("hud-players.yml")));
++    }
++  }
++
++  @Test
++  void unknownOptionsAndVersionsFailWithoutPublishing() throws Exception {
++    try (var store = new HudPreferences(directory, logger)) {
++      for (String invalid :
++          List.of(
++              "version: 9\ndefaults: {}\n",
++              "version: 1\ndefaults:\n  breathng: true\n",
++              "version: 1\ndefaults:\n  style: unknown\n",
++              "version: [")) {
++        Files.writeString(directory.resolve("hud.yml"), invalid);
++        assertThrows(ExecutionException.class, () -> await(store.reload()));
++        assertEquals(GlassPaneStyle.NIGHTMARE, store.settings(first).style());
++      }
++    }
++  }
++
++  private void defaults(String style, boolean breathing) throws IOException {
++    Files.writeString(
++        directory.resolve("hud.yml"),
++        "version: 1\ndefaults:\n  style: " + style + "\n  breathing: " + breathing + "\n");
++  }
++
++  private static <T> T await(CompletableFuture<T> future) throws Exception {
++    return future.get(5, TimeUnit.SECONDS);
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/foundation/hud/HudSettingsBehaviorTest.java b/src/test/java/dev/starcore/starcore/foundation/hud/HudSettingsBehaviorTest.java
+new file mode 100644
+index 0000000..df8dd7d
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/foundation/hud/HudSettingsBehaviorTest.java
+@@ -0,0 +1,358 @@
++package dev.starcore.starcore.foundation.hud;
++
++import static org.junit.jupiter.api.Assertions.*;
++import static org.mockito.ArgumentMatchers.*;
++import static org.mockito.Mockito.*;
++
++import java.nio.file.*;
++import java.util.*;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
++import org.bukkit.Material;
++import org.bukkit.command.Command;
++import org.bukkit.entity.Player;
++import org.bukkit.event.player.PlayerQuitEvent;
++import org.bukkit.inventory.*;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import org.mockito.ArgumentCaptor;
++
++class HudSettingsBehaviorTest {
++  @TempDir Path directory;
++
++  @Test
++  void styleCommandAcknowledgesAfterSaveAndUpdatesExistingInventoryInPlace() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player player = fixture.player(0);
++      var menu = fixture.menu(player);
++      Inventory inventory = menu.getInventory();
++      fixture.command(player, "style", "forest");
++      assertEquals(GlassPaneStyle.NIGHTMARE, menu.getStyle());
++      verify(player, never()).sendMessage(any(Component.class));
++      fixture.drainIo();
++      assertEquals(GlassPaneStyle.NIGHTMARE, menu.getStyle(), "UI update awaits entity ownership");
++      fixture.tickOwners();
++      assertEquals(GlassPaneStyle.FOREST, menu.getStyle());
++      assertSame(inventory, menu.getInventory());
++      verify(player, times(1)).openInventory(any(Inventory.class));
++      assertTrue(messages(player).stream().anyMatch(text -> text.contains("已保存")));
++    }
++  }
++
++  @Test
++  void particleAndBreathingCommandsAffectOnlyTheirPlayerAndPreviewNeverEmitsParticles() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player first = fixture.player(0), second = fixture.player(1000);
++      var menu = fixture.menu(first);
++      var other = fixture.menu(second);
++      fixture.command(first, "particles");
++      fixture.command(first, "particle", "firefly");
++      fixture.command(first, "breathing");
++      fixture.drainIo();
++      fixture.tickOwners();
++      assertFalse(menu.particlesEnabled());
++      assertFalse(menu.breathingEnabled());
++      assertEquals(
++          ModernHudListener.ParticleType.FIREFLY,
++          menu.particleType(ModernHudListener.ParticleType.NONE));
++      assertTrue(other.particlesEnabled());
++      assertTrue(other.breathingEnabled());
++      assertTrue(fixture.listener.isGlobalParticlesEnabled());
++      fixture.command(first, "preview", "royal");
++      clearInvocations(first);
++      fixture.scheduler.owner = first;
++      fixture.listener.onBlockMove(first, null, null);
++      fixture.tickOwners();
++      verify(first, never()).getLocation();
++      assertEquals(
++          GlassPaneStyle.NIGHTMARE, fixture.preferences.settings(first.getUniqueId()).style());
++    }
++  }
++
++  @Test
++  void authorizedReloadUpdatesOwnedMenusPreservesOverridesAndLeavesPreviewAlone() throws Exception {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player admin = fixture.player(0),
++          second = fixture.player(1000),
++          preview = fixture.player(2000);
++      when(admin.hasPermission("starcore.hud.reload")).thenReturn(true);
++      var first = fixture.menu(admin);
++      var other = fixture.menu(second);
++      fixture.command(admin, "style", "forest");
++      fixture.drainIo();
++      fixture.tickOwners();
++      fixture.command(preview, "preview", "crystal");
++      var previewMenu = ModernHudListener.getMenu(preview);
++      Files.writeString(
++          directory.resolve("hud.yml"),
++          "version: 1\ndefaults:\n  style: ROYAL\n  breathing: false\n");
++      fixture.command(admin, "reload");
++      fixture.drainIo();
++      assertEquals(GlassPaneStyle.NIGHTMARE, other.getStyle());
++      fixture.tickOwners();
++      assertEquals(GlassPaneStyle.FOREST, first.getStyle());
++      assertEquals(GlassPaneStyle.ROYAL, other.getStyle());
++      assertFalse(first.breathingEnabled());
++      assertEquals(GlassPaneStyle.CRYSTAL, previewMenu.getStyle());
++      verify(second, times(1)).openInventory(any(Inventory.class));
++    }
++  }
++
++  @Test
++  void reloadPermissionIsEnforcedAndZeroArgumentCompletionIsSafe() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player player = fixture.player(0);
++      fixture.command(player, "reload");
++      assertTrue(fixture.io.jobs.isEmpty());
++      assertTrue(messages(player).getFirst().contains("权限"));
++      assertEquals(
++          List.of(),
++          fixture.command.onTabComplete(player, mock(Command.class), "hud", new String[0]));
++      assertFalse(
++          fixture
++              .command
++              .onTabComplete(player, mock(Command.class), "hud", new String[] {""})
++              .contains("reload"));
++      when(player.hasPermission("starcore.hud.reload")).thenReturn(true);
++      assertTrue(
++          fixture
++              .command
++              .onTabComplete(player, mock(Command.class), "hud", new String[] {"re"})
++              .contains("reload"));
++    }
++  }
++
++  @Test
++  void failedSaveDoesNotClaimSuccessOrChangeMenu() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player player = fixture.player(0);
++      var menu = fixture.menu(player);
++      fixture.failWrites.set(true);
++      fixture.command(player, "style", "forest");
++      fixture.drainIo();
++      fixture.tickOwners();
++      assertEquals(GlassPaneStyle.NIGHTMARE, menu.getStyle());
++      assertTrue(messages(player).stream().anyMatch(text -> text.contains("保存失败")));
++      assertFalse(messages(player).stream().anyMatch(text -> text.contains("已保存")));
++    }
++  }
++
++  @Test
++  void closingMenuBeforeSaveCompletesNeverReopensIt() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player player = fixture.player(0);
++      var menu = fixture.menu(player);
++      fixture.command(player, "style", "forest");
++      fixture.scheduler.owner = player;
++      menu.close();
++      fixture.drainIo();
++      fixture.tickOwners();
++      assertNull(ModernHudListener.getMenu(player));
++      assertFalse(menu.isOpen());
++      verify(player, times(1)).openInventory(any(Inventory.class));
++      assertEquals(
++          GlassPaneStyle.FOREST, fixture.preferences.settings(player.getUniqueId()).style());
++    }
++  }
++
++  @Test
++  void oldPlayerCompletionCannotAlterReconnectedPlayersMenu() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player old = fixture.player(0);
++      fixture.menu(old);
++      fixture.command(old, "style", "forest");
++      PlayerQuitEvent quit = mock(PlayerQuitEvent.class);
++      when(quit.getPlayer()).thenReturn(old);
++      fixture.scheduler.owner = old;
++      fixture.listener.onQuit(quit);
++      when(old.isOnline()).thenReturn(false);
++      fixture.drainIo();
++      Player reconnected = fixture.player(2000);
++      UUID id = old.getUniqueId();
++      when(reconnected.getUniqueId()).thenReturn(id);
++      var next = fixture.menu(reconnected);
++      fixture.tickOwners();
++      assertSame(next, ModernHudListener.getMenu(reconnected));
++      assertEquals(GlassPaneStyle.FOREST, next.getStyle());
++      verify(reconnected, times(1)).openInventory(any(Inventory.class));
++      assertTrue(messages(old).isEmpty());
++    }
++  }
++
++  @Test
++  void shutdownDrainsSaveButSuppressesQueuedGuiFeedback() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player player = fixture.player(0);
++      var menu = fixture.menu(player);
++      fixture.command(player, "style", "forest");
++      fixture.listener.shutdown();
++      fixture.tickOwners();
++      assertFalse(menu.isOpen());
++      assertEquals(
++          GlassPaneStyle.FOREST, fixture.preferences.settings(player.getUniqueId()).style());
++      verify(player, times(1)).openInventory(any(Inventory.class));
++      assertTrue(messages(player).isEmpty());
++    }
++  }
++
++  @Test
++  void breathingTimerPreservesButtonsDirectContentAndInventoryIdentityWithoutParticles() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player player = fixture.player(0);
++      fixture.scheduler.owner = player;
++      var menu =
++          ModernHudMenu.create(
++              player,
++              fixture.scheduler.plugin,
++              "animation",
++              Component.text("Menu"),
++              GlassPaneStyle.FOREST);
++      menu.setParticlesEnabled(false);
++      menu.open();
++      Inventory inventory = menu.getInventory();
++      menu.setButton(21, Material.DIAMOND, "Keep", "Button");
++      ItemStack button = inventory.getItem(21);
++      ItemStack direct = new ItemStack(Material.GOLD_INGOT);
++      inventory.setItem(23, direct);
++      Material original = inventory.getItem(22).getType();
++      for (int tick = 0; tick < 4; tick++) fixture.tickOwners();
++      assertNotEquals(original, inventory.getItem(22).getType());
++      assertSame(button, inventory.getItem(21));
++      assertSame(direct, inventory.getItem(23));
++      assertSame(inventory, menu.getInventory());
++      verify(player, times(1)).openInventory(any(Inventory.class));
++      verify(player, never()).getLocation();
++      menu.close();
++      clearInvocations(inventory);
++      fixture.tickOwners();
++      verify(inventory, never()).setItem(anyInt(), any());
++    }
++  }
++
++  @Test
++  void themesUseColoredPanesAndNineSlotMenuStaysWithinBounds() {
++    assertEquals(Material.GREEN_STAINED_GLASS_PANE, GlassPaneStyle.FOREST.getBackgroundMaterial());
++    assertEquals(Material.RED_STAINED_GLASS_PANE, GlassPaneStyle.INFERNO.getBackgroundMaterial());
++    try (var fixture = new HudTestFixture(directory)) {
++      Player player = fixture.player(0);
++      fixture.scheduler.owner = player;
++      var menu =
++          ModernHudMenu.create(
++              player,
++              fixture.scheduler.plugin,
++              "small",
++              Component.text("Small"),
++              9,
++              GlassPaneStyle.FOREST);
++      menu.setParticlesEnabled(false).setBreathingEnabled(false);
++      menu.open();
++      assertEquals(9, menu.getInventory().getSize());
++      assertEquals(
++          GlassPaneStyle.FOREST.getAccentMaterial(), menu.getInventory().getItem(0).getType());
++    }
++  }
++
++  @Test
++  void mainMenuSettingsUsesHudRouteAndUnavailableModulesHaveNoClickAction() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player player = fixture.player(0);
++      fixture.scheduler.owner = player;
++      var core = mock(dev.starcore.starcore.StarCorePlugin.class, RETURNS_DEEP_STUBS);
++      when(core.getServer().getOnlinePlayers()).thenAnswer(ignored -> fixture.scheduler.players);
++      when(core.context().configuration().moduleEnabled(anyString(), eq(true)))
++          .thenAnswer(
++              call ->
++                  !Set.of("quest", "achievement", "blueprint", "combat", "storage")
++                      .contains(call.getArgument(0)));
++      var menu = MainMenuHud.create(player, core);
++      menu.open();
++      for (int slot : List.of(20, 32, 33, 37, 38)) {
++        assertEquals(Material.GRAY_STAINED_GLASS_PANE, menu.getInventory().getItem(slot).getType());
++        assertFalse(menu.handleClick(player, slot, menu.getInventory().getItem(slot)));
++      }
++      verify(player, never()).performCommand(anyString());
++      menu.handleClick(player, 50, menu.getInventory().getItem(50));
++      verify(player).performCommand("hud settings");
++    }
++  }
++
++  private List<String> messages(Player player) {
++    ArgumentCaptor<Component> captor = ArgumentCaptor.forClass(Component.class);
++    verify(player, atLeast(0)).sendMessage(captor.capture());
++    return captor.getAllValues().stream()
++        .map(PlainTextComponentSerializer.plainText()::serialize)
++        .toList();
++  }
++
++  @Test
++  void chosenParticleTypesReachEachPlayersActualSpawnCallback() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player first = fixture.player(0), second = fixture.player(1000);
++      fixture.menu(first);
++      fixture.menu(second);
++      fixture.command(first, "particle", "firefly");
++      fixture.command(second, "particle", "bubble");
++      fixture.drainIo();
++      fixture.tickOwners();
++      clearInvocations(first, second);
++      fixture.tickOwners();
++      verify(first, atLeastOnce())
++          .spawnParticle(
++              eq(org.bukkit.Particle.WITCH),
++              any(org.bukkit.Location.class),
++              anyInt(),
++              anyDouble(),
++              anyDouble(),
++              anyDouble(),
++              anyDouble());
++      verify(second, atLeastOnce())
++          .spawnParticle(
++              eq(org.bukkit.Particle.ITEM_SNOWBALL),
++              any(org.bukkit.Location.class),
++              anyInt(),
++              anyDouble(),
++              anyDouble(),
++              anyDouble(),
++              anyDouble());
++      verify(second, never())
++          .spawnParticle(
++              eq(org.bukkit.Particle.WITCH),
++              any(org.bukkit.Location.class),
++              anyInt(),
++              anyDouble(),
++              anyDouble(),
++              anyDouble(),
++              anyDouble());
++    }
++  }
++
++  @Test
++  void publicAppearanceSettersDispatchToOwnerAndDisablingBreathingRestoresTheme() {
++    try (var fixture = new HudTestFixture(directory)) {
++      Player player = fixture.player(0);
++      fixture.scheduler.owner = player;
++      var menu =
++          ModernHudMenu.create(
++              player,
++              fixture.scheduler.plugin,
++              "setters",
++              Component.text("Setters"),
++              GlassPaneStyle.FOREST);
++      menu.setParticlesEnabled(false);
++      menu.open();
++      for (int i = 0; i < 4; i++) fixture.tickOwners();
++      assertEquals(
++          GlassPaneStyle.FOREST.getAccentMaterial(), menu.getInventory().getItem(22).getType());
++      fixture.scheduler.owner = null;
++      menu.setBreathingEnabled(false);
++      assertTrue(menu.breathingEnabled());
++      fixture.tickOwners();
++      assertFalse(menu.breathingEnabled());
++      assertEquals(
++          GlassPaneStyle.FOREST.getBackgroundMaterial(), menu.getInventory().getItem(22).getType());
++      menu.setStyle(GlassPaneStyle.INFERNO);
++      fixture.tickOwners();
++      assertEquals(Material.RED_STAINED_GLASS_PANE, menu.getInventory().getItem(22).getType());
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/foundation/hud/HudTestFixture.java b/src/test/java/dev/starcore/starcore/foundation/hud/HudTestFixture.java
+new file mode 100644
+index 0000000..b8a1361
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/foundation/hud/HudTestFixture.java
+@@ -0,0 +1,199 @@
++package dev.starcore.starcore.foundation.hud;
++
++import static org.junit.jupiter.api.Assertions.*;
++import static org.mockito.ArgumentMatchers.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.persistence.AtomicFilePersistence;
++import dev.starcore.starcore.core.scheduler.FeedbackSchedulerFixture;
++import dev.starcore.starcore.foundation.message.MessageService;
++import dev.starcore.starcore.module.nation.NationModule;
++import java.io.IOException;
++import java.nio.file.*;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.*;
++import java.util.logging.Logger;
++import net.kyori.adventure.text.Component;
++import org.bukkit.*;
++import org.bukkit.command.Command;
++import org.bukkit.entity.Player;
++import org.bukkit.event.inventory.InventoryCloseEvent;
++import org.bukkit.inventory.*;
++import org.bukkit.inventory.meta.ItemMeta;
++import org.mockito.MockedConstruction;
++
++final class HudTestFixture implements AutoCloseable {
++  final FeedbackSchedulerFixture scheduler = new FeedbackSchedulerFixture();
++  final ManualIo io = new ManualIo();
++  final AtomicBoolean failWrites = new AtomicBoolean();
++  final HudPreferences preferences;
++  final ModernHudListener listener;
++  final HudCommand command;
++  final Map<Player, AtomicReference<Inventory>> visible = new HashMap<>();
++  final List<Inventory> inventories = new ArrayList<>();
++  final MockedConstruction<ItemStack> items;
++
++  HudTestFixture(Path directory) {
++    when(scheduler.plugin.getDataFolder()).thenReturn(directory.toFile());
++    when(scheduler.plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    when(scheduler.plugin.getServer().getOnlinePlayers()).thenAnswer(ignored -> scheduler.players);
++    items =
++        mockConstruction(
++            ItemStack.class,
++            (item, context) -> {
++              when(item.getType()).thenReturn((Material) context.arguments().getFirst());
++              when(item.getItemMeta()).thenReturn(mock(ItemMeta.class));
++            });
++    preferences =
++        new HudPreferences(
++            directory,
++            scheduler.plugin.getLogger(),
++            io,
++            (file, content) -> {
++              if (failWrites.get()) throw new IOException("injected disk error");
++              AtomicFilePersistence.replace(file, temp -> Files.writeString(temp, content));
++            });
++    listener = ModernHudListener.initialize(scheduler.plugin, preferences);
++    NationModule nation = mock(NationModule.class);
++    when(nation.nationOf(any())).thenReturn(Optional.empty());
++    command = new HudCommand(scheduler.plugin, nation, mock(MessageService.class));
++    scheduler
++        .bukkit
++        .when(() -> Bukkit.createInventory(any(InventoryHolder.class), anyInt(), anyString()))
++        .thenAnswer(
++            call -> {
++              InventoryHolder holder = call.getArgument(0);
++              int size = call.getArgument(1);
++              assertSame(((ModernHudMenu) holder).getPlayer(), scheduler.owner);
++              ItemStack[] slots = new ItemStack[size];
++              Inventory inventory = mock(Inventory.class);
++              when(inventory.getSize()).thenReturn(size);
++              when(inventory.getItem(anyInt()))
++                  .thenAnswer(slot -> slots[slot.getArgument(0, Integer.class)]);
++              doAnswer(
++                      slot -> {
++                        assertSame(((ModernHudMenu) holder).getPlayer(), scheduler.owner);
++                        slots[slot.getArgument(0, Integer.class)] = slot.getArgument(1);
++                        return null;
++                      })
++                  .when(inventory)
++                  .setItem(anyInt(), nullable(ItemStack.class));
++              inventories.add(inventory);
++              return inventory;
++            });
++  }
++
++  Player player(double x) {
++    Player player = scheduler.player(x);
++    when(player.getName()).thenReturn("HudPlayer");
++    AtomicReference<Inventory> top = new AtomicReference<>(mock(Inventory.class));
++    visible.put(player, top);
++    InventoryView view = mock(InventoryView.class);
++    when(view.getTopInventory()).thenAnswer(ignored -> top.get());
++    when(player.getOpenInventory()).thenReturn(view);
++    when(player.openInventory(any(Inventory.class)))
++        .thenAnswer(
++            call -> {
++              assertSame(player, scheduler.owner);
++              closeEvent(player, top.get());
++              top.set(call.getArgument(0));
++              return view;
++            });
++    doAnswer(
++            ignored -> {
++              assertSame(player, scheduler.owner);
++              closeEvent(player, top.get());
++              top.set(mock(Inventory.class));
++              return null;
++            })
++        .when(player)
++        .closeInventory();
++    doAnswer(
++            ignored -> {
++              assertSame(player, scheduler.owner, "feedback must run on player owner");
++              return null;
++            })
++        .when(player)
++        .sendMessage(any(Component.class));
++    return player;
++  }
++
++  void command(Player player, String... arguments) {
++    scheduler.owner = player;
++    command.onCommand(player, mock(Command.class), "hud", arguments);
++    scheduler.owner = null;
++  }
++
++  ModernHudMenu menu(Player player) {
++    command(player);
++    return ModernHudListener.getMenu(player);
++  }
++
++  void drainIo() {
++    scheduler.owner = null;
++    io.drain();
++  }
++
++  void tickOwners() {
++    for (var pending : List.copyOf(scheduler.pending)) pending.tick();
++  }
++
++  private void closeEvent(Player player, Inventory inventory) {
++    InventoryCloseEvent event = mock(InventoryCloseEvent.class);
++    when(event.getPlayer()).thenReturn(player);
++    when(event.getInventory()).thenReturn(inventory);
++    listener.onInventoryClose(event);
++  }
++
++  @Override
++  public void close() {
++    listener.shutdown();
++    items.close();
++    scheduler.close();
++  }
++
++  static final class ManualIo extends AbstractExecutorService {
++    final ArrayDeque<Runnable> jobs = new ArrayDeque<>();
++    boolean stopped;
++
++    void drain() {
++      while (!jobs.isEmpty()) jobs.remove().run();
++    }
++
++    @Override
++    public void execute(Runnable action) {
++      if (stopped) throw new RejectedExecutionException();
++      jobs.add(action);
++    }
++
++    @Override
++    public void shutdown() {
++      stopped = true;
++      drain();
++    }
++
++    @Override
++    public List<Runnable> shutdownNow() {
++      stopped = true;
++      var discarded = List.copyOf(jobs);
++      jobs.clear();
++      return discarded;
++    }
++
++    @Override
++    public boolean isShutdown() {
++      return stopped;
++    }
++
++    @Override
++    public boolean isTerminated() {
++      return stopped && jobs.isEmpty();
++    }
++
++    @Override
++    public boolean awaitTermination(long timeout, TimeUnit unit) {
++      return isTerminated();
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/foundation/hud/ModernHudFoliaTest.java b/src/test/java/dev/starcore/starcore/foundation/hud/ModernHudFoliaTest.java
+index 9c48540..a94650d 100644
+--- a/src/test/java/dev/starcore/starcore/foundation/hud/ModernHudFoliaTest.java
++++ b/src/test/java/dev/starcore/starcore/foundation/hud/ModernHudFoliaTest.java
+@@ -17,6 +17,14 @@ import org.junit.jupiter.api.AfterEach;
+ import org.junit.jupiter.api.Test;
+ 
+ class ModernHudFoliaTest {
++  @org.junit.jupiter.api.io.TempDir java.nio.file.Path directory;
++
++  private ModernHudListener initialize(FeedbackSchedulerFixture fixture) {
++    when(fixture.plugin.getDataFolder()).thenReturn(directory.toFile());
++    when(fixture.plugin.getLogger()).thenReturn(java.util.logging.Logger.getAnonymousLogger());
++    return ModernHudListener.initialize(fixture.plugin);
++  }
++
+   @AfterEach
+   void releaseListener() {
+     try {
+@@ -30,7 +38,7 @@ class ModernHudFoliaTest {
+     try (var fixture = new FeedbackSchedulerFixture();
+         var items = mockConstruction(ItemStack.class)) {
+       Player player = fixture.player(0);
+-      ModernHudListener listener = ModernHudListener.initialize(fixture.plugin);
++      ModernHudListener listener = initialize(fixture);
+       AtomicReference<Inventory> visible = new AtomicReference<>(mock(Inventory.class));
+       InventoryView view = mock(InventoryView.class);
+       when(view.getTopInventory()).thenAnswer(ignored -> visible.get());
+@@ -94,7 +102,7 @@ class ModernHudFoliaTest {
+     try (var fixture = new FeedbackSchedulerFixture()) {
+       Player player = fixture.player(0);
+       fixture.owner = player;
+-      var listener = ModernHudListener.initialize(fixture.plugin);
++      var listener = initialize(fixture);
+       ModernHudMenu old = registered(player, fixture);
+       listener.startParticleEffect(player);
+       var oldTimer = fixture.pending.getFirst();
+@@ -117,7 +125,7 @@ class ModernHudFoliaTest {
+     try (var fixture = new FeedbackSchedulerFixture()) {
+       Player player = fixture.player(0);
+       fixture.owner = player;
+-      var listener = ModernHudListener.initialize(fixture.plugin);
++      var listener = initialize(fixture);
+       var menu = registered(player, fixture);
+       listener.startParticleEffect(player);
+       var old = fixture.pending.getFirst();
+@@ -136,7 +144,7 @@ class ModernHudFoliaTest {
+     try (var fixture = new FeedbackSchedulerFixture()) {
+       Player player = fixture.player(0);
+       fixture.owner = player;
+-      var listener = ModernHudListener.initialize(fixture.plugin);
++      var listener = initialize(fixture);
+       var menu = registered(player, fixture);
+       Inventory top = menu.getInventory();
+       ItemStack item = mock(ItemStack.class);
+@@ -166,7 +174,7 @@ class ModernHudFoliaTest {
+     try (var fixture = new FeedbackSchedulerFixture()) {
+       Player player = fixture.player(0);
+       fixture.owner = player;
+-      var listener = ModernHudListener.initialize(fixture.plugin);
++      var listener = initialize(fixture);
+       var menu = registered(player, fixture);
+       fixture.retireImmediately = true;
+       listener.startParticleEffect(player);
+@@ -189,7 +197,7 @@ class ModernHudFoliaTest {
+     try (var fixture = new FeedbackSchedulerFixture()) {
+       Player player = fixture.player(0);
+       fixture.owner = player;
+-      var listener = ModernHudListener.initialize(fixture.plugin);
++      var listener = initialize(fixture);
+       var menu = registered(player, fixture);
+       InventoryView view = mock(InventoryView.class);
+       Inventory top = menu.getInventory();
+@@ -215,11 +223,11 @@ class ModernHudFoliaTest {
+   void queuedOpenFromDisabledListenerCannotEnterReplacementInstance() {
+     try (var fixture = new FeedbackSchedulerFixture()) {
+       Player player = fixture.player(0);
+-      var first = ModernHudListener.initialize(fixture.plugin);
++      var first = initialize(fixture);
+       var menu = ModernHudMenu.create(player, fixture.plugin, "queued", Component.text("Queued"));
+       menu.open();
+       first.shutdown();
+-      var next = ModernHudListener.initialize(fixture.plugin);
++      var next = initialize(fixture);
+       try {
+         fixture.pending.getFirst().tick();
+         assertFalse(menu.isOpen());
+@@ -237,6 +245,8 @@ class ModernHudFoliaTest {
+     when(menu.getInventory()).thenReturn(mock(Inventory.class));
+     when(menu.getSize()).thenReturn(54);
+     when(menu.isOpen()).thenReturn(true);
++    when(menu.particlesEnabled()).thenReturn(true);
++    when(menu.particleType(any())).thenAnswer(call -> call.getArgument(0));
+     ModernHudListener.register(player, menu);
+     return menu;
+   }

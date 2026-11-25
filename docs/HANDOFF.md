@@ -14,7 +14,9 @@
 
 ## 阶段进度
 
-2026-11-26 继续完成 Core 音效、屏幕震动和现代 HUD 的线程与生命周期适配，新增第四份 [反馈补丁](upstream/FOLIA-FEEDBACK.md)。屏幕反馈不再传送玩家，HUD 按实体处理菜单与粒子，旧任务退役不会清除新会话；独立音效配置与注册名称解析也已修复。最终 Core 定向 132 项及新 Core 成品下 StarSupply 全套 177 项通过；没有启动实服。完整模块兼容和 HUD 部分偏好命令仍有代码工作，见[本轮验证](verification/workspace-folia-feedback-20261126.json)。
+2026-11-26 已继续补齐 HUD 的实际设置与菜单行为，追加第五份 [HUD 设置补丁](upstream/HUD-SETTINGS.md)：个人样式、粒子与呼吸开关持久化，权限控制下真实重载，彩色主题和实体线程背景动画，以及禁用模块入口和设置导航。Core 定向 154 项与新 Core 成品下 StarSupply 全套 177 项通过。没有启动实服；完整 Folia 模块和当前组合验收仍待完成。见[本轮验证](verification/workspace-hud-settings-20261126.json)。
+
+此前第四份反馈补丁已完成音效、客户端震动和 HUD 线程/会话适配；该轮 132 项 Core 与 177 项配套测试的历史证据仍见[反馈验证](verification/workspace-folia-feedback-20261126.json)。
 
 2026-11-25 最新代码已接通按来源补产：示例计划启用 `traceProduction`，六阶段按已记录来源的库存计算缺口，正常停服后由独立读取器重算配方与存档链。生产日志保存跨阶段余额与待完成运行，支持结果已落盘而日志尚未推进时的恢复；旧库存不自动获得证明，旧熔炉内容先正常收回再补产。顺带修正打开箱子/熔炉时读取滞后背包副本的问题。107 项 Node、39 项语法检查及 7 项 PowerShell 恢复检查通过，生产 Java 未变，未启动实服。详见[来源补产验证](verification/workspace-survival-traced-production-20261125.json)。
 
@@ -35,7 +37,7 @@
 
 ## 最新构建与验证
 
-- 本轮 StarSupply 生产和测试源码未变，保留 157 项 verify 与原 JAR 哈希；新 Core 为 `E87A005E2E313040D9F41F75B878C9DF75D6A5211D011B14CD76907D2E17FBA8`（19,586,514 字节），定向 132 项通过，与该成品配套的 StarSupply 全套 177 项通过。11 个生产源与 8 个测试源增量编译，19 个 Java 文件格式检查通过；不是 Core 全仓 verify。20 文件补丁可复现，原生存存档哈希不变。见[反馈适配记录](verification/workspace-folia-feedback-20261126.json)。
+- 本轮 StarSupply 生产和测试源码未变，保留 157 项 verify 与原 JAR 哈希；最新 Core 为 `464AB484F12E4BAFCD1BAAB8E7469DA0CDA083BD00D77343FC74C8497F9DBE6A`（19,606,901 字节），定向 154 项与该成品配套的 StarSupply 全套 177 项通过。6 个生产源与 4 个测试源增量编译，10 个 Java 文件格式检查通过；不是 Core 全仓 verify。第五份 11 文件补丁重放后，全部 3,535 个 src 文件匹配；原生存存档哈希不变。见[HUD 设置记录](verification/workspace-hud-settings-20261126.json)。
 
 - Java 21；Maven Wrapper 3.9.16；Paper API 1.21.11。当前生产 JAR 大小 14,695,959 字节，SHA-256 `267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C`。
 - 完整 `mvnw.cmd -o -B -ntp -DforkCount=0 verify`：157 项测试，0 失败/错误/跳过；最终实际兼容 Core 下 177 项通过，包含 11 个真实玩家资金场景与 9 个真实税款场景。Core 财政定向测试 116 项：114 项执行通过，2 项 MySQL 环境测试跳过。未改写 Maven 依赖、未启动 Paper/Folia。详见[税款记录](verification/workspace-tax-funding-receipts-20261126.json)；此前玩家接口证据仍见[玩家资金记录](verification/workspace-player-money-receipts-20261125.json)。
@@ -52,7 +54,7 @@
 | 玩家资金恢复的部署与旧账处理 | 新回执协议代码与自动化故障测试已完成；旧无标记交易不迁移，已有 REVIEW 不自动解冻 | 部署兼容 Core 后进行实服验收；旧账继续按独立证据核对。MySQL 存储与大规模历史回执性能仍未验证 |
 | 税款自动恢复 | 新协议已通过完整报价绑定的国库耐久回执恢复，意图不作为到账凭证；SQL/事务记录写回失败保持原编号重试，人工标志不能制造到账 | 当前新组合待实服、MySQL 与规模验收；旧无协议税款继续独立核对 |
 | 完整 Folia 支持范围 | 后勤 profile 已接回音效、客户端震动和 HUD；Clan、Religion 及其他白名单外模块仍限制；生产描述符未声明支持 | 完成目标模块/可选插件的线程归属与生命周期适配，并对明确组合验收；不能只改描述符 |
-| HUD 偏好命令 | 已确认 `style` 未把所选样式用于主菜单、`breathing` 只发消息、`reload` 未加载实际配置；本轮仅完成所有权和会话适配 | 接通真实设置、重载与退出清理，并用行为回归证明命令结果 |
+| HUD 偏好命令与动画 | 已接通个人设置持久化、默认配置重载、管理员权限、彩色背景动画、禁用模块入口及实际导航；关闭/重连/停用回调与保存失败有行为测试，详见 [HUD 设置](upstream/HUD-SETTINGS.md) | 本轮代码与自动化闭环完成；当前新 JAR 的实服界面/效果仍待验 |
 
 六类来源补产、采购运输、连续消费及重启核对入口已经实现并有自动化测试，剩余是实服证明。当前无法将其标为六类完整生存闭环；图形资源包也属于待验项。
 

@@ -32,6 +32,8 @@ $taxFundingPatch = 'docs/upstream/starcore-tax-funding-receipts.patch'
 $taxFundingPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $taxFundingPatch) -Algorithm SHA256).Hash
 $feedbackPatch = 'docs/upstream/starcore-folia-feedback.patch'
 $feedbackPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $feedbackPatch) -Algorithm SHA256).Hash
+$hudPatch = 'docs/upstream/starcore-hud-settings.patch'
+$hudPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $hudPatch) -Algorithm SHA256).Hash
 $companionSha = $null
 if ($StarCoreJar) {
     $StarCoreJar = (Resolve-Path -LiteralPath $StarCoreJar).Path
@@ -113,6 +115,8 @@ $manifest = [ordered]@{
     starcore_tax_funding_patch_sha256 = $taxFundingPatchSha
     starcore_feedback_patch = $feedbackPatch
     starcore_feedback_patch_sha256 = $feedbackPatchSha
+    starcore_hud_patch = $hudPatch
+    starcore_hud_patch_sha256 = $hudPatchSha
     starcore_companion_jar_sha256 = $companionSha
 }
 $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $release 'manifest.json') -Encoding utf8

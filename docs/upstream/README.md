@@ -1,6 +1,8 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-当前完整兼容源码检查点还在前三份补丁后追加 [starcore-folia-feedback.patch](starcore-folia-feedback.patch)：音效、客户端震动与现代 HUD 现在进入实体/区域线程并接回 profile，停用、退役与菜单回调有定向测试。应用顺序、已知命令缺口和实服边界见 [FOLIA-FEEDBACK](FOLIA-FEEDBACK.md)。下方未叠加第四份补丁的历史描述仍按其原始范围理解。
+当前最新兼容包按顺序应用五份补丁，在下述四份补丁后追加 [starcore-hud-settings.patch](starcore-hud-settings.patch)。个人设置持久化、真实重载、呼吸动画和彩色主题等 HUD 缺口已补齐；配置、命令、构建与验收范围见 [HUD-SETTINGS](HUD-SETTINGS.md)。
+
+此前公共反馈检查点在前三份补丁后追加 [starcore-folia-feedback.patch](starcore-folia-feedback.patch)：音效、客户端震动与现代 HUD 现在进入实体/区域线程并接回 profile，停用、退役与菜单回调有定向测试。应用顺序、已知命令缺口和实服边界见 [FOLIA-FEEDBACK](FOLIA-FEEDBACK.md)。下方未叠加第四份补丁的历史描述仍按其原始范围理解。
 
 当前玩家资金恢复还需在 `starcore-folia-logistics.patch` 之后追加 [starcore-player-money-receipts.patch](starcore-player-money-receipts.patch)。公开协议、文件/SQL 迁移、旧版兼容、定向测试与打包顺序见 [PLAYER-MONEY](PLAYER-MONEY.md)。随后追加[税款回执补丁](starcore-tax-funding-receipts.patch)，接口、原报价恢复和构建范围见 [TAX-FUNDING](TAX-FUNDING.md)。这些补丁不扩大 Folia 支持声明；原后勤组合补丁已包含本页的攻城修复，不要重复叠加。
 

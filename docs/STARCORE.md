@@ -56,7 +56,7 @@ StarSupply 先在本地 SQL 记下需支付的货物或交付工作，随后用�
 
 ## Folia 约束
 
-实验兼容包现有四份顺序补丁：后勤、玩家资金回执、税款回执、[公共反馈与 HUD](upstream/FOLIA-FEEDBACK.md)。新 Core 的线程定向 132 项与 StarSupply 实际兼容包全套 177 项通过，生产描述符仍关闭 Folia 声明，白名单外模块与明确的 HUD 偏好命令仍需继续开发。本段下方的传统调度限制描述固定原始 Core。
+实验兼容包现有五份顺序补丁：后勤、玩家资金回执、税款回执、[公共反馈](upstream/FOLIA-FEEDBACK.md)、[HUD 设置与菜单行为](upstream/HUD-SETTINGS.md)。最新 Core 定向 154 项与 StarSupply 实际兼容包全套 177 项通过，HUD 偏好命令已补齐；生产描述符仍关闭 Folia 声明，白名单外模块仍需继续适配。新构建与实服边界见[当前记录](verification/workspace-hud-settings-20261126.json)。本段下方的传统调度限制描述固定原始 Core。
 
 StarSupply 的玩家操作走实体调度器，位置相关操作使用 Paper 区域调度器适用的线程边界；季节和围城快照在全局调度器执行，并通过 `Bukkit.isGlobalTickThread()` 检查。已验证的 Paper 实现把该检查委托给相同的主 tick 线程检查，使用此 API 不代表已经完成 Folia 组合验收。当前 StarCore 版本没有 `folia-supported` 声明，其 `ArmyService` 也调用传统 `BukkitScheduler.runTaskTimer`。因此完整组合部署和验证使用 Paper。需要 StarCore 自身支持 Folia 后才能验证完整 Folia 组合，单独修改插件声明不能解决线程兼容性。
 
