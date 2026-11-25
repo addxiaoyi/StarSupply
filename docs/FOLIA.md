@@ -2,6 +2,12 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
+## 2026-11-26 公共反馈与 HUD 线程适配
+
+2026-11-26 继续完成 Core 音效、屏幕震动和现代 HUD 的线程与生命周期适配，新增第四份 [反馈补丁](upstream/FOLIA-FEEDBACK.md)。屏幕反馈不再传送玩家，HUD 按实体处理菜单与粒子，旧任务退役不会清除新会话；独立音效配置与注册名称解析也已修复。最终 Core 定向 132 项及新 Core 成品下 StarSupply 全套 177 项通过；没有启动实服。完整模块兼容和 HUD 部分偏好命令仍有代码工作，见[本轮验证](verification/workspace-folia-feedback-20261126.json)。
+
+本轮 Core 成品 SHA-256：`E87A005E2E313040D9F41F75B878C9DF75D6A5211D011B14CD76907D2E17FBA8`。StarSupply 仍为 `267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C`；旧实服证据不能移用于新 Core。
+
 ## 2026-11-25 续接开发与待验状态
 
 最新税款回执构建通过 157 项 Java verify 与最终 Core 兼容包下 177 项测试，生产 JAR SHA-256 为 `267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C`。玩家资金与新税款恢复使用真实 Core/SQLite 自动化测试，未启动 Folia；下方实服结果仍属于各自历史构建。来源补产验收器已有 107 项 Node 测试，但六类完整生存链与当前组合仍待验。见[税款回执构建](verification/workspace-tax-funding-receipts-20261126.json)和[来源补产记录](verification/workspace-survival-traced-production-20261125.json)。

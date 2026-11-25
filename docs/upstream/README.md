@@ -1,5 +1,7 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+当前完整兼容源码检查点还在前三份补丁后追加 [starcore-folia-feedback.patch](starcore-folia-feedback.patch)：音效、客户端震动与现代 HUD 现在进入实体/区域线程并接回 profile，停用、退役与菜单回调有定向测试。应用顺序、已知命令缺口和实服边界见 [FOLIA-FEEDBACK](FOLIA-FEEDBACK.md)。下方未叠加第四份补丁的历史描述仍按其原始范围理解。
+
 当前玩家资金恢复还需在 `starcore-folia-logistics.patch` 之后追加 [starcore-player-money-receipts.patch](starcore-player-money-receipts.patch)。公开协议、文件/SQL 迁移、旧版兼容、定向测试与打包顺序见 [PLAYER-MONEY](PLAYER-MONEY.md)。随后追加[税款回执补丁](starcore-tax-funding-receipts.patch)，接口、原报价恢复和构建范围见 [TAX-FUNDING](TAX-FUNDING.md)。这些补丁不扩大 Folia 支持声明；原后勤组合补丁已包含本页的攻城修复，不要重复叠加。
 
 补丁 [starcore-siege-treasury.patch](starcore-siege-treasury.patch) 适用于公开仓库 `addxiaoyi/starcore` 的固定提交 `f769e62799e769a18fe51305b545869a17f80cd1`。这是单独、可审查的上游源码修复，不包含编译产物，也未推送到远端。StarSupply 的编译 API 仍以该固定提交为基础。
@@ -75,7 +77,7 @@ $env:MAVEN_OPTS = '-Xmx512m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC'
 .\mvnw.cmd '-Dspotless.ratchetFrom=HEAD' '-Dtest=CompatSchedulerTest,*Folia*Test,ModuleManagerTest,ArmyService*Test,*Siege*Test,War*Test,SupplyLine*Test,Battlefield*Test' package
 ```
 
-该源码补丁保留生产描述符的保守状态。隔离运行夹具只对测试 JAR 增加 Folia 加载标识，并分别记录修改前后哈希；这允许实际检查线程归属，不构成发布支持声明。Profile 下的可选现代 HUD 和压力测试命令不注册，国家及 StarSupply 常规 GUI 继续提供。Folia 下停用 StarCore 时，其他实体线程上的瞬态科技属性随玩家重登或服务器重启清理；不支持通过热重载验证正式服生命周期。
+该源码补丁保留生产描述符的保守状态。隔离运行夹具只对测试 JAR 增加 Folia 加载标识，并分别记录修改前后哈希；这允许实际检查线程归属，不构成发布支持声明。仅应用原后勤补丁时，profile 下的可选现代 HUD 和压力测试命令不注册；叠加新反馈补丁后 HUD 已接回，压力测试命令仍不注册，国家及 StarSupply 常规 GUI 继续提供。Folia 下停用 StarCore 时，其他实体线程上的瞬态科技属性随玩家重登或服务器重启清理；不支持通过热重载验证正式服生命周期。
 
 ## SQLite 国库快照并发争用修复
 

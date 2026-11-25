@@ -1,0 +1,995 @@
+{
+  "recorded_date": "2026-11-26",
+  "kind": "workspace-development-and-regression-only",
+  "source_base_commit": "08cff12d3a94ed56d9bdf719d94e1903535057c3",
+  "scope": "Entity-owned screen feedback, scene sounds and modern HUD; profile bootstrap and shutdown",
+  "artifacts": {
+    "starsupply": {
+      "path": "starsupply-0.1.0.jar",
+      "sha256": "267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C",
+      "bytes": 14695959
+    },
+    "core_companion": {
+      "path": "starcore-1.0.0.jar",
+      "sha256": "E87A005E2E313040D9F41F75B878C9DF75D6A5211D011B14CD76907D2E17FBA8",
+      "bytes": 19586514
+    }
+  },
+  "core_targeted": {
+    "log": {
+      "path": "feedback-tests-final-20261126.log",
+      "sha256": "B32BD5595BEA99D94D038848D65B2D8DDDAA3DB204F05D5840CFBCA2431215E6",
+      "bytes": 17337
+    },
+    "completed_at": "2026-11-26T00:58:27+08:00",
+    "totals": {
+      "tests": 132,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": [
+      {
+        "suite": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B4AB5F2E3612C9A4F8D2A2A6CE47FBC440CE47960A77167B0FA113C25CF23652",
+        "cases": [
+          "publicApiMatchesCommittedBaseline"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.core.config.ConfigurationServiceFoliaProfileTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "62F75319D4525AB95B899A4A75888330646C8ED07228C0E4205EFD808D271D33",
+        "cases": [
+          "profileIsExplicitAndPreservesNormalModuleDefaults",
+          "enabledProfileKeepsWholeSupplyClosureAndExcludesUnauditedModules"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.core.scheduler.CompatSchedulerTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C919200DDB3740BC5078D5FBB5220B5C5077CD68BAAD39B9B95B3C1715B63509",
+        "cases": [
+          "foliaRoutesEntityTasksWithRetirementCallbacks",
+          "nativeTickSchedulersClampZeroDelayToTheNextTick",
+          "entityTimerCallbackCanCancelBeforeNativeHandleBinding",
+          "foliaRoutesAsyncTasksWithTickDurationsConvertedToMilliseconds",
+          "cancelTasksOnlyRemovesHandlesOwnedByTheRequestedPlugin",
+          "foliaRoutesGlobalTasksToTheGlobalScheduler",
+          "asyncDurationsSaturateInsteadOfOverflowing",
+          "alreadyRetiredEntityReturnsACancelledHandleWithoutLeaking",
+          "repeatingTasksRemainRegisteredUntilCancelled",
+          "schedulerRegistrationFailureDoesNotLeakItsPendingHandle",
+          "oneShotCompletionRemovesItsRegistryEntryAndCannotRunTwice",
+          "retirementBeforeNativeHandleBindingCancelsTheLateHandle",
+          "paperPreservesAllLegacySchedulerRoutesAndHandles",
+          "entityRetirementRunsItsFallbackOnceAndReleasesThePendingHandle",
+          "failingCallbacksCancelAndRemoveTheirTask",
+          "cancellingAOneShotRemovesItAndSuppressesAQueuedCallback",
+          "oneShotCompletionBeforeHandleBindingDoesNotLeakARegistryEntry",
+          "foliaRegionTasksUseAnIndependentLocationSnapshot",
+          "paperCancellationRetainsLegacyTaskIdAndPluginSemantics"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.AnimationOwnershipTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "58C033863B9E94A92CCB0D0A3AD2E4FD482A202E5878ACA24422DDEC06161862",
+        "cases": [
+          "completedLoadingCallbackSettlesOnceAndCancelsItsTimer",
+          "foreignPlayerDispatchUsesEntitySchedulerAndShutdownSuppressesQueuedEffects"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.AnimationPlayerTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "688A45FAA8A423043ACEB9CBD1E7A34424D71E12482E3D6DC4D8BBEDB083B4A1",
+        "cases": [
+          "numberAnimationReachesExactTargetWhenStepIsSmallerThanFrameCount"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.AnimationTaskTrackerLifecycleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "08CF1CCF5817C4698F2FAADFB88BEBD6C703A481910BF2C0DC8DD0A0AF805186",
+        "cases": [
+          "paperBackgroundWorkDispatchesToMainThreadAndShutdownSuppressesIt",
+          "shutdownWaitsForActiveFeedbackAndPreventsFurtherWork"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.AnimationTaskTrackerTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "CDD19AC8543483C3639E177A4B60DFE3D3C5A1C498A76B8BE6A5AC1C411511FE",
+        "cases": [
+          "shutdownCancelsTrackedTasksAndPreventsCallbacksFromStarting"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.GuiAnimationRegistryLifecycleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1A441F6BD2C9F70165B6DAFF467EE112BDA9E32836D6FF2E45A0CE7C92C8B262",
+        "cases": [
+          "shutdownCancelsAnimationPlayerAndDelayedSoundTasks",
+          "shutdownCancelsEffectsAndAllowsAnewPluginInstanceToInitialize"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.ParticleEffectManagerFoliaOwnershipTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "BDA2E9133779DAABA5715C57ED8AEF3917A5DDA1328EE1214A2A7F7BC7206669",
+        "cases": [
+          "fixedWarAnimationUsesItsRegionAndCancelsWithoutLegacyScheduler"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.ParticleEffectManagerLifecycleTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "FE220798CA4E79ED3FDEB437D74FD3FDE9ADE3824A20CB0C7C26D9F96DFC897E",
+        "cases": [
+          "playerAndGlobalCancellationCoverTrackedEffectsWithoutCrossPlayerCancellation",
+          "delayedPresetCallbacksAreIncludedInPlayerCancellation",
+          "naturallyCompletedAnimationUnregistersItsTask",
+          "rejectedSchedulesAreRemovedFromTheActiveRegistry",
+          "cancellationReenteredDuringSchedulingCancelsTheNewlyCreatedTask"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.ParticleEffectManagerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3B17BB59CC16D4100052CCA3C2A9EB536B542473435356E986B3DC8B333D4609",
+        "cases": [
+          "battlePresetsUseExpectedParticles",
+          "commonPresetsExposeParameters",
+          "allPresetsHaveValidNumericRanges",
+          "blockPresetCarriesMaterial",
+          "managerConstructionDoesNotTouchBukkitRuntime"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.ScreenShakeFoliaTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B6590AE1CB6D375F614D3CCE1B8DD546E9FAC6D1D51F29261709B72577C27543",
+        "cases": [
+          "areaSamplesEachPlayerOnOwnerAndClonesCallerLocation",
+          "foreignDispatchUsesOwnerAndNeverTeleportsOrDamages",
+          "shutdownSuppressesQueuedAndActiveCallbacksAndAllowsSeparateManager",
+          "stopIsOrderedAfterQueuedStartOnSameEntity",
+          "staleTickAndRetirementCannotRemoveReplacement",
+          "retirementDuringSubmissionAndSchedulingFailureReleaseState",
+          "expiryCleanupCancelsTimerAndInvalidConfigIsRejected"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.animation.ScreenShakeManagerTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "B4138565410C0198BC7700CA4E2C7969620E2F2E14BFC8677CAE076744066A10",
+        "cases": [
+          "presetConfigInheritsTypeValues",
+          "nullAndOfflinePlayersAreIgnored",
+          "customConfigPreservesArguments",
+          "cleanupAndStopAreIdempotent",
+          "playerPreferencesControlShakeEligibility",
+          "shakeTypesExposeConfiguration"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.hud.ModernHudFoliaTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "82C7BA2E9DB1FAC1DBE8CA0224BE9CE7EE8CF180F4E079F7A7010F73B3234302",
+        "cases": [
+          "restartingSameMenusParticlesSurvivesOldRetirement",
+          "bottomInventoryTransfersAndTopSlotDragsCannotModifyMenu",
+          "replacedTimerRetirementDoesNotDiscardNewMenu",
+          "immediateRetirementAndDisableLeaveNoMenuOrLiveTimer",
+          "queuedOpenFromDisabledListenerCannotEnterReplacementInstance",
+          "menuOpenAndRefreshUseOwnerAndCloseCallbackRunsExactlyOnce",
+          "clickRunsNextTickAndStaleClickCannotActOnReplacementMenu"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.sound.BukkitSoundResolverTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "67FE3FC99B2B5FB356304E1EFDBDBC7079365967B130EA3A24D575ECFD103E91",
+        "cases": [
+          "everyDefaultSceneSoundIsDeclaredByPinnedPaperApi",
+          "customNamespacesRemainExplicitAndCannotOverrideMinecraftAliases",
+          "legacyNamesPreserveUnderscoresInsideMinecraftKeySegments"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.sound.SceneSoundConfigTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9839161AF55373AE6CD25A1E01853B8737FA83592BE6EC8E515D0286446EC769",
+        "cases": [
+          "configurationPersistsSeparatelyAndReloadedSnapshotControlsPlayerSound",
+          "invalidReloadPreservesPreviousStateAndDefaultYamlUsesNestedScenePaths"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.sound.SceneSoundFoliaTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3DBB8D5077A668F12EE1F3574C464ABF72C2574C5A06A4EDA5D12D1D65EA9042",
+        "cases": [
+          "concurrentPreferenceCollectionsCanBeReadWithoutCopyingMutableHashSets",
+          "eachPlayersDelayedSequenceRemainsOnItsEntityAndRetirementSuppressesIt",
+          "ownerDispatchRespectsLatestMuteAndShutdownStopsDelayedReward",
+          "fixedPositionIsClonedAndUsesRegionCallback"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.StarCorePluginDependencyFallbackContractTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "254576F657258C76B5DA48D803CE00D9E078A7D10DF2AEB3D11A407E052559CC",
+        "cases": [
+          "pluginSourceRegistersSelectedEconomyProviderAtServiceRegistryBoundary",
+          "serviceRegistryFindsRegisteredServiceAndReportsMissingService",
+          "serviceRegistrySnapshotContainsOnlyActualRegistrations",
+          "autoModeFallsBackToInternalWhenVaultIsUnavailable",
+          "serviceRegistryDoesNotResolveWhenRegistrationTypeAndLookupTypeDiffer",
+          "optionalModuleEnableFailureIsRecordedAndPartialServiceRegistrationIsRemoved",
+          "autoModeSelectsVaultWhenVaultIsAvailable",
+          "explicitVaultModeFailsClosedWhenVaultIsUnavailable",
+          "internalModeIsWiredToInternalProvider"
+        ]
+      },
+      {
+        "suite": "dev.starcore.starcore.StarCorePluginRegistrationTest",
+        "tests": 53,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0D96B3D1F84F587467B42B4EEFB03C3B1996B210556F958495340257A768A7A2",
+        "cases": [
+          "registersEveryConcreteFeatureModule",
+          "registersOneMailModule",
+          "registersPlaceholderExpansionOnlyWhenPlaceholderApiIsEnabled",
+          "activeMysqlStoragesAvoidUnconditionalSqliteDmlAndDdl",
+          "mercenaryStorageAndMigrationUseMysqlCompatibleSql",
+          "doesNotAdvertiseUnwiredAiTrainingBot",
+          "pluginNavigationUsesRelationContractForDiplomacyAndWarGui",
+          "commandNamesAndAliasesAreGloballyUnique",
+          "shopStorageUsesPortableSchemaAndUpsert",
+          "achievementModuleRegistersItsGuiListener",
+          "nationMenusResolveTreasuryAfterDependencyStartup",
+          "duelHistoryPersistsKitSeriesAndScore",
+          "wiresTooltipFoundationIntoPluginLifecycle",
+          "essentialsBindingsAreDeclaredForPaperCommandResolution",
+          "vassalLegacyPackageIsNotReachable",
+          "bothAnvilProvidersClaimSessionsBeforeDispatchingCallbacks",
+          "declaresPacketEventsAsSoftDependencyForOptionalAnvilMenus",
+          "nationCoreMenusResolveLateServicesAfterDependencyStartup",
+          "diplomacyMenuResolvesSubmoduleServicesAfterDependencyStartup",
+          "socialStorageUsesAuthoritativeColumnsAndRepairsLegacySchema",
+          "nationPolicyUsesSingleReachableMenu",
+          "warSituationMenuExistsBeforeMainMenuListenerCapturesIt",
+          "nationModuleClosesOptionalAnvilProviderOnDisable",
+          "activeMysqlServicesCreateIndexesThroughMetadata",
+          "combatHistoryHasProductionWriterAndCommandStorage",
+          "mysqlMigrationsDoNotRecreateIndexes",
+          "nationStatusBarResolvesArmyAfterStartupAndDropsUnusedReputation",
+          "wrapperModulesRegisterTheirConcreteServices",
+          "businessStorageUsesPortableUpsert",
+          "warMenuDoesNotAdvertiseUnimplementedTreatyFlow",
+          "everyMapMarkerPermissionIsDeclared",
+          "tradeHistoryStorageUsesPortableIndexesAndUpsert",
+          "activeMailAndRentStoragesAvoidSqliteOnlyWrites",
+          "doesNotShipUnwiredAiMatchmaking",
+          "registersFederationAndAttachmentMailAsDistinctModules",
+          "disconnectedFoundationReliabilityDraftsAreRemoved",
+          "resourceModuleDoesNotShipUnwiredGuiFacade",
+          "bothAnvilTransferPathsSanitizePlayerInput",
+          "nationTechnologyUsesSingleReachableMenu",
+          "governmentMemberWritesAvoidMysqlOnlyUpserts",
+          "mysqlMigrationsAvoidSqliteOnlySyntax",
+          "triumphChestProviderDoesNotShipUnavailableSubmenuPlaceholder",
+          "everyFixedRuntimePermissionIsDeclared",
+          "doesNotAdvertiseUnwiredBattlePass",
+          "resourceMenuDoesNotNullOutRequiredServices",
+          "warMenuDoesNotMutateMissingItemLore",
+          "combatStorageUsesPortableIndexesAndUpsert",
+          "fallbackNationProvidersDoNotShipUnavailableSubmenuPlaceholder",
+          "everyDeclaredCommandHasAProductionBindingPoint",
+          "everyCommandPermissionIsDeclared",
+          "diplomacyMenuHasReachableCommandAndNetworkLifecycle",
+          "nationGovernmentMenuResolvesServiceAfterDependencyStartup",
+          "disconnectedLegacyMailAttachmentStorageIsRemoved"
+        ]
+      }
+    ]
+  },
+  "starsupply_actual_companion": {
+    "log": {
+      "path": "feedback-companion-final-20261126.log",
+      "sha256": "9CF6F4087F57436EB92E07277DAFADCBA54D7827695DD943B956263C3737B0E1",
+      "bytes": 1128688
+    },
+    "completed_at": "2026-11-26T01:01:04+08:00",
+    "totals": {
+      "tests": 177,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": [
+      {
+        "suite": "dev.starsupply.bukkit.AsyncTasksTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "CFF691B4BB224D746B2032B3EB78264E7CD584FC56E715D63B5D661DFCB31DF7",
+        "cases": [
+          "fatalWorkerFailureReleasesTheCallerAndStillDrainsAlreadyAcceptedTransactions",
+          "successfulTasksRetainTheirResultsIncludingNull",
+          "checkedAndLinkageFailuresCompleteWithoutEscapingTheTaskBoundary"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.EntityCallbacksTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "A68D88C5EC4B6702AAC606872AC01DBAFF9C680B149AE542DCD6A70E0C755D2F",
+        "cases": [
+          "cancellingARunningFutureDoesNotAllowReenableDuringItsInventoryWrite",
+          "shutdownDoesNotCompleteAnInventoryWriteAlreadyInProgress",
+          "shutdownRacingTheSchedulerEitherCancelsOrFinishesEachOperation",
+          "pendingCallbacksKeepTheGenerationBusyUntilRetired",
+          "inlineCompletionChainsFinishBeforeTheGenerationBecomesIdle",
+          "retiredOrRejectedTasksCannotLaterBeClaimed",
+          "fatalCallbackFailureCompletesTheResultAndReleasesRunningStateBeforePropagating",
+          "oldCallbacksRemainCancelledWhenTheNextGenerationRegistersWork",
+          "shutdownFinishesQueuedOperationsAndReleasesTheInventoryGuard"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.InventoryTasksTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "420E7075BCD6899FBF58E2D9179E4ED546206C85B86158F116ED5F0BC0D17A1B",
+        "cases": [
+          "originalPipelineFailureIsPreservedAndReleasesOwnershipBeforeObserversRun",
+          "synchronousStartupFailuresReleaseTheGuardAndKeepTheOriginalFailure",
+          "successReleasesOnlyItsPlayerBeforeCompletion",
+          "cancellingTheApiResultKeepsOwnershipUntilTheInventoryPipelineCompletes",
+          "completingTheApiResultEarlyCannotStrandTheGuardOnPipelineFailure"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.InventoryFingerprintTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "EC8BD52737E52149C1E1C2E2ACE4BBAD7CAAE19AFDE56D58CC4839A0CF5806D0",
+        "cases": [
+          "ignoresMapInsertionOrderButRetainsInventoryChanges"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.PlayerDataReceiptTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2E8D8BC61951D132371EB8C0B96C6E25FA45A2DF3D72947717B519949C6CF8F1",
+        "cases": [
+          "requiresExactOperationInCurrentPlayerSave",
+          "rejectsTruncatedAndDuplicateMarkersEvenWhenExpectedMarkerAppears"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.item.ResourceMappingConfigTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "EC9753386FCD1AFC49E70A0B3A732AE26257408EA66BF4DCE2C59E6634FE01D9",
+        "cases": [
+          "defaultConfigurationMapsEveryStrategicResourceToAnAvailableVanillaItem"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.bukkit.LifecycleGateTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0786E110D561D7EC110005B13BD9423DFB6E6DDBDFCB078A53B27ECD6C8C8A36",
+        "cases": [
+          "rejectsCallbacksAfterDisableOrGenerationChange"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CampaignSiegeTargetTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C0B0C1B56B043F7AC58905D7EB7BF35927402C57A8DCEE71F38D2860E1F68EC8",
+        "cases": [
+          "siegeInfluenceUsesTargetsNationWorldAndBoundedDistance"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CoreInsurancePaymentTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "307A6D6C864AC99B18E99B25D698348F58DC51ECE2B927D6BD327E38D47669D1",
+        "cases": [
+          "ambiguousPlayerPremiumDebitIsNotRepeatedAndConfirmedDebitFundsPremiumOnlyOnce",
+          "treasuryPremiumUncertaintyNeedsEvidenceBeforeCompensatingPlayerAndRefundNeverReplays"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePaymentTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "69270BF2C2F15F12A94B3ED73A3A556C9D24879B7329C7878EC902BD7FD54830",
+        "cases": [
+          "uncertainCreditStaysHeldUntilOperatorConfirmsApplied",
+          "insufficientTreasuryBalanceRejectsWithoutCreditingPlayer",
+          "uncertainCreditCanBeConfirmedUnpaidAndRefundedAfterRestart",
+          "paidSettlementDoesNotDebitOrCreditTwiceUnderConcurrencyAndRestart",
+          "lostNationalSpendResponseResumesFromAuthorityReceipt",
+          "nationalReserveIsReceiptBackedAndCanEitherReleaseOrPayOnlyOnce",
+          "operatorCanFundConfirmedUnpaidTariffWithoutRepeatingSellerCredit",
+          "falseResultAfterPossibleCommitNeverRefundsUntilReconciled",
+          "independentlyConfirmedUnpaidClaimCanRetryOriginalReserveWithoutNewNationalDebit",
+          "insufficientFundsStatusWithSufficientBalanceRetries",
+          "tariffWithholdsFromSellerOnlyAfterGrossTreasuryDebitAndRetriesWithoutDuplicateCredit",
+          "operatorCanConfirmFundedTariffAfterRestartWithoutFundingOrCreditingAgain",
+          "knownCreditFailureRefundsUsingSameNationalReceiptEvenAfterLostResponse"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePlayerMoneyTest",
+        "tests": 22,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "889EF69DE2DFE863F27AB8C06DA784EADEFB0CA5CDEA843118CE17C17F1EA1AB",
+        "cases": [
+          "markedIntentCannotDowngradeAndLegacyAmbiguityCannotUpgrade(boolean)[1]",
+          "markedIntentCannotDowngradeAndLegacyAmbiguityCannotUpgrade(boolean)[2]",
+          "taxUncertaintyStillFreezesAfterPlayerReceiptRecovery(boolean)[1]",
+          "taxUncertaintyStillFreezesAfterPlayerReceiptRecovery(boolean)[2]",
+          "operatorUnpaidCannotOverrideACommittedPlayerReceipt(boolean)[1]",
+          "operatorUnpaidCannotOverrideACommittedPlayerReceipt(boolean)[2]",
+          "rejectedCreditHasDurableProofBeforeNationRefund(boolean)[1]",
+          "rejectedCreditHasDurableProofBeforeNationRefund(boolean)[2]",
+          "reservedClaimRecoversAppliedReceiptInsteadOfRepeatingPayout(boolean)[1]",
+          "reservedClaimRecoversAppliedReceiptInsteadOfRepeatingPayout(boolean)[2]",
+          "premiumDebitAndRefundRecoverUsingOriginalIdentities(boolean)[1]",
+          "premiumDebitAndRefundRecoverUsingOriginalIdentities(boolean)[2]",
+          "transactionResultWriteFailureRecoversFromAuthoritativePlayerReceipt(boolean)[1]",
+          "transactionResultWriteFailureRecoversFromAuthoritativePlayerReceipt(boolean)[2]",
+          "legacyPremiumDebitIsNotUpgradedAndNewMarkedDebitCannotDowngrade(boolean)[1]",
+          "legacyPremiumDebitIsNotUpgradedAndNewMarkedDebitCannotDowngrade(boolean)[2]",
+          "insuranceLocalResultRollbackAndRestartDoNotRepeatPlayerDebit(boolean)[1]",
+          "insuranceLocalResultRollbackAndRestartDoNotRepeatPlayerDebit(boolean)[2]",
+          "interruptedPurchaseResumesAfterReopenWithoutPayingTwice(boolean)[1]",
+          "interruptedPurchaseResumesAfterReopenWithoutPayingTwice(boolean)[2]",
+          "mismatchedReceiptFreezesPaymentWithoutRefund(boolean)[1]",
+          "mismatchedReceiptFreezesPaymentWithoutRefund(boolean)[2]"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CorePremiumCreditTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1413A88EE0FCF3BD3DF0C0F5F1F055D93ADC27474C32BC39257969106EEFBF68",
+        "cases": [
+          "existingLegacyCallIsNeverReplayedUsingANewReceiptAfterUpgrade",
+          "receiptIdentityAndImmutableOperationDetailsAreCheckedEvenOnDuplicateCalls",
+          "lostLocalSqlResultRecoversInProcessAndAfterReopeningAllLedgers(boolean)[1]",
+          "lostLocalSqlResultRecoversInProcessAndAfterReopeningAllLedgers(boolean)[2]",
+          "losingReceiptServiceAfterIntentNeverFallsBackToOrdinaryTreasuryDeposit",
+          "missingReceiptCannotBeConfirmedAppliedAndOnlyOriginalContractCanRefund",
+          "realCoreTreasuryReceiptSurvivesRestartAndDoesNotCreditOrDebitAgain",
+          "receiptConflictingWithLocalCancellationFreezesBothCreditAndRefund",
+          "anotherShipmentOrPurchaseCannotReuseThePremiumDebit",
+          "failedTransactionFabricWriteRecoversTheCommittedCoreReceiptAfterRestart",
+          "lostResponseAfterRealCoreCommitRecoversWithOriginalReceipt",
+          "receiptTakesPrecedenceOverAnOperatorsUnappliedFlag",
+          "realSqlFailureBeforeCreditRetriesWithoutCancellingOrRefunding"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.CoreTaxPaymentTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5BBC01FE031AD5242979A585E1D84B85F876AAB9E98DCAFBBC920DA716B74B61",
+        "cases": [
+          "missingProviderAndConflictingQuoteCannotFallBack(boolean)[1]",
+          "missingProviderAndConflictingQuoteCannotFallBack(boolean)[2]",
+          "legacyFundingWindowNeverUpgradesAndExistingReviewStaysFrozen(boolean)[1]",
+          "legacyFundingWindowNeverUpgradesAndExistingReviewStaysFrozen(boolean)[2]",
+          "localTaxResultRollbackRecoversSameAuthorityReceipt(boolean)[1]",
+          "localTaxResultRollbackRecoversSameAuthorityReceipt(boolean)[2]",
+          "operatorFlagsCannotManufactureFundingOrRepeatAnAppliedTax(boolean)[1]",
+          "operatorFlagsCannotManufactureFundingOrRepeatAnAppliedTax(boolean)[2]",
+          "authorityUnavailableBeforeCreditRetainsOriginalPendingIntent(boolean)[1]",
+          "authorityUnavailableBeforeCreditRetainsOriginalPendingIntent(boolean)[2]",
+          "fabricWriteFailureAfterTaxCreditDoesNotFundTwice(boolean)[1]",
+          "fabricWriteFailureAfterTaxCreditDoesNotFundTwice(boolean)[2]",
+          "lostFundingReplyKeepsPurchasePendingAndReopenPaysAndStocksOnlyOnce(boolean)[1]",
+          "lostFundingReplyKeepsPurchasePendingAndReopenPaysAndStocksOnlyOnce(boolean)[2]",
+          "protocolIsSavedBeforeSqlFundingAndResumesIfSqlTransitionFails(boolean)[1]",
+          "protocolIsSavedBeforeSqlFundingAndResumesIfSqlTransitionFails(boolean)[2]",
+          "badAuthoritativeIdentityAndMissingTerminalReceiptStayFrozen(boolean)[1]",
+          "badAuthoritativeIdentityAndMissingTerminalReceiptStayFrozen(boolean)[2]"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.NativeSupplyBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3705DF6F922A4EF17D856D8CB2DCC56B523F9215F66A0414869A8574F3E2B690",
+        "cases": [
+          "requiresReceiptCapableCoreAndValidatesTheAuthorityResponse",
+          "readsAndValidatesTheDurableReceiptForOperatorReconciliation",
+          "preservesFailureAndRequiresFreshPersistenceConfirmationOnEveryRetry"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.integration.TemporaryMoraleBridgeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5D0A82BA816E764ED1A7863E164247CE4D75FCD9E1C3DC8B2271529390815C3F",
+        "cases": [
+          "publicRegistrationChangesAuthorityViewAndUnregisterIsIdempotent",
+          "missingOrIncompatiblePublicAuthorityContractFailsClosed",
+          "authorityRegistrationFailureIsNotSilentlyIgnored"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.route.RoutePlannerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "D6A4171FE5CE35FE449E1E68939B550E915D9E550CFB45E69DF230E017669780",
+        "cases": [
+          "routesAreDirectedAndMayBeUnreachable",
+          "findsDetourWhenRoadIsCutAndSwitchesBackWhenRestored",
+          "planOwnsImmutableCopiesOfTheRoute",
+          "rejectsNonFiniteAndInconsistentGraphData",
+          "excludesSelectedRoadsAndUsesRoadEfficiencyAndRisk"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.service.ArmySupplyRulesTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "07DD3230EAAA47920B1A5D37BCA3A9754421ADA82BE365CEE5524C43583A1375",
+        "cases": [
+          "allSixLogisticsCategoriesHaveDemandAndBoundedCombatEffects",
+          "shortageMoraleIsCurrentBoundedAndImmediatelyRecoversWithoutCompounding",
+          "nationalSupplyEfficiencyReducesTroopEquivalentDemandWithinBounds"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.service.CampaignRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "16625C577F010048254B13996BCAF9D7372C36B95BC07B420DF42FE05E8B0C7F",
+        "cases": [
+          "ceasefireStaleObservationsAndInvalidConfigurationCannotLeavePermanentPressure",
+          "winterAndContinuousSiegeAddBoundedCurrentDemandWithoutCompounding"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.service.CaravanInsuranceTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "C0EF29146B04661F50FD962093559DC5DD11C92F259D48FBFF75828599DF2E69",
+        "cases": [
+          "insuredPostingReleasesCollateralIfCarrierNeverDeparts",
+          "interruptedReleaseRecoversThroughItsOriginalAuthorityReceipt",
+          "onlyActualRouteRiskFailureClaimsAndSameCargoCannotInsureTwice",
+          "rejectedCargoCancellationCannotReleaseInsuranceMoneyOrDestroyRiskClaim",
+          "interruptedClaimRecoversThroughItsOriginalAuthorityReceipt",
+          "uncertainPremiumDebitFreezesShipmentUntilIndependentEvidenceAndNeverRecharges",
+          "upfrontPremiumAndReservedClaimRemainIdempotentAcrossCommandsAndRestart",
+          "premiumCreditWithLostLocalResultIsNotRepeatedBeforeRestart",
+          "legacyInsuranceSchemaMigratesActiveBoundaryWithoutActivatingUnfinishedPolicy",
+          "persistedRiskOutcomeBeforeDeadlineCanBeClaimedAfterLongRestart",
+          "confirmedUnfundedPremiumCreditRefundsOnlyItsConfirmedDebitBeforeReleasingReserve",
+          "failedClaimCreditRemainsFrozenAndResumesWithoutAnotherPremiumOrReservation",
+          "delayedPremiumReviewReceivesFullDepartureWindowFromActualActivationAcrossRestart",
+          "premiumRefundWithLostLocalResultIsNotRepeatedBeforeRestart",
+          "premiumDebitWithLostLocalResultIsNotRepeatedBeforeRestart",
+          "fatalPremiumFailureDoesNotReplayStartedCallInTheSameProcess",
+          "crashWithNonreceiptCallStartedDoesNotReplayItAfterDatabaseReopen",
+          "timeoutsCancellationsAndUnaffordableReservesNeverProduceInsuranceClaims",
+          "interruptedReserveRecoversThroughItsOriginalAuthorityReceipt"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.service.MarketRulesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "37D8E5A45B37929F94595C688A70EDFE4D052EA9B7EA62EE8C64CCF15922029F",
+        "cases": [
+          "marketQuoteIsBoundedAndRejectsInvalidInputs",
+          "depotPriceRisesWithDemandAndFallsWithRealStock"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.service.TavernServiceTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5788D0D0C09D303CB1C67F75145EF63A3A63CA2C36DBD12C19CADB37617F642B",
+        "cases": [
+          "activeReportCapExpiresNaturallyAndCannotBeResetByPublication",
+          "onlyAuthorizedNationManagersRegisterOwnedExactLocationsAndLimitsApply",
+          "restartDuplicatePublicationAndHubDeletionNeverExtendReportLifetime",
+          "reconnaissanceRequiresPhysicalObservationAndCapturesAuthoritativeImmutableRoute",
+          "publishedBoardsEnforceNationPresenceAndTerritoryAndContainOnlyOpenContracts"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.storage.CampaignPersistenceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2C58B8D3F5E7C3E52EEDEE138C866DC4A2BDA0336A9F3DB8581393120C31DAD9",
+        "cases": [
+          "shortRestartPreservesSiegeContinuityWhileGapLiftStaleAndClockRollbackResetIt"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.storage.SqlTransactionsTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "940BDD4C99A7B9A39FECB8BF143E42BEC871F1EFF45383ACE81A9EB225C8655C",
+        "cases": [
+          "unclosedConnectionIsRetiredEvenWhenCloseFailsBeforeTakingEffect",
+          "lostCommitReceiptClosesConnectionAndLeavesOneDurableWrite",
+          "failedRollbackNeverEnablesAutoCommitOrCommitsPendingChanges",
+          "workFailureRollsBackBeforeRestoringAndRetainsOriginalFailure",
+          "errorsAlsoRollbackAndCloseFailuresRemainSuppressed",
+          "failedRestoreAfterRollbackClosesAndPreservesWorkFailure",
+          "failedBeginClosesAndNeverRunsWork",
+          "failedRestoreAfterCommitClosesWithoutHidingConfirmedWrite",
+          "successfulTransactionCommitsAndCanBeReused",
+          "failedCommitBeforeApplicationAlsoClosesWithoutRestoringAutoCommit"
+        ]
+      },
+      {
+        "suite": "dev.starsupply.storage.SupplyLifecycleTest",
+        "tests": 33,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "EFABC3A245F79CD4A731C8069CEFDC5E5A8613F3A056713CA2CF84989F262B4E",
+        "cases": [
+          "carrierCannotEarnTheirOwnEscortRiskOrTravelBonus",
+          "persistsStarCoreTariffSnapshotAndHoldsRealStockUntilFundingIsResolved",
+          "logisticsEscortRequiresNationAndOriginAndPersistsProtectedRiskAcrossRestart",
+          "rejectedPaymentAndInterruptedReturnKeepExactlyOneRecoverablePhysicalBatch",
+          "lostDepotCannotBuyOrReceiveGoodsAndForwardRebindingDoesNotMoveStock",
+          "campaignDemandIsChargedOnceAndPeaceClearsTemporaryPressure",
+          "expiresOrCancelsShipmentsWithoutPayingOrLosingReservedItems",
+          "escortedHighRiskShipmentPersistsParticipantsAndReturnsCargoWithoutFee",
+          "crossNationSalesRejectMissingOrInsufficientAgreementTermsWithoutReservingInventory",
+          "wartimeExportControlsFollowExporterAuthorityAndDoNotBlockImportsOrInternalSupply",
+          "crossNationPhysicalLotsReserveStarCoreAgreementVolumeIdempotently",
+          "militaryResourceCategoriesMapToStarCoreStrategicResourceKeys",
+          "nativeSupplyReconciliationRequiresMatchingReceiptAndNeverReappliesIt",
+          "nativeSupplySurvivesLostResponseRestartPruningAndRebindingWithoutRepeatingFood",
+          "migratesLegacyDatabaseAndQuarantinesUncertainInventoryPerPlayer",
+          "invalidNativeRecipientIsHeldForReviewAndDoesNotBlockPhysicalStatus",
+          "routeRiskScansNarrowHostileTerritoryBeyondThirtyTwoSamples",
+          "crossNationSupplySalesRespectStarCoreResourceEmbargoes",
+          "rebindExistingFrontPreservesDeliveredLotsAndRejectsForeignOrDuplicateArmyBindings",
+          "capturedAndDistantFrontsPausePhysicalSupplyUntilControlAndRangeRecover",
+          "nativeCreditUsesOnlyActuallyConsumedFoodAndEmptyOrLegacyCyclesNeverCreateCredit",
+          "switchingEscortToCarrierKeepsOnlyIndependentGuardBonusesAcrossRestart",
+          "nativeCreditKeepsCycleLengthInItsStableIdentityAfterConsumptionPruning",
+          "restartsAtInventoryAndPaymentBoundariesThenDeliversAndConsumesExactlyOnce",
+          "regionalQuotesUseDepotPhysicalStockAndOpenItemDemand",
+          "migratesV10ConsumptionRowsWithoutChangingTheirIdempotency",
+          "reroutesAfterRoadClosureAndRechecksPermissionsAndTravelTime",
+          "reservesASingleSellerAndCourierUnderConcurrentAttempts",
+          "routeRiskAcceptsTheChunkScanLimitAndDisablesLegacyRoadsOverIt",
+          "reshippingTheSamePhysicalBatchCannotRerollConvoyRisk",
+          "consumptionSeparatesDifferentCycleLengthsThatShareTheSameSlot",
+          "safelyAbandonsAnUnappliedInventoryTransferAcrossRestart",
+          "starCoreTechnologyTransportBonusImprovesRouteCostWithoutChangingThreatRisk"
+        ]
+      }
+    ]
+  },
+  "main_verify": {
+    "rerun": false,
+    "reason": "StarSupply production/test sources unchanged",
+    "prior_evidence": "workspace-tax-funding-receipts-20261126.json",
+    "tests": 157
+  },
+  "compilation": {
+    "mode": "incremental on previously complete Core production compilation",
+    "production_sources": 11,
+    "test_sources": 8,
+    "heap_mib": 192,
+    "core_full_repository_verify": false
+  },
+  "logs": [
+    {
+      "path": "feedback-main-javac-final-20261126.log",
+      "sha256": "EEC7F15E0C22F40090E779F1C53DF746DB476BEF8DC829A9D1E9D9FCEC71B23A",
+      "bytes": 271
+    },
+    {
+      "path": "feedback-test-javac-final-20261126.log",
+      "sha256": "8E50B11602FB839383FFCCDB10679349C704B47D8E3E66506D1C22EBC48DBA34",
+      "bytes": 276
+    },
+    {
+      "path": "feedback-format-final-20261126.log",
+      "sha256": "AF1FA7DB11FF386746D733CAABCE74B63A04DCC69933DD9D3A0AB17CA9E18DA1",
+      "bytes": 1077
+    },
+    {
+      "path": "feedback-package-final-20261126.log",
+      "sha256": "BD0E571EB20100DC484933F11D1532E1C8E8867172EF6C74C2A68D82D3874BE0",
+      "bytes": 1189
+    },
+    {
+      "path": "feedback-patch-reproduction-20261126.log",
+      "sha256": "BA7FC59C89E4C8D88DC521BFC2215884BD455D6BF01A5E0D40D2A9C954E5EE16",
+      "bytes": 239
+    }
+  ],
+  "patch": {
+    "path": "docs/upstream/starcore-folia-feedback.patch",
+    "sha256": "2F96450A295A40AAE83D2C84456898C4DA270D21CF923AD846FED7D8DA302CE1",
+    "base": "f769e62799e769a18fe51305b545869a17f80cd1",
+    "apply_after": [
+      "starcore-folia-logistics.patch",
+      "starcore-player-money-receipts.patch",
+      "starcore-tax-funding-receipts.patch"
+    ],
+    "reverse_check_reapply_passed": true,
+    "source_files": [
+      {
+        "path": "src/main/java/dev/starcore/starcore/StarCorePlugin.java",
+        "sha256": "DE1041F64FDDC0C655DF60745A5E74AAB9928B6D1DD6C604650B6B39D0DFE255"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/animation/AnimationTaskTracker.java",
+        "sha256": "4BFA57EEB35DF149C372D8E5D37EACF42276BC76DDC52726D0D906F6AB3F4F14"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/animation/ScreenShake.java",
+        "sha256": "6A9CFCA74D270C7F01104783685AC037FECCF24D23806DC6D12CCF9681DA5615"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/animation/ScreenShakeManager.java",
+        "sha256": "4A14644212608C63F96F1040302C578EA7C944AB343B9EB1EA5FD808464C2469"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/hud/HudCommand.java",
+        "sha256": "8D8508F09E5F30EB05A7B0063E13981855885CF3555F7459F900B6BC5F5CAA5C"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/hud/ModernHudListener.java",
+        "sha256": "110E205CF9C49247560F6363190B0D5C23C379490465ED506D9F946D5BA9DA72"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/hud/ModernHudMenu.java",
+        "sha256": "E8ED4876F8B513DD69681965ACC6D00B988F03237AD3648CF490A00D55CA9D40"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/sound/BukkitSoundResolver.java",
+        "sha256": "20EB650B43A72811EC337683E83695AD735B4ADA8C802BC67EF2D70B95EAC433"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/sound/SceneSoundCommand.java",
+        "sha256": "8F86BA0E1B09AA35EED3E63C5C743A7AA8F7E795B96E7B82C0FA1F0A20008E0B"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/sound/SceneSoundConfig.java",
+        "sha256": "8CAE7158430DD694241E563B6DA277598BB4A10A3C021F43F5F40506F4AB6B83"
+      },
+      {
+        "path": "src/main/java/dev/starcore/starcore/foundation/sound/SceneSoundService.java",
+        "sha256": "ADBF63DD2BEE39CCBB28414E8E5AAA40439F495C2140C190AE7F08F5A7D0D2C7"
+      },
+      {
+        "path": "src/main/resources/config.yml",
+        "sha256": "8109812D869942AC2835FF5700E72C5F24FB2C5BFBF78D8B80A6A84F0B30487B"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/core/scheduler/FeedbackSchedulerFixture.java",
+        "sha256": "93286A7C518752DA4659CD9ECD3E3F3996B4D00D0FB8DA763754E5A36AAF357F"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/foundation/animation/AnimationTaskTrackerLifecycleTest.java",
+        "sha256": "DA98FACA4B10AEA6C7DF8B5A099C2625CF1CA1699E8EFAC60906C61318188B3C"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/foundation/animation/ScreenShakeFoliaTest.java",
+        "sha256": "B222F416D74B66BF84A2811B48FB104B1962624FE2D79B3E1F7E2E96DC5D21D3"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/foundation/animation/ScreenShakeManagerTest.java",
+        "sha256": "C37526A2AE61779AF41AEDC6AFFF904CC690194EBB716042BA1FA832872F5EDF"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/foundation/hud/ModernHudFoliaTest.java",
+        "sha256": "61D465B8A3BC4E9AD068CEBEA014A6179458C8EFA6E09CE6C559D33822C34EB5"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/foundation/sound/BukkitSoundResolverTest.java",
+        "sha256": "52EBA32CF1A2F3F0731945C13B9B1773161115F207E6092DDA561C259D0EE32D"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/foundation/sound/SceneSoundConfigTest.java",
+        "sha256": "D82ED6BC3766F07EEAB1B6350E2CAE2791382D3CD13283E68248AC65A495EFE3"
+      },
+      {
+        "path": "src/test/java/dev/starcore/starcore/foundation/sound/SceneSoundFoliaTest.java",
+        "sha256": "26E8E3B4F70CE122ECC2590DCB025DD027E25F839F9D919C098BC783FD0C1297"
+      }
+    ],
+    "full_source_tree_comparison": {
+      "source_files_compared": 3531,
+      "extra_source_paths": [],
+      "missing_source_paths": [],
+      "different_contents_after_crlf_normalization": [],
+      "scope": "All files beneath src in the tested Core checkout and the original revision with all four patches applied"
+    }
+  },
+  "jar_validation": {
+    "previous_core": {
+      "path": "starcore-before-feedback.jar",
+      "sha256": "B1F800DEB55B423123E54E79AC41B161D1734A7E3C48B481BE60E53FFECA11B3",
+      "bytes": 19578695
+    },
+    "removed_entries": [],
+    "added_entries": [
+      "dev/starcore/starcore/foundation/hud/ModernHudListener$ParticleSession.class",
+      "dev/starcore/starcore/foundation/sound/SceneSoundConfig$Snapshot.class"
+    ],
+    "changed_source_class_bytes_verified": [
+      "dev/starcore/starcore/StarCorePlugin.class",
+      "dev/starcore/starcore/StarCorePlugin$1.class",
+      "dev/starcore/starcore/StarCorePlugin$2.class",
+      "dev/starcore/starcore/StarCorePlugin$StarcoreSmokeDepositFailure.class",
+      "dev/starcore/starcore/foundation/animation/AnimationTaskTracker.class",
+      "dev/starcore/starcore/foundation/animation/ScreenShake.class",
+      "dev/starcore/starcore/foundation/animation/ScreenShakeManager.class",
+      "dev/starcore/starcore/foundation/animation/ScreenShakeManager$PlayerShakePreferences.class",
+      "dev/starcore/starcore/foundation/animation/ScreenShakeManager$ShakeConfig.class",
+      "dev/starcore/starcore/foundation/animation/ScreenShakeManager$ShakeState.class",
+      "dev/starcore/starcore/foundation/animation/ScreenShakeManager$ShakeType.class",
+      "dev/starcore/starcore/foundation/hud/HudCommand.class",
+      "dev/starcore/starcore/foundation/hud/ModernHudListener.class",
+      "dev/starcore/starcore/foundation/hud/ModernHudListener$1.class",
+      "dev/starcore/starcore/foundation/hud/ModernHudListener$ParticleSession.class",
+      "dev/starcore/starcore/foundation/hud/ModernHudListener$ParticleType.class",
+      "dev/starcore/starcore/foundation/hud/ModernHudMenu.class",
+      "dev/starcore/starcore/foundation/sound/BukkitSoundResolver.class",
+      "dev/starcore/starcore/foundation/sound/SceneSoundCommand.class",
+      "dev/starcore/starcore/foundation/sound/SceneSoundConfig.class",
+      "dev/starcore/starcore/foundation/sound/SceneSoundConfig$GroupSoundConfig.class",
+      "dev/starcore/starcore/foundation/sound/SceneSoundConfig$Snapshot.class",
+      "dev/starcore/starcore/foundation/sound/SceneSoundConfig$SoundConfig.class",
+      "dev/starcore/starcore/foundation/sound/SceneSoundService.class",
+      "dev/starcore/starcore/foundation/sound/SceneSoundService$SoundPreferences.class",
+      "dev/starcore/starcore/foundation/sound/SceneSoundService$SoundScene.class",
+      "dev/starcore/starcore/foundation/sound/SceneSoundService$SoundSceneGroup.class"
+    ],
+    "production_folia_descriptor": false
+  },
+  "live_server_started": false,
+  "folia_full_stack_verified": false,
+  "survival_save": {
+    "path": "C:\\tmp\\starsupply-folia-sqlite-retry-runtime-20261122\\starsupply-stage1-world\\playerdata\\904364cc-bf39-35a0-b688-6cc8a6d846c8.dat",
+    "sha256": "747194DCF7BBF6FAA52996FA9DA2A59939227354612FC69A0F05AC92D0BD24D0",
+    "unchanged": true
+  },
+  "coverage": [
+    "Cross-entity dispatch with actual CompatScheduler and controllable native scheduler interfaces",
+    "Player access asserts owner; native callbacks cover immediate/later retirement and cancelled stale ticks",
+    "Screen feedback does not teleport or damage; stop/start order, monotonic expiry and strength replacement",
+    "HUD open/refresh/close, actual particle callback, deferred/stale clicks, bottom transfers and drag cancellation",
+    "Shutdown admission barrier, separate plugin instance, old queued GUI suppression",
+    "Independent sound YAML, malformed reload preservation, configuration snapshot publication",
+    "Registry sound key underscore preservation and all default scene names declared by Paper API",
+    "Full StarSupply tests against final Core artifact including 11 actual player-money and 9 tax scenarios"
+  ],
+  "pending": [
+    "Remaining Core modules outside logistics profile, Clan and Religion Folia migration",
+    "HUD style/breathing/reload command functional gaps documented in FOLIA-FEEDBACK.md",
+    "Real Paper/Folia feedback startup, cross-region player interaction, client rendering and sound",
+    "Six-resource survival production, persistent delivery/consumption and full optional plugin combination",
+    "Current receipt build live restart, MySQL integration and historical-receipt scale validation"
+  ]
+}

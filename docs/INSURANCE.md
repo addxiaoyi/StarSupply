@@ -35,7 +35,7 @@ StarSupply 的承运收入险由发单国家承保，只对本国承运者开放
 
 准备金和释放使用原国库凭证恢复；新理赔的玩家入账也使用原结算编号和玩家回执。玩家回执阶段的 148/159 项回归已通过；当前包含税款恢复的版本通过 157 项完整 verify、实际最终 Core 下 177 项回归；新增 11 个场景同时覆盖测试权威和真实 Core，含准备金、国库、玩家 SQLite 与保险库结果回滚、提交后丢失响应及重启恢复。此前 13 项国库保费回执测试继续通过。没有新增实服资金验收，见[玩家资金回执记录](verification/workspace-player-money-receipts-20261125.json)、[前一版国库回执记录](verification/workspace-premium-credit-receipts-20261125.json)及[旧操作中断保护](verification/workspace-insurance-interruption-20261125.json)。
 
-当前测试的兼容 Core 为 `B1F800DEB55B423123E54E79AC41B161D1734A7E3C48B481BE60E53FFECA11B3`。上游新增回执支持文件存储与 SQLite；此前玩家回执 77 项定向测试通过；本轮财政相关 116 项中 114 项执行通过、2 项 MySQL 环境测试跳过。见[当前构建证据](verification/workspace-tax-funding-receipts-20261126.json)。MySQL、规模压力和实服组合仍待验证。
+税款回执检查点的兼容 Core 为 `B1F800DEB55B423123E54E79AC41B161D1734A7E3C48B481BE60E53FFECA11B3`。上游新增回执支持文件存储与 SQLite；此前玩家回执 77 项定向测试通过；本轮财政相关 116 项中 114 项执行通过、2 项 MySQL 环境测试跳过。见[当前构建证据](verification/workspace-tax-funding-receipts-20261126.json)。MySQL、规模压力和实服组合仍待验证。
 
 管理员核对独立经济证据后，可执行：
 
@@ -52,3 +52,5 @@ StarSupply 的承运收入险由发单国家承保，只对本国承运者开放
 公共服务 `InsuranceApi` 的投保操作接受 `Player`，调用者须在玩家实体线程使用；操作执行玩家权限、国家身份、起点距离及可取消事件检查。只读报价和保险查询返回不可变记录。具体方法见源码中的 `dev.starsupply.api.InsuranceApi`。
 
 该实现复用 StarCore 国库支出、退款、内部经济和 `TransactionFabric`，没有调用上游 `EconomyInsuranceService`：上游保险产品依赖其自身交易归属和领域结算处理器，无法直接表示 StarSupply 的实物运输失败语义。
+
+后续公共反馈补丁的新 Core 为 `E87A005E2E313040D9F41F75B878C9DF75D6A5211D011B14CD76907D2E17FBA8`，其下重新通过 StarSupply 全套 177 项，包括既有保险与实际资金/税款回执测试；保险源码未变。见[当前兼容测试](verification/workspace-folia-feedback-20261126.json)。

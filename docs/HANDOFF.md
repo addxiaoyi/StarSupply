@@ -14,6 +14,8 @@
 
 ## 阶段进度
 
+2026-11-26 继续完成 Core 音效、屏幕震动和现代 HUD 的线程与生命周期适配，新增第四份 [反馈补丁](upstream/FOLIA-FEEDBACK.md)。屏幕反馈不再传送玩家，HUD 按实体处理菜单与粒子，旧任务退役不会清除新会话；独立音效配置与注册名称解析也已修复。最终 Core 定向 132 项及新 Core 成品下 StarSupply 全套 177 项通过；没有启动实服。完整模块兼容和 HUD 部分偏好命令仍有代码工作，见[本轮验证](verification/workspace-folia-feedback-20261126.json)。
+
 2026-11-25 最新代码已接通按来源补产：示例计划启用 `traceProduction`，六阶段按已记录来源的库存计算缺口，正常停服后由独立读取器重算配方与存档链。生产日志保存跨阶段余额与待完成运行，支持结果已落盘而日志尚未推进时的恢复；旧库存不自动获得证明，旧熔炉内容先正常收回再补产。顺带修正打开箱子/熔炉时读取滞后背包副本的问题。107 项 Node、39 项语法检查及 7 项 PowerShell 恢复检查通过，生产 Java 未变，未启动实服。详见[来源补产验证](verification/workspace-survival-traced-production-20261125.json)。
 
 随后新保费入国库已接入原固定 StarCore 的 `NationCreditService`，按保单原键和持久协议标记恢复；旧普通入账不自动换协议。新增 13 项回执测试使用真实国库、SQLite 与 TransactionFabric，验证响应丢失、各层结果写回失败、同进程/重启恢复和冲突隔离；全量 137 项 Java 测试通过。该检查点当时尚无玩家业务回执；税收认领也不等于国库到账。本轮未启动实服，详见[保费回执记录](verification/workspace-premium-credit-receipts-20261125.json)。
@@ -33,6 +35,8 @@
 
 ## 最新构建与验证
 
+- 本轮 StarSupply 生产和测试源码未变，保留 157 项 verify 与原 JAR 哈希；新 Core 为 `E87A005E2E313040D9F41F75B878C9DF75D6A5211D011B14CD76907D2E17FBA8`（19,586,514 字节），定向 132 项通过，与该成品配套的 StarSupply 全套 177 项通过。11 个生产源与 8 个测试源增量编译，19 个 Java 文件格式检查通过；不是 Core 全仓 verify。20 文件补丁可复现，原生存存档哈希不变。见[反馈适配记录](verification/workspace-folia-feedback-20261126.json)。
+
 - Java 21；Maven Wrapper 3.9.16；Paper API 1.21.11。当前生产 JAR 大小 14,695,959 字节，SHA-256 `267DC0BB068714DFFB70D26C65B5AD4F09C7FF8E878489BD211D2A837C99C38C`。
 - 完整 `mvnw.cmd -o -B -ntp -DforkCount=0 verify`：157 项测试，0 失败/错误/跳过；最终实际兼容 Core 下 177 项通过，包含 11 个真实玩家资金场景与 9 个真实税款场景。Core 财政定向测试 116 项：114 项执行通过，2 项 MySQL 环境测试跳过。未改写 Maven 依赖、未启动 Paper/Folia。详见[税款记录](verification/workspace-tax-funding-receipts-20261126.json)；此前玩家接口证据仍见[玩家资金记录](verification/workspace-player-money-receipts-20261125.json)。
 - 验收器：当前 107 项 Node 测试通过；39 个 Node 脚本语法检查通过，7 项 PowerShell 恢复检查复跑通过。最新来源补产、容器库存读取和日志恢复见[来源补产验证](verification/workspace-survival-traced-production-20261125.json)。需求探针已用 Java 21 编译；此前数量计划见 [数量计划记录](verification/workspace-survival-demand-planning-20261125.json)，恢复和证据串联见 [恢复记录](verification/workspace-survival-recovery-evidence-20261125.json)。
@@ -45,9 +49,10 @@
 
 | 缺口 | 当前处理 | 完成条件 |
 | --- | --- | --- |
-| 玩家资金恢复的部署与旧账处理 | 新回执协议代码与自动化故障测试已完成；旧无标记交易不迁移，已有 REVIEW 不自动解冻 | 部署当前三份兼容补丁后进行实服验收；旧账继续按独立证据核对。MySQL 存储与大规模历史回执性能仍未验证 |
+| 玩家资金恢复的部署与旧账处理 | 新回执协议代码与自动化故障测试已完成；旧无标记交易不迁移，已有 REVIEW 不自动解冻 | 部署兼容 Core 后进行实服验收；旧账继续按独立证据核对。MySQL 存储与大规模历史回执性能仍未验证 |
 | 税款自动恢复 | 新协议已通过完整报价绑定的国库耐久回执恢复，意图不作为到账凭证；SQL/事务记录写回失败保持原编号重试，人工标志不能制造到账 | 当前新组合待实服、MySQL 与规模验收；旧无协议税款继续独立核对 |
-| 完整 Folia 支持范围 | 现有兼容补丁限于后勤 profile；生产描述符仍未声明支持 | 完成目标模块/可选插件的线程归属与生命周期适配，并对明确组合验收；不能只改描述符 |
+| 完整 Folia 支持范围 | 后勤 profile 已接回音效、客户端震动和 HUD；Clan、Religion 及其他白名单外模块仍限制；生产描述符未声明支持 | 完成目标模块/可选插件的线程归属与生命周期适配，并对明确组合验收；不能只改描述符 |
+| HUD 偏好命令 | 已确认 `style` 未把所选样式用于主菜单、`breathing` 只发消息、`reload` 未加载实际配置；本轮仅完成所有权和会话适配 | 接通真实设置、重载与退出清理，并用行为回归证明命令结果 |
 
 六类来源补产、采购运输、连续消费及重启核对入口已经实现并有自动化测试，剩余是实服证明。当前无法将其标为六类完整生存闭环；图形资源包也属于待验项。
 
@@ -69,7 +74,7 @@ $env:JAVA_HOME = 'C:\path\to\jdk-21'
 .\tools\build.ps1 -StarCoreRoot ..\starsupply-starcore-api -JavaHome $env:JAVA_HOME
 ```
 
-运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch` 和 `starcore-tax-funding-receipts.patch`；这个组合补丁已包含攻城补丁，不能再重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。本轮兼容 Core 成品 SHA-256 为 `B1F800DEB55B423123E54E79AC41B161D1734A7E3C48B481BE60E53FFECA11B3`，不同构建需登记自己的哈希。
+运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch` 和 `starcore-folia-feedback.patch`；这个组合补丁已包含攻城补丁，不能再重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。本轮兼容 Core 成品 SHA-256 为 `E87A005E2E313040D9F41F75B878C9DF75D6A5211D011B14CD76907D2E17FBA8`，不同构建需登记自己的哈希。
 
 依赖已安装时，低内存构建命令为：
 
@@ -116,4 +121,4 @@ GitHub 提供源码和验证摘要，**不会同步世界、玩家存档或运�
 
 ## 给下一次 Codex 的接续说明
 
-> 读取 docs/HANDOFF.md、docs/REQUIREMENTS.md、docs/FOLIA.md 和最新 verification JSON，继续完成全部剩余阶段。用户当前选择先完成可运行的开发测试、保留实服待验；继续上方玩家经济回执、税务原子入账和 Folia 兼容范围的代码工作，维持无权威凭证时的保守复核，不自行启动测试服。六阶段生产、自产物资采购运输与连续消费、当前完整 Folia 组合和图形资源包均保留待验。保留现有改动与历史证据，按具体构建哈希记录新结果，不把未完成项标成通过。
+> 读取 docs/HANDOFF.md、docs/REQUIREMENTS.md、docs/FOLIA.md 和最新 verification JSON，继续完成全部剩余阶段。用户当前选择先完成可运行的开发测试、保留实服待验；继续完整 Folia 范围的代码工作，先接通已明确的 HUD 样式/呼吸灯/重载命令，再推进白名单外目标模块；玩家资金与税款回执代码已有自动化证据，维持无权威凭证时的保守复核，不自行启动测试服。六阶段生产、自产物资采购运输与连续消费、当前完整 Folia 组合和图形资源包均保留待验。保留现有改动与历史证据，按具体构建哈希记录新结果，不把未完成项标成通过。
