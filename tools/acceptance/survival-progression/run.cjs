@@ -6,8 +6,11 @@ const {runtimeHealth} = require('./runtime-health.cjs');
 const {preflightMemory} = require('./memory-preflight.cjs');
 const {createHash} = require('node:crypto');
 const {readSavedPickaxe, readSavedResourcePhase, readSavedInventory} = require('./survival-checkpoint.cjs');
-const {stopViaRcon} = require('./rcon-stop.cjs');
-const {validatePlan, assertStart, readSnapshot, verifyStoppedCycle} = require('./logistics-cycle.cjs');
+const {stopViaRcon, commandViaRcon} = require('./rcon-stop.cjs');
+const {validatePlan, journalPath, prepareCycle, verifyStoppedCycle} = require('./logistics-cycle.cjs');
+const {prepareReplay, probeCredits, verifyReplayStopped} = require('./native-replay.cjs');
+const {hash, archiveSavedPlayer, linkProductionEvidence} = require('./production-evidence.cjs');
+const {writeJson} = require('./durable-json.cjs');
 
 const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
@@ -113,21 +116,33 @@ async function main() {
     throw new Error('Client arguments must be a JSON array of strings');
   }
   const resourceClient = clientScriptArg && path.resolve(clientScriptArg) === path.join(__dirname, 'six-resources.cjs');
-  let logisticsPlan, savedBefore;
-  if (resourceClient && clientArguments[0] === 'logistics') {
-    if (!clientArguments[1]) throw new Error('The logistics phase requires an explicit plan JSON path');
-    clientArguments[1] = path.resolve(clientArguments[1]);
-    logisticsPlan = validatePlan(JSON.parse(fs.readFileSync(clientArguments[1], 'utf8')));
-    savedBefore = await readSavedInventory(stage, properties['level-name'], username, mineflayerArg);
-    assertStart(logisticsPlan, readSnapshot(stage, logisticsPlan), savedBefore.inventory);
-    if (fs.existsSync(path.join(stage, 'folia-proof', `survival-logistics-${logisticsPlan.runId}.json`))) {
-      throw new Error('This logistics run already exists; inspect its journal before retrying');
-    }
-  }
-
+  const replayOnly = resourceClient && clientArguments[0] === 'logistics-replay';
   const proofDirectory = path.join(stage, 'folia-proof');
   fs.mkdirSync(proofDirectory, {recursive: true});
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const worldIdentity = {level: properties['level-name'], uidSha256: hash(fs.readFileSync(path.join(stage, properties['level-name'], 'uid.dat')))};
+  let logisticsPlan, savedBefore;
+  if (resourceClient) savedBefore = archiveSavedPlayer(stage,
+    await readSavedInventory(stage, properties['level-name'], username, mineflayerArg), `survival-${timestamp}-before`);
+  if (resourceClient && ['logistics', 'logistics-replay'].includes(clientArguments[0])) {
+    if (!clientArguments[1]) throw new Error('The logistics phase requires an explicit plan JSON path');
+    clientArguments[1] = path.resolve(clientArguments[1]);
+    logisticsPlan = validatePlan(JSON.parse(fs.readFileSync(clientArguments[1], 'utf8')));
+    if (logisticsPlan.nativeReplay && !plugins.some(row => row.name === 'SupplyNativeProof-1.0.0.jar')) {
+      throw new Error('Install the current isolated SupplyNativeProof fixture before starting this logistics plan');
+    }
+    if (replayOnly) prepareReplay(stage, logisticsPlan, plugins, savedBefore);
+    else {
+      const journal = prepareCycle({stage, plan: logisticsPlan, player: username, inventory: savedBefore.inventory, savedBefore, plugins});
+      if (logisticsPlan.productionEvidence) {
+        const production = linkProductionEvidence(stage, logisticsPlan, journal.savedBefore, username, plugins);
+        if (JSON.stringify(production.worldIdentity) !== JSON.stringify(worldIdentity)) throw new Error('Production and logistics worlds differ');
+        journal.productionEvidence = production;
+        writeJson(journalPath(stage, logisticsPlan), journal);
+      }
+    }
+  }
+
   const serverLogPath = path.join(proofDirectory, `survival-progression-${timestamp}-server.log`);
   const serverErrorPath = path.join(proofDirectory, `survival-progression-${timestamp}-server-error.log`);
   const clientLogPath = path.join(proofDirectory, `survival-progression-${timestamp}-client.log`);
@@ -147,6 +162,7 @@ async function main() {
   let stopping = false;
   let shutdownMethod;
   let clientSources;
+  let nativeReplayProof;
   const health = runtimeHealth(rconPort);
   const observe = (chunk, channel) => {
     health.push(chunk, channel);
@@ -161,8 +177,8 @@ async function main() {
       '-jar', 'folia.jar', 'nogui'
     ], {cwd: stage, windowsHide: true, stdio: ['pipe', 'pipe', 'pipe']});
 
-    server.stdout.pipe(serverLog);
-    server.stderr.pipe(serverErrorLog);
+    server.stdout.pipe(serverLog, {end: false});
+    server.stderr.pipe(serverErrorLog, {end: false});
     server.stdout.on('data', chunk => {
       serverTail = (serverTail + chunk.toString('utf8')).slice(-30000);
       observe(chunk, 'stdout');
@@ -191,23 +207,34 @@ async function main() {
       .filter((file, index, files) => files.indexOf(file) === index)
       .map(file => ({file: path.relative(__dirname, file).replace(/\\/g, '/'),
         sha256: createHash('sha256').update(fs.readFileSync(file)).digest('hex').toUpperCase()}));
-    client = spawn(process.execPath, [
-      '--max-old-space-size=256',
-      clientPath,
-      stage,
-      path.resolve(mineflayerArg),
-      path.resolve(pathfinderArg),
-      username,
-      ...clientArguments
-    ], {cwd: stage, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe']});
-    client.stdout.pipe(clientLog);
-    client.stderr.pipe(clientLog);
-    client.on('error', error => { runFailure = error; });
-    clientClosed = new Promise(resolve => client.once('close', (code, signal) => {
-      clientExit = {code, signal};
-      resolve(clientExit);
-    }));
-    await within(clientClosed, 'Mineflayer survival progression', clientTimeoutMs);
+    const probe = restarting => probeCredits({stage, plan: logisticsPlan, restarting,
+      command: async command => {
+        const reply = await commandViaRcon(rconPort, properties['rcon.password'], command);
+        if (!reply.includes(`NATIVE_SUPPLY_PROOF_QUEUED ${command.split(' ')[1]}`)) throw new Error('Native replay probe was not accepted');
+      },
+      until: (read, label, timeout) => until(read, label, timeout,
+        () => health.failure ?? serverFailure ?? (serverExit ? new Error('Folia exited during native replay') : null))});
+    if (replayOnly) nativeReplayProof = await probe(true);
+    else {
+      client = spawn(process.execPath, [
+        '--max-old-space-size=256',
+        clientPath,
+        stage,
+        path.resolve(mineflayerArg),
+        path.resolve(pathfinderArg),
+        username,
+        ...clientArguments
+      ], {cwd: stage, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe']});
+      client.stdout.pipe(clientLog, {end: false});
+      client.stderr.pipe(clientLog, {end: false});
+      client.on('error', error => { runFailure = error; });
+      clientClosed = new Promise(resolve => client.once('close', (code, signal) => {
+        clientExit = {code, signal};
+        resolve(clientExit);
+      }));
+      await within(clientClosed, 'Mineflayer survival progression', clientTimeoutMs);
+      if (!health.failure && !serverFailure && clientExit?.code === 0 && logisticsPlan?.nativeReplay) nativeReplayProof = await probe(false);
+    }
     if (health.failure) throw health.failure;
   } catch (error) {
     runFailure = runFailure ?? error;
@@ -241,6 +268,9 @@ async function main() {
     serverErrorLog.end();
     clientLog.end();
   }
+  // Result hashes must cover fully flushed logs, including a failed client's last checkpoint.
+  await Promise.all([serverLog, serverErrorLog, clientLog].map(stream => stream.writableFinished
+    ? Promise.resolve() : new Promise((resolve, reject) => { stream.once('finish', resolve); stream.once('error', reject); })));
 
   const normalStopObserved = serverTail.includes('Stopping server')
     && serverTail.includes('Saved all player data')
@@ -255,17 +285,21 @@ async function main() {
   if (normalStopObserved && gamePortClosed && rconPortClosed && (!clientScriptArg
       || path.resolve(clientScriptArg) === path.join(__dirname, 'six-resources.cjs'))) {
     try {
-      savedCheckpoint = await readSavedInventory(stage, properties['level-name'], username, mineflayerArg);
+      savedCheckpoint = archiveSavedPlayer(stage,
+        await readSavedInventory(stage, properties['level-name'], username, mineflayerArg), `survival-${timestamp}-after`);
     } catch (error) { runFailure = runFailure ?? error; }
   }
-  if (clientExit?.code === 0 && normalStopObserved && gamePortClosed && rconPortClosed) {
+  const workSucceeded = replayOnly ? !!nativeReplayProof : clientExit?.code === 0;
+  if (!runFailure && workSucceeded && normalStopObserved && gamePortClosed && rconPortClosed) {
     try {
       if (!clientScriptArg) {
         savedPlayer = await readSavedPickaxe(stage, properties['level-name'], username, mineflayerArg);
       } else if (path.resolve(clientScriptArg) === path.join(__dirname, 'six-resources.cjs')) {
         if (logisticsPlan) {
           savedPlayer = await readSavedInventory(stage, properties['level-name'], username, mineflayerArg);
-          logisticsVerification = verifyStoppedCycle(stage, logisticsPlan, savedBefore, savedPlayer);
+          logisticsVerification = replayOnly
+            ? verifyReplayStopped(stage, logisticsPlan, savedBefore, savedPlayer)
+            : verifyStoppedCycle(stage, logisticsPlan, savedBefore, savedPlayer);
         } else {
           savedPlayer = await readSavedResourcePhase(stage, properties['level-name'], username, mineflayerArg,
             clientArguments[0] ?? 'mining');
@@ -283,6 +317,11 @@ async function main() {
     memory,
     plugins,
     clientSources,
+    phase: resourceClient ? clientArguments[0] ?? 'mining' : 'iron-pickaxe',
+    productionProtocolVersion: 1,
+    replayOnly: !!replayOnly,
+    nativeReplayProof,
+    worldIdentity,
     savedPlayer,
     savedCheckpoint,
     savedBefore,
@@ -290,7 +329,7 @@ async function main() {
     startupTimeoutMs,
     runtimeHealth: health.snapshot(),
     failure: runFailure?.message ?? null,
-    pass: !runFailure && clientExit?.code === 0 && normalStopObserved && gamePortClosed && rconPortClosed,
+    pass: !runFailure && workSucceeded && normalStopObserved && gamePortClosed && rconPortClosed,
     player: username,
     clientExit,
     serverExit,
@@ -300,14 +339,14 @@ async function main() {
     rconPortClosed,
     serverLog: path.relative(stage, serverLogPath).replace(/\\/g, '/'),
     serverErrorLog: path.relative(stage, serverErrorPath).replace(/\\/g, '/'),
-    clientLog: path.relative(stage, clientLogPath).replace(/\\/g, '/')
+    clientLog: path.relative(stage, clientLogPath).replace(/\\/g, '/'),
+    clientLogSha256: hash(fs.readFileSync(clientLogPath))
   };
-  fs.writeFileSync(path.join(proofDirectory, `survival-progression-${timestamp}-result.json`),
-    JSON.stringify(summary, null, 2) + '\n');
+  writeJson(path.join(proofDirectory, `survival-progression-${timestamp}-result.json`), summary, {exclusive: true});
   console.log(JSON.stringify(summary));
 
   if (runFailure) throw runFailure;
-  if (clientExit?.code !== 0) throw new Error('The survival progression client did not pass');
+  if (!workSucceeded) throw new Error('The survival progression client or native replay did not pass');
   if (!normalStopObserved || !gamePortClosed || !rconPortClosed) {
     throw new Error('Folia did not confirm a normal shutdown and closed listeners');
   }

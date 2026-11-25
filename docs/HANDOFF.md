@@ -8,6 +8,8 @@
 
 后续已补齐 `logistics` 验收阶段，将六类现有背包物资通过正常采购、运输接入至少三个连续完整消费周期，再核对唯一付款、实物批次、原生补给 outbox 与停服 NBT。新增 11 项真实 SQLite 夹具测试，总计 58 项 Node 测试通过。旧库的混合库存被正确拒绝，原库和玩家存档未变；该阶段仍待实服运行，不能替代生产来源或 Core 重启回执证据。见 [物流阶段记录](verification/workspace-survival-logistics-20261125.json)。
 
+继续开发已将物流日志升级为先刷盘临时文件再替换的 v2 格式，按既有订单恢复，避免重发已记录的经济命令；原始背包基线跨尝试保留。新增生产记录与存档哈希串联，以及 `logistics-replay` 独立重启阶段：按关联 UUID 和探针启动 ID 核验原生补给回执、既有结算/消费与玩家存档。初始已有物资不自动获得生存来源证明，旧 v1 日志也不自动升级。代码与自动化测试范围见[恢复和证据串联记录](verification/workspace-survival-recovery-evidence-20261125.json)；这些新路径尚未在 Folia 实服执行。
+
 ## 阶段进度
 
 | 阶段 | 当前结果 | 后续工作 |
@@ -23,7 +25,7 @@
 
 - Java 21；Maven Wrapper 3.9.16；Paper API 1.21.11。当前生产 JAR 大小 14,678,765 字节，SHA-256 `87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980`。
 - `mvnw.cmd -B -ntp -DforkCount=0 verify`：124 项测试，0 失败/错误/跳过。生产源码在该构建后未改；后续修改是验收脚本和文档。见 [库存取消修复记录](verification/workspace-inventory-cancellation-20261125.json)。
-- 验收器：当前 58 项 Node 测试通过，其中 8 项服务器放置确认、9 项熔炉断点、11 项采购运输/消费证明测试；23 个 Node 脚本语法检查通过。此前 7 项 PowerShell 恢复检查通过，恢复脚本未改。历史实服范围见 [六类续接记录](verification/folia-survival-six-resource-progress-20261125.json)，最新自动化范围见 [物流阶段记录](verification/workspace-survival-logistics-20261125.json)。
+- 验收器：当前 80 项 Node 测试通过；29 个 Node 脚本语法检查通过，7 项 PowerShell 恢复检查复跑通过。后续收紧蜂蜜来源的玻璃瓶追溯后，5 项生产证据测试再次通过，不重复计数。新探针已用 Java 21 编译。恢复、生产证据和重启流程的范围见 [最新记录](verification/workspace-survival-recovery-evidence-20261125.json)。历史实服范围见 [六类续接记录](verification/folia-survival-six-resource-progress-20261125.json)，最新自动化范围见 [物流阶段记录](verification/workspace-survival-logistics-20261125.json)。
 - 当前构建的独立 Folia 区域恢复：两种库存边界、实际退役异常栈、唯一付款、重复恢复不变、停服玩家 NBT 和六库完整性均通过。见 [区域恢复记录](verification/folia-region-retirement-20261125.json)。
 - 最后实服运行 `2026-11-25T07-52-02-144Z`：Core/Supply/服务器均启用；Mineflayer 进程因内存分配失败退出 134，阶段未通过。服务器随后经 RCON 正常保存退出，两个端口关闭，全部插件按哈希恢复。玩家存档仍保留前述材料。
 
@@ -71,7 +73,7 @@ node --max-old-space-size=64 --test --test-concurrency=1 @($tests.FullName)
 
 运行器会记录脚本哈希，在正常停服后保存失败阶段的权威背包检查点，但只有目标产物在生存模式 NBT 中持久存在才允许阶段通过。已完成的物品可以断点续用；纸、瓶子、煤和工作台也会被后续配方消耗，需检查真实背包。现有世界为 peaceful，烟花脚本计划从自然生成地牢箱取得火药；这是待验收路线。
 
-完成六类生产后，用正常权限建立专用空仓库、前线和道路，填写 `logistics-plan.example.json`，再运行 `-ClientArguments @('logistics', '<计划JSON绝对路径>')`。旧 `alpha-depot` / `morale-front` 有历史物资，当前不能直接用于这条严格归因验收。客户端只走已有通道；测试玩家需拥有正常采购管理权限。数量须覆盖真实季节/围城需求和交货期间可能发生的部分周期。中断会保留强制落盘日志，须先核对其中订单 ID 和库存状态，不可删除日志盲目重跑。完整命令和证据边界见[运行说明](../tools/acceptance/survival-progression/README.md)。
+完成六类生产后，用正常权限建立专用空仓库、前线和道路，填写 `logistics-plan.example.json`，再运行 `-ClientArguments @('logistics', '<计划JSON绝对路径>')`。旧 `alpha-depot` / `morale-front` 有历史物资，当前不能直接用于这条严格归因验收。客户端只走已有通道；测试玩家需拥有正常采购管理权限。数量须覆盖真实季节/围城需求和交货期间可能发生的部分周期。v2 中断日志支持使用相同计划继续观察、完成后续动作；无法确定是否受理的命令不会重发，旧 v1 日志仍须核查。可在开始前配置 `productionEvidence` 和 `nativeReplay`，完成正常停服后再执行 `logistics-replay`。完整命令和证据边界见[运行说明](../tools/acceptance/survival-progression/README.md)。
 
 ## 旧设备的本地状态
 

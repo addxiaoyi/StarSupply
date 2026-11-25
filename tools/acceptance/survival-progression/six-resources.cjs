@@ -36,6 +36,10 @@ async function main() {
   bot.on('death', () => { failure = new Error('Survival player died; saved progress requires recovery'); bot.pathfinder.setGoal(null); });
   bot.on('messagestr', message => log('message', {message}));
   const count = name => bot.inventory.items().filter(item => item.name === name).reduce((n, item) => n + item.count, 0);
+  const acquired = (item, before, source, inputs = {}) => {
+    const after = count(item);
+    if (after > before) log('production_acquired', {item, before, after, count: after - before, source, inputs, inventory: inventory()});
+  };
   const inventory = () => bot.inventory.items().map(item => ({slot: item.slot, name: item.name, count: item.count}));
   async function until(read, label, timeout = 10000) {
     const deadline = Date.now() + timeout;
@@ -246,6 +250,7 @@ async function main() {
           await until(() => !blockNames.includes(bot.blockAt(position)?.name), 'server block removal');
           await collect(dropName, before, position.offset(0.5, 0.5, 0.5));
           log('harvest_collected', {drop: dropName, before, after: count(dropName), position, inventory: inventory()});
+          acquired(dropName, before, 'harvest');
           gathered = true; break;
         } catch (error) {
           bot.pathfinder.setGoal(null); bot.clearControlStates(); failures++;
@@ -317,6 +322,7 @@ async function main() {
       await delay(500);
       if (count(output) <= before) throw new Error(`Crafted ${output} was not retained`);
       log('crafted', {output, ingredients, before, after: count(output), inventory: inventory()});
+      acquired(output, before, 'craft', Object.fromEntries(ingredients.map(([name, slots]) => [name, slots.length])));
     }
   }
   async function furnace() {
@@ -335,6 +341,7 @@ async function main() {
   }
   async function smelt(input, output, desired, gatherMissing) {
     if (count(output) >= desired) return;
+    const before = count(output);
     const block = await furnace();
     let window = await bot.openFurnace(block);
     try {
@@ -351,6 +358,7 @@ async function main() {
     await delay(500);
     if (count(output) < desired) throw new Error(`Smelting output did not persist: ${output}`);
     log('smelting_collected', {output, count: count(output), inventory: inventory()});
+    acquired(output, before, 'smelt', {[input]: count(output) - before});
   }
 
   async function farmBread() {
@@ -398,6 +406,7 @@ async function main() {
         const before = count('wheat');
         await bot.dig(crop, true, 'auto'); await collect('wheat', before, position.offset(0.5, 0.5, 0.5));
         log('wheat_harvested', {position, count: count('wheat')});
+        acquired('wheat', before, 'harvest');
         if (count('wheat_seeds')) {
           await equip('wheat_seeds');
           await helpers.placeBlockEventually(bot, bot.blockAt(position.offset(0, -1, 0)), new Vec3(0, 1, 0), 'wheat', 'replant survival wheat', log);
@@ -435,6 +444,7 @@ async function main() {
       await until(() => count('honey_bottle') > before && Number(bot.blockAt(position).getProperties().honey_level) === 0,
         'server honey bottle and emptied nest');
       log('honey_harvested', {position, before, after: count('honey_bottle')});
+      acquired('honey_bottle', before, 'honey', {glass_bottle: count('honey_bottle') - before});
     }
     if (count('honey_bottle') < 3) throw new Error('Natural honey sources need more time before another harvest');
   }
@@ -462,6 +472,7 @@ async function main() {
           await window.withdraw(item.type, null, item.count);
           await until(() => count(name) > before, `collect natural ${name} loot`);
           log('natural_loot_collected', {position, name, before, after: count(name)});
+          acquired(name, before, 'natural-chest');
         }
       } finally { window.close(); }
       if (count('gunpowder')) return;

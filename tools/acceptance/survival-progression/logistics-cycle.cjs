@@ -1,7 +1,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const {createHash} = require('node:crypto');
+const {isDeepStrictEqual} = require('node:util');
 const {offlinePlayerId} = require('./survival-checkpoint.cjs');
+const {writeJson} = require('./durable-json.cjs');
 
 const ITEMS = Object.freeze({FOOD: 'bread', MEDICAL: 'honey_bottle', EQUIPMENT: 'iron_ingot',
   MATERIALS: 'cobblestone', ENGINEERING: 'scaffolding', STRATEGIC: 'firework_rocket'});
@@ -34,6 +36,7 @@ function validatePlan(plan) {
   requireThat(Number.isInteger(plan.intervalMillis) && plan.intervalMillis >= 5000 && plan.intervalMillis <= 86400000,
     'Invalid expected supply interval');
   requireThat(money(plan.price) > 0n && money(plan.reward) > 0n, 'Prices and freight must be positive');
+  requireThat(plan.nativeReplay === undefined || typeof plan.nativeReplay === 'boolean', 'nativeReplay must be boolean');
   for (const resource of RESOURCES) requireThat(Number.isInteger(plan.counts?.[resource])
     && plan.counts[resource] >= plan.cycles && plan.counts[resource] <= 256, `Invalid ${resource} delivery count`);
   return plan;
@@ -51,7 +54,7 @@ function readSnapshot(stage, plan) {
     database.exec('PRAGMA query_only=ON; PRAGMA busy_timeout=1000; BEGIN');
     requireThat(database.prepare('PRAGMA user_version').get().user_version === 11, 'Logistics verifier requires schema v11');
     const rows = (sql, ...args) => database.prepare(sql).all(...args).map(row => ({...row}));
-    const warehouses = rows('SELECT * FROM warehouse WHERE id IN (?,?)', plan.depot, plan.front);
+    const warehouses = rows('SELECT * FROM warehouse WHERE id IN (?,?) ORDER BY id', plan.depot, plan.front);
     const purchases = rows('SELECT * FROM purchase WHERE depot=?', plan.depot);
     const shipments = rows('SELECT * FROM shipment WHERE origin=? OR target=?', plan.depot, plan.front);
     const transfers = rows('SELECT t.* FROM item_transfer t JOIN purchase p ON p.id=t.purchase WHERE p.depot=?', plan.depot);
@@ -150,86 +153,196 @@ function verifyCycle(plan, journal, snapshot) {
     purchaseSettlements: 6, transportSettlements: 6, coreReceiptReplayVerified: false};
 }
 
-function saveJournal(file, value, exclusive = false) {
-  const fd = fs.openSync(file, exclusive ? 'wx' : 'w');
-  try { fs.writeFileSync(fd, JSON.stringify(value, null, 2) + '\n'); fs.fsyncSync(fd); }
-  finally { fs.closeSync(fd); }
+const saveJournal = (file, value, exclusive = false) => writeJson(file, value, {exclusive});
+const actionFor = (journal, verb, resource) => journal.actions.find(row => row.key === `${verb}:${resource}`);
+
+function checkPurchase(plan, journal, resource, row) {
+  requireThat(row && row.depot === plan.depot && row.resource === resource
+    && row.item_count === plan.counts[resource] && row.nation === journal.nation
+    && money(row.price) === money(plan.price)
+    && (row.seller === null || row.seller === offlinePlayerId(journal.player)), 'Purchase identity changed');
+  requireThat(!['REVIEW', 'CANCELLED'].includes(row.state), 'Purchase requires reconciliation');
+  requireThat(['OPEN', 'RESERVED', 'SETTLING', 'BOUGHT'].includes(row.state)
+    && (row.state !== 'BOUGHT' || row.seller === offlinePlayerId(journal.player)), 'Invalid purchase state or seller');
+  return row;
+}
+
+function checkShipment(plan, journal, order, row) {
+  requireThat(row && row.purchase === order.purchase && row.origin === plan.depot
+    && row.target === plan.front && row.nation === journal.nation && money(row.reward) === money(plan.reward)
+    && (row.carrier === null || row.carrier === offlinePlayerId(journal.player)), 'Shipment identity changed');
+  requireThat(!['REVIEW', 'CANCELLED', 'FAILED'].includes(row.state), 'Shipment requires reconciliation');
+  requireThat(['OPEN', 'IN_TRANSIT', 'SETTLING', 'DELIVERED'].includes(row.state)
+    && (row.state === 'OPEN' || row.carrier === offlinePlayerId(journal.player)), 'Invalid shipment state or carrier');
+  if (row.state === 'IN_TRANSIT') requireThat(row.expires > Date.now(), 'Shipment failed or expired during travel');
+  return row;
+}
+
+// Recover a creation whose response was lost using the saved pre-command IDs.
+// Missing/ambiguous creations are never dispatched a second time.
+function reconcileOrders(plan, journal, snapshot) {
+  for (const resource of RESOURCES) {
+    let order = journal.orders.find(row => row.resource === resource);
+    const buy = actionFor(journal, 'buy', resource);
+    if (!order && buy) {
+      requireThat(Array.isArray(buy.beforeIds), 'Creation intent lacks its baseline; inspect the legacy run');
+      const found = snapshot.purchases.filter(row => !buy.beforeIds.includes(row.id)
+        && !journal.orders.some(other => other.purchase === row.id));
+      requireThat(found.length <= 1, 'Concurrent purchase creation requires inspection');
+      if (found.length) {
+        const purchase = checkPurchase(plan, journal, resource, found[0]);
+        order = {resource, purchase: purchase.id}; journal.orders.push(order);
+      }
+    }
+    if (!order) continue;
+    requireThat(buy, 'Purchase has no persisted creation intent');
+    checkPurchase(plan, journal, resource, snapshot.purchases.find(row => row.id === order.purchase));
+    const ship = actionFor(journal, 'ship', resource);
+    if (!order.shipment && ship) {
+      requireThat(Array.isArray(ship.beforeIds), 'Shipment intent lacks its baseline');
+      const found = snapshot.shipments.filter(row => !ship.beforeIds.includes(row.id)
+        && row.purchase === order.purchase);
+      requireThat(found.length <= 1, 'Concurrent shipment creation requires inspection');
+      if (found.length) order.shipment = checkShipment(plan, journal, order, found[0]).id;
+    }
+    if (order.shipment) {
+      requireThat(ship, 'Shipment has no persisted creation intent');
+      checkShipment(plan, journal, order, snapshot.shipments.find(row => row.id === order.shipment));
+    }
+  }
+  for (const [table, key] of [['purchases', 'purchase'], ['shipments', 'shipment']]) {
+    const known = new Set([...journal.baseline[table].map(row => row.id), ...journal.orders.map(row => row[key])]);
+    requireThat(snapshot[table].every(row => known.has(row.id)), 'Unrelated orders entered the dedicated warehouses');
+  }
+  requireThat(journal.orders.length <= 6 && new Set(journal.orders.map(row => row.resource)).size === journal.orders.length,
+    'Journal has duplicate resource orders');
+}
+
+function prepareCycle({stage, plan, player, inventory, savedBefore, plugins}) {
+  validatePlan(plan);
+  const file = journalPath(stage, plan), snapshot = readSnapshot(stage, plan), existed = fs.existsSync(file);
+  let journal;
+  if (!existed) {
+    const {depot} = assertStart(plan, snapshot, inventory);
+    journal = {version: 2, plan, player, nation: depot.nation, initialInventory: inventory, baseline: snapshot,
+      savedBefore, plugins, startedAt: new Date().toISOString(), state: 'running', orders: [], actions: []};
+  } else {
+    journal = JSON.parse(fs.readFileSync(file, 'utf8'));
+    requireThat(journal.version === 2, 'Legacy logistics journal requires manual inspection; do not delete it');
+    requireThat(isDeepStrictEqual(journal.plan, plan) && journal.player === player, 'Logistics plan or player changed');
+    requireThat(journal.state !== 'stopped-and-verified', 'Logistics run is already verified; use its restart proof');
+    requireThat(!plugins || isDeepStrictEqual(plugins, journal.plugins), 'Deployed plugins changed during logistics');
+    requireThat(isDeepStrictEqual(snapshot.warehouses, journal.baseline.warehouses), 'Warehouse binding or position changed');
+    reconcileOrders(plan, journal, snapshot);
+    for (const resource of RESOURCES) {
+      const item = ITEMS[resource], initial = journal.initialInventory[item], current = inventory[item] ?? 0;
+      const order = journal.orders.find(row => row.resource === resource);
+      const purchase = snapshot.purchases.find(row => row.id === order?.purchase);
+      const sold = actionFor(journal, 'sell', resource);
+      if (purchase?.state === 'BOUGHT') {
+        requireThat(sold && current === initial - plan.counts[resource], 'Saved inventory does not match completed purchases');
+      } else {
+        requireThat(current === initial || (sold && current === initial - plan.counts[resource]),
+          'Inventory changed outside the recorded logistics actions');
+      }
+    }
+    if (savedBefore) requireThat(journal.savedBefore, 'The original saved checkpoint is missing');
+  }
+  if (savedBefore) {
+    requireThat(savedBefore.gameMode === 'survival' && savedBefore.playerId === offlinePlayerId(player), 'Saved player identity or game mode changed');
+    journal.attemptBefore = savedBefore;
+  }
+  fs.mkdirSync(path.dirname(file), {recursive: true});
+  saveJournal(file, journal, !existed);
+  return journal;
 }
 
 async function runCycle({stage, plan, player, inventory, world, travel, chat, until, log}) {
-  validatePlan(plan);
   const file = journalPath(stage, plan);
-  requireThat(!fs.existsSync(file), 'This logistics run already has a journal; inspect its order IDs before any retry');
-  const baseline = readSnapshot(stage, plan), initialInventory = inventory();
-  const {depot, front} = assertStart(plan, baseline, initialInventory);
+  const journal = prepareCycle({stage, plan, player, inventory: inventory()});
+  const depot = journal.baseline.warehouses.find(row => row.id === plan.depot);
+  const front = journal.baseline.warehouses.find(row => row.id === plan.front);
   requireThat(world === depot.world, 'Player is in a different world');
-  const journal = {version: 1, plan, player, nation: depot.nation, initialInventory, baseline,
-    startedAt: new Date().toISOString(), state: 'running', orders: [], actions: []};
-  saveJournal(file, journal, true);
-  const dispatch = text => {
-    requireThat(/^\/supply (buy|sell|ship|accept|deliver) /.test(text), 'Only normal logistics commands are allowed');
-    journal.actions.push({command: text, at: new Date().toISOString(), state: 'dispatched'});
+  let atDepot = false;
+  const snapshot = () => {
+    const state = readSnapshot(stage, plan);
+    requireThat(isDeepStrictEqual(state.warehouses, journal.baseline.warehouses), 'Warehouse binding or position changed');
+    reconcileOrders(plan, journal, state);
+    return state;
+  };
+  const dispatch = async (verb, resource, command, observe, label, timeout = 60000) => {
+    let action = actionFor(journal, verb, resource);
+    if (!action) {
+      if (verb !== 'deliver' && !atDepot) { await travel(depot); atDepot = true; }
+      const state = snapshot();
+      const order = journal.orders.find(row => row.resource === resource);
+      if (verb === 'sell') {
+        const row = state.purchases.find(row => row.id === order.purchase);
+        requireThat(row.state === 'OPEN' && row.seller === null
+          && !state.transfers.some(transfer => transfer.purchase === row.id), 'Sale progressed without a recorded command');
+      }
+      if (verb === 'accept') {
+        const row = state.shipments.find(row => row.id === order.shipment);
+        requireThat(row.state === 'OPEN' && row.carrier === null, 'Acceptance progressed without a recorded command');
+      }
+      action = {key: `${verb}:${resource}`, command, at: new Date().toISOString(), state: 'dispatched'};
+      if (verb === 'buy') action.beforeIds = state.purchases.map(row => row.id);
+      if (verb === 'ship') action.beforeIds = state.shipments.map(row => row.id);
+      journal.actions.push(action);
+      saveJournal(file, journal);
+      chat(command);
+    } else requireThat(action.command === command, 'Recorded command differs from the logistics plan');
+    const result = await until(() => observe(snapshot()), label, timeout);
+    action.state = 'observed';
     saveJournal(file, journal);
-    chat(text);
+    return result;
   };
   try {
-    await travel(depot);
     for (const resource of RESOURCES) {
-      const known = new Set(readSnapshot(stage, plan).purchases.map(row => row.id));
-      dispatch(`/supply buy ${plan.depot} ${resource.toLowerCase()} ${plan.counts[resource]} ${plan.price}`);
-      const purchase = await until(() => {
-        const found = readSnapshot(stage, plan).purchases.filter(row => !known.has(row.id));
-        requireThat(found.length <= 1, 'Concurrent purchase creation requires inspection');
-        if (found[0]) requireThat(found[0].state === 'OPEN' && found[0].seller === null
-          && found[0].resource === resource && found[0].item_count === plan.counts[resource]
-          && found[0].nation === depot.nation && money(found[0].price) === money(plan.price), 'Unexpected newly created purchase');
-        return found[0];
-      }, `new ${resource} purchase`);
-      const order = {resource, purchase: purchase.id}; journal.orders.push(order); saveJournal(file, journal);
-      dispatch(`/supply sell ${purchase.id}`);
-      await until(() => {
-        const row = readSnapshot(stage, plan).purchases.find(row => row.id === purchase.id);
-        requireThat(!['REVIEW', 'CANCELLED'].includes(row?.state), 'Purchase requires reconciliation');
-        return row?.state === 'BOUGHT';
-      }, `paid ${resource} purchase`, 60000);
-      dispatch(`/supply ship ${purchase.id} ${plan.front} ${plan.reward}`);
-      const shipment = await until(() => readSnapshot(stage, plan).shipments.find(row => row.purchase === purchase.id),
-        `${resource} shipment`);
-      requireThat(shipment.state === 'OPEN' && shipment.carrier === null && shipment.origin === plan.depot
-        && shipment.target === plan.front && shipment.nation === depot.nation
-        && money(shipment.reward) === money(plan.reward), 'Unexpected newly created shipment');
-      order.shipment = shipment.id; saveJournal(file, journal);
-      dispatch(`/supply accept ${shipment.id}`);
-      await until(() => readSnapshot(stage, plan).shipments.find(row => row.id === shipment.id)?.state === 'IN_TRANSIT',
-        `accepted ${resource} shipment`);
+      await dispatch('buy', resource, `/supply buy ${plan.depot} ${resource.toLowerCase()} ${plan.counts[resource]} ${plan.price}`,
+        () => journal.orders.find(row => row.resource === resource), `new ${resource} purchase`);
+      const order = journal.orders.find(row => row.resource === resource);
+      await dispatch('sell', resource, `/supply sell ${order.purchase}`, state =>
+        checkPurchase(plan, journal, resource, state.purchases.find(row => row.id === order.purchase)).state === 'BOUGHT',
+      `paid ${resource} purchase`);
+      await dispatch('ship', resource, `/supply ship ${order.purchase} ${plan.front} ${plan.reward}`,
+        () => order.shipment, `${resource} shipment`);
+      await dispatch('accept', resource, `/supply accept ${order.shipment}`, state => {
+        const row = checkShipment(plan, journal, order, state.shipments.find(row => row.id === order.shipment));
+        return ['IN_TRANSIT', 'SETTLING', 'DELIVERED'].includes(row.state) && row.carrier === offlinePlayerId(player);
+      }, `accepted ${resource} shipment`);
     }
-    await travel(front);
+    const needsDelivery = journal.orders.some(order => !actionFor(journal, 'deliver', order.resource));
+    if (needsDelivery) await travel(front);
     for (const order of journal.orders) {
-      await until(() => {
-        const row = readSnapshot(stage, plan).shipments.find(row => row.id === order.shipment);
-        requireThat(row?.state === 'IN_TRANSIT' && row.expires > Date.now(), 'Shipment failed or expired during travel');
+      if (!actionFor(journal, 'deliver', order.resource)) await until(() => {
+        const row = checkShipment(plan, journal, order, snapshot().shipments.find(row => row.id === order.shipment));
+        requireThat(row.state === 'IN_TRANSIT', 'Delivery progressed without a recorded command');
         return row.ready <= Date.now();
       }, 'real transport travel time', 120000);
-      dispatch(`/supply deliver ${order.shipment}`);
-      await until(() => readSnapshot(stage, plan).shipments.find(row => row.id === order.shipment)?.state === 'DELIVERED',
-        `paid ${order.resource} delivery`, 60000);
+      await dispatch('deliver', order.resource, `/supply deliver ${order.shipment}`, state =>
+        checkShipment(plan, journal, order, state.shipments.find(row => row.id === order.shipment)).state === 'DELIVERED',
+      `paid ${order.resource} delivery`);
     }
     const result = await until(() => {
-      try { return verifyCycle(plan, journal, readSnapshot(stage, plan)); }
+      try { return verifyCycle(plan, journal, snapshot()); }
       catch (error) { if (/^Awaiting /.test(error.message)) return false; throw error; }
     }, 'sustained physical consumption', (plan.cycles + 2) * plan.intervalMillis + 60000);
-    journal.state = 'awaiting-normal-stop'; journal.result = result; saveJournal(file, journal);
+    journal.state = 'awaiting-normal-stop'; journal.result = result; delete journal.failure; saveJournal(file, journal);
     log('survival_logistics_client_complete', {journal: path.basename(file), result});
   } catch (error) {
-    journal.state = 'failed-requires-inspection'; journal.failure = error.message; saveJournal(file, journal);
+    journal.state = 'failed-requires-inspection'; journal.failure = error.message;
+    try { saveJournal(file, journal); } catch (persistError) { error.message += `; journal update failed: ${persistError.message}`; }
     throw error;
   }
 }
 
 function verifyStoppedCycle(stage, plan, before, after) {
   const file = journalPath(stage, plan), journal = JSON.parse(fs.readFileSync(file, 'utf8'));
-  requireThat(JSON.stringify(journal.plan) === JSON.stringify(plan), 'Logistics plan changed after execution');
+  requireThat(isDeepStrictEqual(journal.plan, plan), 'Logistics plan changed after execution');
   requireThat(journal.state === 'awaiting-normal-stop', 'Client did not finish the logistics run');
+  if (journal.attemptBefore) requireThat(isDeepStrictEqual(before, journal.attemptBefore), 'Attempt checkpoint changed');
+  before = journal.savedBefore ?? before;
   requireThat(before.gameMode === 'survival' && after.gameMode === 'survival'
     && before.playerId === offlinePlayerId(journal.player) && after.playerId === before.playerId, 'Saved player identity or game mode changed');
   for (const resource of RESOURCES) {
@@ -237,11 +350,18 @@ function verifyStoppedCycle(stage, plan, before, after) {
     requireThat(before.inventory[item] === journal.initialInventory[item], 'Starting inventory differs from the saved survival checkpoint');
     requireThat((after.inventory[item] ?? 0) === before.inventory[item] - plan.counts[resource], 'Saved inventory debit does not match the orders');
   }
-  const result = verifyCycle(plan, journal, readSnapshot(stage, plan));
+  const stoppedSnapshot = readSnapshot(stage, plan), result = verifyCycle(plan, journal, stoppedSnapshot);
+  if (plan.nativeReplay) requireThat(journal.nativeBeforeRestart?.length === plan.cycles
+    && result.credits.every(id => journal.nativeBeforeRestart.some(row => row.receipt.request === id)), 'Native probes did not complete before stopping');
   journal.state = 'stopped-and-verified'; journal.savedBefore = before; journal.savedAfter = after; journal.result = result;
+  journal.stoppedSnapshot = stoppedSnapshot;
   saveJournal(file, journal);
   return {...result, journal: path.basename(file), savedInventoryVerified: true,
-    acquisitionProvenanceRequiresPhaseEvidence: true, survivalProductionVerified: false, processRestartReplayVerified: false};
+    acquisitionProvenanceRequiresPhaseEvidence: !journal.productionEvidence?.survivalProductionVerified,
+    productionEvidenceLinked: !!journal.productionEvidence?.productionEvidenceLinked,
+    survivalProductionVerified: journal.productionEvidence?.survivalProductionVerified === true,
+    unprovenQuantities: journal.productionEvidence?.unprovenQuantities, processRestartReplayVerified: false};
 }
 
-module.exports = {ITEMS, RESOURCES, money, nativeReceiptId, validatePlan, readSnapshot, assertStart, verifyCycle, runCycle, verifyStoppedCycle};
+module.exports = {ITEMS, RESOURCES, money, nativeReceiptId, validatePlan, journalPath, readSnapshot,
+  assertStart, verifyCycle, prepareCycle, runCycle, verifyStoppedCycle};

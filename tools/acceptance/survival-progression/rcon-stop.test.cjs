@@ -1,7 +1,7 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const net = require('node:net');
-const {stopViaRcon} = require('./rcon-stop.cjs');
+const {stopViaRcon, commandViaRcon} = require('./rcon-stop.cjs');
 
 function packet(id, type, text) {
   const body = Buffer.from(text), frame = Buffer.alloc(body.length + 14);
@@ -59,4 +59,16 @@ test('an unresponsive connection times out and invalid configuration never conne
   const port = await serverFor(t, () => {});
   await assert.rejects(stopViaRcon(port, 'fixture', 100), /timed out/);
   await assert.rejects(stopViaRcon(port, undefined), /Invalid RCON shutdown configuration/);
+});
+
+test('native probe commands authenticate and return queue acknowledgement without treating it as completion', async t => {
+  const commands = [];
+  const port = await serverFor(t, (socket, frame) => {
+    if (frame.type === 3) socket.write(packet(1, 2, ''));
+    else { commands.push(frame.body); socket.write(packet(2, 0, 'NATIVE_SUPPLY_PROOF_QUEUED retry')); }
+  });
+  const command = 'supplynativeproof retry 11111111-1111-4111-8111-111111111111';
+  assert.equal(await commandViaRcon(port, 'fixture', command), 'NATIVE_SUPPLY_PROOF_QUEUED retry');
+  await assert.rejects(commandViaRcon(port, 'fixture', command + '\nstop'), /Invalid RCON/);
+  assert.deepEqual(commands, [command]);
 });

@@ -1,6 +1,7 @@
 package local.test;
 
 import dev.starcore.starcore.api.StarCoreApi;
+import dev.starcore.starcore.foundation.economy.EconomyService;
 import dev.starcore.starcore.module.army.ArmyService;
 import dev.starcore.starcore.module.army.LogisticsSupplyReceipt;
 import dev.starcore.starcore.module.army.model.ArmyUnit;
@@ -33,6 +34,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /** Disposable acceptance fixture. No SQL writes, private-field access or production installation. */
 public final class SupplyNativeProof extends JavaPlugin implements Listener {
     private final Map<UUID, Integer> events = new ConcurrentHashMap<>();
+    private final UUID bootId = UUID.randomUUID();
 
     @Override public void onEnable() {
         Objects.requireNonNull(getCommand("supplynativeproof")).setExecutor(this);
@@ -46,7 +48,7 @@ public final class SupplyNativeProof extends JavaPlugin implements Listener {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage("supplynativeproof prepare <army> <nativeSupply> <baseMorale> | state <army> | receipt <request> | retry <request> | watch <army> <seconds>");
+            sender.sendMessage("supplynativeproof prepare <army> <nativeSupply> <baseMorale> | state <army> | receipt/retry <request> [correlation] | accounts <nation> <player> <correlation> | watch <army> <seconds>");
             return true;
         }
         String[] captured = args.clone();
@@ -67,6 +69,17 @@ public final class SupplyNativeProof extends JavaPlugin implements Listener {
         StarCoreApi core = Objects.requireNonNull(Bukkit.getServicesManager().load(StarCoreApi.class));
         ArmyService armies = core.service(ArmyService.class).orElseThrow();
         switch (a[0]) {
+            case "accounts" -> {
+                require(a.length == 4, "accounts <nation> <player> <correlation UUID>");
+                UUID nation = UUID.fromString(a[1]);
+                UUID player = UUID.fromString(a[2]);
+                UUID correlation = UUID.fromString(a[3]);
+                TreasuryService treasury = core.service(TreasuryService.class).orElseThrow();
+                EconomyService economy = core.service(EconomyService.class).orElseThrow();
+                emit("accounts", Map.of("nation", nation, "player", player, "correlation", correlation,
+                        "playerBalance", economy.getBalance(player).toPlainString(),
+                        "treasuryBalance", treasury.balance(new NationId(nation)).toPlainString()));
+            }
             case "prepare" -> {
                 require(a.length == 4, "prepare <army> <nativeSupply> <baseMorale>");
                 UUID id = UUID.fromString(a[1]);
@@ -107,11 +120,14 @@ public final class SupplyNativeProof extends JavaPlugin implements Listener {
                 emit("watch-started", Map.of("army", id, "seconds", seconds));
             }
             case "receipt", "retry" -> {
-                require(a.length == 2, "receipt/retry <request>");
+                require(a.length == 2 || a.length == 3, "receipt/retry <request> [correlation UUID]");
                 UUID request = UUID.fromString(a[1]);
+                String correlation = a.length == 3 ? UUID.fromString(a[2]).toString() : "legacy";
                 LogisticsSupplyReceipt receipt = armies.logisticsSupplyReceipt(request).orElseThrow();
                 if (a[0].equals("receipt")) {
-                    emit("receipt", receipt(receipt));
+                    Map<String, Object> row = new LinkedHashMap<>(receipt(receipt));
+                    row.put("correlation", correlation);
+                    emit("receipt", row);
                     return;
                 }
                 TreasuryService treasury = core.service(TreasuryService.class).orElseThrow();
@@ -134,8 +150,8 @@ public final class SupplyNativeProof extends JavaPlugin implements Listener {
                 require(armies.getArmySnapshot(receipt.armyId()).orElseThrow().supply() == after.supply(),
                         "Conflicting replay changed native supply");
                 emit("retry-passed", Map.of("receipt", receipt(receipt), "nativeSupplyBefore", before.supply(),
-                        "nativeSupplyAfter", after.supply(), "treasuryBefore", balanceBefore,
-                        "treasuryAfter", balanceAfter, "conflictRejected", true));
+                        "nativeSupplyAfter", after.supply(), "treasuryBefore", balanceBefore.toPlainString(),
+                        "treasuryAfter", balanceAfter.toPlainString(), "conflictRejected", true, "correlation", correlation));
             }
             default -> throw new IllegalArgumentException("Unknown acceptance operation");
         }
@@ -171,6 +187,7 @@ public final class SupplyNativeProof extends JavaPlugin implements Listener {
     private synchronized void emit(String type, Map<String, ?> values) {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("type", type); row.put("at", Instant.now());
+        row.put("bootId", bootId);
         row.put("thread", Thread.currentThread().getName()); row.put("global", Bukkit.isGlobalTickThread());
         row.putAll(values);
         String json = json(row);

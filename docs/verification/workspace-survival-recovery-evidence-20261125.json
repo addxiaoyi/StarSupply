@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-25",
+  "base_commit": "40190f2af71e60655f71c554b1ef05679e02dd0c",
+  "change": "Persist recoverable logistics intent and original saved inventory, link production checkpoints, and add correlated Core receipt/player-balance probes before and after a normal process restart.",
+  "implementation": {
+    "journal_version": 2,
+    "journal_commit": "Flush complete sibling file before rename; exclusive initial creation uses a hard link. Interrupted writes/flushes/renames leave the previous journal intact.",
+    "windows_power_loss_guarantee": false,
+    "resume": "Reconcile persisted pre-command IDs and known orders; observe prior actions without dispatching them again; continue undispatched actions after checking live SQLite state and inventory.",
+    "ambiguous_or_missing_outcome": "Stop for inspection; do not resend recorded commands, delete old journals, or replay an uncertain payment.",
+    "legacy_v1_journals": "Require manual inspection because they lack the new recovery baselines.",
+    "production": "Archive survival NBT before/after each run, hash client action logs and source binaries, check checkpoint continuity, and account for acquisition and recipe inputs. Initial stock starts with zero provenance credit.",
+    "production_flags": "Linking six successful phases does not imply sufficient traced quantities. Unproven quantities remain explicit; survivalProductionVerified is conditional on sufficient traced inputs/outputs.",
+    "replay": "Optional nativeReplay plan runs public Core retries before normal stop; logistics-replay starts a separate process and requires different probe boot IDs, fresh correlation IDs, identical receipts, unchanged original settlement/consumption rows, unchanged independently read player balance and unchanged player NBT.",
+    "writes_server_databases": false,
+    "grants_items_or_teleports": false
+  },
+  "tests": {
+    "node_command": "node --max-old-space-size=64 --test --test-concurrency=1 --test-reporter=spec <all survival-progression *.test.cjs>",
+    "node_total": 80,
+    "node_failures": 0,
+    "node_skipped": 0,
+    "node_log": "target/survival-recovery-evidence-tests-20261125.log",
+    "node_log_sha256": "9422E4F521D9A05D1D333B5E572189378340C05FEA0DE23BE23ADACE55249345",
+    "final_production_tightening": "After the complete suite, honey acquisition was tightened to require traced consumed bottles. All five production evidence tests passed again; this is a rerun, not five additional tests.",
+    "final_production_log": "target/production-evidence-final-tests-20261125.log",
+    "final_production_log_sha256": "5C8968D26E00298C28946F496EACB19F7BBA23D8CB405EEBEE2F9BB84AFE78D9",
+    "final_native_replay_check": "Historical-row matching was changed to set lookups to avoid quadratic scans of existing consumption history. All three native replay tests passed again; not additional tests.",
+    "final_native_replay_log": "target/native-replay-final-tests-20261125.log",
+    "final_native_replay_log_sha256": "4B9E45871F3A4475BD723F9B505A47629562486A2FE03A6DC7A808F890B5CDF6",
+    "sqlite": "Actual v1-v11 migrations in disposable databases; gameplay commands and Core responses are simulated.",
+    "faults": "Write/flush/rename errors; response loss after buy/sell/ship/accept/deliver; pending settlement; ambiguous creations; expired shipments; changed identities; stale/same-boot Core evidence; balance/receipt changes; forged inventory-only production claims and broken checkpoint hashes.",
+    "nbt_unit_fixtures": "Production-linkage unit tests use hashed fixture bytes; they do not claim real Minecraft NBT or a live production run.",
+    "node_syntax_files": 29,
+    "powershell_restoration_checks": 7,
+    "launcher_powershell_syntax": "passed"
+  },
+  "native_probe_build": {
+    "java": "21.0.13.1",
+    "source": "tools/acceptance/native-supply/src/local/test/SupplyNativeProof.java",
+    "build": "tools/acceptance/native-supply/build.ps1 with existing Core/Supply JARs",
+    "result": "passed",
+    "jar_sha256": "FD0E41F1163A068ED9889E2FD5A2FB53138DB803A513894600A064ACC437F139"
+  },
+  "production_plugin": {
+    "source_changed": false,
+    "jar_sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+    "existing_java_verify_tests": 124,
+    "java_suite_rerun_this_change": false,
+    "evidence": "workspace-survival-resume-20261125.json"
+  },
+  "preserved_stage": {
+    "player_save_sha256": "747194DCF7BBF6FAA52996FA9DA2A59939227354612FC69A0F05AC92D0BD24D0",
+    "player_save_unchanged": true,
+    "acceptance_listeners": 0,
+    "acceptance_jvms": 0
+  },
+  "live_acceptance": {
+    "performed": false,
+    "reason": "User requested runnable development/tests first and retained live acceptance as pending; last observed free memory remained below the minimum test-server threshold.",
+    "new_logistics_resume_live_verified": false,
+    "new_production_linkage_live_verified": false,
+    "new_process_restart_workflow_live_verified": false,
+    "full_folia_stack_verified": false
+  },
+  "remaining": [
+    "Complete six-resource survival production and logistics/replay with the current deployed hashes on Folia.",
+    "Trace retained historical materials independently or produce fresh quantities; the new linker does not certify old inventory by possession.",
+    "Connect production targets/replenishment to actual seasonal and siege demand.",
+    "Upstream player/premium/tax receipt limitations still require conservative REVIEW handling for ambiguous economic operations.",
+    "Full optional-plugin Folia support and graphical resource-pack acceptance remain pending."
+  ]
+}

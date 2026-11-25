@@ -53,8 +53,13 @@ Copy-Item -LiteralPath $stagedJar -Destination (Join-Path $backup 'StarSupply-0.
 $originalHash = (Get-FileHash -LiteralPath $stagedJar -Algorithm SHA256).Hash
 $optional = @()
 if ($Profile -eq 'vanilla') {
+    $retainedPlugins = @('StarCore-1.0.0.jar', 'StarSupply-0.1.0.jar')
+    if ($ClientArguments.Count -ge 2 -and $ClientArguments[0] -in @('logistics', 'logistics-replay')) {
+        $logisticsPlan = Get-Content -LiteralPath $ClientArguments[1] -Raw | ConvertFrom-Json
+        if ($logisticsPlan.nativeReplay -eq $true) { $retainedPlugins += 'SupplyNativeProof-1.0.0.jar' }
+    }
     $optional = @(Get-ChildItem -LiteralPath $plugins -File -Filter '*.jar' |
-        Where-Object Name -notin @('StarCore-1.0.0.jar', 'StarSupply-0.1.0.jar') |
+        Where-Object Name -notin $retainedPlugins |
         ForEach-Object { @{ name=$_.Name; sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash } })
 }
 $manifest = [ordered]@{
