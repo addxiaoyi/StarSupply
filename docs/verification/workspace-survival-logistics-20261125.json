@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-25",
+  "base_commit": "0f14d32",
+  "change": "Add the logistics phase using the saved player's existing six resource types, normal player commands, read-only SQLite snapshots and normal-stop NBT verification.",
+  "implementation": {
+    "source": "tools/acceptance/survival-progression/logistics-cycle.cjs",
+    "plan": "tools/acceptance/survival-progression/logistics-plan.example.json",
+    "minimum_consecutive_full_cycles": 3,
+    "purchase_settlements": 6,
+    "transport_settlements": 6,
+    "uses_item_grants": false,
+    "uses_teleports": false,
+    "writes_server_databases": false,
+    "records_intent_before_commands": true,
+    "blindly_replays_interrupted_order_creation": false
+  },
+  "tests": {
+    "command": "node --max-old-space-size=64 --test --test-concurrency=1 --test-reporter=spec <all survival-progression *.test.cjs>",
+    "node": "22.23.5",
+    "total": 58,
+    "new_logistics_tests": 11,
+    "failures": 0,
+    "skipped": 0,
+    "test_database": "Disposable SQLite databases created with the actual v1-v11 migrations; command responses are simulated, not a live Minecraft server",
+    "syntax_checks": 23,
+    "syntax_retry": "The initial repeated node --check launch hit host native-memory exhaustion after all tests passed. A single 64 MiB process parsed all 23 scripts successfully.",
+    "log": "target/survival-logistics-final-tests-20261125.log",
+    "log_sha256": "B6ABE4A5D4D71AD0662C253AAA3956805EC57D5C0B91B13AE721E56008066928"
+  },
+  "existing_stage_read_only_check": {
+    "warehouses": 2,
+    "purchases": 61,
+    "shipments": 56,
+    "physical_lots": 60,
+    "gate": "Rejected prior stock: dedicated empty warehouses required for attribution",
+    "database_hash_unchanged": true,
+    "player_save_sha256": "747194DCF7BBF6FAA52996FA9DA2A59939227354612FC69A0F05AC92D0BD24D0",
+    "player_save_unchanged": true
+  },
+  "production": {
+    "source_changed": false,
+    "jar_sha256": "87487098E790404108C9010EAE2186B1FFECAD1CF0A99119363A93D37BD18980",
+    "java_verify_evidence": "workspace-survival-resume-20261125.json",
+    "java_tests": 124
+  },
+  "live_acceptance": {
+    "performed": false,
+    "reason": "User chose to retain live verification as pending while the host has insufficient free memory.",
+    "survival_production_verified": false,
+    "logistics_phase_live_verified": false,
+    "process_restart_replay_verified": false,
+    "full_folia_stack_verified": false,
+    "graphical_resource_pack_verified": false
+  }
+}

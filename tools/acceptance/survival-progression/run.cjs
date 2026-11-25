@@ -7,6 +7,7 @@ const {preflightMemory} = require('./memory-preflight.cjs');
 const {createHash} = require('node:crypto');
 const {readSavedPickaxe, readSavedResourcePhase, readSavedInventory} = require('./survival-checkpoint.cjs');
 const {stopViaRcon} = require('./rcon-stop.cjs');
+const {validatePlan, assertStart, readSnapshot, verifyStoppedCycle} = require('./logistics-cycle.cjs');
 
 const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
@@ -110,6 +111,18 @@ async function main() {
   const clientArguments = clientArgumentsArg === undefined ? [] : JSON.parse(clientArgumentsArg);
   if (!Array.isArray(clientArguments) || clientArguments.some(argument => typeof argument !== 'string')) {
     throw new Error('Client arguments must be a JSON array of strings');
+  }
+  const resourceClient = clientScriptArg && path.resolve(clientScriptArg) === path.join(__dirname, 'six-resources.cjs');
+  let logisticsPlan, savedBefore;
+  if (resourceClient && clientArguments[0] === 'logistics') {
+    if (!clientArguments[1]) throw new Error('The logistics phase requires an explicit plan JSON path');
+    clientArguments[1] = path.resolve(clientArguments[1]);
+    logisticsPlan = validatePlan(JSON.parse(fs.readFileSync(clientArguments[1], 'utf8')));
+    savedBefore = await readSavedInventory(stage, properties['level-name'], username, mineflayerArg);
+    assertStart(logisticsPlan, readSnapshot(stage, logisticsPlan), savedBefore.inventory);
+    if (fs.existsSync(path.join(stage, 'folia-proof', `survival-logistics-${logisticsPlan.runId}.json`))) {
+      throw new Error('This logistics run already exists; inspect its journal before retrying');
+    }
   }
 
   const proofDirectory = path.join(stage, 'folia-proof');
@@ -238,6 +251,7 @@ async function main() {
   ]);
   let savedPlayer;
   let savedCheckpoint;
+  let logisticsVerification;
   if (normalStopObserved && gamePortClosed && rconPortClosed && (!clientScriptArg
       || path.resolve(clientScriptArg) === path.join(__dirname, 'six-resources.cjs'))) {
     try {
@@ -249,8 +263,13 @@ async function main() {
       if (!clientScriptArg) {
         savedPlayer = await readSavedPickaxe(stage, properties['level-name'], username, mineflayerArg);
       } else if (path.resolve(clientScriptArg) === path.join(__dirname, 'six-resources.cjs')) {
-        savedPlayer = await readSavedResourcePhase(stage, properties['level-name'], username, mineflayerArg,
-          clientArguments[0] ?? 'mining');
+        if (logisticsPlan) {
+          savedPlayer = await readSavedInventory(stage, properties['level-name'], username, mineflayerArg);
+          logisticsVerification = verifyStoppedCycle(stage, logisticsPlan, savedBefore, savedPlayer);
+        } else {
+          savedPlayer = await readSavedResourcePhase(stage, properties['level-name'], username, mineflayerArg,
+            clientArguments[0] ?? 'mining');
+        }
       }
     } catch (error) {
       runFailure = runFailure ?? error;
@@ -266,6 +285,8 @@ async function main() {
     clientSources,
     savedPlayer,
     savedCheckpoint,
+    savedBefore,
+    logisticsVerification,
     startupTimeoutMs,
     runtimeHealth: health.snapshot(),
     failure: runFailure?.message ?? null,

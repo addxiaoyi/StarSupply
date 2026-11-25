@@ -1,0 +1,18 @@
+{
+  "runId": "survival-six-resources-01",
+  "depot": "survival-depot",
+  "front": "survival-front",
+  "army": "00000000-0000-0000-0000-000000000000",
+  "cycles": 3,
+  "intervalMillis": 30000,
+  "price": "5.00",
+  "reward": "1.00",
+  "counts": {
+    "FOOD": 6,
+    "MEDICAL": 3,
+    "EQUIPMENT": 6,
+    "MATERIALS": 6,
+    "ENGINEERING": 6,
+    "STRATEGIC": 3
+  }
+}

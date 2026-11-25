@@ -48,8 +48,32 @@ Run the acceptance-tool regression tests without starting a server:
 
 ```powershell
 $tests = Get-ChildItem tools/acceptance/survival-progression -Filter '*.test.cjs'
-node --test @($tests.FullName)
+node --max-old-space-size=64 --test --test-concurrency=1 @($tests.FullName)
 .\tools\acceptance\survival-progression\restore-stage.test.ps1
 ```
 
 These checks do not establish six-resource survival production, a complete Folia plugin combination, graphical resource-pack rendering, or world-unload recovery. Current runtime scope and artifact hashes are recorded in `docs/FOLIA.md` and the linked evidence.
+
+## Physical delivery and sustained consumption
+
+After finishing the six production phases, the `logistics` phase uses the same saved player's existing items and normal `/supply buy`, `sell`, `ship`, `accept` and `deliver` commands. It never grants items, teleports, changes game mode or writes server databases. It reads a consistent schema-v11 SQLite snapshot with Node 22.13+ `node:sqlite` in read-only/query-only mode. The default overworld is required; walking must use existing passages because digging and block placement are disabled during this phase.
+
+Copy `logistics-plan.example.json` outside the tracked source and fill in the actual army UUID, dedicated empty depot/front, configured supply interval, quantities, total purchase prices and freight. The player needs the normal nation-management authority for creating orders, enough treasury funds and all six item types in a saved survival inventory. Create the depot/front and road through normal authority beforehand. The bound army must be at war, in service range and have demand small enough for the available batch. Account for winter/siege demand and any partial consumption while the six deliveries finish; the example counts are not a guarantee that three complete cycles will be possible.
+
+```powershell
+.\tools\acceptance\survival-progression\stage-current.ps1 `
+  -Stage C:\path\to\isolated-folia-stage `
+  -JavaHome C:\path\to\jdk-21 `
+  -MineflayerModule C:\path\to\node_modules\mineflayer `
+  -PathfinderModule C:\path\to\node_modules\mineflayer-pathfinder `
+  -Profile vanilla `
+  -ClientScript .\tools\acceptance\survival-progression\six-resources.cjs `
+  -ClientArguments @('logistics', 'C:\path\to\logistics-plan.json') `
+  -ClientTimeoutMs 2100000
+```
+
+The driver requires six uniquely paid purchases and shipments, exact seller/carrier/amount/resource identities, matching stored physical lots, and at least three consecutive complete six-resource consumption intervals. Every consumed unit must equal a reduction in these delivered lots; old cycles, other inventories, unrelated lots or changed interval lengths cannot supply the proof. Matching native outbox rows must be `APPLIED`. The parent runner then requires normal shutdown, closed ports, a survival-mode NBT save with exactly the sold quantities removed and another read-only database verification.
+
+Before any command, a forced journal is written under `folia-proof/survival-logistics-<runId>.json`. An interrupted run is deliberately not blindly replayed: inspect the recorded commands and purchase/shipment IDs, recover pending inventories through StarSupply, and reconcile the outcome before preparing another isolated run. Reusing the same run ID is refused even if a creation response was lost. Do not delete the journal to bypass that check.
+
+This verifies the delivery/consumption segment when actually run. It does **not** independently prove how the starting items were produced: keep the six production-phase results, action logs and saved checkpoints as acquisition evidence. The result explicitly leaves `survivalProductionVerified` and `processRestartReplayVerified` false. Native outbox confirmation also does not replace the separate Core receipt/restart replay workflow in `../native-supply/README.md`. Current coverage is 11 automated tests using real SQLite migrations and simulated command responses; this phase has not yet passed a live Folia run.

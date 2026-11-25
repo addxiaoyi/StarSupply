@@ -4,10 +4,12 @@ const {createHash} = require('node:crypto');
 const helpers = require('./iron-pickaxe.cjs');
 const {installServerDigConfirmation} = require('./server-dig.cjs');
 const {smeltingState, smeltUntil} = require('./survival-smelting.cjs');
+const {ITEMS, validatePlan, runCycle} = require('./logistics-cycle.cjs');
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function main() {
-  const [stage, mineflayerModule, pathfinderModule, username = 'SupplyCook', phase = 'mining'] = process.argv.slice(2);
+  const [stage, mineflayerModule, pathfinderModule, username = 'SupplyCook', phase = 'mining', planFile] = process.argv.slice(2);
+  const logisticsPlan = phase === 'logistics' ? validatePlan(JSON.parse(fs.readFileSync(planFile, 'utf8'))) : null;
   const mineflayer = require(mineflayerModule), pf = require(pathfinderModule);
   const Vec3 = require(path.join(path.dirname(mineflayerModule), 'vec3')).Vec3;
   const properties = Object.fromEntries(fs.readFileSync(path.join(stage, 'server.properties'), 'utf8')
@@ -23,6 +25,12 @@ async function main() {
     auth: 'offline', version: '1.21.11', viewDistance: 'short', checkTimeoutInterval: 90000});
   bot.loadPlugin(pf.pathfinder);
   let failure;
+  let protocolWorld;
+  bot._client.on('login', packet => { protocolWorld = packet.worldState?.name; });
+  bot._client.on('respawn', packet => {
+    protocolWorld = packet.worldState?.name;
+    if (phase === 'logistics') failure = new Error('World changed during survival logistics');
+  });
   bot.on('error', error => { failure = error; });
   bot.on('kicked', reason => { failure = new Error(`Kicked: ${JSON.stringify(reason)}`); });
   bot.on('death', () => { failure = new Error('Survival player died; saved progress requires recovery'); bot.pathfinder.setGoal(null); });
@@ -522,6 +530,16 @@ async function main() {
         await lootGunpowder();
         await craft('firework_rocket', [['paper', [1]], ['gunpowder', [2]]]);
       }
+    } else if (phase === 'logistics') {
+      // The final inventory delta must be exactly the sold quantities. Navigate
+      // existing passages without mining, placing blocks or consuming supplies.
+      movements.canDig = false; movements.scafoldingBlocks = [];
+      bot.pathfinder.setMovements(movements);
+      await runCycle({stage, plan: logisticsPlan, player: username,
+        inventory: () => Object.fromEntries(Object.values(ITEMS).map(name => [name, count(name)])),
+        world: protocolWorld === 'minecraft:overworld' ? properties['level-name'] : null,
+        travel: point => travel(new Vec3(point.x, point.y, point.z), 3),
+        chat: text => bot.chat(text), until, log});
     } else {
       throw new Error(`Unimplemented survival phase: ${phase}`);
     }
