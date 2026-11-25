@@ -2,11 +2,17 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
+## 2026-11-26 预算付款恢复检查点
+
+第十份[预算补丁](upstream/BUDGET-RECOVERY.md)修复预拨、补差和退款的跨保存中断，876 项 Core 定向回归通过（预算 81 项）。真实文件中原编号重试保持 840，不再重复扣到 680。待恢复处置、旧月份余款结转和归档仍待开发。未启动实服，生产 Folia 声明继续关闭；完整 Core 干净构建、MySQL 和剩余模块门槛仍见[清单](CODE-CLOSURE.md)及[证据](verification/workspace-budget-recovery-20261126.json)。
+
+当前 Core SHA-256：`E934CF6E84C8DC08B71910A9B2192F4FFDA4B623F10852133ABC209A30EE95DC`；下方为此前构建的历史记录。
+
 ## 2026-11-26 海军可靠性检查点
 
-第九份[海军补丁](upstream/NAVY-RELIABILITY.md)修复权限、直接国库付款恢复、分钟维护、海战状态和启停；718 项 Core 定向测试通过。海军仍未加入实验后勤 profile，真实运兵、港口接线及预算服务中断恢复仍缺代码。未启动实服，生产 Folia 声明继续关闭。详见[证据](verification/workspace-navy-reliability-20261126.json)和[未闭环清单](CODE-CLOSURE.md)。
+第九份[海军补丁](upstream/NAVY-RELIABILITY.md)修复权限、直接国库付款恢复、分钟维护、海战状态和启停；718 项 Core 定向测试通过。海军仍未加入实验后勤 profile，当时真实运兵、港口接线及预算服务中断恢复仍缺代码；预算新协议现已由第十份修复。未启动实服，生产 Folia 声明继续关闭。详见[证据](verification/workspace-navy-reliability-20261126.json)和[未闭环清单](CODE-CLOSURE.md)。
 
-当前 Core SHA-256：`7CBBF81FB402E3B888D097D7213DC15585B68FEE39A36640C978FC6EBDB55AB4`；以下 Faith 记录属于此前构建。
+海军检查点 Core SHA-256：`7CBBF81FB402E3B888D097D7213DC15585B68FEE39A36640C978FC6EBDB55AB4`；以下 Faith 记录属于此前构建。
 
 ## 2026-11-26 Faith 与 Religion 代码和自动化闭环
 

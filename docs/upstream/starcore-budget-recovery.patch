@@ -1,0 +1,3212 @@
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/BudgetMoneyOperation.java b/src/main/java/dev/starcore/starcore/module/treasury/BudgetMoneyOperation.java
+new file mode 100644
+index 0000000..8b935ed
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/treasury/BudgetMoneyOperation.java
+@@ -0,0 +1,98 @@
++package dev.starcore.starcore.module.treasury;
++
++import java.nio.charset.StandardCharsets;
++import java.util.Objects;
++import java.util.UUID;
++
++/** Durable original quote; a prepared operation reserves admission until it is settled. */
++record BudgetMoneyOperation(
++    Kind kind,
++    Status status,
++    UUID subjectId,
++    String requestId,
++    NationSpendingService.SpendingCategory category,
++    String description,
++    NationSpendingReceipt quote) {
++  enum Kind {
++    FUND,
++    SPEND,
++    REFUND
++  }
++
++  enum Status {
++    PREPARED,
++    APPLIED
++  }
++
++  BudgetMoneyOperation {
++    Objects.requireNonNull(kind);
++    Objects.requireNonNull(status);
++    Objects.requireNonNull(subjectId);
++    Objects.requireNonNull(requestId);
++    Objects.requireNonNull(category);
++    Objects.requireNonNull(description);
++    Objects.requireNonNull(quote);
++    if (requestId.isBlank()
++        || requestId.length() > 4096
++        || description.length() > 16384
++        || !subjectId.equals(quote.transactionId())
++        || quote.refunded()) throw new IllegalArgumentException("Invalid budget money operation");
++    if (kind != Kind.FUND && !subjectId.equals(requestUuid(requestId)))
++      throw new IllegalArgumentException("Budget original request identity mismatch");
++    if (kind == Kind.FUND
++        && (!requestId.equals("budget-funding:" + subjectId)
++            || quote.budgetAmount().signum() != 0
++            || category != NationSpendingService.SpendingCategory.OTHER
++            || quote.category() != BudgetService.BudgetCategory.OTHER
++            || !description.equals("Budget funding: " + subjectId)))
++      throw new IllegalArgumentException("Invalid budget funding quote");
++    if (!quote.description().equals(description.trim()))
++      throw new IllegalArgumentException("Budget original description mismatch");
++    if (kind == Kind.SPEND && quote.category() != budgetCategory(category))
++      throw new IllegalArgumentException("Budget original category mismatch");
++  }
++
++  static BudgetService.BudgetCategory budgetCategory(
++      NationSpendingService.SpendingCategory category) {
++    return switch (category) {
++      case TERRITORY_RENT, TERRITORY_LEASE_FEE -> BudgetService.BudgetCategory.INFRASTRUCTURE;
++      case RESEARCH -> BudgetService.BudgetCategory.RESEARCH;
++      case MILITARY -> BudgetService.BudgetCategory.MILITARY;
++      case TREATY -> BudgetService.BudgetCategory.DIPLOMACY;
++      case NATIONAL_EVENT -> BudgetService.BudgetCategory.ADMINISTRATION;
++      case OTHER -> BudgetService.BudgetCategory.OTHER;
++    };
++  }
++
++  String key() {
++    return kind.name() + ":" + subjectId;
++  }
++
++  BudgetMoneyOperation applied() {
++    return new BudgetMoneyOperation(
++        kind, Status.APPLIED, subjectId, requestId, category, description, quote);
++  }
++
++  static UUID requestUuid(String request) {
++    return UUID.nameUUIDFromBytes(request.getBytes(StandardCharsets.UTF_8));
++  }
++
++  NationSpendingService.SpendRequest debitRequest() {
++    return new NationSpendingService.SpendRequest(
++        "budget:v3:" + kind.name() + ":" + subjectId,
++        quote.nationId(),
++        quote.treasuryAmount(),
++        category,
++        "Budget " + kind.name() + ":" + requestId);
++  }
++
++  NationCreditService.CreditRequest refundRequest() {
++    // Keep the historical key so retries of pre-v3 refunds cannot credit again.
++    return new NationCreditService.CreditRequest(
++        "budget-spending-refund:" + subjectId,
++        quote.nationId(),
++        quote.treasuryAmount(),
++        NationCreditService.CreditCategory.BUDGET_SPENDING_REFUND,
++        "Budget spending refund: " + quote.description());
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/BudgetServiceImpl.java b/src/main/java/dev/starcore/starcore/module/treasury/BudgetServiceImpl.java
+index b510530..40407f1 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/BudgetServiceImpl.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/BudgetServiceImpl.java
+@@ -48,6 +48,10 @@ public final class BudgetServiceImpl
+   private final Map<UUID, BudgetBill> budgets = new LinkedHashMap<>();
+   private final Map<NationId, UUID> currentBudgets = new LinkedHashMap<>();
+   private final Map<UUID, NationSpendingReceipt> receipts = new LinkedHashMap<>();
++  private final Map<String, BudgetMoneyOperation> operations = new LinkedHashMap<>();
++  private BukkitTask recoveryTask;
++  private boolean active;
++  private boolean notifying;
+   private final BudgetStateCodec stateCodec = new BudgetStateCodec();
+   private final Clock clock;
+ 
+@@ -59,6 +63,7 @@ public final class BudgetServiceImpl
+   private StarCoreContext currentContext;
+   private boolean stateLoaded;
+   private boolean reconciliationRequired;
++  private BudgetStateSnapshot durableState;
+ 
+   public BudgetServiceImpl() {
+     this(null, null, Clock.systemDefaultZone());
+@@ -79,6 +84,7 @@ public final class BudgetServiceImpl
+     this.clock = Objects.requireNonNull(clock, "clock");
+     if (stateStorage != null) {
+       loadState();
++      active = true;
+     }
+   }
+ 
+@@ -89,35 +95,59 @@ public final class BudgetServiceImpl
+ 
+   @Override
+   public void enable(StarCoreContext context) {
+-    this.currentContext = Objects.requireNonNull(context, "context");
+-    this.treasuryService = context.serviceRegistry().require(TreasuryService.class);
+-    this.nationCreditService = context.serviceRegistry().require(NationCreditService.class);
+-    if (stateStorage == null) {
+-      context.persistenceService().ensureNamespace(STORAGE_NAMESPACE).join();
+-      stateStorage =
+-          new PersistenceBudgetStateStorage(STORAGE_NAMESPACE, context.persistenceService());
+-      if (context.databaseService().isRunning()) {
+-        stateStorage =
+-            new SqlBudgetStateStorage(
+-                () ->
+-                    context
+-                        .databaseService()
+-                        .dataSource()
+-                        .orElseThrow(
+-                            () ->
+-                                new IllegalStateException("Budget SQL DataSource is unavailable")),
+-                stateStorage);
++    synchronized (stateLock) {
++      disable(context);
++      try {
++        this.currentContext = Objects.requireNonNull(context, "context");
++        this.treasuryService = context.serviceRegistry().require(TreasuryService.class);
++        this.nationCreditService = context.serviceRegistry().require(NationCreditService.class);
++        if (stateStorage == null) {
++          context.persistenceService().ensureNamespace(STORAGE_NAMESPACE).join();
++          stateStorage =
++              new PersistenceBudgetStateStorage(STORAGE_NAMESPACE, context.persistenceService());
++          if (context.databaseService().isRunning()) {
++            stateStorage =
++                new SqlBudgetStateStorage(
++                    () ->
++                        context
++                            .databaseService()
++                            .dataSource()
++                            .orElseThrow(
++                                () ->
++                                    new IllegalStateException(
++                                        "Budget SQL DataSource is unavailable")),
++                    stateStorage);
++          }
++        }
++        stateLoaded = false;
++        reconciliationRequired = false;
++        loadState();
++        active = true;
++        tryRecoverPayments();
++        startMonthlyResetTask(context);
++        recoveryTask =
++            CompatScheduler.asyncTimer(context.plugin(), this::tryRecoverPayments, 1200L, 1200L);
++        if (recoveryTask == null)
++          throw new IllegalStateException("Budget recovery scheduling failed");
++      } catch (RuntimeException failure) {
++        disable(context);
++        throw failure;
+       }
+     }
+-    loadState();
+-    startMonthlyResetTask(context);
+   }
+ 
+   @Override
+   public void disable(StarCoreContext context) {
+-    stopMonthlyResetTask();
+-    // Every mutation is persisted synchronously; shutdown must not rewrite an idle SQL snapshot.
+-    currentContext = null;
++    synchronized (stateLock) {
++      active = false;
++      stopMonthlyResetTask();
++      if (recoveryTask != null) {
++        recoveryTask.cancel();
++        recoveryTask = null;
++      }
++      // Every mutation is persisted synchronously; do not rewrite an idle snapshot.
++      currentContext = null;
++    }
+   }
+ 
+   @Override
+@@ -127,7 +157,7 @@ public final class BudgetServiceImpl
+       throw new IllegalArgumentException("month must be between 1 and 12");
+     }
+     synchronized (stateLock) {
+-      refreshStateLocked();
++      readyLocked();
+       BudgetBill existing = currentBudgetLocked(nationId).orElse(null);
+       if (existing != null && existing.year() == year && existing.month() == month) {
+         return existing;
+@@ -160,7 +190,7 @@ public final class BudgetServiceImpl
+     Objects.requireNonNull(category, "category");
+     BigDecimal normalized = requirePositive(amount, "amount");
+     synchronized (stateLock) {
+-      refreshStateLocked();
++      readyLocked();
+       persistMutationLocked(
+           () -> {
+             BudgetBill budget = requireBudgetLocked(billId);
+@@ -204,7 +234,7 @@ public final class BudgetServiceImpl
+     Objects.requireNonNull(billId, "billId");
+     BudgetBill submitted;
+     synchronized (stateLock) {
+-      refreshStateLocked();
++      readyLocked();
+       submitted =
+           persistMutationLocked(
+               () -> {
+@@ -244,7 +274,7 @@ public final class BudgetServiceImpl
+     String actor = approvedBy == null || approvedBy.isBlank() ? "SYSTEM" : approvedBy.trim();
+     BudgetBill approved;
+     synchronized (stateLock) {
+-      refreshStateLocked();
++      readyLocked();
+       BudgetBill existing = budgets.get(billId);
+       if (existing == null) {
+         return false;
+@@ -282,62 +312,40 @@ public final class BudgetServiceImpl
+   @Override
+   public boolean executeBudget(UUID billId) {
+     Objects.requireNonNull(billId, "billId");
+-    BudgetBill executed;
+     synchronized (stateLock) {
+-      refreshStateLocked();
+-      BudgetBill budget = budgets.get(billId);
+-      if (budget == null) {
+-        return false;
+-      }
+-      if (budget.status() == BudgetBill.BudgetStatus.EXECUTED) {
+-        return true;
+-      }
+-      if (budget.status() != BudgetBill.BudgetStatus.APPROVED) {
+-        return false;
+-      }
+-      TreasuryService treasury = requireTreasuryService();
+-      if (!treasury.withdraw(budget.nationId(), budget.totalAmount())) {
+-        recordBudgetEvent(
+-            budget.nationId(),
+-            "insufficient-funds",
+-            "amount="
+-                + budget.totalAmount().toPlainString()
+-                + ";balance="
+-                + treasury.balance(budget.nationId()).toPlainString());
++      readyLocked();
++      BudgetBill bill = budgets.get(billId);
++      if (bill == null) return false;
++      if (bill.status() == BudgetBill.BudgetStatus.EXECUTED) return true;
++      if (bill.status() != BudgetBill.BudgetStatus.APPROVED) return false;
++      requireDurableSpending();
++      if (requireTreasuryService().balance(bill.nationId()).compareTo(bill.totalAmount()) < 0)
+         return false;
+-      }
+-
+-      BudgetStateSnapshot before = snapshotLocked();
+-      executed =
+-          new BudgetBill(
+-              budget.billId(),
+-              budget.nationId(),
+-              budget.year(),
+-              budget.month(),
+-              budget.entries(),
+-              budget.totalAmount(),
+-              BudgetBill.BudgetStatus.EXECUTED,
+-              budget.approvedAt() == null ? clock.instant() : budget.approvedAt(),
+-              budget.approvedBy() == null ? "SYSTEM" : budget.approvedBy());
+-      budgets.put(billId, executed);
+-      try {
+-        persistStateLocked();
+-      } catch (RuntimeException persistenceFailure) {
+-        restoreLocked(before);
+-        if (persistenceFailure instanceof BudgetStateReconciliationException)
+-          throw persistenceFailure;
+-        compensateTreasuryCredit(
+-            treasury,
+-            budget.nationId(),
+-            budget.totalAmount(),
+-            "Budget funding compensation failed",
+-            persistenceFailure);
+-        throw new IllegalStateException("Failed to persist funded budget", persistenceFailure);
+-      }
++      var quote =
++          new NationSpendingReceipt(
++              billId,
++              bill.nationId(),
++              BudgetCategory.OTHER,
++              bill.totalAmount(),
++              zero(),
++              bill.totalAmount(),
++              null,
++              "Budget funding: " + billId,
++              clock.instant(),
++              false);
++      var intent =
++          new BudgetMoneyOperation(
++              BudgetMoneyOperation.Kind.FUND,
++              BudgetMoneyOperation.Status.PREPARED,
++              billId,
++              "budget-funding:" + billId,
++              SpendingCategory.OTHER,
++              quote.description(),
++              quote);
++      prepareLocked(intent);
++      finishLocked(intent);
++      return true;
+     }
+-    recordBudgetEvent(
+-        executed.nationId(), "funded", "amount=" + executed.totalAmount().toPlainString());
+-    return true;
+   }
+ 
+   @Override
+@@ -345,7 +353,7 @@ public final class BudgetServiceImpl
+     Objects.requireNonNull(billId, "billId");
+     BudgetBill cancelled;
+     synchronized (stateLock) {
+-      refreshStateLocked();
++      readyLocked();
+       BudgetBill budget = budgets.get(billId);
+       if (budget == null || budget.status() == BudgetBill.BudgetStatus.EXECUTED) {
+         return false;
+@@ -378,49 +386,101 @@ public final class BudgetServiceImpl
+   @Override
+   public SpendResult spend(SpendRequest request) {
+     Objects.requireNonNull(request, "request");
+-    UUID transactionId =
+-        UUID.nameUUIDFromBytes(
+-            request.transactionId().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+-    BudgetCategory category = mapSpendingCategoryToBudgetCategory(request.category());
+-
+-    Optional<SpendingMutation> mutationOpt =
+-        spendInternal(
+-            transactionId, request.nationId(), category, request.amount(), request.description());
+-
+-    if (mutationOpt.isEmpty()) {
+-      TreasuryService treasury = requireTreasuryService();
++    UUID id = BudgetMoneyOperation.requestUuid(request.transactionId());
++    synchronized (stateLock) {
++      refreshStateLocked();
++      var operation = operations.get("SPEND:" + id);
++      if (operation != null) verifyOriginal(operation, request);
++      readyLocked();
++      operation = operations.get("SPEND:" + id);
++      if (operation != null) verifyOriginal(operation, request);
++      var existing = receipts.get(id);
++      if (existing != null) {
++        verifyIdempotentRequest(
++            existing,
++            request.nationId(),
++            mapSpendingCategoryToBudgetCategory(request.category()),
++            request.amount(),
++            request.description().trim());
++        if (existing.refunded())
++          throw new IllegalStateException("Spending transaction was already refunded");
++        return new SpendResult(
++            SpendingStatus.ALREADY_APPLIED,
++            request.transactionId(),
++            requireTreasuryService().balance(request.nationId()));
++      }
++      var category = mapSpendingCategoryToBudgetCategory(request.category());
++      var budget = activeFundedBudgetLocked(request.nationId()).orElse(null);
++      var allocated =
++          budget == null ? zero() : budgetRemainingLocked(budget, category).min(request.amount());
++      var debit = request.amount().subtract(allocated);
++      if (debit.signum() > 0) {
++        requireDurableSpending();
++        if (requireTreasuryService().balance(request.nationId()).compareTo(debit) < 0)
++          return new SpendResult(
++              SpendingStatus.INSUFFICIENT_FUNDS,
++              request.transactionId(),
++              requireTreasuryService().balance(request.nationId()));
++      }
++      var quote =
++          new NationSpendingReceipt(
++              id,
++              request.nationId(),
++              category,
++              request.amount(),
++              allocated,
++              debit,
++              allocated.signum() > 0 ? budget.billId() : null,
++              request.description(),
++              clock.instant(),
++              false);
++      var intent =
++          new BudgetMoneyOperation(
++              BudgetMoneyOperation.Kind.SPEND,
++              BudgetMoneyOperation.Status.PREPARED,
++              id,
++              request.transactionId(),
++              request.category(),
++              request.description(),
++              quote);
++      prepareLocked(intent);
++      finishLocked(intent);
+       return new SpendResult(
+-          SpendingStatus.INSUFFICIENT_FUNDS,
++          SpendingStatus.APPLIED,
+           request.transactionId(),
+-          treasury.balance(request.nationId()));
++          requireTreasuryService().balance(request.nationId()));
+     }
++  }
+ 
+-    SpendingMutation mutation = mutationOpt.get();
+-    TreasuryService treasury = requireTreasuryService();
+-    return new SpendResult(
+-        mutation.alreadyApplied() ? SpendingStatus.ALREADY_APPLIED : SpendingStatus.APPLIED,
+-        request.transactionId(),
+-        treasury.balance(request.nationId()));
++  private void verifyOriginal(BudgetMoneyOperation intent, SpendRequest request) {
++    if (!intent.requestId().equals(request.transactionId())
++        || intent.category() != request.category()
++        || !intent.description().equals(request.description())
++        || !intent.quote().nationId().equals(request.nationId())
++        || intent.quote().amount().compareTo(request.amount()) != 0)
++      throw new IllegalArgumentException("Budget request conflicts with its original quote");
+   }
+ 
+   @Override
+   public Optional<SpendingReceipt> spendingReceipt(String transactionId) {
+     Objects.requireNonNull(transactionId, "transactionId");
+-    UUID uuid =
+-        UUID.nameUUIDFromBytes(transactionId.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+     synchronized (stateLock) {
+-      refreshStateLocked();
+-      NationSpendingReceipt receipt = receipts.get(uuid);
+-      if (receipt == null) {
+-        return Optional.empty();
+-      }
++      readyLocked();
++      UUID id = BudgetMoneyOperation.requestUuid(transactionId);
++      var receipt = receipts.get(id);
++      if (receipt == null) return Optional.empty();
++      var original = operations.get("SPEND:" + id);
++      if (original != null && !original.requestId().equals(transactionId))
++        throw new IllegalArgumentException("Budget request identity conflict");
+       return Optional.of(
+           new SpendingReceipt(
+               transactionId,
+               receipt.nationId(),
+               receipt.amount(),
+-              mapBudgetCategoryToSpendingCategory(receipt.category()),
+-              receipt.description(),
++              original == null
++                  ? mapBudgetCategoryToSpendingCategory(receipt.category())
++                  : original.category(),
++              original == null ? receipt.description() : original.description(),
+               receipt.spentAt(),
+               receipt.refunded()));
+     }
+@@ -429,9 +489,162 @@ public final class BudgetServiceImpl
+   @Override
+   public boolean refund(String transactionId) {
+     Objects.requireNonNull(transactionId, "transactionId");
+-    UUID uuid =
+-        UUID.nameUUIDFromBytes(transactionId.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+-    return refundInternal(uuid);
++    synchronized (stateLock) {
++      readyLocked();
++      UUID id = BudgetMoneyOperation.requestUuid(transactionId);
++      var receipt = receipts.get(id);
++      if (receipt == null) return false;
++      var original = operations.get("SPEND:" + id);
++      if (original != null && !original.requestId().equals(transactionId))
++        throw new IllegalArgumentException("Budget request identity conflict");
++      if (receipt.refunded()) return true;
++      if (receipt.treasuryAmount().signum() > 0) requireNationCreditService();
++      var intent =
++          new BudgetMoneyOperation(
++              BudgetMoneyOperation.Kind.REFUND,
++              BudgetMoneyOperation.Status.PREPARED,
++              id,
++              transactionId,
++              original == null
++                  ? mapBudgetCategoryToSpendingCategory(receipt.category())
++                  : original.category(),
++              original == null ? receipt.description() : original.description(),
++              receipt);
++      prepareLocked(intent);
++      finishLocked(intent);
++      return true;
++    }
++  }
++
++  /** Resume persisted original quotes; never infer payment from a current balance. */
++  public void recoverPayments() {
++    synchronized (stateLock) {
++      readyLocked();
++    }
++  }
++
++  public Map<String, String> pendingPayments() {
++    synchronized (stateLock) {
++      refreshStateLocked();
++      var result = new LinkedHashMap<String, String>();
++      operations.values().stream()
++          .filter(o -> o.status() == BudgetMoneyOperation.Status.PREPARED)
++          .forEach(o -> result.put(o.key(), o.requestId()));
++      return Map.copyOf(result);
++    }
++  }
++
++  private void tryRecoverPayments() {
++    try {
++      recoverPayments();
++    } catch (RuntimeException failure) {
++      synchronized (stateLock) {
++        logWarning(
++            "BUDGET_RECOVERY_PENDING: "
++                + operations.values().stream()
++                    .filter(o -> o.status() == BudgetMoneyOperation.Status.PREPARED)
++                    .map(BudgetMoneyOperation::key)
++                    .toList()
++                + "; "
++                + failure.getMessage());
++      }
++    }
++  }
++
++  private void readyLocked() {
++    refreshStateLocked();
++    for (var operation : List.copyOf(operations.values()))
++      if (operation.status() == BudgetMoneyOperation.Status.PREPARED) finishLocked(operation);
++  }
++
++  private NationSpendingService requireDurableSpending() {
++    if (requireTreasuryService() instanceof NationSpendingService authority && authority != this)
++      return authority;
++    throw new IllegalStateException("Budget requires treasury spending receipts");
++  }
++
++  private void prepareLocked(BudgetMoneyOperation operation) {
++    if (operations.values().stream()
++        .anyMatch(o -> o.status() == BudgetMoneyOperation.Status.PREPARED))
++      throw new IllegalStateException("Budget has an unresolved money operation");
++    persistMutationLocked(
++        () -> {
++          operations.put(operation.key(), operation);
++          return null;
++        });
++  }
++
++  private void finishLocked(BudgetMoneyOperation operation) {
++    if (operation.status() == BudgetMoneyOperation.Status.APPLIED) return;
++    var quote = operation.quote();
++    if (quote.treasuryAmount().signum() > 0) {
++      if (operation.kind() == BudgetMoneyOperation.Kind.REFUND) {
++        var request = operation.refundRequest();
++        var authority = requireNationCreditService();
++        var proof = authority.creditReceipt(request.transactionId());
++        if (proof.isEmpty()) {
++          authority.credit(request);
++          proof = authority.creditReceipt(request.transactionId());
++        }
++        var receipt =
++            proof.orElseThrow(
++                () -> new IllegalStateException("Budget refund confirmation pending"));
++        if (!receipt.transactionId().equals(request.transactionId())
++            || !receipt.nationId().equals(request.nationId())
++            || receipt.amount().compareTo(request.amount()) != 0
++            || receipt.category() != request.category()
++            || !receipt.description().equals(request.description()))
++          throw new IllegalStateException("Budget refund receipt conflict");
++      } else {
++        var request = operation.debitRequest();
++        var authority = requireDurableSpending();
++        var proof = authority.spendingReceipt(request.transactionId());
++        if (proof.isEmpty()) {
++          authority.spend(request);
++          proof = authority.spendingReceipt(request.transactionId());
++        }
++        var receipt =
++            proof.orElseThrow(
++                () ->
++                    new IllegalStateException(
++                        "Budget debit confirmation pending; original intent retained"));
++        if (!receipt.transactionId().equals(request.transactionId())
++            || !receipt.nationId().equals(request.nationId())
++            || receipt.amount().compareTo(request.amount()) != 0
++            || receipt.category() != request.category()
++            || !receipt.description().equals(request.description())
++            || receipt.refunded()) throw new IllegalStateException("Budget debit receipt conflict");
++      }
++    }
++    persistMutationLocked(
++        () -> {
++          switch (operation.kind()) {
++            case FUND -> {
++              var bill = requireBudgetLocked(operation.subjectId());
++              budgets.put(
++                  bill.billId(),
++                  new BudgetBill(
++                      bill.billId(),
++                      bill.nationId(),
++                      bill.year(),
++                      bill.month(),
++                      bill.entries(),
++                      bill.totalAmount(),
++                      BudgetBill.BudgetStatus.EXECUTED,
++                      bill.approvedAt() == null ? quote.spentAt() : bill.approvedAt(),
++                      bill.approvedBy() == null ? "SYSTEM" : bill.approvedBy()));
++            }
++            case SPEND -> receipts.put(operation.subjectId(), quote);
++            case REFUND -> receipts.put(operation.subjectId(), quote.asRefunded());
++          }
++          operations.put(operation.key(), operation.applied());
++          return null;
++        });
++    if (operation.kind() == BudgetMoneyOperation.Kind.FUND)
++      recordBudgetEvent(quote.nationId(), "funded", "billId=" + operation.subjectId());
++    else
++      recordSpendingEvent(
++          operation.kind() == BudgetMoneyOperation.Kind.REFUND ? "refunded" : "committed", quote);
+   }
+ 
+   @Override
+@@ -462,14 +675,7 @@ public final class BudgetServiceImpl
+   }
+ 
+   private BudgetCategory mapSpendingCategoryToBudgetCategory(SpendingCategory category) {
+-    return switch (category) {
+-      case TERRITORY_RENT, TERRITORY_LEASE_FEE -> BudgetCategory.INFRASTRUCTURE;
+-      case RESEARCH -> BudgetCategory.RESEARCH;
+-      case MILITARY -> BudgetCategory.MILITARY;
+-      case TREATY -> BudgetCategory.DIPLOMACY;
+-      case NATIONAL_EVENT -> BudgetCategory.ADMINISTRATION;
+-      case OTHER -> BudgetCategory.OTHER;
+-    };
++    return BudgetMoneyOperation.budgetCategory(category);
+   }
+ 
+   private SpendingCategory mapBudgetCategoryToSpendingCategory(BudgetCategory category) {
+@@ -485,141 +691,6 @@ public final class BudgetServiceImpl
+ 
+   // ==================== 内部支出方法 ====================
+ 
+-  private Optional<SpendingMutation> spendInternal(
+-      UUID transactionId,
+-      NationId nationId,
+-      BudgetCategory category,
+-      BigDecimal amount,
+-      String description) {
+-    Objects.requireNonNull(transactionId, "transactionId");
+-    Objects.requireNonNull(nationId, "nationId");
+-    Objects.requireNonNull(category, "category");
+-    BigDecimal normalized = requirePositive(amount, "amount");
+-    String normalizedDescription = description == null ? "" : description.trim();
+-    NationSpendingReceipt committed;
+-
+-    synchronized (stateLock) {
+-      refreshStateLocked();
+-      NationSpendingReceipt existing = receipts.get(transactionId);
+-      if (existing != null) {
+-        verifyIdempotentRequest(existing, nationId, category, normalized, normalizedDescription);
+-        if (existing.refunded()) {
+-          throw new IllegalStateException("Spending transaction was already refunded");
+-        }
+-        return Optional.of(new SpendingMutation(true));
+-      }
+-
+-      BudgetBill activeBudget = activeFundedBudgetLocked(nationId).orElse(null);
+-      BigDecimal budgetAmount = zero();
+-      UUID budgetId = null;
+-      if (activeBudget != null) {
+-        BigDecimal remaining = budgetRemainingLocked(activeBudget, category);
+-        budgetAmount = remaining.min(normalized);
+-        if (budgetAmount.signum() > 0) {
+-          budgetId = activeBudget.billId();
+-        }
+-      }
+-      BigDecimal treasuryAmount = normalize(normalized.subtract(budgetAmount));
+-      TreasuryService treasury = null;
+-      if (treasuryAmount.signum() > 0) {
+-        treasury = requireTreasuryService();
+-        if (!treasury.withdraw(nationId, treasuryAmount)) {
+-          return Optional.empty();
+-        }
+-      }
+-
+-      BudgetStateSnapshot before = snapshotLocked();
+-      committed =
+-          new NationSpendingReceipt(
+-              transactionId,
+-              nationId,
+-              category,
+-              normalized,
+-              budgetAmount,
+-              treasuryAmount,
+-              budgetId,
+-              normalizedDescription,
+-              clock.instant(),
+-              false);
+-      receipts.put(transactionId, committed);
+-      try {
+-        persistStateLocked();
+-      } catch (RuntimeException persistenceFailure) {
+-        restoreLocked(before);
+-        if (persistenceFailure instanceof BudgetStateReconciliationException)
+-          throw persistenceFailure;
+-        if (treasuryAmount.signum() > 0) {
+-          compensateTreasuryCredit(
+-              treasury,
+-              nationId,
+-              treasuryAmount,
+-              "Nation spending compensation failed",
+-              persistenceFailure);
+-        }
+-        throw new IllegalStateException("Failed to persist national spending", persistenceFailure);
+-      }
+-    }
+-
+-    recordSpendingEvent("committed", committed);
+-    return Optional.of(new SpendingMutation(false));
+-  }
+-
+-  private record SpendingMutation(boolean alreadyApplied) {}
+-
+-  private synchronized boolean refundInternal(UUID transactionId) {
+-    Objects.requireNonNull(transactionId, "transactionId");
+-    NationSpendingReceipt existing;
+-    synchronized (stateLock) {
+-      refreshStateLocked();
+-      existing = receipts.get(transactionId);
+-      if (existing == null) {
+-        return false;
+-      }
+-      if (existing.refunded()) {
+-        return true;
+-      }
+-    }
+-
+-    if (existing.treasuryAmount().signum() > 0) {
+-      NationCreditService.CreditResult credit =
+-          requireNationCreditService()
+-              .credit(
+-                  new NationCreditService.CreditRequest(
+-                      "budget-spending-refund:" + transactionId,
+-                      existing.nationId(),
+-                      existing.treasuryAmount(),
+-                      NationCreditService.CreditCategory.BUDGET_SPENDING_REFUND,
+-                      "Budget spending refund: " + existing.description()));
+-      if (!credit.applied()) {
+-        return false;
+-      }
+-    }
+-
+-    NationSpendingReceipt refunded;
+-    synchronized (stateLock) {
+-      refreshStateLocked();
+-      NationSpendingReceipt current = receipts.get(transactionId);
+-      if (current == null) {
+-        return false;
+-      }
+-      if (current.refunded()) {
+-        return true;
+-      }
+-      BudgetStateSnapshot before = snapshotLocked();
+-      refunded = current.asRefunded();
+-      receipts.put(transactionId, refunded);
+-      try {
+-        persistStateLocked();
+-      } catch (RuntimeException persistenceFailure) {
+-        restoreLocked(before);
+-        throw new IllegalStateException(
+-            "Failed to persist national spending refund", persistenceFailure);
+-      }
+-    }
+-    recordSpendingEvent("refunded", refunded);
+-    return true;
+-  }
+-
+   private Optional<NationSpendingReceipt> receiptInternal(UUID transactionId) {
+     Objects.requireNonNull(transactionId, "transactionId");
+     synchronized (stateLock) {
+@@ -882,6 +953,8 @@ public final class BudgetServiceImpl
+       creditService = currentContext.serviceRegistry().find(NationCreditService.class).orElse(null);
+       nationCreditService = creditService;
+     }
++    if (creditService == null && treasuryService instanceof NationCreditService authority)
++      creditService = authority;
+     if (creditService == null) {
+       throw new IllegalStateException("Nation credit service is not available");
+     }
+@@ -904,29 +977,6 @@ public final class BudgetServiceImpl
+     }
+   }
+ 
+-  private boolean safeTryDeposit(TreasuryService treasury, NationId nationId, BigDecimal amount) {
+-    try {
+-      return treasury.tryDeposit(nationId, amount);
+-    } catch (RuntimeException failure) {
+-      logWarning("Treasury refund threw for " + nationId + ": " + failure.getMessage());
+-      return false;
+-    }
+-  }
+-
+-  private void compensateTreasuryCredit(
+-      TreasuryService treasury,
+-      NationId nationId,
+-      BigDecimal amount,
+-      String message,
+-      RuntimeException originalFailure) {
+-    if (safeTryDeposit(treasury, nationId, amount)) {
+-      return;
+-    }
+-    IllegalStateException critical = new IllegalStateException(message, originalFailure);
+-    reconciliationRequired = true;
+-    throw critical;
+-  }
+-
+   private <T> T persistMutationLocked(Supplier<T> mutation) {
+     BudgetStateSnapshot before = snapshotLocked();
+     T result;
+@@ -937,11 +987,15 @@ public final class BudgetServiceImpl
+     } catch (RuntimeException failure) {
+       restoreLocked(before);
+       throw failure;
++    } catch (Error interrupted) {
++      restoreLocked(before);
++      reconciliationRequired = true;
++      throw interrupted;
+     }
+   }
+ 
+   private BudgetStateSnapshot snapshotLocked() {
+-    return new BudgetStateSnapshot(budgets, currentBudgets, receipts);
++    return new BudgetStateSnapshot(budgets, currentBudgets, receipts, operations);
+   }
+ 
+   private void restoreLocked(BudgetStateSnapshot snapshot) {
+@@ -951,6 +1005,8 @@ public final class BudgetServiceImpl
+     currentBudgets.putAll(snapshot.currentBudgets());
+     receipts.clear();
+     receipts.putAll(snapshot.receipts());
++    operations.clear();
++    operations.putAll(snapshot.operations());
+   }
+ 
+   private void loadState() {
+@@ -960,22 +1016,45 @@ public final class BudgetServiceImpl
+       }
+       BudgetStateSnapshot loaded = stateCodec.fromProperties(stateStorage.load());
+       restoreLocked(loaded);
++      durableState = loaded;
+       stateLoaded = true;
+     }
+   }
+ 
+   private void persistStateLocked() {
+     if (stateStorage != null) {
++      BudgetStateSnapshot candidate = snapshotLocked();
+       try {
+-        stateStorage.save(stateCodec.toProperties(snapshotLocked()));
+-      } catch (BudgetStateReconciliationException uncertain) {
+-        reconciliationRequired = true;
++        stateStorage.save(stateCodec.toProperties(candidate));
++        durableState = candidate;
++      } catch (BudgetStateConflictException conflict) {
++        throw conflict;
++      } catch (RuntimeException uncertain) {
++        try {
++          var actual = stateCodec.fromProperties(stateStorage.load());
++          if (sameDurableState(candidate, actual)) {
++            durableState = actual;
++            return;
++          }
++          if (!sameDurableState(durableState, actual)) reconciliationRequired = true;
++        } catch (RuntimeException unreadable) {
++          uncertain.addSuppressed(unreadable);
++          reconciliationRequired = true;
++        }
+         throw uncertain;
+       }
+     }
+   }
+ 
++  private boolean sameDurableState(BudgetStateSnapshot left, BudgetStateSnapshot right) {
++    // The durable format stores milliseconds; system clocks can have nanosecond precision.
++    return left != null
++        && right != null
++        && stateCodec.toProperties(left).equals(stateCodec.toProperties(right));
++  }
++
+   private void refreshStateLocked() {
++    if (!active || notifying) throw new IllegalStateException("Budget service is unavailable");
+     if (reconciliationRequired) {
+       throw new IllegalStateException("Budget requires restart and financial reconciliation");
+     }
+@@ -987,6 +1066,7 @@ public final class BudgetServiceImpl
+                 BudgetStateSnapshot validated = stateCodec.fromProperties(refresh.properties());
+                 stateStorage.acceptRefresh(refresh);
+                 restoreLocked(validated);
++                durableState = validated;
+               });
+     }
+   }
+@@ -1000,7 +1080,18 @@ public final class BudgetServiceImpl
+     stopMonthlyResetTask();
+     monthlyResetTask =
+         CompatScheduler.globalTimer(
+-            context.plugin(), this::performMonthlyReset, 20L * 60 * 60 * 24, 20L * 60 * 60 * 24);
++            context.plugin(),
++            () -> {
++              try {
++                performMonthlyReset();
++              } catch (RuntimeException failure) {
++                logWarning("Budget monthly processing pending: " + failure.getMessage());
++              }
++            },
++            20L * 60 * 60 * 24,
++            20L * 60 * 60 * 24);
++    if (monthlyResetTask == null)
++      throw new IllegalStateException("Budget monthly scheduling failed");
+   }
+ 
+   private void stopMonthlyResetTask() {
+@@ -1015,7 +1106,7 @@ public final class BudgetServiceImpl
+     List<UUID> toCancel = new ArrayList<>();
+     List<UUID> toExecute = new ArrayList<>();
+     synchronized (stateLock) {
+-      refreshStateLocked();
++      readyLocked();
+       for (UUID billId : currentBudgets.values()) {
+         BudgetBill budget = budgets.get(billId);
+         if (budget == null || budget.status() != BudgetBill.BudgetStatus.APPROVED) {
+@@ -1070,18 +1161,24 @@ public final class BudgetServiceImpl
+   }
+ 
+   private void recordEvent(NationId nationId, String type, String message, String context) {
+-    StarCoreContext contextRef = currentContext;
+-    if (contextRef == null) {
+-      return;
+-    }
+-    EventService eventService = contextRef.serviceRegistry().find(EventService.class).orElse(null);
+-    if (eventService == null) {
+-      return;
+-    }
+-    try {
+-      eventService.record(nationId, type, message, context);
+-    } catch (RuntimeException failure) {
+-      logWarning("Post-commit finance event failed: " + failure.getMessage());
++    synchronized (stateLock) {
++      StarCoreContext contextRef = currentContext;
++      if (contextRef == null) {
++        return;
++      }
++      EventService eventService =
++          contextRef.serviceRegistry().find(EventService.class).orElse(null);
++      if (eventService == null) {
++        return;
++      }
++      notifying = true;
++      try {
++        eventService.record(nationId, type, message, context);
++      } catch (RuntimeException failure) {
++        logWarning("Post-commit finance event failed: " + failure.getMessage());
++      } finally {
++        notifying = false;
++      }
+     }
+   }
+ 
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/BudgetStateCodec.java b/src/main/java/dev/starcore/starcore/module/treasury/BudgetStateCodec.java
+index f41b070..e2aede9 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/BudgetStateCodec.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/BudgetStateCodec.java
+@@ -21,7 +21,7 @@ import java.util.Set;
+ import java.util.UUID;
+ 
+ final class BudgetStateCodec {
+-  static final int CURRENT_SCHEMA_VERSION = 2;
++  static final int CURRENT_SCHEMA_VERSION = 3;
+   private static final int SCALE = 2;
+ 
+   Properties toProperties(BudgetStateSnapshot snapshot) {
+@@ -57,6 +57,9 @@ final class BudgetStateCodec {
+     for (int i = 0; i < receipts.size(); i++) {
+       writeReceipt(properties, "spending." + i + ".", receipts.get(i));
+     }
++    writeOperations(properties, snapshot.operations());
++    validateOperations(snapshot);
++    properties.setProperty("snapshot.sha256", checksum(properties));
+     return properties;
+   }
+ 
+@@ -72,10 +75,25 @@ final class BudgetStateCodec {
+       throw new IllegalArgumentException(
+           "Unsupported budget state schema version: " + schemaVersion);
+     }
++    if (schemaVersion == 3) {
++      for (String header :
++          List.of(
++              "budget.count",
++              "current.count",
++              "spending.count",
++              "operation.count",
++              "snapshot.sha256")) required(properties, header);
++      if (!required(properties, "snapshot.sha256").equals(checksum(properties)))
++        throw new IllegalArgumentException("Budget snapshot checksum mismatch");
++    }
+ 
+     boolean legacy = schemaText == null || schemaVersion == 1;
+     String countKey = legacy ? "count" : "budget.count";
+-    int budgetCount = parseNonNegativeInt(properties.getProperty(countKey, "0"), countKey);
++    int budgetCount = parseNonNegativeInt(required(properties, countKey), countKey);
++    if (schemaVersion == 2) {
++      required(properties, "current.count");
++      required(properties, "spending.count");
++    }
+ 
+     Map<UUID, BudgetBill> budgets = new LinkedHashMap<>();
+     for (int i = 0; i < budgetCount; i++) {
+@@ -86,11 +104,151 @@ final class BudgetStateCodec {
+     }
+ 
+     Map<NationId, UUID> currentBudgets =
+-        legacy ? deriveCurrentBudgets(budgets) : readCurrentBudgets(properties, budgets);
++        legacy
++            ? deriveCurrentBudgets(budgets)
++            : readCurrentBudgets(properties, budgets, schemaVersion < 3);
+     Map<UUID, NationSpendingReceipt> receipts =
+         legacy ? synthesizeLegacyReceipts(budgets) : readReceipts(properties, budgets);
+     validateAggregateBudgetSpending(budgets, receipts);
+-    return new BudgetStateSnapshot(budgets, currentBudgets, receipts);
++    var result =
++        new BudgetStateSnapshot(
++            budgets,
++            currentBudgets,
++            receipts,
++            schemaVersion >= 3 ? readOperations(properties, budgets) : Map.of());
++    validateOperations(result);
++    if (schemaVersion == 3 && !toProperties(result).keySet().equals(properties.keySet()))
++      throw new IllegalArgumentException("Budget snapshot contains missing or unexpected fields");
++    return result;
++  }
++
++  private void writeOperations(
++      Properties properties, Map<String, BudgetMoneyOperation> operations) {
++    var values =
++        operations.values().stream()
++            .sorted(Comparator.comparing(BudgetMoneyOperation::key))
++            .toList();
++    properties.setProperty("operation.count", Integer.toString(values.size()));
++    for (int i = 0; i < values.size(); i++) {
++      var value = values.get(i);
++      String prefix = "operation." + i + ".";
++      if (!value.equals(operations.get(value.key())))
++        throw new IllegalArgumentException("Operation key mismatch");
++      properties.setProperty(prefix + "kind", value.kind().name());
++      properties.setProperty(prefix + "status", value.status().name());
++      properties.setProperty(prefix + "subjectId", value.subjectId().toString());
++      properties.setProperty(prefix + "requestId", value.requestId());
++      properties.setProperty(prefix + "category", value.category().name());
++      properties.setProperty(prefix + "description", value.description());
++      writeReceipt(properties, prefix + "quote.", value.quote());
++    }
++  }
++
++  private Map<String, BudgetMoneyOperation> readOperations(
++      Properties properties, Map<UUID, BudgetBill> budgets) {
++    var values = new LinkedHashMap<String, BudgetMoneyOperation>();
++    int count = parseNonNegativeInt(required(properties, "operation.count"), "operation.count");
++    for (int i = 0; i < count; i++) {
++      String prefix = "operation." + i + ".";
++      var quoteProperties = new Properties();
++      quoteProperties.setProperty("spending.count", "1");
++      for (String name :
++          List.of(
++              "transactionId",
++              "nationId",
++              "category",
++              "amount",
++              "budgetAmount",
++              "treasuryAmount",
++              "budgetId",
++              "description",
++              "spentAt",
++              "refunded")) {
++        String field = properties.getProperty(prefix + "quote." + name);
++        if (field != null) quoteProperties.setProperty("spending.0." + name, field);
++      }
++      var quote = readReceipts(quoteProperties, budgets).values().iterator().next();
++      var value =
++          new BudgetMoneyOperation(
++              BudgetMoneyOperation.Kind.valueOf(required(properties, prefix + "kind")),
++              BudgetMoneyOperation.Status.valueOf(required(properties, prefix + "status")),
++              parseUuid(required(properties, prefix + "subjectId"), prefix + "subjectId"),
++              Objects.requireNonNull(properties.getProperty(prefix + "requestId")),
++              NationSpendingService.SpendingCategory.valueOf(
++                  required(properties, prefix + "category")),
++              Objects.requireNonNull(properties.getProperty(prefix + "description")),
++              quote);
++      if (values.put(value.key(), value) != null)
++        throw new IllegalArgumentException("Duplicate budget operation");
++    }
++    return values;
++  }
++
++  private void validateOperations(BudgetStateSnapshot state) {
++    int pending = 0;
++    var reserved = new LinkedHashMap<>(state.receipts());
++    for (var operation : state.operations().values()) {
++      boolean prepared = operation.status() == BudgetMoneyOperation.Status.PREPARED;
++      if (prepared) pending++;
++      var quote = operation.quote();
++      var receipt = state.receipts().get(operation.subjectId());
++      switch (operation.kind()) {
++        case FUND -> {
++          var bill = state.budgets().get(operation.subjectId());
++          if (bill == null
++              || !bill.nationId().equals(quote.nationId())
++              || bill.totalAmount().compareTo(quote.amount()) != 0
++              || bill.status()
++                  != (prepared
++                      ? BudgetBill.BudgetStatus.APPROVED
++                      : BudgetBill.BudgetStatus.EXECUTED))
++            throw new IllegalArgumentException("Budget funding intent does not match bill");
++        }
++        case SPEND -> {
++          if (prepared) {
++            if (receipt != null)
++              throw new IllegalArgumentException("Pending budget spend already settled");
++            reserved.put(operation.subjectId(), quote);
++          } else if (receipt == null || !quote.asRefunded().equals(receipt.asRefunded()))
++            throw new IllegalArgumentException("Budget operation does not match spending receipt");
++          if (!quote.description().equals(operation.description().trim()))
++            throw new IllegalArgumentException("Budget original description mismatch");
++        }
++        case REFUND -> {
++          if (receipt == null
++              || !quote.asRefunded().equals(receipt.asRefunded())
++              || receipt.refunded() == prepared)
++            throw new IllegalArgumentException("Budget refund intent does not match receipt");
++          var original = state.operations().get("SPEND:" + operation.subjectId());
++          if (original != null
++              && (!original.requestId().equals(operation.requestId())
++                  || original.category() != operation.category()
++                  || !original.description().equals(operation.description())))
++            throw new IllegalArgumentException("Budget refund does not match original request");
++        }
++      }
++    }
++    if (pending > 1) throw new IllegalArgumentException("Multiple pending budget money operations");
++    validateAggregateBudgetSpending(state.budgets(), reserved);
++  }
++
++  static String checksum(Properties properties) {
++    try {
++      var digest = java.security.MessageDigest.getInstance("SHA-256");
++      for (String key :
++          properties.stringPropertyNames().stream()
++              .filter(k -> !k.equals("snapshot.sha256"))
++              .sorted()
++              .toList())
++        for (String value : List.of(key, properties.getProperty(key))) {
++          byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
++          digest.update(java.nio.ByteBuffer.allocate(4).putInt(bytes.length).array());
++          digest.update(bytes);
++        }
++      return java.util.HexFormat.of().formatHex(digest.digest());
++    } catch (java.security.NoSuchAlgorithmException impossible) {
++      throw new IllegalStateException(impossible);
++    }
+   }
+ 
+   private void writeBudget(Properties properties, String prefix, BudgetBill budget) {
+@@ -187,9 +345,9 @@ final class BudgetStateCodec {
+   }
+ 
+   private Map<NationId, UUID> readCurrentBudgets(
+-      Properties properties, Map<UUID, BudgetBill> budgets) {
++      Properties properties, Map<UUID, BudgetBill> budgets, boolean deriveEmpty) {
+     int count = parseNonNegativeInt(properties.getProperty("current.count", "0"), "current.count");
+-    if (count == 0) {
++    if (count == 0 && deriveEmpty) {
+       return deriveCurrentBudgets(budgets);
+     }
+     Map<NationId, UUID> current = new LinkedHashMap<>();
+@@ -279,7 +437,10 @@ final class BudgetStateCodec {
+       UUID budgetId = budgetIdText == null ? null : parseUuid(budgetIdText, prefix + "budgetId");
+       String description = properties.getProperty(prefix + "description", "");
+       Instant spentAt = parseInstant(required(properties, prefix + "spentAt"), prefix + "spentAt");
+-      boolean refunded = Boolean.parseBoolean(properties.getProperty(prefix + "refunded", "false"));
++      String refundedText = properties.getProperty(prefix + "refunded", "false");
++      if (!refundedText.equals("true") && !refundedText.equals("false"))
++        throw new IllegalArgumentException("Invalid refunded flag");
++      boolean refunded = Boolean.parseBoolean(refundedText);
+       NationSpendingReceipt receipt =
+           new NationSpendingReceipt(
+               transactionId,
+@@ -393,7 +554,7 @@ final class BudgetStateCodec {
+ 
+   private static int parseNonNegativeInt(String value, String name) {
+     int parsed = parseInt(value, name);
+-    if (parsed < 0) {
++    if (parsed < 0 || parsed > 100_000) {
+       throw new IllegalArgumentException(name + " must be non-negative");
+     }
+     return parsed;
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/BudgetStateSnapshot.java b/src/main/java/dev/starcore/starcore/module/treasury/BudgetStateSnapshot.java
+index 5fcf7cd..767da19 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/BudgetStateSnapshot.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/BudgetStateSnapshot.java
+@@ -10,12 +10,21 @@ import java.util.UUID;
+ record BudgetStateSnapshot(
+     Map<UUID, BudgetBill> budgets,
+     Map<NationId, UUID> currentBudgets,
+-    Map<UUID, NationSpendingReceipt> receipts) {
++    Map<UUID, NationSpendingReceipt> receipts,
++    Map<String, BudgetMoneyOperation> operations) {
+   BudgetStateSnapshot {
+     budgets = Map.copyOf(new LinkedHashMap<>(Objects.requireNonNull(budgets, "budgets")));
+     currentBudgets =
+         Map.copyOf(new LinkedHashMap<>(Objects.requireNonNull(currentBudgets, "currentBudgets")));
+     receipts = Map.copyOf(new LinkedHashMap<>(Objects.requireNonNull(receipts, "receipts")));
++    operations = Map.copyOf(Objects.requireNonNull(operations, "operations"));
++  }
++
++  BudgetStateSnapshot(
++      Map<UUID, BudgetBill> budgets,
++      Map<NationId, UUID> currentBudgets,
++      Map<UUID, NationSpendingReceipt> receipts) {
++    this(budgets, currentBudgets, receipts, Map.of());
+   }
+ 
+   static BudgetStateSnapshot empty() {
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/PersistenceBudgetStateStorage.java b/src/main/java/dev/starcore/starcore/module/treasury/PersistenceBudgetStateStorage.java
+index 85d8132..8ff3662 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/PersistenceBudgetStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/PersistenceBudgetStateStorage.java
+@@ -1,27 +1,155 @@
+ package dev.starcore.starcore.module.treasury;
+ 
++import dev.starcore.starcore.core.persistence.AtomicFilePersistence;
+ import dev.starcore.starcore.core.persistence.PersistenceService;
+-import java.util.Objects;
++import java.io.*;
++import java.nio.file.*;
++import java.util.*;
+ import java.util.Properties;
+ 
+ final class PersistenceBudgetStateStorage implements BudgetStateStorage {
+   private static final String FILE_NAME = "budgets.properties";
+ 
+-  private final String namespace;
+-  private final PersistenceService persistenceService;
++  private static final Object[] GUARDS = new Object[64];
++
++  static {
++    Arrays.setAll(GUARDS, ignored -> new Object());
++  }
++
++  private final Path path;
++  private final BudgetStateCodec codec = new BudgetStateCodec();
++  private byte[] expected, offered;
++  private long revision;
++  private boolean loaded, failed;
+ 
+   PersistenceBudgetStateStorage(String namespace, PersistenceService persistenceService) {
+-    this.namespace = Objects.requireNonNull(namespace, "namespace");
+-    this.persistenceService = Objects.requireNonNull(persistenceService, "persistenceService");
++    try {
++      path =
++          Objects.requireNonNull(persistenceService)
++              .namespacePath(namespace)
++              .resolve(FILE_NAME)
++              .toAbsolutePath()
++              .normalize();
++    } catch (IOException failure) {
++      throw new IllegalStateException("Budget storage unavailable", failure);
++    }
++  }
++
++  @Override
++  public synchronized Properties load() {
++    try {
++      byte[] data = read();
++      if (data == null
++          && (expected != null
++              || Files.exists(AtomicFilePersistence.backup(path))
++              || Files.exists(AtomicFilePersistence.temp(path))))
++        throw new IOException("Missing budget authority; explicit recovery required");
++      Properties value = decode(data);
++      expected = data;
++      loaded = true;
++      failed = false;
++      return value;
++    } catch (IOException | RuntimeException failure) {
++      failed = true;
++      throw new BudgetStateReconciliationException(failure);
++    }
+   }
+ 
+   @Override
+-  public Properties load() {
+-    return persistenceService.loadProperties(namespace, FILE_NAME);
++  public synchronized void save(Properties properties) {
++    synchronized (GUARDS[Math.floorMod(path.hashCode(), GUARDS.length)]) {
++      requireLoaded();
++      var canonical = codec.toProperties(codec.fromProperties(properties));
++      try {
++        byte[] current = read();
++        if (!Arrays.equals(expected, current))
++          throw new BudgetStateConflictException(new IOException("Budget file changed"));
++        var buffer = new ByteArrayOutputStream();
++        canonical.store(buffer, "STARCORE budget state");
++        byte[] candidate = buffer.toByteArray();
++        if (candidate.length > 64 * 1024 * 1024) throw new IOException("Budget snapshot too large");
++        try {
++          AtomicFilePersistence.replace(path, temp -> Files.write(temp, candidate));
++          if (!Arrays.equals(read(), candidate))
++            throw new IOException("Budget snapshot not published");
++        } catch (IOException | RuntimeException failure) {
++          byte[] actual;
++          try {
++            actual = read();
++          } catch (IOException unreadable) {
++            failed = true;
++            failure.addSuppressed(unreadable);
++            throw new BudgetStateReconciliationException(failure);
++          }
++          if (Arrays.equals(actual, candidate)) {
++            expected = candidate;
++            return;
++          }
++          if (!Arrays.equals(actual, expected)) {
++            failed = true;
++            throw new BudgetStateReconciliationException(failure);
++          }
++          throw failure;
++        }
++        expected = candidate;
++      } catch (IOException failure) {
++        throw new IllegalStateException("Budget file save failed", failure);
++      }
++    }
+   }
+ 
+   @Override
+-  public void save(Properties properties) {
+-    persistenceService.saveProperties(namespace, FILE_NAME, properties);
++  public synchronized Optional<BudgetStateRefresh> refreshIfChanged() {
++    requireLoaded();
++    try {
++      byte[] current = read();
++      if (Arrays.equals(expected, current)) return Optional.empty();
++      if (current == null) throw new IOException("Budget authority disappeared");
++      Properties value = decode(current);
++      offered = current;
++      return Optional.of(new BudgetStateRefresh(value, ++revision));
++    } catch (IOException | RuntimeException failure) {
++      failed = true;
++      throw new BudgetStateReconciliationException(failure);
++    }
++  }
++
++  @Override
++  public synchronized void acceptRefresh(BudgetStateRefresh refresh) {
++    if (offered == null || refresh.revision() != revision)
++      throw new IllegalStateException("Stale budget refresh");
++    expected = offered;
++    offered = null;
++  }
++
++  private void requireLoaded() {
++    if (!loaded || failed) throw new IllegalStateException("Budget storage unavailable");
++  }
++
++  private byte[] read() throws IOException {
++    if (!Files.exists(path)) return null;
++    if (!Files.isRegularFile(path) || Files.size(path) > 64 * 1024 * 1024)
++      throw new IOException("Invalid budget authority file");
++    try (var input = Files.newInputStream(path)) {
++      byte[] bytes = input.readNBytes(64 * 1024 * 1024 + 1);
++      if (bytes.length > 64 * 1024 * 1024) throw new IOException("Budget file too large");
++      return bytes;
++    }
++  }
++
++  private Properties decode(byte[] bytes) throws IOException {
++    Properties value =
++        new Properties() {
++          @Override
++          public synchronized Object put(Object key, Object text) {
++            if (containsKey(key)) throw new IllegalArgumentException("Duplicate budget property");
++            return super.put(key, text);
++          }
++        };
++    if (bytes == null) return value;
++    value.load(new ByteArrayInputStream(bytes));
++    if (value.isEmpty()) throw new IOException("Empty budget authority");
++    codec.fromProperties(value);
++    return value;
+   }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/SqlBudgetStateStorage.java b/src/main/java/dev/starcore/starcore/module/treasury/SqlBudgetStateStorage.java
+index 263675e..094c8bd 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/SqlBudgetStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/SqlBudgetStateStorage.java
+@@ -53,9 +53,14 @@ final class SqlBudgetStateStorage implements BudgetStateStorage {
+           }
+         }
+       }
+-      Properties local = canonical(legacy.load());
+-      String fingerprint = hasState(local) ? fingerprint(local) : "";
++      Properties original = legacy.load();
++      Properties local = canonical(original);
++      String fingerprint =
++          hasState(local) ? fingerprint(importFingerprintState(original, local)) : "";
+       Snapshot shared = read(connection);
++      if (loaded && shared.revision() < expectedRevision) {
++        throw new SQLException("Budget SQL revision moved backwards or disappeared");
++      }
+       if (shared.revision() == 0) {
+         expectedRevision = 0;
+         try {
+@@ -123,7 +128,21 @@ final class SqlBudgetStateStorage implements BudgetStateStorage {
+       connection = dataSource.get().getConnection();
+       write(connection, validated, null);
+       written = true;
+-    } catch (BudgetStateConflictException | BudgetStateReconciliationException failure) {
++    } catch (BudgetStateReconciliationException failure) {
++      // A committed transaction may lose its reply; only exact authoritative readback confirms it.
++      try (var confirmation = dataSource.get().getConnection()) {
++        Snapshot actual = read(confirmation);
++        if (actual.revision() >= expectedRevision
++            && canonical(actual.properties()).equals(validated)) {
++          expectedRevision = actual.revision();
++          written = true;
++          return;
++        }
++      } catch (Exception readFailure) {
++        failure.addSuppressed(readFailure);
++      }
++      throw failure;
++    } catch (BudgetStateConflictException failure) {
+       throw failure;
+     } catch (Exception failure) {
+       throw new IllegalStateException("Budget SQL state write failed", failure);
+@@ -267,7 +286,23 @@ final class SqlBudgetStateStorage implements BudgetStateStorage {
+     BudgetStateSnapshot state = codec.fromProperties(properties);
+     return !state.budgets().isEmpty()
+         || !state.currentBudgets().isEmpty()
+-        || !state.receipts().isEmpty();
++        || !state.receipts().isEmpty()
++        || !state.operations().isEmpty();
++  }
++
++  private Properties importFingerprintState(Properties original, Properties current) {
++    if (Integer.parseInt(original.getProperty("schema.version", "1")) >= 3) return current;
++    // v1/v2 files were historically fingerprinted after normalization to v2. Preserve that
++    // identity.
++    var historical = new Properties();
++    historical.putAll(current);
++    historical.setProperty("schema.version", "2");
++    historical.remove("snapshot.sha256");
++    historical.stringPropertyNames().stream()
++        .filter(k -> k.startsWith("operation."))
++        .toList()
++        .forEach(historical::remove);
++    return historical;
+   }
+ 
+   private static String fingerprint(Properties properties) throws Exception {
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/BudgetAuthorityTest.java b/src/test/java/dev/starcore/starcore/module/treasury/BudgetAuthorityTest.java
+new file mode 100644
+index 0000000..7a50bf8
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/treasury/BudgetAuthorityTest.java
+@@ -0,0 +1,197 @@
++package dev.starcore.starcore.module.treasury;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.Mockito.*;
++
++import java.math.BigDecimal;
++import java.util.Map;
++import java.util.Optional;
++import java.util.Properties;
++import java.util.concurrent.atomic.AtomicBoolean;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++
++class BudgetAuthorityTest extends BudgetTestSupport {
++  @Test
++  void successWithoutDurableProofLeavesTheOriginalIntentPending() {
++    doReturn(
++            new NationSpendingService.SpendResult(
++                NationSpendingService.SpendingStatus.APPLIED, "unproven", BigDecimal.ZERO))
++        .when(treasury)
++        .spend(any());
++    var budget = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    assertThatThrownBy(() -> budget.spend(request())).hasMessageContaining("confirmation pending");
++    assertThat(budget.pendingPayments()).hasSize(1);
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("100.00");
++    doCallRealMethod().when(treasury).spend(any());
++    budget.recoverPayments();
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++    assertThat(budget.spend(request()).status())
++        .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
++  }
++
++  @ParameterizedTest
++  @ValueSource(strings = {"id", "nation", "amount", "category", "description", "refunded"})
++  void conflictingDebitProofNeverFinalizesOrTriggersCompensation(String field) {
++    var budget = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    doAnswer(
++            call -> {
++              String id = call.getArgument(0);
++              return Optional.of(
++                  new NationSpendingService.SpendingReceipt(
++                      field.equals("id") ? "other" : id,
++                      field.equals("nation")
++                          ? dev.starcore.starcore.module.nation.model.NationId.random()
++                          : nation,
++                      new BigDecimal(field.equals("amount") ? "26.00" : "25.00"),
++                      field.equals("category")
++                          ? NationSpendingService.SpendingCategory.OTHER
++                          : request().category(),
++                      field.equals("description")
++                          ? "wrong"
++                          : "Budget SPEND:" + request().transactionId(),
++                      CLOCK.instant(),
++                      field.equals("refunded")));
++            })
++        .when(treasury)
++        .spendingReceipt(any());
++    assertThatThrownBy(() -> budget.spend(request())).hasMessageContaining("receipt conflict");
++    assertThat(budget.pendingPayments()).hasSize(1);
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("100.00");
++    verify(treasury, never()).spend(any());
++    verify(treasury, never()).tryDeposit(any(), any());
++    doCallRealMethod().when(treasury).spendingReceipt(any());
++    budget.recoverPayments();
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++  }
++
++  @ParameterizedTest
++  @ValueSource(strings = {"id", "nation", "amount", "category", "description"})
++  void conflictingRefundProofCannotMarkReceiptRefunded(String field) {
++    var budget = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    budget.spend(request());
++    doAnswer(
++            call -> {
++              String id = call.getArgument(0);
++              return Optional.of(
++                  new NationCreditService.CreditReceipt(
++                      field.equals("id") ? "other" : id,
++                      field.equals("nation")
++                          ? dev.starcore.starcore.module.nation.model.NationId.random()
++                          : nation,
++                      new BigDecimal(field.equals("amount") ? "26.00" : "25.00"),
++                      field.equals("category")
++                          ? NationCreditService.CreditCategory.OTHER
++                          : NationCreditService.CreditCategory.BUDGET_SPENDING_REFUND,
++                      field.equals("description")
++                          ? "wrong"
++                          : "Budget spending refund: " + request().description(),
++                      CLOCK.instant()));
++            })
++        .when(treasury)
++        .creditReceipt(any());
++    assertThatThrownBy(() -> budget.refund(request().transactionId()))
++        .hasMessageContaining("receipt conflict");
++    assertThat(budget.pendingPayments()).hasSize(1);
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++    verify(treasury, never()).credit(any());
++    doCallRealMethod().when(treasury).creditReceipt(any());
++    budget.recoverPayments();
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("100.00");
++  }
++
++  @Test
++  void changedBalanceAfterPreparationRetainsIntentAndRejectsNewMutationsUntilRecovered() {
++    var delegate = fileStorage();
++    var drain = new AtomicBoolean(true);
++    var budget =
++        new BudgetServiceImpl(
++            new BudgetStateStorage() {
++              public Properties load() {
++                return delegate.load();
++              }
++
++              public void save(Properties next) {
++                delegate.save(next);
++                if (drain.compareAndSet(true, false))
++                  treasury.withdraw(nation, new BigDecimal("100.00"));
++              }
++            },
++            treasury,
++            CLOCK);
++    assertThatThrownBy(() -> budget.spend(request())).hasMessageContaining("confirmation pending");
++    assertThat(budget.pendingPayments()).hasSize(1);
++    assertThatThrownBy(() -> budget.createBudgetDraft(nation, 2026, 12))
++        .hasMessageContaining("confirmation pending");
++    treasury.deposit(nation, new BigDecimal("25.00"));
++    var restarted = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    restarted.recoverPayments();
++    assertThat(restarted.spendingReceipt(request().transactionId())).isPresent();
++    assertThat(restarted.pendingPayments()).isEmpty();
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("0.00");
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void legacyV2RefundReusesOriginalCreditIdentity(boolean alreadyCredited) {
++    var codec = new BudgetStateCodec();
++    var id = BudgetMoneyOperation.requestUuid(request().transactionId());
++    var receipt =
++        new NationSpendingReceipt(
++            id,
++            nation,
++            BudgetService.BudgetCategory.ADMINISTRATION,
++            request().amount(),
++            BigDecimal.ZERO,
++            request().amount(),
++            null,
++            request().description(),
++            CLOCK.instant(),
++            false);
++    Properties legacy =
++        codec.toProperties(new BudgetStateSnapshot(Map.of(), Map.of(), Map.of(id, receipt)));
++    legacy.setProperty("schema.version", "2");
++    legacy.remove("operation.count");
++    legacy.remove("snapshot.sha256");
++    treasury.withdraw(nation, request().amount());
++    if (alreadyCredited)
++      treasury.credit(
++          new NationCreditService.CreditRequest(
++              "budget-spending-refund:" + id,
++              nation,
++              request().amount(),
++              NationCreditService.CreditCategory.BUDGET_SPENDING_REFUND,
++              "Budget spending refund: " + request().description()));
++    clearInvocations(treasury);
++    var memory =
++        new BudgetStateStorage() {
++          Properties saved = legacy;
++
++          public Properties load() {
++            return saved;
++          }
++
++          public void save(Properties next) {
++            saved = next;
++          }
++        };
++    var budget = new BudgetServiceImpl(memory, treasury, CLOCK);
++    assertThat(budget.refund(request().transactionId())).isTrue();
++    assertThat(new BudgetServiceImpl(memory, treasury, CLOCK).refund(request().transactionId()))
++        .isTrue();
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("100.00");
++    verify(treasury, times(alreadyCredited ? 0 : 1)).credit(any());
++  }
++
++  @Test
++  void absentTreasuryReceiptAuthorityFailsBeforeIntentOrMoney() {
++    var legacyTreasury = mock(TreasuryService.class);
++    var budget = new BudgetServiceImpl(fileStorage(), legacyTreasury, CLOCK);
++    assertThatThrownBy(() -> budget.spend(request()))
++        .hasMessageContaining("requires treasury spending receipts");
++    assertThat(budget.pendingPayments()).isEmpty();
++    verifyNoInteractions(legacyTreasury);
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/BudgetLifecycleTest.java b/src/test/java/dev/starcore/starcore/module/treasury/BudgetLifecycleTest.java
+new file mode 100644
+index 0000000..f9f20bf
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/treasury/BudgetLifecycleTest.java
+@@ -0,0 +1,189 @@
++package dev.starcore.starcore.module.treasury;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.ArgumentMatchers.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.StarCoreContext;
++import dev.starcore.starcore.core.scheduler.CompatScheduler;
++import dev.starcore.starcore.core.service.ServiceRegistry;
++import dev.starcore.starcore.module.event.EventService;
++import java.util.concurrent.atomic.AtomicReference;
++import java.util.logging.Logger;
++import org.bukkit.plugin.java.JavaPlugin;
++import org.bukkit.scheduler.BukkitTask;
++import org.junit.jupiter.api.Test;
++
++class BudgetLifecycleTest extends BudgetTestSupport {
++  StarCoreContext context(EventService events) {
++    var context = mock(StarCoreContext.class);
++    var plugin = mock(JavaPlugin.class);
++    when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    when(context.plugin()).thenReturn(plugin);
++    var services = new ServiceRegistry();
++    services.register(TreasuryService.class, treasury);
++    services.register(NationCreditService.class, treasury);
++    if (events != null) services.register(EventService.class, events);
++    when(context.serviceRegistry()).thenReturn(services);
++    return context;
++  }
++
++  @Test
++  void enableRecoversOriginalPaymentAndStoppedCallbacksCannotWrite() {
++    var budget = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    doThrow(new IllegalStateException("treasury unavailable")).when(treasury).spend(any());
++    assertThatThrownBy(() -> budget.spend(request())).isInstanceOf(IllegalStateException.class);
++    doCallRealMethod().when(treasury).spend(any());
++    var context = context(null);
++    var monthly = mock(BukkitTask.class);
++    var retry = mock(BukkitTask.class);
++    var monthlyCallback = new AtomicReference<Runnable>();
++    var retryCallback = new AtomicReference<Runnable>();
++    try (var scheduler = mockStatic(CompatScheduler.class)) {
++      scheduler
++          .when(
++              () -> CompatScheduler.globalTimer(eq(context.plugin()), any(), anyLong(), anyLong()))
++          .thenAnswer(
++              call -> {
++                monthlyCallback.set(call.getArgument(1));
++                return monthly;
++              });
++      scheduler
++          .when(() -> CompatScheduler.asyncTimer(eq(context.plugin()), any(), anyLong(), anyLong()))
++          .thenAnswer(
++              call -> {
++                retryCallback.set(call.getArgument(1));
++                return retry;
++              });
++      budget.enable(context);
++      assertThat(budget.spendingReceipt(request().transactionId())).isPresent();
++      assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++      budget.disable(context);
++      retryCallback.get().run();
++      monthlyCallback.get().run();
++      assertThatThrownBy(() -> budget.spend(request())).hasMessageContaining("unavailable");
++      verify(monthly).cancel();
++      verify(retry).cancel();
++      assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++    }
++  }
++
++  @Test
++  void minuteRecoveryRetriesTheSameIntentAfterStartupFailure() {
++    var budget = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    doThrow(new IllegalStateException("treasury unavailable")).when(treasury).spend(any());
++    assertThatThrownBy(() -> budget.spend(request())).isInstanceOf(IllegalStateException.class);
++    var context = context(null);
++    var callback = new AtomicReference<Runnable>();
++    try (var scheduler = mockStatic(CompatScheduler.class)) {
++      scheduler
++          .when(() -> CompatScheduler.globalTimer(any(), any(), anyLong(), anyLong()))
++          .thenReturn(mock(BukkitTask.class));
++      scheduler
++          .when(() -> CompatScheduler.asyncTimer(any(), any(), anyLong(), anyLong()))
++          .thenAnswer(
++              call -> {
++                callback.set(call.getArgument(1));
++                return mock(BukkitTask.class);
++              });
++      budget.enable(context);
++      assertThat(budget.pendingPayments()).hasSize(1);
++      doCallRealMethod().when(treasury).spend(any());
++      callback.get().run();
++      callback.get().run();
++      assertThat(budget.pendingPayments()).isEmpty();
++      assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++      budget.disable(context);
++    }
++  }
++
++  @Test
++  void failedSchedulingCancelsEarlierTaskAndDisablesReference() {
++    var budget = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    var context = context(null);
++    var monthly = mock(BukkitTask.class);
++    try (var scheduler = mockStatic(CompatScheduler.class)) {
++      scheduler
++          .when(() -> CompatScheduler.globalTimer(any(), any(), anyLong(), anyLong()))
++          .thenReturn(monthly);
++      assertThatThrownBy(() -> budget.enable(context))
++          .hasMessageContaining("recovery scheduling failed");
++      verify(monthly).cancel();
++      assertThatThrownBy(() -> budget.spend(request())).hasMessageContaining("unavailable");
++      assertThat(treasury.balance(nation)).isEqualByComparingTo("100.00");
++    }
++  }
++
++  @Test
++  void failedInitialLoadDoesNotPublishAnActiveServiceOrStartTasks() {
++    var context = context(null);
++    when(context.persistenceService()).thenReturn(persistence);
++    when(context.databaseService())
++        .thenReturn(mock(dev.starcore.starcore.core.database.DatabaseService.class));
++    var budget = new BudgetServiceImpl();
++    try {
++      java.nio.file.Files.writeString(
++          persistence.namespacePath("treasury").resolve("budgets.properties"),
++          "schema.version=3\n");
++    } catch (java.io.IOException failure) {
++      throw new IllegalStateException(failure);
++    }
++    try (var scheduler = mockStatic(CompatScheduler.class)) {
++      assertThatThrownBy(() -> budget.enable(context)).isInstanceOf(IllegalStateException.class);
++      scheduler.verifyNoInteractions();
++      assertThatThrownBy(() -> budget.spend(request())).hasMessageContaining("unavailable");
++    }
++  }
++
++  @Test
++  void sameObjectReenableReloadsAuthorityBeforeServingOldReferences() {
++    var budget = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    budget.disable(null);
++    new BudgetServiceImpl(fileStorage(), treasury, CLOCK).spend(request());
++    var context = context(null);
++    try (var scheduler = mockStatic(CompatScheduler.class)) {
++      scheduler
++          .when(() -> CompatScheduler.globalTimer(any(), any(), anyLong(), anyLong()))
++          .thenReturn(mock(BukkitTask.class));
++      scheduler
++          .when(() -> CompatScheduler.asyncTimer(any(), any(), anyLong(), anyLong()))
++          .thenReturn(mock(BukkitTask.class));
++      budget.enable(context);
++      assertThat(budget.spend(request()).status())
++          .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
++      assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++      budget.disable(context);
++    }
++  }
++
++  @Test
++  void reentrantOrFailingNotificationCannotReverseCommittedPayment() {
++    var events = mock(EventService.class);
++    var context = context(events);
++    var budget = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    doAnswer(
++            call -> {
++              assertThat(
++                      new BudgetServiceImpl(fileStorage(), treasury, CLOCK)
++                          .spendingReceipt(request().transactionId()))
++                  .isPresent();
++              assertThatThrownBy(() -> budget.refund(request().transactionId()))
++                  .hasMessageContaining("unavailable");
++              throw new IllegalStateException("notification failed");
++            })
++        .when(events)
++        .record(any(), anyString(), anyString(), anyString());
++    try (var scheduler = mockStatic(CompatScheduler.class)) {
++      scheduler
++          .when(() -> CompatScheduler.globalTimer(any(), any(), anyLong(), anyLong()))
++          .thenReturn(mock(BukkitTask.class));
++      scheduler
++          .when(() -> CompatScheduler.asyncTimer(any(), any(), anyLong(), anyLong()))
++          .thenReturn(mock(BukkitTask.class));
++      budget.enable(context);
++      assertThat(budget.spend(request()).applied()).isTrue();
++      assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++      budget.disable(context);
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/BudgetRecoveryTest.java b/src/test/java/dev/starcore/starcore/module/treasury/BudgetRecoveryTest.java
+new file mode 100644
+index 0000000..11223dc
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/treasury/BudgetRecoveryTest.java
+@@ -0,0 +1,341 @@
++package dev.starcore.starcore.module.treasury;
++
++import static org.junit.jupiter.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.core.scheduler.StarCoreScheduler;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.math.BigDecimal;
++import java.nio.file.*;
++import java.time.*;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.*;
++import java.util.logging.Logger;
++import org.bukkit.plugin.java.JavaPlugin;
++import org.junit.jupiter.api.*;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.CsvSource;
++import org.junit.jupiter.params.provider.EnumSource;
++
++class BudgetRecoveryTest {
++  @TempDir Path directory;
++  final NationId nation = NationId.random();
++  final Clock clock = Clock.fixed(Instant.parse("2026-11-26T00:00:00Z"), ZoneOffset.UTC);
++  final AtomicInteger treasuryFailure = new AtomicInteger();
++  PersistenceService persistence;
++  TreasuryModule treasury;
++  BudgetServiceImpl service;
++  FaultStorage storage;
++
++  @BeforeEach
++  void setup() {
++    var plugin = mock(JavaPlugin.class);
++    when(plugin.getDataFolder()).thenReturn(directory.toFile());
++    when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    persistence = new PersistenceService(plugin, mock(StarCoreScheduler.class));
++    persistence.start();
++    treasury = NavyTreasuryFixture.open(persistence, treasuryFailure);
++    treasury.deposit(nation, money("1000"));
++    reopen();
++  }
++
++  @AfterEach
++  void close() {
++    if (service != null) service.disable(null);
++    if (persistence != null) persistence.stop();
++  }
++
++  void reopen() {
++    if (service != null) service.disable(null);
++    treasury = NavyTreasuryFixture.open(persistence, treasuryFailure);
++    storage =
++        new FaultStorage(new PersistenceBudgetStateStorage("budget-recovery-test", persistence));
++    service = new BudgetServiceImpl(storage, treasury, treasury, clock);
++  }
++
++  static BigDecimal money(String value) {
++    return new BigDecimal(value).setScale(2);
++  }
++
++  NationSpendingService.SpendRequest request(String id, String amount) {
++    return new NationSpendingService.SpendRequest(
++        id,
++        nation,
++        money(amount),
++        NationSpendingService.SpendingCategory.MILITARY,
++        "Fleet purchase");
++  }
++
++  void balance(String expected) {
++    assertEquals(0, money(expected).compareTo(treasury.balance(nation)));
++  }
++
++  UUID funded(String amount) {
++    var id = approved(amount);
++    assertTrue(service.executeBudget(id));
++    return id;
++  }
++
++  UUID approved(String amount) {
++    var bill = service.createBudgetDraft(nation, 2026, 11);
++    service.addBudgetEntry(
++        bill.billId(), BudgetService.BudgetCategory.MILITARY, "Military pool", money(amount));
++    service.submitBudget(bill.billId());
++    assertTrue(service.approveBudget(bill.billId(), "Founder"));
++    return bill.billId();
++  }
++
++  @ParameterizedTest
++  @CsvSource({"1,false", "1,true", "2,false", "2,true"})
++  void spendingInterruptionAtEachSnapshotBoundaryRecoversSingleDebit(int offset, boolean after) {
++    var request = request("crash-spend", "160");
++    storage.interruptAfter(offset, after);
++    assertThrows(InterruptedProcess.class, () -> service.spend(request));
++    reopen();
++    service.spend(request);
++    balance("840");
++    reopen();
++    assertEquals(
++        NationSpendingService.SpendingStatus.ALREADY_APPLIED, service.spend(request).status());
++    balance("840");
++    assertTrue(service.pendingPayments().isEmpty());
++  }
++
++  @ParameterizedTest
++  @CsvSource({"1,false", "1,true", "2,false", "2,true"})
++  void fundingInterruptionAtEachSnapshotBoundaryCannotFundTwice(int offset, boolean after) {
++    UUID id = approved("500");
++    storage.interruptAfter(offset, after);
++    assertThrows(InterruptedProcess.class, () -> service.executeBudget(id));
++    reopen();
++    assertTrue(service.executeBudget(id));
++    balance("500");
++    reopen();
++    assertTrue(service.executeBudget(id));
++    balance("500");
++    assertEquals(
++        BudgetService.BudgetBill.BudgetStatus.EXECUTED,
++        service.getBudget(id).orElseThrow().status());
++  }
++
++  @ParameterizedTest
++  @CsvSource({"1,false", "1,true", "2,false", "2,true"})
++  void refundInterruptionCannotCreditTwice(int offset, boolean after) {
++    var request = request("crash-refund", "160");
++    service.spend(request);
++    storage.interruptAfter(offset, after);
++    assertThrows(InterruptedProcess.class, () -> service.refund(request.transactionId()));
++    reopen();
++    assertTrue(service.refund(request.transactionId()));
++    balance("1000");
++    reopen();
++    assertTrue(service.refund(request.transactionId()));
++    balance("1000");
++    assertTrue(service.spendingReceipt(request.transactionId()).orElseThrow().refunded());
++  }
++
++  @Test
++  void originalCrashReproductionNowRestores840AndNever680() {
++    storage.interruptAfter(2, false);
++    var request = request("original-crash", "160");
++    assertThrows(InterruptedProcess.class, () -> service.spend(request));
++    balance("840");
++    reopen();
++    service.recoverPayments();
++    service.spend(request);
++    balance("840");
++    assertTrue(service.spendingReceipt(request.transactionId()).isPresent());
++  }
++
++  @Test
++  void mixedBudgetQuoteSurvivesMonthChangeAndRefundRestoresBothParts() {
++    UUID bill = funded("100");
++    var request = request("mixed", "160");
++    storage.interruptAfter(2, false);
++    assertThrows(InterruptedProcess.class, () -> service.spend(request));
++    balance("840");
++    service.disable(null);
++    treasury = NavyTreasuryFixture.open(persistence, treasuryFailure);
++    service =
++        new BudgetServiceImpl(
++            new PersistenceBudgetStateStorage("budget-recovery-test", persistence),
++            treasury,
++            treasury,
++            Clock.fixed(Instant.parse("2026-12-01T00:00:00Z"), ZoneOffset.UTC));
++    service.recoverPayments();
++    balance("840");
++    assertEquals(money("100"), service.getBudgetExecutionReport(bill).totalSpent());
++    assertTrue(service.refund(request.transactionId()));
++    balance("900");
++    assertEquals(money("0"), service.getBudgetExecutionReport(bill).totalSpent());
++  }
++
++  @Test
++  void fullyFundedPoolDoesNotDebitTreasuryAgain() {
++    UUID bill = funded("500");
++    service.spend(request("pool", "160"));
++    balance("500");
++    assertEquals(money("160"), service.getBudgetExecutionReport(bill).totalSpent());
++    service.refund("pool");
++    balance("500");
++    assertEquals(money("0"), service.getBudgetExecutionReport(bill).totalSpent());
++  }
++
++  @Test
++  void rejectedPreflightHasNoIntentAndCanRetryAfterFunding() {
++    var request = request("unfunded", "2000");
++    assertEquals(
++        NationSpendingService.SpendingStatus.INSUFFICIENT_FUNDS, service.spend(request).status());
++    assertTrue(service.pendingPayments().isEmpty());
++    balance("1000");
++    treasury.deposit(nation, money("1000"));
++    assertTrue(service.spend(request).applied());
++    balance("0");
++  }
++
++  @ParameterizedTest
++  @EnumSource(NationSpendingService.SpendingCategory.class)
++  void originalCategoryAndDescriptionSurviveRestart(
++      NationSpendingService.SpendingCategory category) {
++    var request =
++        new NationSpendingService.SpendRequest(
++            "exact-id", nation, money("25"), category, "  exact description  ");
++    service.spend(request);
++    reopen();
++    var receipt = service.spendingReceipt(request.transactionId()).orElseThrow();
++    assertEquals(category, receipt.category());
++    assertEquals(request.description(), receipt.description());
++    assertThrows(
++        IllegalArgumentException.class,
++        () ->
++            service.spend(
++                new NationSpendingService.SpendRequest(
++                    "exact-id", nation, money("25"), category, "exact description")));
++    balance("975");
++  }
++
++  @Test
++  void categoryAliasCannotReplayAnotherOriginalQuote() {
++    service.spend(
++        new NationSpendingService.SpendRequest(
++            "rent",
++            nation,
++            money("25"),
++            NationSpendingService.SpendingCategory.TERRITORY_RENT,
++            "rent"));
++    assertThrows(
++        IllegalArgumentException.class,
++        () ->
++            service.spend(
++                new NationSpendingService.SpendRequest(
++                    "rent",
++                    nation,
++                    money("25"),
++                    NationSpendingService.SpendingCategory.TERRITORY_LEASE_FEE,
++                    "rent")));
++    balance("975");
++  }
++
++  @Test
++  void failedPreparationDoesNotSpendAndLostBudgetWriteReplyIsReadBack() {
++    var request = request("no-prepare", "160");
++    storage.failBeforeNext = true;
++    assertThrows(IllegalStateException.class, () -> service.spend(request));
++    balance("1000");
++    storage.failAfterNext = true;
++    assertTrue(service.spend(request).applied());
++    balance("840");
++    reopen();
++    service.spend(request);
++    balance("840");
++  }
++
++  @Test
++  void treasuryFailureKeepsQuoteUntilRecoveredRatherThanCompensating() {
++    treasuryFailure.set(1);
++    var request = request("treasury-failure", "160");
++    assertThrows(IllegalStateException.class, () -> service.spend(request));
++    balance("1000");
++    assertEquals(1, service.pendingPayments().size());
++    reopen();
++    service.recoverPayments();
++    balance("840");
++  }
++
++  @Test
++  void lostTreasuryWriteReplyIsConfirmedWithoutAnotherDebit() {
++    treasuryFailure.set(2);
++    assertTrue(service.spend(request("lost-reply", "160")).applied());
++    balance("840");
++    reopen();
++    service.spend(request("lost-reply", "160"));
++    balance("840");
++  }
++
++  @Test
++  void corruptedOrMissingAuthorityCannotLoadOldBackup() throws Exception {
++    service.spend(request("saved", "160"));
++    service.disable(null);
++    Path file = persistence.namespacePath("budget-recovery-test").resolve("budgets.properties");
++    Files.writeString(file, "schema.version=3\n");
++    assertThrows(IllegalStateException.class, this::reopen);
++    Files.delete(file);
++    assertThrows(IllegalStateException.class, this::reopen);
++    balance("840");
++  }
++
++  @Test
++  void oldServiceReferencesCannotModifyAfterDisable() {
++    service.disable(null);
++    assertThrows(IllegalStateException.class, () -> service.spend(request("disabled", "160")));
++    assertThrows(IllegalStateException.class, service::recoverPayments);
++    balance("1000");
++  }
++
++  static final class InterruptedProcess extends Error {}
++
++  static final class FaultStorage implements BudgetStateStorage {
++    final BudgetStateStorage delegate;
++    int saves, failAt = -1;
++    boolean after, failBeforeNext, failAfterNext;
++
++    FaultStorage(BudgetStateStorage delegate) {
++      this.delegate = delegate;
++    }
++
++    void interruptAfter(int offset, boolean after) {
++      failAt = saves + offset;
++      this.after = after;
++    }
++
++    public Properties load() {
++      return delegate.load();
++    }
++
++    public Optional<BudgetStateRefresh> refreshIfChanged() {
++      return delegate.refreshIfChanged();
++    }
++
++    public void acceptRefresh(BudgetStateRefresh refresh) {
++      delegate.acceptRefresh(refresh);
++    }
++
++    public void save(Properties next) {
++      saves++;
++      if (failBeforeNext) {
++        failBeforeNext = false;
++        throw new IllegalStateException("before save");
++      }
++      if (saves == failAt && !after) throw new InterruptedProcess();
++      delegate.save(next);
++      if (saves == failAt && after) throw new InterruptedProcess();
++      if (failAfterNext) {
++        failAfterNext = false;
++        throw new IllegalStateException("lost save reply");
++      }
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/BudgetServiceImplSpendingTest.java b/src/test/java/dev/starcore/starcore/module/treasury/BudgetServiceImplSpendingTest.java
+index 04f4cdd..4b384bd 100644
+--- a/src/test/java/dev/starcore/starcore/module/treasury/BudgetServiceImplSpendingTest.java
++++ b/src/test/java/dev/starcore/starcore/module/treasury/BudgetServiceImplSpendingTest.java
+@@ -1,206 +1,151 @@
+ package dev.starcore.starcore.module.treasury;
+ 
+-import static org.assertj.core.api.Assertions.assertThat;
+-import static org.junit.jupiter.api.Assertions.assertEquals;
+-import static org.junit.jupiter.api.Assertions.assertFalse;
+-import static org.junit.jupiter.api.Assertions.assertThrows;
+-import static org.junit.jupiter.api.Assertions.assertTrue;
++import static org.assertj.core.api.Assertions.*;
+ import static org.mockito.ArgumentMatchers.any;
+-import static org.mockito.Mockito.mock;
+-import static org.mockito.Mockito.times;
+-import static org.mockito.Mockito.verify;
+-import static org.mockito.Mockito.when;
++import static org.mockito.Mockito.*;
+ 
+-import dev.starcore.starcore.module.nation.model.NationId;
+-import java.math.BigDecimal;
+-import java.time.Clock;
+-import java.time.Instant;
+-import java.time.ZoneOffset;
+ import java.util.Properties;
+-import java.util.concurrent.atomic.AtomicReference;
++import java.util.concurrent.atomic.AtomicInteger;
+ import org.junit.jupiter.api.Test;
+ 
+-class BudgetServiceImplSpendingTest {
+-
++class BudgetServiceImplSpendingTest extends BudgetTestSupport {
+   @Test
+   void idleInstanceRefreshesPublicReceiptsAndStatisticsBeforeReplayingSpend() {
+-    RecordingStorage shared = new RecordingStorage();
+-    BudgetStateStorage observerStorage =
+-        new BudgetStateStorage() {
+-          @Override
+-          public Properties load() {
+-            return shared.load();
+-          }
+-
+-          @Override
+-          public void save(Properties value) {
+-            shared.save(value);
+-          }
+-
+-          @Override
+-          public java.util.Optional<BudgetStateRefresh> refreshIfChanged() {
+-            return java.util.Optional.of(new BudgetStateRefresh(shared.load(), 1));
+-          }
+-        };
+-    TreasuryService treasury = mock(TreasuryService.class);
+-    when(treasury.withdraw(any(), any())).thenReturn(true);
+-    when(treasury.balance(any())).thenReturn(new BigDecimal("75.00"));
+-    Clock clock = Clock.fixed(Instant.parse("2026-11-05T12:00:00Z"), ZoneOffset.UTC);
+-    NationId nation = NationId.random();
+-    BudgetServiceImpl first = new BudgetServiceImpl(shared, treasury, clock);
+-    BudgetServiceImpl observer = new BudgetServiceImpl(observerStorage, treasury, clock);
+-    var request =
+-        new NationSpendingService.SpendRequest(
+-            "shared-policy",
+-            nation,
+-            new BigDecimal("25.00"),
+-            NationSpendingService.SpendingCategory.NATIONAL_EVENT,
+-            "policy");
+-
++    var first = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    var observer = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    var request = request();
+     first.spend(request);
+-
+     assertThat(observer.spendingSnapshot(nation).orElseThrow().spent())
+         .isEqualByComparingTo("25.00");
+     assertThat(observer.spendingReceipt(request.transactionId())).isPresent();
+     assertThat(observer.getMonthlySpending(nation, 2026, 11)).isEqualByComparingTo("25.00");
+     assertThat(observer.spend(request).status())
+         .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
+-    verify(treasury, times(1)).withdraw(nation, new BigDecimal("25.00"));
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++    verify(treasury, times(1)).spend(any());
+   }
+ 
+   @Test
+   void reportsNewAndRepeatedSpendsAccuratelyAcrossRestart() {
+-    RecordingStorage storage = new RecordingStorage();
+-    TreasuryService treasury = mock(TreasuryService.class);
+-    AtomicReference<BigDecimal> balance = new AtomicReference<>(new BigDecimal("100.00"));
+-    when(treasury.withdraw(any(), any()))
+-        .thenAnswer(
+-            invocation -> {
+-              BigDecimal amount = invocation.getArgument(1);
+-              if (balance.get().compareTo(amount) < 0) {
+-                return false;
+-              }
+-              balance.updateAndGet(value -> value.subtract(amount));
+-              return true;
+-            });
+-    when(treasury.balance(any())).thenAnswer(invocation -> balance.get());
+-    Clock clock = Clock.fixed(Instant.parse("2026-11-05T12:00:00Z"), ZoneOffset.UTC);
+-    NationId nationId = NationId.random();
+-    NationSpendingService.SpendRequest request =
+-        new NationSpendingService.SpendRequest(
+-            "policy:paid:activation-1",
+-            nationId,
+-            new BigDecimal("25.00"),
+-            NationSpendingService.SpendingCategory.NATIONAL_EVENT,
+-            "policy activation");
+-    BudgetServiceImpl service = new BudgetServiceImpl(storage, treasury, clock);
+-
++    var request = request();
++    var service = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
+     assertThat(service.spend(request).status())
+         .isEqualTo(NationSpendingService.SpendingStatus.APPLIED);
+     assertThat(service.spend(request).status())
+         .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
+-
+-    BudgetServiceImpl restarted = new BudgetServiceImpl(storage, treasury, clock);
++    var restarted = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
+     assertThat(restarted.spend(request).status())
+         .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
+-    assertThat(balance.get()).isEqualByComparingTo("75.00");
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
+     assertThat(restarted.spendingReceipt(request.transactionId())).isPresent();
+-    verify(treasury).withdraw(nationId, new BigDecimal("25.00"));
++    verify(treasury, times(1)).spend(any());
+   }
+ 
+   @Test
+   void retriesRefundAfterRestartWithoutCreditingTreasuryTwice() {
+-    RecordingStorage storage = new RecordingStorage(2);
+-    TreasuryService treasury = mock(TreasuryService.class);
+-    AtomicReference<BigDecimal> balance = new AtomicReference<>(new BigDecimal("100.00"));
+-    when(treasury.withdraw(any(), any()))
+-        .thenAnswer(
+-            invocation -> {
+-              BigDecimal amount = invocation.getArgument(1);
+-              if (balance.get().compareTo(amount) < 0) {
+-                return false;
+-              }
+-              balance.updateAndGet(value -> value.subtract(amount));
+-              return true;
+-            });
+-    NationCreditService creditService = mock(NationCreditService.class);
+-    AtomicReference<NationCreditService.CreditReceipt> creditReceipt = new AtomicReference<>();
+-    when(creditService.credit(any()))
+-        .thenAnswer(
+-            invocation -> {
+-              NationCreditService.CreditRequest request = invocation.getArgument(0);
+-              NationCreditService.CreditReceipt existing = creditReceipt.get();
+-              if (existing != null) {
+-                assertEquals(existing.transactionId(), request.transactionId());
+-                return new NationCreditService.CreditResult(
+-                    NationCreditService.CreditStatus.ALREADY_APPLIED,
+-                    request.transactionId(),
+-                    balance.get());
+-              }
+-              balance.updateAndGet(value -> value.add(request.amount()));
+-              creditReceipt.set(
+-                  new NationCreditService.CreditReceipt(
+-                      request.transactionId(),
+-                      request.nationId(),
+-                      request.amount(),
+-                      request.category(),
+-                      request.description(),
+-                      Instant.now()));
+-              return new NationCreditService.CreditResult(
+-                  NationCreditService.CreditStatus.APPLIED, request.transactionId(), balance.get());
+-            });
+-
+-    Clock clock = Clock.fixed(Instant.parse("2026-11-05T12:00:00Z"), ZoneOffset.UTC);
+-    NationId nationId = NationId.random();
+-    NationSpendingService.SpendRequest request =
+-        new NationSpendingService.SpendRequest(
+-            "mercenary-hire:contract-refund-retry",
+-            nationId,
+-            new BigDecimal("25.00"),
+-            NationSpendingService.SpendingCategory.MILITARY,
+-            "mercenary hire");
+-    BudgetServiceImpl service = new BudgetServiceImpl(storage, treasury, creditService, clock);
+-
+-    assertEquals(NationSpendingService.SpendingStatus.APPLIED, service.spend(request).status());
+-    assertThrows(IllegalStateException.class, () -> service.refund(request.transactionId()));
+-    assertFalse(service.spendingReceipt(request.transactionId()).orElseThrow().refunded());
+-    assertEquals(new BigDecimal("100.00"), balance.get());
++    var delegate = fileStorage();
++    var saves = new AtomicInteger();
++    var storage =
++        new BudgetStateStorage() {
++          public Properties load() {
++            return delegate.load();
++          }
+ 
+-    BudgetServiceImpl restarted = new BudgetServiceImpl(storage, treasury, creditService, clock);
+-    assertTrue(restarted.refund(request.transactionId()));
+-    assertTrue(restarted.spendingReceipt(request.transactionId()).orElseThrow().refunded());
+-    assertEquals(new BigDecimal("100.00"), balance.get());
+-    verify(creditService, times(2)).credit(any());
++          public void save(Properties next) {
++            if (saves.incrementAndGet() == 4)
++              throw new IllegalStateException("refund final save unavailable");
++            delegate.save(next);
++          }
++        };
++    var request = request();
++    var service = new BudgetServiceImpl(storage, treasury, CLOCK);
++    service.spend(request);
++    assertThatThrownBy(() -> service.refund(request.transactionId()))
++        .hasMessageContaining("refund final save");
++    assertThat(new BudgetStateCodec().fromProperties(delegate.load()).receipts().values())
++        .allMatch(receipt -> !receipt.refunded());
++    assertThat(service.pendingPayments()).hasSize(1);
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("100.00");
++    var restarted = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    assertThat(restarted.refund(request.transactionId())).isTrue();
++    assertThat(restarted.spendingReceipt(request.transactionId()).orElseThrow().refunded())
++        .isTrue();
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("100.00");
++    verify(treasury, times(1)).credit(any());
+   }
+ 
+-  private static final class RecordingStorage implements BudgetStateStorage {
+-    private Properties properties = new Properties();
+-    private final int failAtSave;
+-    private int saves;
++  @Test
++  void changedCategoryAfterSecondRefreshCannotReplayAnAliasedOriginalRequest() {
++    var writer = new BudgetServiceImpl(fileStorage(), treasury, CLOCK);
++    var delegate = fileStorage();
++    var refreshes = new AtomicInteger();
++    var original =
++        new NationSpendingService.SpendRequest(
++            "same-id",
++            nation,
++            new java.math.BigDecimal("25.00"),
++            NationSpendingService.SpendingCategory.TERRITORY_RENT,
++            "same description");
++    var observer =
++        new BudgetServiceImpl(
++            new BudgetStateStorage() {
++              public Properties load() {
++                return delegate.load();
++              }
+ 
+-    private RecordingStorage() {
+-      this(-1);
+-    }
++              public void save(Properties next) {
++                delegate.save(next);
++              }
+ 
+-    private RecordingStorage(int failAtSave) {
+-      this.failAtSave = failAtSave;
+-    }
++              public java.util.Optional<BudgetStateRefresh> refreshIfChanged() {
++                if (refreshes.incrementAndGet() == 2) writer.spend(original);
++                return delegate.refreshIfChanged();
++              }
++
++              public void acceptRefresh(BudgetStateRefresh refresh) {
++                delegate.acceptRefresh(refresh);
++              }
++            },
++            treasury,
++            CLOCK);
++    var conflict =
++        new NationSpendingService.SpendRequest(
++            original.transactionId(),
++            nation,
++            original.amount(),
++            NationSpendingService.SpendingCategory.TERRITORY_LEASE_FEE,
++            original.description());
++    assertThatThrownBy(() -> observer.spend(conflict)).isInstanceOf(IllegalArgumentException.class);
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++  }
+ 
+-    @Override
+-    public Properties load() {
+-      Properties copy = new Properties();
+-      copy.putAll(properties);
+-      return copy;
+-    }
++  @Test
++  void lostWriteReplyAndFailedPreparationRemainUsableWithNanosecondClock() {
++    var delegate = fileStorage();
++    var saves = new AtomicInteger();
++    var service =
++        new BudgetServiceImpl(
++            new BudgetStateStorage() {
++              public Properties load() {
++                return delegate.load();
++              }
+ 
+-    @Override
+-    public void save(Properties next) {
+-      saves++;
+-      if (saves == failAtSave) {
+-        throw new IllegalStateException("injected budget storage failure");
+-      }
+-      properties = new Properties();
+-      properties.putAll(next);
+-    }
++              public void save(Properties next) {
++                int count = saves.incrementAndGet();
++                if (count == 3) throw new IllegalStateException("before preparation");
++                delegate.save(next);
++                if (count <= 2) throw new IllegalStateException("lost write reply");
++              }
++            },
++            treasury,
++            CLOCK);
++    assertThat(service.spend(request()).applied()).isTrue();
++    var other =
++        new NationSpendingService.SpendRequest(
++            "second", nation, request().amount(), request().category(), "second");
++    assertThatThrownBy(() -> service.spend(other)).hasMessageContaining("before preparation");
++    assertThat(service.pendingPayments()).isEmpty();
++    assertThat(service.spend(other).applied()).isTrue();
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("50.00");
+   }
+ }
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/BudgetStateCodecTest.java b/src/test/java/dev/starcore/starcore/module/treasury/BudgetStateCodecTest.java
+index 380c164..2f1a347 100644
+--- a/src/test/java/dev/starcore/starcore/module/treasury/BudgetStateCodecTest.java
++++ b/src/test/java/dev/starcore/starcore/module/treasury/BudgetStateCodecTest.java
+@@ -91,7 +91,8 @@ class BudgetStateCodecTest {
+   void rejectsFutureSchemaAndPersistedBudgetOverspend() {
+     BudgetStateCodec codec = new BudgetStateCodec();
+     Properties future = new Properties();
+-    future.setProperty("schema.version", "3");
++    future.setProperty(
++        "schema.version", Integer.toString(BudgetStateCodec.CURRENT_SCHEMA_VERSION + 1));
+     assertThrows(IllegalArgumentException.class, () -> codec.fromProperties(future));
+ 
+     NationId nationId = NationId.random();
+@@ -110,13 +111,29 @@ class BudgetStateCodecTest {
+             "corrupt",
+             NOW,
+             false);
++    assertThrows(
++        IllegalArgumentException.class,
++        () ->
++            codec.toProperties(
++                new BudgetStateSnapshot(
++                    Map.of(billId, budget),
++                    Map.of(nationId, billId),
++                    Map.of(transactionId, overspent))));
+     Properties corrupt =
+         codec.toProperties(
+-            new BudgetStateSnapshot(
+-                Map.of(billId, budget),
+-                Map.of(nationId, billId),
+-                Map.of(transactionId, overspent)));
+-
++            new BudgetStateSnapshot(Map.of(billId, budget), Map.of(nationId, billId), Map.of()));
++    corrupt.setProperty("schema.version", "2");
++    corrupt.remove("snapshot.sha256");
++    corrupt.remove("operation.count");
++    corrupt.setProperty("spending.count", "1");
++    corrupt.setProperty("spending.0.transactionId", transactionId.toString());
++    corrupt.setProperty("spending.0.nationId", nationId.toString());
++    corrupt.setProperty("spending.0.category", "MILITARY");
++    corrupt.setProperty("spending.0.amount", "101.00");
++    corrupt.setProperty("spending.0.budgetAmount", "101.00");
++    corrupt.setProperty("spending.0.treasuryAmount", "0.00");
++    corrupt.setProperty("spending.0.budgetId", billId.toString());
++    corrupt.setProperty("spending.0.spentAt", Long.toString(NOW.toEpochMilli()));
+     assertThrows(IllegalArgumentException.class, () -> codec.fromProperties(corrupt));
+   }
+ 
+@@ -134,4 +151,68 @@ class BudgetStateCodecTest {
+         NOW,
+         "tester");
+   }
++
++  @Test
++  void emptyCurrentIndexCannotResurrectAnOlderFundedBudget() {
++    var codec = new BudgetStateCodec();
++    var nation = NationId.random();
++    var id = UUID.randomUUID();
++    var state =
++        new BudgetStateSnapshot(
++            Map.of(id, fundedBudget(nation, id, new BigDecimal("100.00"))), Map.of(), Map.of());
++    assertTrue(codec.fromProperties(codec.toProperties(state)).currentBudgets().isEmpty());
++  }
++
++  @org.junit.jupiter.params.ParameterizedTest
++  @org.junit.jupiter.params.provider.ValueSource(
++      strings = {"checksum", "missing", "extra", "category", "count", "boolean", "request"})
++  void rejectsCorruptOrContradictoryOperationEvenWithRecomputedChecksum(String field) {
++    var codec = new BudgetStateCodec();
++    var id = BudgetMoneyOperation.requestUuid("operation-test");
++    var quote =
++        new NationSpendingReceipt(
++            id,
++            NationId.random(),
++            BudgetCategory.MILITARY,
++            new BigDecimal("25.00"),
++            BigDecimal.ZERO,
++            new BigDecimal("25.00"),
++            null,
++            "payment",
++            NOW,
++            false);
++    var operation =
++        new BudgetMoneyOperation(
++            BudgetMoneyOperation.Kind.SPEND,
++            BudgetMoneyOperation.Status.PREPARED,
++            id,
++            "operation-test",
++            NationSpendingService.SpendingCategory.MILITARY,
++            "payment",
++            quote);
++    var properties =
++        codec.toProperties(
++            new BudgetStateSnapshot(
++                Map.of(), Map.of(), Map.of(), Map.of(operation.key(), operation)));
++    switch (field) {
++      case "checksum" -> properties.setProperty("snapshot.sha256", "invalid");
++      case "missing" -> properties.remove("operation.0.quote.refunded");
++      case "extra" -> properties.setProperty("operation.1.kind", "SPEND");
++      case "category" -> properties.setProperty("operation.0.category", "OTHER");
++      case "count" -> properties.setProperty("operation.count", "0");
++      case "boolean" -> properties.setProperty("operation.0.quote.refunded", "garbled");
++      case "request" -> properties.setProperty("operation.0.requestId", "another-request");
++      default -> throw new AssertionError(field);
++    }
++    if (!field.equals("checksum"))
++      properties.setProperty("snapshot.sha256", BudgetStateCodec.checksum(properties));
++    assertThrows(IllegalArgumentException.class, () -> codec.fromProperties(properties));
++  }
++
++  @Test
++  void unknownPrimaryCannotMasqueradeAsAnEmptyLegacyState() {
++    var data = new Properties();
++    data.setProperty("garbled", "primary");
++    assertThrows(IllegalArgumentException.class, () -> new BudgetStateCodec().fromProperties(data));
++  }
+ }
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/BudgetTestSupport.java b/src/test/java/dev/starcore/starcore/module/treasury/BudgetTestSupport.java
+new file mode 100644
+index 0000000..62db41a
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/treasury/BudgetTestSupport.java
+@@ -0,0 +1,58 @@
++package dev.starcore.starcore.module.treasury;
++
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.core.scheduler.StarCoreScheduler;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.math.BigDecimal;
++import java.nio.file.Path;
++import java.time.Clock;
++import java.time.Instant;
++import java.time.ZoneOffset;
++import java.util.concurrent.atomic.AtomicInteger;
++import java.util.logging.Logger;
++import org.bukkit.plugin.java.JavaPlugin;
++import org.junit.jupiter.api.AfterEach;
++import org.junit.jupiter.api.BeforeEach;
++import org.junit.jupiter.api.io.TempDir;
++
++/** Real durable treasury authority shared by budget file and SQL failure tests. */
++abstract class BudgetTestSupport {
++  static final Clock CLOCK =
++      Clock.fixed(Instant.parse("2026-11-18T12:00:00.123456789Z"), ZoneOffset.UTC);
++  @TempDir Path temporary;
++  final NationId nation = NationId.random();
++  PersistenceService persistence;
++  TreasuryModule treasury;
++
++  @BeforeEach
++  void openTreasury() {
++    var plugin = mock(JavaPlugin.class);
++    when(plugin.getDataFolder()).thenReturn(temporary.toFile());
++    when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    persistence = new PersistenceService(plugin, mock(StarCoreScheduler.class));
++    persistence.start();
++    treasury = spy(NavyTreasuryFixture.open(persistence, new AtomicInteger()));
++    treasury.deposit(nation, new BigDecimal("100.00"));
++    clearInvocations(treasury);
++  }
++
++  @AfterEach
++  void closeTreasury() {
++    if (persistence != null) persistence.stop();
++  }
++
++  NationSpendingService.SpendRequest request() {
++    return new NationSpendingService.SpendRequest(
++        "budget-shared-test",
++        nation,
++        new BigDecimal("25.00"),
++        NationSpendingService.SpendingCategory.NATIONAL_EVENT,
++        "policy");
++  }
++
++  BudgetStateStorage fileStorage() {
++    return new PersistenceBudgetStateStorage("budget-test", persistence);
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/SqlBudgetStateStorageTest.java b/src/test/java/dev/starcore/starcore/module/treasury/SqlBudgetStateStorageTest.java
+index 052a8b7..2b3b145 100644
+--- a/src/test/java/dev/starcore/starcore/module/treasury/SqlBudgetStateStorageTest.java
++++ b/src/test/java/dev/starcore/starcore/module/treasury/SqlBudgetStateStorageTest.java
+@@ -10,12 +10,8 @@ import dev.starcore.starcore.module.nation.model.NationId;
+ import java.lang.reflect.InvocationTargetException;
+ import java.lang.reflect.Proxy;
+ import java.math.BigDecimal;
+-import java.nio.file.Path;
+ import java.sql.Connection;
+ import java.sql.SQLException;
+-import java.time.Clock;
+-import java.time.Instant;
+-import java.time.ZoneOffset;
+ import java.util.Properties;
+ import java.util.concurrent.CyclicBarrier;
+ import java.util.concurrent.Executors;
+@@ -27,13 +23,9 @@ import javax.sql.DataSource;
+ import org.junit.jupiter.api.AfterEach;
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+-import org.junit.jupiter.api.io.TempDir;
+ import org.sqlite.SQLiteDataSource;
+ 
+-class SqlBudgetStateStorageTest {
+-  private static final Clock CLOCK =
+-      Clock.fixed(Instant.parse("2026-11-18T12:00:00Z"), ZoneOffset.UTC);
+-  @TempDir Path temporary;
++class SqlBudgetStateStorageTest extends BudgetTestSupport {
+   private DataSource mysql;
+ 
+   @BeforeEach
+@@ -68,35 +60,17 @@ class SqlBudgetStateStorageTest {
+   }
+ 
+   @Test
+-  void simultaneousSameIdSpendCommitsOneReceiptAndCompensatesTheLosingDebit() throws Exception {
++  void simultaneousSameIdSpendAdmitsOneIntentBeforeTouchingMoney() throws Exception {
+     DataSource source = database();
+-    TreasuryService treasury = treasury();
+-    AtomicReference<BigDecimal> balance = new AtomicReference<>(new BigDecimal("100.00"));
+     var barrier = new CyclicBarrier(2);
+-    when(treasury.withdraw(any(), any()))
+-        .thenAnswer(
+-            call -> {
+-              balance.updateAndGet(value -> value.subtract(call.getArgument(1)));
+-              barrier.await(10, TimeUnit.SECONDS);
+-              return true;
+-            });
+-    when(treasury.tryDeposit(any(), any()))
+-        .thenAnswer(
+-            call -> {
+-              balance.updateAndGet(value -> value.add(call.getArgument(1)));
+-              return true;
+-            });
+-    when(treasury.balance(any())).thenAnswer(ignored -> balance.get());
+-    var first = new BudgetServiceImpl(storage(source), treasury, CLOCK);
+-    var second = new BudgetServiceImpl(storage(source), treasury, CLOCK);
++    var first = new BudgetServiceImpl(barrierStorage(source, barrier), treasury, CLOCK);
++    var second = new BudgetServiceImpl(barrierStorage(source, barrier), treasury, CLOCK);
+     var request = request();
+     var workers = Executors.newFixedThreadPool(2);
+     try {
+       var left = workers.submit(() -> attemptSpend(first, request));
+       var right = workers.submit(() -> attemptSpend(second, request));
+-      String leftResult = left.get(20, TimeUnit.SECONDS);
+-      String rightResult = right.get(20, TimeUnit.SECONDS);
+-      assertThat(java.util.List.of(leftResult, rightResult))
++      assertThat(java.util.List.of(left.get(20, TimeUnit.SECONDS), right.get(20, TimeUnit.SECONDS)))
+           .containsExactlyInAnyOrder("APPLIED", "CONFLICT");
+       assertThat(first.spendingReceipt(request.transactionId())).isPresent();
+       assertThat(second.spendingReceipt(request.transactionId())).isPresent();
+@@ -104,20 +78,52 @@ class SqlBudgetStateStorageTest {
+           .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
+       assertThat(second.spend(request).status())
+           .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
+-      assertThat(balance.get()).isEqualByComparingTo("75.00");
+-      verify(treasury, times(2)).withdraw(any(), any());
+-      verify(treasury, times(1)).tryDeposit(any(), any());
++      assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++      verify(treasury, times(1)).spend(any());
++      verify(treasury, never()).tryDeposit(any(), any());
+     } finally {
+       workers.shutdownNow();
+     }
+   }
+ 
++  private BudgetStateStorage barrierStorage(DataSource source, CyclicBarrier barrier) {
++    var delegate = storage(source);
++    return new BudgetStateStorage() {
++      boolean first = true;
++
++      public Properties load() {
++        return delegate.load();
++      }
++
++      public void save(Properties next) {
++        if (first) {
++          first = false;
++          try {
++            barrier.await(10, TimeUnit.SECONDS);
++          } catch (Exception failure) {
++            throw new IllegalStateException(failure);
++          }
++        }
++        delegate.save(next);
++      }
++
++      public java.util.Optional<BudgetStateRefresh> refreshIfChanged() {
++        return delegate.refreshIfChanged();
++      }
++
++      public void acceptRefresh(BudgetStateRefresh refresh) {
++        delegate.acceptRefresh(refresh);
++      }
++    };
++  }
++
+   private static String attemptSpend(
+       BudgetServiceImpl service, NationSpendingService.SpendRequest request) {
+     try {
+       return service.spend(request).status().name();
+     } catch (IllegalStateException conflict) {
+-      if (conflict.getCause() instanceof BudgetStateConflictException) return "CONFLICT";
++      if (conflict instanceof BudgetStateConflictException
++          || conflict.getCause() instanceof BudgetStateConflictException) return "CONFLICT";
+       throw conflict;
+     }
+   }
+@@ -125,61 +131,34 @@ class SqlBudgetStateStorageTest {
+   @Test
+   void independentInstancesRefreshReceiptsReplayAndRefundAfterRestart() {
+     DataSource database = database();
+-    TreasuryService treasury = treasury();
+-    var balance = new AtomicReference<>(new BigDecimal("100.00"));
+-    when(treasury.balance(any())).thenAnswer(ignored -> balance.get());
+-    when(treasury.withdraw(any(), any()))
+-        .thenAnswer(
+-            call -> {
+-              balance.updateAndGet(value -> value.subtract(call.getArgument(1)));
+-              return true;
+-            });
+-    NationCreditService credits = mock(NationCreditService.class);
+-    AtomicBoolean credited = new AtomicBoolean();
+-    when(credits.credit(any()))
+-        .thenAnswer(
+-            call -> {
+-              var request = (NationCreditService.CreditRequest) call.getArgument(0);
+-              boolean first = credited.compareAndSet(false, true);
+-              if (first) balance.updateAndGet(value -> value.add(request.amount()));
+-              return new NationCreditService.CreditResult(
+-                  first
+-                      ? NationCreditService.CreditStatus.APPLIED
+-                      : NationCreditService.CreditStatus.ALREADY_APPLIED,
+-                  request.transactionId(),
+-                  balance.get());
+-            });
+-    var first = new BudgetServiceImpl(storage(database), treasury, credits, CLOCK);
+-    var second = new BudgetServiceImpl(storage(database), treasury, credits, CLOCK);
++    var first = new BudgetServiceImpl(storage(database), treasury, CLOCK);
++    var second = new BudgetServiceImpl(storage(database), treasury, CLOCK);
+     var request = request();
+     assertThat(first.spend(request).status())
+         .isEqualTo(NationSpendingService.SpendingStatus.APPLIED);
+     assertThat(second.spendingReceipt(request.transactionId())).isPresent();
+-    assertThat(second.spendingSnapshot(request.nationId()).orElseThrow().spent())
+-        .isEqualByComparingTo("25.00");
++    assertThat(second.spendingSnapshot(nation).orElseThrow().spent()).isEqualByComparingTo("25.00");
+     assertThat(second.spend(request).status())
+         .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
+     assertThat(second.refund(request.transactionId())).isTrue();
+     assertThat(first.spendingReceipt(request.transactionId()).orElseThrow().refunded()).isTrue();
+-    assertThat(first.getMonthlySpending(request.nationId(), 2026, 11)).isEqualByComparingTo("0.00");
+-    assertThat(first.spendingSnapshot(request.nationId()).orElseThrow().spent())
+-        .isEqualByComparingTo("0.00");
+-    assertThat(first.spendingSnapshot(request.nationId()).orElseThrow().totalBudget())
++    assertThat(first.getMonthlySpending(nation, 2026, 11)).isEqualByComparingTo("0.00");
++    assertThat(first.spendingSnapshot(nation).orElseThrow().spent()).isEqualByComparingTo("0.00");
++    assertThat(first.spendingSnapshot(nation).orElseThrow().totalBudget())
+         .isEqualByComparingTo("100.00");
+-    var restarted = new BudgetServiceImpl(storage(database), treasury, credits, CLOCK);
++    var restarted = new BudgetServiceImpl(storage(database), treasury, CLOCK);
+     assertThat(restarted.refund(request.transactionId())).isTrue();
+-    assertThat(balance.get()).isEqualByComparingTo("100.00");
+-    verify(treasury, times(1)).withdraw(any(), any());
+-    verify(credits, times(1)).credit(any());
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("100.00");
++    verify(treasury, times(1)).spend(any());
++    verify(treasury, times(1)).credit(any());
+   }
+ 
+   @Test
+   void fundedBudgetPropagatesAndCannotBeFundedAgainOnAnotherInstance() {
+     DataSource database = database();
+-    TreasuryService treasury = treasury();
++    TreasuryModule treasury = treasury();
+     var first = new BudgetServiceImpl(storage(database), treasury, CLOCK);
+     var second = new BudgetServiceImpl(storage(database), treasury, CLOCK);
+-    NationId nation = NationId.random();
+     var bill = first.createBudgetDraft(nation, 2026, 11);
+     second.addBudgetEntry(
+         bill.billId(),
+@@ -203,8 +182,8 @@ class SqlBudgetStateStorageTest {
+     assertThat(first.getCurrentBudget(nation)).isPresent();
+     assertThat(first.getBudgetHistory(nation, 10)).hasSize(1);
+     assertThat(first.spendingReceipt(request.transactionId())).isPresent();
+-    verify(treasury, times(1)).withdraw(nation, new BigDecimal("50.00"));
+-    verify(treasury, times(1)).withdraw(any(), any());
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("50.00");
++    verify(treasury, times(1)).spend(any());
+   }
+ 
+   @Test
+@@ -225,29 +204,42 @@ class SqlBudgetStateStorageTest {
+   }
+ 
+   @Test
+-  void staleSpendCompensatesOnlyItsOwnDebitAndCanBeExplicitlyRetried() {
++  void concurrentRecoveryFinalizesOriginalIntentWithoutCompensationOrAnotherDebit() {
+     DataSource database = database();
+-    TreasuryService treasury = treasury();
+-    var first = new BudgetServiceImpl(storage(database), treasury, CLOCK);
++    var delegate = storage(database);
+     var rival = new BudgetServiceImpl(storage(database), treasury, CLOCK);
+-    AtomicBoolean collide = new AtomicBoolean(true);
+-    when(treasury.withdraw(any(), any()))
+-        .thenAnswer(
+-            ignored -> {
+-              if (collide.compareAndSet(true, false))
+-                rival.createBudgetDraft(NationId.random(), 2026, 11);
+-              return true;
+-            });
++    var collide = new AtomicBoolean(true);
++    var first =
++        new BudgetServiceImpl(
++            new BudgetStateStorage() {
++              public Properties load() {
++                return delegate.load();
++              }
++
++              public void save(Properties next) {
++                if ("APPLIED".equals(next.getProperty("operation.0.status"))
++                    && collide.compareAndSet(true, false)) rival.recoverPayments();
++                delegate.save(next);
++              }
++
++              public java.util.Optional<BudgetStateRefresh> refreshIfChanged() {
++                return delegate.refreshIfChanged();
++              }
++
++              public void acceptRefresh(BudgetStateRefresh refresh) {
++                delegate.acceptRefresh(refresh);
++              }
++            },
++            treasury,
++            CLOCK);
+     var request = request();
+-    assertThatThrownBy(() -> first.spend(request))
+-        .hasCauseInstanceOf(BudgetStateConflictException.class);
+-    verify(treasury).tryDeposit(request.nationId(), request.amount());
+-    assertThat(first.spendingReceipt(request.transactionId())).isEmpty();
++    assertThatThrownBy(() -> first.spend(request)).isInstanceOf(BudgetStateConflictException.class);
+     assertThat(first.spend(request).status())
+-        .isEqualTo(NationSpendingService.SpendingStatus.APPLIED);
++        .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
+     assertThat(rival.spendingReceipt(request.transactionId())).isPresent();
+-    verify(treasury, times(2)).withdraw(any(), any());
+-    verify(treasury, times(1)).tryDeposit(any(), any());
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++    verify(treasury, times(1)).spend(any());
++    verify(treasury, never()).tryDeposit(any(), any());
+   }
+ 
+   @Test
+@@ -287,13 +279,13 @@ class SqlBudgetStateStorageTest {
+               return source;
+             },
+             legacy);
+-    TreasuryService treasury = treasury();
++    TreasuryModule treasury = treasury();
+     var budget = new BudgetServiceImpl(storage, treasury, CLOCK);
+     offline.set(true);
+     assertThatThrownBy(() -> budget.spend(request())).hasMessageContaining("refresh failed");
+     assertThatThrownBy(storage::load).hasMessageContaining("load failed");
+     assertThatThrownBy(() -> storage.save(new Properties())).hasMessageContaining("write failed");
+-    verify(treasury, never()).withdraw(any(), any());
++    verify(treasury, never()).spend(any());
+     assertThat(legacy.load()).isEmpty();
+   }
+ 
+@@ -322,7 +314,7 @@ class SqlBudgetStateStorageTest {
+   }
+ 
+   @Test
+-  void lostCommitAcknowledgementDoesNotRefundAndBlocksUntilRestart() {
++  void lostCommitAcknowledgementIsConfirmedByExactReadback() {
+     DataSource database = database();
+     AtomicBoolean fail = new AtomicBoolean();
+     DataSource intercepted =
+@@ -332,24 +324,87 @@ class SqlBudgetStateStorageTest {
+               if (fail.compareAndSet(true, false)) throw new IllegalStateException("lose-ack");
+             },
+             false);
+-    TreasuryService treasury = treasury();
+     var budget = new BudgetServiceImpl(storage(intercepted), treasury, CLOCK);
+     fail.set(true);
+     var request = request();
+-    assertThatThrownBy(() -> budget.spend(request))
+-        .isInstanceOf(BudgetStateReconciliationException.class);
++    assertThat(budget.spend(request).applied()).isTrue();
+     verify(treasury, never()).tryDeposit(any(), any());
+-    assertThatThrownBy(() -> budget.spend(request)).hasMessageContaining("requires restart");
+     var restarted = new BudgetServiceImpl(storage(database), treasury, CLOCK);
+     assertThat(restarted.spend(request).status())
+         .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
+-    verify(treasury, times(1)).withdraw(any(), any());
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++    verify(treasury, times(1)).spend(any());
++  }
++
++  @Test
++  void unreadableCommitOutcomeBlocksOldInstanceUntilRestart() {
++    DataSource database = database();
++    AtomicBoolean armed = new AtomicBoolean(), offline = new AtomicBoolean();
++    var commits = new java.util.concurrent.atomic.AtomicInteger();
++    DataSource intercepted =
++        intercept(
++            database,
++            connection -> {
++              if (armed.get() && commits.incrementAndGet() == 2) {
++                offline.set(true);
++                throw new IllegalStateException("lost final reply and database offline");
++              }
++            },
++            false);
++    var storage =
++        new SqlBudgetStateStorage(
++            () -> {
++              if (offline.get()) throw new IllegalStateException("offline");
++              return intercepted;
++            },
++            new MemoryStorage());
++    var budget = new BudgetServiceImpl(storage, treasury, CLOCK);
++    armed.set(true);
++    assertThatThrownBy(() -> budget.spend(request()))
++        .isInstanceOf(BudgetStateReconciliationException.class);
++    offline.set(false);
++    assertThatThrownBy(() -> budget.spend(request())).hasMessageContaining("requires restart");
++    var restarted = new BudgetServiceImpl(storage(database), treasury, CLOCK);
++    assertThat(restarted.spend(request()).status())
++        .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++    verify(treasury, times(1)).spend(any());
++  }
++
++  @Test
++  void newerSnapshotAfterLostCommitReplyCannotBeOverwrittenByOldState() {
++    DataSource database = database();
++    var rival = new BudgetServiceImpl(storage(database), treasury, CLOCK);
++    var bill = new AtomicReference<BudgetService.BudgetBill>();
++    var commits = new java.util.concurrent.atomic.AtomicInteger();
++    AtomicBoolean armed = new AtomicBoolean();
++    DataSource intercepted =
++        intercept(
++            database,
++            connection -> {
++              if (armed.get() && commits.incrementAndGet() == 2) {
++                bill.set(rival.createBudgetDraft(NationId.random(), 2026, 11));
++                throw new IllegalStateException("lost commit reply after rival progressed");
++              }
++            },
++            false);
++    var budget = new BudgetServiceImpl(storage(intercepted), treasury, CLOCK);
++    armed.set(true);
++    assertThatThrownBy(() -> budget.spend(request()))
++        .isInstanceOf(BudgetStateReconciliationException.class);
++    assertThatThrownBy(() -> budget.createBudgetDraft(nation, 2026, 12))
++        .hasMessageContaining("requires restart");
++    var restarted = new BudgetServiceImpl(storage(database), treasury, CLOCK);
++    assertThat(restarted.getBudget(bill.get().billId())).isPresent();
++    assertThat(restarted.spend(request()).status())
++        .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
+   }
+ 
+   @Test
+   void connectionReleaseErrorAfterAcknowledgedCommitDoesNotCauseRefund() {
+     DataSource database = database();
+-    TreasuryService treasury = treasury();
++    TreasuryModule treasury = treasury();
+     var budget = new BudgetServiceImpl(storage(database), treasury, CLOCK);
+     // Load on a normal connection; only subsequent save connection release is faulty.
+     var loaded = storage(intercept(database, ignored -> {}, true));
+@@ -387,27 +442,54 @@ class SqlBudgetStateStorageTest {
+     return source;
+   }
+ 
++  @Test
++  void alreadyImportedV2FileAndSqlFingerprintRemainCompatible() throws Exception {
++    var codec = new BudgetStateCodec();
++    var legacy = new MemoryStorage();
++    var bill = new BudgetServiceImpl(legacy, treasury, CLOCK).createBudgetDraft(nation, 2026, 11);
++    var properties = legacy.load();
++    properties.setProperty("schema.version", "2");
++    properties.remove("snapshot.sha256");
++    properties.remove("operation.count");
++    legacy.save(properties);
++    var source = database();
++    new SqlBudgetStateStorage(() -> source, legacy).load();
++    try (var connection = source.getConnection();
++        var statement = connection.createStatement()) {
++      statement.executeUpdate(
++          "DELETE FROM starcore_budget_state WHERE property_key IN"
++              + " ('operation.count','snapshot.sha256')");
++      statement.executeUpdate(
++          "UPDATE starcore_budget_state SET property_value = '2' WHERE property_key ="
++              + " 'schema.version'");
++      try (var update =
++          connection.prepareStatement(
++              "UPDATE starcore_budget_state SET property_value = ? WHERE property_key ="
++                  + " '__starcore_legacy_sha256__'")) {
++        update.setString(1, BudgetStateCodec.checksum(properties));
++        update.executeUpdate();
++      }
++    }
++    var budget =
++        new BudgetServiceImpl(new SqlBudgetStateStorage(() -> source, legacy), treasury, CLOCK);
++    assertThat(budget.getBudget(bill.billId())).isPresent();
++    budget.spend(request());
++    var restarted =
++        new BudgetServiceImpl(new SqlBudgetStateStorage(() -> source, legacy), treasury, CLOCK);
++    assertThat(restarted.spend(request()).status())
++        .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
++    assertThat(legacy.load()).isEqualTo(properties);
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("75.00");
++  }
++
+   private SqlBudgetStateStorage storage(DataSource source) {
+     return new SqlBudgetStateStorage(() -> source, new MemoryStorage());
+   }
+ 
+-  private TreasuryService treasury() {
+-    TreasuryService treasury = mock(TreasuryService.class);
+-    when(treasury.withdraw(any(), any())).thenReturn(true);
+-    when(treasury.tryDeposit(any(), any())).thenReturn(true);
+-    when(treasury.balance(any())).thenReturn(new BigDecimal("75.00"));
++  private TreasuryModule treasury() {
+     return treasury;
+   }
+ 
+-  private NationSpendingService.SpendRequest request() {
+-    return new NationSpendingService.SpendRequest(
+-        "budget-shared-test",
+-        NationId.random(),
+-        new BigDecimal("25.00"),
+-        NationSpendingService.SpendingCategory.NATIONAL_EVENT,
+-        "policy");
+-  }
+-
+   private static DataSource intercept(
+       DataSource source, Consumer<Connection> afterCommit, boolean failClose) {
+     return (DataSource)

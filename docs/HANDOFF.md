@@ -14,7 +14,9 @@
 
 ## 阶段进度
 
-2026-11-26 已追加第九份[海军可靠性补丁](upstream/NAVY-RELIABILITY.md)：完整/短 UUID 授权、直接国库原编号回执恢复、舰队串行保存、分钟补给余量、海战冷却与启停已修复。718 项 Core 定向回归通过。真实军队运输、港口补给仍未接通，海军仍不进入实验 profile。本轮还用真实文件复现预算服务的中断重复扣款缺口；海军保持原直接国库来源，预算服务另列 P1 待修。总目标仍未完成，当前优先级见[代码清单](CODE-CLOSURE.md)。
+2026-11-26 已追加第十份[预算恢复补丁](upstream/BUDGET-RECOVERY.md)：预拨、国库补差和退款先保存原编号意图，再凭耐久资金回执完成；跨保存中断、SQLite 多实例竞争、丢响应和旧退款迁移已有测试。876 项 Core 定向回归通过（预算 81 项）；最新成品哈希与配套测试见[预算记录](verification/workspace-budget-recovery-20261126.json)。待恢复付款的安全撤销/管理入口、旧月份余款结转和归档仍待开发。下一优先项是演习保存和唯一结算，全部阶段尚未完成。
+
+2026-11-26 已追加第九份[海军可靠性补丁](upstream/NAVY-RELIABILITY.md)：完整/短 UUID 授权、直接国库原编号回执恢复、舰队串行保存、分钟补给余量、海战冷却与启停已修复。718 项 Core 定向回归通过。真实军队运输、港口补给仍未接通，海军仍不进入实验 profile。该海军检查点曾用真实文件复现预算服务的中断重复扣款；后来由第十份修复新协议，海军仍保持原直接国库来源。总目标仍未完成，当前优先级见[代码清单](CODE-CLOSURE.md)。
 
 2026-11-26 已追加第七份 [Religion 闭环补丁](upstream/RELIGION-CLOSURE.md)：SQLite 串行事务、耐久命令反馈、离线排行榜、完整圣地范围索引、实体线程和启停接线已完成。466 项 Core 定向测试（Religion 新增 37 项）与实际最终 Core 成品下 StarSupply 全套 177 项通过。未启动实服；独立国家 Faith、其他未适配模块、回执归档、全量 Core 与 MySQL 验证仍未闭环，见[代码清单](CODE-CLOSURE.md)和[本轮证据](verification/workspace-religion-closure-20261126.json)。
 
@@ -43,7 +45,8 @@
 
 ## 最新构建与验证
 
-- 最新海军可靠性检查点 Core：`7CBBF81FB402E3B888D097D7213DC15585B68FEE39A36640C978FC6EBDB55AB4`（19,713,101 字节），718 项定向回归通过。22 文件补丁重放后全部 3,557 个 src 文件匹配；25 个海军 class 与空目录编译结果一致，其他既有 JAR 内容保持一致（除本次三份资源）。不是当前全仓干净 verify，未启动实服。最终兼容测试及详细证据见[本轮记录](verification/workspace-navy-reliability-20261126.json)。下方 Faith 构建是历史检查点。
+- 最新预算恢复检查点 Core：`E934CF6E84C8DC08B71910A9B2192F4FFDA4B623F10852133ABC209A30EE95DC`（19,729,727 字节），876 项定向回归通过，预算专项 81 项。13 文件补丁重放后全部 3,562 个 src 文件匹配；13 个预算 class 与空目录编译结果一致，移除旧 SpendingMutation class，其他既有 JAR 内容不变。不是全仓干净 verify，MySQL 和实服待验。详见[本轮记录](verification/workspace-budget-recovery-20261126.json)。
+- 此前海军可靠性检查点 Core：`7CBBF81FB402E3B888D097D7213DC15585B68FEE39A36640C978FC6EBDB55AB4`（19,713,101 字节），718 项定向回归通过。22 文件补丁重放后全部 3,557 个 src 文件匹配；25 个海军 class 与空目录编译结果一致，其他既有 JAR 内容保持一致（除本次三份资源）。不是当前全仓干净 verify，未启动实服。最终兼容测试及详细证据见[本轮记录](verification/workspace-navy-reliability-20261126.json)。下方 Faith 构建是历史检查点。
 
 - 最新国家 Faith 检查点：StarSupply 生产源码和 157 项 verify 的 JAR 未变；Core `E3CCA19A08A602197FB9C816BE85D405BA0FDB6286455D1B3BDD43F4654895B7`（19,684,304 字节）通过 629 项定向测试，配套 StarSupply 177 项通过。26 个改动生产源在空输出目录重新编译，9 个改动测试源编译、35 个 Java 格式检查通过。第八份 38 文件补丁重放后全部 3,551 个 src 文件匹配；46 个编译 class 与 JAR 字节一致，仅移除已删除的匿名 Faith 退出监听 class。实服未运行，原玩家存档哈希不变。见 [Faith 证据](verification/workspace-faith-closure-20261126.json)；之前 Religion 证据仍独立保留。
 
@@ -57,7 +60,7 @@
 
 ## 代码闭环与剩余范围
 
-第九份补丁已修复此前海军授权、付款恢复和分钟补给缺陷；真实运兵/港口仍未闭环。当前优先修复已复现的预算中断重复扣款，其后是演习空存档/唯一结算、伤兵回补、学说实效、雇佣兵和社交线程/生命周期、回执归档。当前完整 Core 干净构建与 MySQL 验证也仍待完成；详见 [代码闭环清单](CODE-CLOSURE.md)。
+第九份已修复海军授权、付款恢复和分钟补给；第十份已修复预算新协议的跨保存重复扣款。下一优先项是演习空存档与唯一结算，其后继续真实运兵/港口、伤兵回补、学说实效、雇佣兵和社交线程/生命周期、预算运维/结转及回执归档。当前完整 Core 干净构建与 MySQL 验证也仍待完成；详见 [代码闭环清单](CODE-CLOSURE.md)。
 
 | 缺口 | 当前处理 | 完成条件 |
 | --- | --- | --- |
@@ -90,7 +93,7 @@ $env:JAVA_HOME = 'C:\path\to\jdk-21'
 .\tools\build.ps1 -StarCoreRoot ..\starsupply-starcore-api -JavaHome $env:JAVA_HOME
 ```
 
-运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`、`starcore-religion-closure.patch`、`starcore-faith-closure.patch`、`starcore-navy-reliability.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `7CBBF81FB402E3B888D097D7213DC15585B68FEE39A36640C978FC6EBDB55AB4`。
+运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`、`starcore-religion-closure.patch`、`starcore-faith-closure.patch`、`starcore-navy-reliability.patch`、`starcore-budget-recovery.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `E934CF6E84C8DC08B71910A9B2192F4FFDA4B623F10852133ABC209A30EE95DC`。
 
 依赖已安装时，低内存构建命令为：
 
@@ -137,4 +140,4 @@ GitHub 提供源码和验证摘要，**不会同步世界、玩家存档或运�
 
 ## 给下一次 Codex 的接续说明
 
-> 读取 docs/HANDOFF.md、docs/CODE-CLOSURE.md、docs/REQUIREMENTS.md、docs/FOLIA.md 和 workspace-navy-reliability-20261126.json，继续全部剩余阶段。用户选择先完成可运行开发测试、保留实服待验，不自行启动测试服。第九份海军可靠性补丁已有 718 项 Core（海军 86 项）与实际 Core 成品下 StarSupply 177 项通过；尚未接通真实运兵/港口，也未扩入 Folia profile。优先修复证据中已复现的 BudgetServiceImpl 跨保存重复扣款，其后补演习保存和唯一结算、伤兵回补、学说实效、雇佣兵/社交线程和生命周期、回执有界归档。当前 Core 全仓干净 verify、MySQL 和实服门槛继续待验。保留本地 Core 改动和历史证据，只同步 StarSupply codex/strategic-logistics，不推 Core、不合并 main。
+> 读取 docs/HANDOFF.md、docs/CODE-CLOSURE.md、docs/REQUIREMENTS.md、docs/FOLIA.md 和 workspace-budget-recovery-20261126.json，继续全部剩余阶段。用户选择先完成可运行开发测试、保留实服待验，不自行启动测试服。十份补丁已有 876 项 Core（预算 81 项）回归通过，实际 Core JAR 配套结果以最新证据为准。预算预拨/支出/退款可按原编号恢复；仍缺安全撤销/管理入口、旧月份余款结转和归档。优先补演习保存及唯一结算，其后真实运兵/港口、伤兵回补、学说实效、雇佣兵/社交线程和生命周期。当前 Core 全仓干净 verify、MySQL 和实服门槛继续待验。保留本地 Core 改动和历史证据，只同步 StarSupply codex/strategic-logistics，不推 Core、不合并 main。

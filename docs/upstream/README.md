@@ -1,6 +1,6 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-当前最新兼容包按顺序应用九份补丁：后勤、玩家资金回执、税款回执、公共反馈、HUD 设置、[Clan 闭环](CLAN-CLOSURE.md)、[Religion 闭环](RELIGION-CLOSURE.md)、[国家 Faith 闭环](FAITH-CLOSURE.md)、[海军可靠性修复](NAVY-RELIABILITY.md)。第九份修复海军权限、直接国库付款恢复、分钟补给、海战保存与启停，尚未完成真实运兵/港口接线，也未加入 Folia profile。718 项 Core 定向回归通过；预算服务的跨保存中断重复扣款已单独复现并保留待修，见[代码闭环清单](../CODE-CLOSURE.md)。
+当前最新兼容包按顺序应用十份补丁：后勤、玩家资金回执、税款回执、公共反馈、HUD 设置、[Clan 闭环](CLAN-CLOSURE.md)、[Religion 闭环](RELIGION-CLOSURE.md)、[国家 Faith 闭环](FAITH-CLOSURE.md)、[海军可靠性修复](NAVY-RELIABILITY.md)、[预算付款恢复](BUDGET-RECOVERY.md)。第十份用原编号意图和耐久资金回执修复预算预拨、补差及退款中断；876 项 Core 定向回归通过，预算专项 81 项。演习、海军实际运输、伤兵、学说以及预算运维/归档等仍未全部闭环，详见[代码清单](../CODE-CLOSURE.md)。生产 Folia 声明继续关闭。
 
 此前 HUD 兼容包按顺序应用五份补丁，在下述四份补丁后追加 [starcore-hud-settings.patch](starcore-hud-settings.patch)。个人设置持久化、真实重载、呼吸动画和彩色主题等 HUD 缺口已补齐；配置、命令、构建与验收范围见 [HUD-SETTINGS](HUD-SETTINGS.md)。
 
