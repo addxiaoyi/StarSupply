@@ -4,9 +4,11 @@
 
 当前是可继续开发的阶段检查点，**全部阶段尚未完成**。下表按需求分组汇报，验收口径以 [REQUIREMENTS](REQUIREMENTS.md)、[Paper 记录](PAPER-ACCEPTANCE.md) 和 [Folia 记录](FOLIA.md) 为准。不要把旧构建的运行记录套用于新构建，也不要把管理员准备库存的消费验收当成生存生产验收。
 
-2026-11-26 最新第十三份[圈地恢复补丁](upstream/CLAIM-RECOVERY.md)已实现原报价/选区意图、原编号资金、原子领土批次回执、取消/退款及管理恢复；普通领土存储改为同步确认并使用文件/SQL 并发版本。1,666 项 Core 定向回归与实际最终 Core 下 StarSupply 177 项通过，20 个生产源空目录编译、30 个 class 校验，32 文件补丁重放后全部 3,595 个 src 文件一致。详见[证据](verification/workspace-claim-recovery-20261126.json)。下一 P1 是完整分裂/解散跨实例协调；圈地派生通知仍缺耐久投递，其他未闭环项见[清单](CODE-CLOSURE.md)。全仓干净 Core、最新 MySQL 与实服继续待验。
+2026-11-26 最新第十四份[国家分裂恢复补丁](upstream/SPLIT-RECOVERY.md)实现共享目录意图、原编号领土转移回执、取消封存和目录终态；目录提交失败不再反向转地。新增 `/nation splitrecovery`，保留创建/圈地/经验历史，并补普通修改的权威预检和目录发布重入屏障。1,712 项 Core 定向回归（7 个独立批次）与实际最终 Core 下 StarSupply 177 项通过，均无失败、错误、跳过。16 个改动生产源空目录编译、28 个 class 一致，22 文件补丁重放后全部 3,601 个 src 文件及 API 基线一致。详见[证据](verification/workspace-split-recovery-20261126.json)。 下一 P1 是解散共享协议及领土/城市/外交/国库持久退役保护；全部阶段仍未完成。
 
-随后按“代码层面还有什么没有闭环”复核了 10 组已知缺口、17 个源码文件及相关调用点；源码与十三份补丁检查点一致。分裂仍有保存失败反向转地，解散外部清理缺持久退役保护，海军真实运兵、伤兵回补与学说实效尚未接通。详见[源码证据](verification/code-closure-source-audit-20261126.json)及[当前清单](CODE-CLOSURE.md)。这次只更新审计记录，没有新增生产代码、构建或行为测试；原测试数量和 JAR 不变。
+此前圈地检查点：2026-11-26 第十三份[圈地恢复补丁](upstream/CLAIM-RECOVERY.md)已实现原报价/选区意图、原编号资金、原子领土批次回执、取消/退款及管理恢复；普通领土存储改为同步确认并使用文件/SQL 并发版本。1,666 项 Core 定向回归与实际最终 Core 下 StarSupply 177 项通过，20 个生产源空目录编译、30 个 class 校验，32 文件补丁重放后全部 3,595 个 src 文件一致。详见[证据](verification/workspace-claim-recovery-20261126.json)。当时下一 P1 是完整分裂/解散跨实例协调；当前剩余范围以[清单](CODE-CLOSURE.md)为准。
+
+第十四份补丁实施前，按“代码层面还有什么没有闭环”复核了 10 组已知缺口、17 个源码文件及相关调用点；源码与十三份补丁检查点一致。当时分裂仍有保存失败反向转地，解散外部清理缺持久退役保护，海军真实运兵、伤兵回补与学说实效尚未接通。详见[历史源码证据](verification/code-closure-source-audit-20261126.json)及[当前清单](CODE-CLOSURE.md)。该次仅审计记录未改变生产代码、构建或行为测试；分裂实现与新测试以本页顶部第十四份补丁为准。
 
 此前第十二份检查点：2026-11-26 已完成第十二份 [建国/城邦创建恢复补丁](upstream/CREATION-RECOVERY.md)：原意图与目录同存、原编号扣款/退款、终态重放、管理员恢复/取消、重入和待恢复日志保护；另修复 SQL 资金旧快照覆盖其他实例普通收入，并保护重载后的旧异步队列。1,322 项 Core 定向回归及实际最终 Core 下 StarSupply 177 项通过；14 个生产源空目录编译，21 文件补丁重放后全源码一致。详见[验证记录](verification/workspace-creation-recovery-20261126.json)。圈地付款、完整跨实例国家生命周期、全仓 Core、最新 MySQL 与实服仍待完成。
 
@@ -57,7 +59,9 @@
 
 ## 最新构建与验证
 
-- 最新圈地恢复 Core：`D5CBFE11C94883C098F1E768608DF0C41C8FA7B12CD99F8093CFDD22301A4DB0`（19,835,048 字节）；1,666 项 Core 与配套 177 项通过。生产 Folia 声明关闭，未启动实服。以下创建恢复及更早记录属于历史检查点。
+- 最新分裂恢复 Core：`210F1DE4187CBD9D91BA7B2E2B90BFB65E3EB5025733399DE810C68465515C11`（19,859,103 字节）；1,712 项 Core 与配套 177 项通过。生产 Folia 声明关闭，未启动实服。以下为历史检查点。
+
+- 第十三份圈地恢复 Core：`D5CBFE11C94883C098F1E768608DF0C41C8FA7B12CD99F8093CFDD22301A4DB0`（19,835,048 字节）；1,666 项 Core 与配套 177 项通过。生产 Folia 声明关闭，未启动实服。以下创建恢复及更早记录属于历史检查点。
 
 - 第十二份创建恢复 Core：`F6B5BCF965CD2279B096A55D9961DDF00E3D1A5F5E428698293D8C12077DC91B`（19,796,345 字节）；1,322 项定向测试及配套 177 项通过。21 个 class 与空目录编译一致，其余旧 JAR 条目未变；生产 Folia 声明关闭，实服未启动。下方是各历史检查点。
 
@@ -109,7 +113,7 @@ $env:JAVA_HOME = 'C:\path\to\jdk-21'
 .\tools\build.ps1 -StarCoreRoot ..\starsupply-starcore-api -JavaHome $env:JAVA_HOME
 ```
 
-运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`、`starcore-religion-closure.patch`、`starcore-faith-closure.patch`、`starcore-navy-reliability.patch`、`starcore-budget-recovery.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `E934CF6E84C8DC08B71910A9B2192F4FFDA4B623F10852133ABC209A30EE95DC`。
+运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`、`starcore-religion-closure.patch`、`starcore-faith-closure.patch`、`starcore-navy-reliability.patch`、`starcore-budget-recovery.patch`、`starcore-exercise-recovery.patch`、`starcore-creation-recovery.patch`、`starcore-claim-recovery.patch`、`starcore-split-recovery.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `210F1DE4187CBD9D91BA7B2E2B90BFB65E3EB5025733399DE810C68465515C11`。
 
 依赖已安装时，低内存构建命令为：
 

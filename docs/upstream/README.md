@@ -1,6 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-当前最新兼容包按顺序应用十三份补丁：在前十二份后追加[圈地付款与领土回执恢复](CLAIM-RECOVERY.md)（`starcore-claim-recovery.patch`）。原报价/选区意图、原编号付款/退款、整批地块与不可变回执、管理员恢复已接通；文件/SQL 领土同步版本提交。1,666 项 Core 定向回归和实际最终 Core 下 StarSupply 177 项通过。完整国家生命周期、圈地派生通知及其他待办见[代码清单](../CODE-CLOSURE.md)。生产 Folia 声明关闭。
+当前最新兼容包按顺序应用十四份补丁：在前十三份后追加[国家分裂恢复](SPLIT-RECOVERY.md)（`starcore-split-recovery.patch`）。共享意图、原编号领土转移与目录终态、取消和管理恢复已接通；不再反向转地。1,712 项 Core 定向回归与实际成品下 177 项配套测试通过。完整国家生命周期仍需解散和外部退役协议，其他缺口见[代码清单](../CODE-CLOSURE.md)。生产 Folia 声明关闭。
+
+
+此前圈地兼容包按顺序应用十三份补丁：在前十二份后追加[圈地付款与领土回执恢复](CLAIM-RECOVERY.md)（`starcore-claim-recovery.patch`）。原报价/选区意图、原编号付款/退款、整批地块与不可变回执、管理员恢复已接通；文件/SQL 领土同步版本提交。1,666 项 Core 定向回归和实际最终 Core 下 StarSupply 177 项通过。完整国家生命周期、圈地派生通知及其他待办见[代码清单](../CODE-CLOSURE.md)。生产 Folia 声明关闭。
 
 
 此前创建恢复兼容包按顺序应用十二份补丁，在下述十一份后追加 [建国与城邦恢复](CREATION-RECOVERY.md)（`starcore-creation-recovery.patch`）。新创建按原编号恢复付款/退款，并保留终态、提供管理入口；SQL 普通账户与回执快照共享版本，防止旧实例覆盖收入。1,322 项 Core 定向回归和实际最终 Core 下 StarSupply 177 项通过。圈地、完整国家生命周期跨实例协议及其他未闭环范围见[当前清单](../CODE-CLOSURE.md)。生产 Folia 声明继续关闭。

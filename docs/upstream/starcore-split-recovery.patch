@@ -1,0 +1,3121 @@
+diff --git a/docs/api/starcore-api-v1.txt b/docs/api/starcore-api-v1.txt
+index 0c90970..6be3f4e 100644
+--- a/docs/api/starcore-api-v1.txt
++++ b/docs/api/starcore-api-v1.txt
+@@ -88,6 +88,11 @@ FIELD dev.starcore.starcore.module.nation.NationSplitOutcome$Status#SOURCE_TERRI
+ FIELD dev.starcore.starcore.module.nation.NationSplitOutcome$Status#SUCCESS type=dev.starcore.starcore.module.nation.NationSplitOutcome$Status modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.module.nation.NationSplitOutcome$Status#TERRITORY_CHANGED type=dev.starcore.starcore.module.nation.NationSplitOutcome$Status modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.module.nation.NationSplitOutcome$Status#TERRITORY_MISMATCH type=dev.starcore.starcore.module.nation.NationSplitOutcome$Status modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationSplitService$State#CANCELLED type=dev.starcore.starcore.module.nation.NationSplitService$State modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationSplitService$State#CANCEL_PENDING type=dev.starcore.starcore.module.nation.NationSplitService$State modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationSplitService$State#COMPLETED type=dev.starcore.starcore.module.nation.NationSplitService$State modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationSplitService$State#PREPARED type=dev.starcore.starcore.module.nation.NationSplitService$State modifiers=public,static,final enumConstant=true
++FIELD dev.starcore.starcore.module.nation.NationSplitService$State#REJECTED type=dev.starcore.starcore.module.nation.NationSplitService$State modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.module.nation.claimtool.ClaimToolPoint#FIRST type=dev.starcore.starcore.module.nation.claimtool.ClaimToolPoint modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.module.nation.claimtool.ClaimToolPoint#SECOND type=dev.starcore.starcore.module.nation.claimtool.ClaimToolPoint modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.module.nation.model.NationKind#CITY_STATE type=dev.starcore.starcore.module.nation.model.NationKind modifiers=public,static,final enumConstant=true
+@@ -262,6 +267,7 @@ METHOD dev.starcore.starcore.api.StarCoreApi#modules typeParameters=<> parameter
+ METHOD dev.starcore.starcore.api.StarCoreApi#nationClaimService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.nation.NationClaimService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#nationCreationService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.nation.NationCreationService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#nationService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.nation.NationService> modifiers=public default=true
++METHOD dev.starcore.starcore.api.StarCoreApi#nationSplitService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.nation.NationSplitService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#officerService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.officer.OfficerService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#policyService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.policy.PolicyService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#resolutionService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.resolution.ResolutionService> modifiers=public default=true
+@@ -660,6 +666,31 @@ METHOD dev.starcore.starcore.module.nation.NationSplitOutcome#success typeParame
+ METHOD dev.starcore.starcore.module.nation.NationSplitOutcome#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
+ METHOD dev.starcore.starcore.module.nation.NationSplitOutcome$Status#valueOf typeParameters=<> parameters=(java.lang.String) returns=dev.starcore.starcore.module.nation.NationSplitOutcome$Status modifiers=public,static
+ METHOD dev.starcore.starcore.module.nation.NationSplitOutcome$Status#values typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.NationSplitOutcome$Status[] modifiers=public,static
++METHOD dev.starcore.starcore.module.nation.NationSplitService#cancelSplit typeParameters=<> parameters=(java.util.UUID) returns=dev.starcore.starcore.module.nation.NationSplitService$Receipt modifiers=public,abstract
++METHOD dev.starcore.starcore.module.nation.NationSplitService#pendingSplits typeParameters=<> parameters=() returns=java.util.List<dev.starcore.starcore.module.nation.NationSplitService$Receipt> modifiers=public,abstract
++METHOD dev.starcore.starcore.module.nation.NationSplitService#recoverSplit typeParameters=<> parameters=(java.util.UUID) returns=dev.starcore.starcore.module.nation.NationSplitService$Receipt modifiers=public,abstract
++METHOD dev.starcore.starcore.module.nation.NationSplitService#split typeParameters=<> parameters=(dev.starcore.starcore.module.nation.NationSplitService$Request) returns=dev.starcore.starcore.module.nation.NationSplitService$Receipt modifiers=public,abstract
++METHOD dev.starcore.starcore.module.nation.NationSplitService#splitOperation typeParameters=<> parameters=(java.util.UUID) returns=java.util.Optional<dev.starcore.starcore.module.nation.NationSplitService$Receipt> modifiers=public,abstract
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Receipt#detail typeParameters=<> parameters=() returns=java.lang.String modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Receipt#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Receipt#hashCode typeParameters=<> parameters=() returns=int modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Receipt#outcome typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.NationSplitOutcome$Status modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Receipt#request typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.NationSplitService$Request modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Receipt#state typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.NationSplitService$State modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Receipt#targetNationId typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationId modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Receipt#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Request#coordinates typeParameters=<> parameters=() returns=java.util.List<dev.starcore.starcore.foundation.territory.model.ChunkCoordinate> modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Request#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Request#founderId typeParameters=<> parameters=() returns=java.util.UUID modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Request#hashCode typeParameters=<> parameters=() returns=int modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Request#minimumRemainingClaims typeParameters=<> parameters=() returns=int modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Request#name typeParameters=<> parameters=() returns=java.lang.String modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Request#operationId typeParameters=<> parameters=() returns=java.util.UUID modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Request#sourceNationId typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationId modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$Request#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
++METHOD dev.starcore.starcore.module.nation.NationSplitService$State#pending typeParameters=<> parameters=() returns=boolean modifiers=public
++METHOD dev.starcore.starcore.module.nation.NationSplitService$State#valueOf typeParameters=<> parameters=(java.lang.String) returns=dev.starcore.starcore.module.nation.NationSplitService$State modifiers=public,static
++METHOD dev.starcore.starcore.module.nation.NationSplitService$State#values typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.NationSplitService$State[] modifiers=public,static
+ METHOD dev.starcore.starcore.module.nation.claimtool.ClaimToolPoint#valueOf typeParameters=<> parameters=(java.lang.String) returns=dev.starcore.starcore.module.nation.claimtool.ClaimToolPoint modifiers=public,static
+ METHOD dev.starcore.starcore.module.nation.claimtool.ClaimToolPoint#values typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.claimtool.ClaimToolPoint[] modifiers=public,static
+ METHOD dev.starcore.starcore.module.nation.claimtool.ClaimToolSelectionUpdate#blockX typeParameters=<> parameters=() returns=int modifiers=public
+@@ -1414,6 +1445,17 @@ RECORD_COMPONENT dev.starcore.starcore.module.nation.NationExperienceService$Rec
+ RECORD_COMPONENT dev.starcore.starcore.module.nation.NationExperienceService$Receipt#grant type=dev.starcore.starcore.module.nation.NationExperienceService$Grant
+ RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitOutcome#nation type=dev.starcore.starcore.module.nation.model.Nation
+ RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitOutcome#status type=dev.starcore.starcore.module.nation.NationSplitOutcome$Status
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Receipt#detail type=java.lang.String
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Receipt#outcome type=dev.starcore.starcore.module.nation.NationSplitOutcome$Status
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Receipt#request type=dev.starcore.starcore.module.nation.NationSplitService$Request
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Receipt#state type=dev.starcore.starcore.module.nation.NationSplitService$State
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Receipt#targetNationId type=dev.starcore.starcore.module.nation.model.NationId
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Request#coordinates type=java.util.List<dev.starcore.starcore.foundation.territory.model.ChunkCoordinate>
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Request#founderId type=java.util.UUID
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Request#minimumRemainingClaims type=int
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Request#name type=java.lang.String
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Request#operationId type=java.util.UUID
++RECORD_COMPONENT dev.starcore.starcore.module.nation.NationSplitService$Request#sourceNationId type=dev.starcore.starcore.module.nation.model.NationId
+ RECORD_COMPONENT dev.starcore.starcore.module.nation.claimtool.ClaimToolSelectionUpdate#blockX type=int
+ RECORD_COMPONENT dev.starcore.starcore.module.nation.claimtool.ClaimToolSelectionUpdate#blockZ type=int
+ RECORD_COMPONENT dev.starcore.starcore.module.nation.claimtool.ClaimToolSelectionUpdate#chunkX type=int
+@@ -1658,6 +1700,10 @@ TYPE dev.starcore.starcore.module.nation.NationExperienceService$Receipt kind=re
+ TYPE dev.starcore.starcore.module.nation.NationService kind=interface modifiers=public,abstract typeParameters=<>
+ TYPE dev.starcore.starcore.module.nation.NationSplitOutcome kind=record modifiers=public,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.nation.NationSplitOutcome$Status kind=enum modifiers=public,static,final typeParameters=<> extends=java.lang.Enum<dev.starcore.starcore.module.nation.NationSplitOutcome$Status>
++TYPE dev.starcore.starcore.module.nation.NationSplitService kind=interface modifiers=public,abstract typeParameters=<>
++TYPE dev.starcore.starcore.module.nation.NationSplitService$Receipt kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
++TYPE dev.starcore.starcore.module.nation.NationSplitService$Request kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
++TYPE dev.starcore.starcore.module.nation.NationSplitService$State kind=enum modifiers=public,static,final typeParameters=<> extends=java.lang.Enum<dev.starcore.starcore.module.nation.NationSplitService$State>
+ TYPE dev.starcore.starcore.module.nation.claimtool.ClaimToolPoint kind=enum modifiers=public,final typeParameters=<> extends=java.lang.Enum<dev.starcore.starcore.module.nation.claimtool.ClaimToolPoint>
+ TYPE dev.starcore.starcore.module.nation.claimtool.ClaimToolSelectionUpdate kind=record modifiers=public,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.nation.claimtool.ClaimToolService kind=interface modifiers=public,abstract typeParameters=<>
+diff --git a/src/main/java/dev/starcore/starcore/api/StarCoreApi.java b/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
+index f1c97d8..fe494d9 100644
+--- a/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
++++ b/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
+@@ -49,6 +49,10 @@ public interface StarCoreApi {
+     return service(dev.starcore.starcore.module.nation.NationClaimService.class);
+   }
+ 
++  default Optional<dev.starcore.starcore.module.nation.NationSplitService> nationSplitService() {
++    return service(dev.starcore.starcore.module.nation.NationSplitService.class);
++  }
++
+   default Optional<dev.starcore.starcore.module.nation.NationCreationService>
+       nationCreationService() {
+     return service(dev.starcore.starcore.module.nation.NationCreationService.class);
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryService.java b/src/main/java/dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryService.java
+index 8eeee32..fb3bf03 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryService.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryService.java
+@@ -10,7 +10,7 @@ import java.util.logging.Logger;
+ 
+ /** The configured backend is pinned; database outages cannot silently switch the land authority. */
+ public final class DatabaseAwareTerritoryService
+-    implements TerritoryService, TerritoryBatchService {
++    implements TerritoryService, TerritoryBatchService, TerritoryTransferService {
+   private final StateStorageBackend backend;
+   private final DurableTerritoryService delegate;
+   private boolean closed;
+@@ -83,6 +83,18 @@ public final class DatabaseAwareTerritoryService
+     return current().batchReceipt(id);
+   }
+ 
++  public TransferReceipt transferBatch(TransferRequest request) {
++    return current().transferBatch(request);
++  }
++
++  public TransferReceipt cancelTransfer(TransferRequest request) {
++    return current().cancelTransfer(request);
++  }
++
++  public Optional<TransferReceipt> transferReceipt(UUID id) {
++    return current().transferReceipt(id);
++  }
++
+   public synchronized void shutdown() {
+     if (!closed) {
+       closed = true;
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/DurableTerritoryService.java b/src/main/java/dev/starcore/starcore/foundation/territory/DurableTerritoryService.java
+index 56c2353..a2d6e45 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/DurableTerritoryService.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/DurableTerritoryService.java
+@@ -4,7 +4,8 @@ import dev.starcore.starcore.foundation.territory.model.ChunkCoordinate;
+ import dev.starcore.starcore.foundation.territory.model.TerritoryClaim;
+ import java.util.*;
+ 
+-abstract class DurableTerritoryService implements TerritoryService, TerritoryBatchService {
++abstract class DurableTerritoryService
++    implements TerritoryService, TerritoryBatchService, TerritoryTransferService {
+   private final TerritoryLedgerStorage storage;
+   private boolean closed;
+ 
+@@ -40,7 +41,7 @@ abstract class DurableTerritoryService implements TerritoryService, TerritoryBat
+     if (state.claims().containsKey(c)) return false;
+     var next = new HashMap<>(state.claims());
+     next.put(c, new TerritoryClaim(owner, c));
+-    commit(new TerritoryLedger(next, state.receipts()));
++    commit(new TerritoryLedger(next, state.receipts(), state.transfers()));
+     return true;
+   }
+ 
+@@ -50,7 +51,7 @@ abstract class DurableTerritoryService implements TerritoryService, TerritoryBat
+     if (current == null || !current.ownerId().equals(owner)) return false;
+     var next = new HashMap<>(state.claims());
+     next.remove(c);
+-    commit(new TerritoryLedger(next, state.receipts()));
++    commit(new TerritoryLedger(next, state.receipts(), state.transfers()));
+     return true;
+   }
+ 
+@@ -69,7 +70,8 @@ abstract class DurableTerritoryService implements TerritoryService, TerritoryBat
+       if (current != null && !current.ownerId().equals(claim.ownerId())) return false;
+       next.remove(claim.coordinate());
+     }
+-    if (!next.equals(state.claims())) commit(new TerritoryLedger(next, state.receipts()));
++    if (!next.equals(state.claims()))
++      commit(new TerritoryLedger(next, state.receipts(), state.transfers()));
+     return true;
+   }
+ 
+@@ -83,7 +85,7 @@ abstract class DurableTerritoryService implements TerritoryService, TerritoryBat
+       if (current == null || !source.equals(current.ownerId())) return false;
+       next.put(c, new TerritoryClaim(target, c));
+     }
+-    commit(new TerritoryLedger(next, state.receipts()));
++    commit(new TerritoryLedger(next, state.receipts(), state.transfers()));
+     return true;
+   }
+ 
+@@ -125,7 +127,50 @@ abstract class DurableTerritoryService implements TerritoryService, TerritoryBat
+     receipts.put(request.operationId(), result);
+     if (status == Status.APPLIED)
+       for (var c : request.coordinates()) next.put(c, new TerritoryClaim(request.ownerId(), c));
+-    commit(new TerritoryLedger(next, receipts));
++    commit(new TerritoryLedger(next, receipts, state.transfers()));
++    return result;
++  }
++
++  public synchronized TransferReceipt transferBatch(TransferRequest request) {
++    return transfer(request, false);
++  }
++
++  public synchronized TransferReceipt cancelTransfer(TransferRequest request) {
++    return transfer(request, true);
++  }
++
++  public synchronized Optional<TransferReceipt> transferReceipt(UUID id) {
++    return Optional.ofNullable(load().transfers().get(Objects.requireNonNull(id)));
++  }
++
++  private TransferReceipt transfer(TransferRequest request, boolean cancel) {
++    Objects.requireNonNull(request);
++    var state = load();
++    var previous = state.transfers().get(request.operationId());
++    if (previous != null) {
++      if (!previous.request().equals(request))
++        throw new IllegalArgumentException("Conflicting territory transfer");
++      return previous;
++    }
++    TransferStatus status = cancel ? TransferStatus.CANCELLED : TransferStatus.APPLIED;
++    if (!cancel) {
++      if (request.coordinates().stream()
++          .anyMatch(
++              c -> !new TerritoryClaim(request.sourceOwner(), c).equals(state.claims().get(c))))
++        status = TransferStatus.OWNER_CHANGED;
++      else if (state.claims().values().stream()
++                  .filter(c -> c.ownerId().equals(request.sourceOwner()))
++                  .count()
++              - request.coordinates().size()
++          < request.minimumRemainingClaims()) status = TransferStatus.REMAINING_LIMIT;
++    }
++    var next = new HashMap<>(state.claims());
++    var transfers = new HashMap<>(state.transfers());
++    var result = new TransferReceipt(request, status);
++    transfers.put(request.operationId(), result);
++    if (status == TransferStatus.APPLIED)
++      for (var c : request.coordinates()) next.put(c, new TerritoryClaim(request.targetOwner(), c));
++    commit(new TerritoryLedger(next, state.receipts(), transfers));
+     return result;
+   }
+ 
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.java b/src/main/java/dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.java
+index db6f2ca..235c0ef 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.java
+@@ -75,6 +75,10 @@ final class FileTerritoryLedgerStorage implements TerritoryLedgerStorage {
+         byte[] current = read();
+         if (!Arrays.equals(expected, current))
+           throw new IllegalStateException("Territory file changed; retry original operation");
++        var previous = TerritoryLedger.decode(decode(current));
++        if (!ledger.receipts().entrySet().containsAll(previous.receipts().entrySet())
++            || !ledger.transfers().entrySet().containsAll(previous.transfers().entrySet()))
++          throw new IllegalStateException("Territory receipts cannot be removed or changed");
+         var buffer = new ByteArrayOutputStream();
+         canonical.store(buffer, "STARCORE territory state");
+         byte[] candidate = buffer.toByteArray();
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/SqlTerritoryLedgerStorage.java b/src/main/java/dev/starcore/starcore/foundation/territory/SqlTerritoryLedgerStorage.java
+index 27239d2..38b3802 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/SqlTerritoryLedgerStorage.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/SqlTerritoryLedgerStorage.java
+@@ -32,8 +32,9 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+     if (initialized) return;
+     boolean claims = table(c, "starcore_territory_claims"),
+         receipts = table(c, "starcore_territory_batch_receipts"),
++        transfers = table(c, "starcore_territory_transfer_receipts"),
+         revision = table(c, "starcore_territory_revision");
+-    boolean durable = receipts || revision;
++    boolean durable = receipts || transfers || revision;
+     if (durable && (!claims || !receipts || !revision))
+       throw new SQLException("Missing territory authority table");
+     boolean sqlite = "SQLite".equalsIgnoreCase(c.getMetaData().getDatabaseProductName());
+@@ -50,6 +51,11 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+       s.execute(
+           "CREATE TABLE IF NOT EXISTS starcore_territory_revision (singleton INTEGER PRIMARY"
+               + " KEY,revision BIGINT NOT NULL,checksum VARCHAR(64) NOT NULL)");
++      s.execute(
++          "CREATE TABLE IF NOT EXISTS starcore_territory_transfer_receipts (operation_id"
++              + " VARCHAR(36) PRIMARY KEY,payload "
++              + (sqlite ? "TEXT" : "LONGTEXT")
++              + " NOT NULL)");
+       if (!durable)
+         s.execute(
+             sqlite
+@@ -102,7 +108,10 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+         expected = after.value();
+         expectedHash = after.checksum();
+         if (expected != 0) return ledger;
+-        initial = ledger.claims().isEmpty() && ledger.receipts().isEmpty() ? legacy.get() : ledger;
++        initial =
++            ledger.claims().isEmpty() && ledger.receipts().isEmpty() && ledger.transfers().isEmpty()
++                ? legacy.get()
++                : ledger;
+         break;
+       }
+       if (initial == null) throw new SQLException("Territory authority changed while reading");
+@@ -168,7 +177,42 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+           throw new SQLException("Invalid territory receipt");
+       }
+     }
+-    return new TerritoryLedger(claims, receipts);
++    Map<UUID, TerritoryTransferService.TransferReceipt> transfers = new HashMap<>();
++    try (var s = c.createStatement();
++        var r =
++            s.executeQuery(
++                "SELECT operation_id,payload FROM starcore_territory_transfer_receipts")) {
++      while (r.next()) {
++        if (transfers.size() >= 100_000) throw new SQLException("Too many territory transfers");
++        var p = receiptProperties(r.getString(2));
++        var receipt = TerritoryLedger.readTransfer(p, "");
++        Properties exact = new Properties();
++        TerritoryLedger.writeTransfer(exact, "", receipt);
++        if (!p.equals(exact)
++            || !receipt.request().operationId().toString().equals(r.getString(1))
++            || transfers.putIfAbsent(receipt.request().operationId(), receipt) != null)
++          throw new SQLException("Invalid territory transfer receipt");
++      }
++    }
++    return new TerritoryLedger(claims, receipts, transfers);
++  }
++
++  private Properties receiptProperties(String payload) throws SQLException {
++    if (payload == null || payload.length() > 64 * 1024 * 1024)
++      throw new SQLException("Invalid territory transfer payload");
++    Properties p =
++        new Properties() {
++          public synchronized Object put(Object k, Object v) {
++            if (containsKey(k)) throw new IllegalArgumentException("Duplicate receipt field");
++            return super.put(k, v);
++          }
++        };
++    try {
++      p.load(new StringReader(payload));
++    } catch (IOException e) {
++      throw new SQLException(e);
++    }
++    return p;
+   }
+ 
+   public synchronized void save(TerritoryLedger ledger) {
+@@ -195,6 +239,8 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+           throw new SQLException("Territory changed outside revision protocol");
+         if (!ledger.receipts().entrySet().containsAll(previous.receipts().entrySet()))
+           throw new SQLException("Territory receipts cannot be removed or changed");
++        if (!ledger.transfers().entrySet().containsAll(previous.transfers().entrySet()))
++          throw new SQLException("Territory transfer receipts cannot be removed or changed");
+         try (var s = c.createStatement()) {
+           s.executeUpdate("DELETE FROM starcore_territory_claims");
+         }
+@@ -231,6 +277,26 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+             }
+           insert.executeBatch();
+         }
++        try (var insert =
++            c.prepareStatement(
++                "INSERT INTO starcore_territory_transfer_receipts(operation_id,payload)"
++                    + " VALUES(?,?)")) {
++          for (var entry : ledger.transfers().entrySet()) {
++            if (previous.transfers().containsKey(entry.getKey())) continue;
++            Properties p = new Properties();
++            TerritoryLedger.writeTransfer(p, "", entry.getValue());
++            StringWriter output = new StringWriter();
++            try {
++              p.store(output, "territory transfer receipt");
++            } catch (IOException e) {
++              throw new SQLException(e);
++            }
++            insert.setString(1, entry.getKey().toString());
++            insert.setString(2, output.toString());
++            insert.addBatch();
++          }
++          insert.executeBatch();
++        }
+         c.commit();
+         safe = true;
+         expected++;
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryLedger.java b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryLedger.java
+index 43edfd9..43e678d 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryLedger.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryLedger.java
+@@ -6,10 +6,18 @@ import java.util.*;
+ 
+ record TerritoryLedger(
+     Map<ChunkCoordinate, TerritoryClaim> claims,
+-    Map<UUID, TerritoryBatchService.Receipt> receipts) {
++    Map<UUID, TerritoryBatchService.Receipt> receipts,
++    Map<UUID, TerritoryTransferService.TransferReceipt> transfers) {
++  TerritoryLedger(
++      Map<ChunkCoordinate, TerritoryClaim> claims,
++      Map<UUID, TerritoryBatchService.Receipt> receipts) {
++    this(claims, receipts, Map.of());
++  }
++
+   TerritoryLedger {
+     claims = Map.copyOf(claims);
+     receipts = Map.copyOf(receipts);
++    transfers = Map.copyOf(transfers);
+     for (var e : claims.entrySet()) {
+       var c = e.getKey();
+       var owner = e.getValue().ownerId();
+@@ -25,7 +33,7 @@ record TerritoryLedger(
+ 
+   Properties properties() {
+     Properties result = TerritoryStateCodec.toProperties(claims.values());
+-    result.setProperty("batches.version", "1");
++    result.setProperty("batches.version", transfers.isEmpty() ? "1" : "2");
+     result.setProperty("batches.count", Integer.toString(receipts.size()));
+     int i = 0;
+     for (var entry : receipts.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
+@@ -35,6 +43,15 @@ record TerritoryLedger(
+       String key = "batches." + i++ + ".";
+       writeReceipt(result, key, receipt);
+     }
++    if (!transfers.isEmpty()) {
++      result.setProperty("transfers.count", Integer.toString(transfers.size()));
++      int j = 0;
++      for (var entry : transfers.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
++        if (!entry.getKey().equals(entry.getValue().request().operationId()))
++          throw new IllegalArgumentException("Territory transfer key mismatch");
++        writeTransfer(result, "transfers." + j++ + ".", entry.getValue());
++      }
++    }
+     result.setProperty("batches.sha256", checksum(result));
+     return result;
+   }
+@@ -81,7 +98,7 @@ record TerritoryLedger(
+     boolean durable = p.stringPropertyNames().stream().anyMatch(k -> k.startsWith("batches."));
+     Properties plain = new Properties();
+     p.stringPropertyNames().stream()
+-        .filter(k -> !k.startsWith("batches."))
++        .filter(k -> !k.startsWith("batches.") && !k.startsWith("transfers."))
+         .forEach(k -> plain.setProperty(k, p.getProperty(k)));
+     int claimCount = Integer.parseInt(plain.getProperty("count"));
+     if (claimCount < 0 || claimCount > 1_000_000)
+@@ -100,8 +117,9 @@ record TerritoryLedger(
+     if (!TerritoryStateCodec.toProperties(claims.values()).equals(plain))
+       throw new IllegalArgumentException("Incomplete territory claims");
+     Map<UUID, TerritoryBatchService.Receipt> receipts = new LinkedHashMap<>();
++    Map<UUID, TerritoryTransferService.TransferReceipt> transfers = new LinkedHashMap<>();
+     if (durable) {
+-      if (!"1".equals(p.getProperty("batches.version"))
++      if (!Set.of("1", "2").contains(p.getProperty("batches.version", ""))
+           || !checksum(p).equals(p.getProperty("batches.sha256")))
+         throw new IllegalArgumentException("Territory ledger checksum mismatch");
+       int count = Integer.parseInt(p.getProperty("batches.count"));
+@@ -112,13 +130,65 @@ record TerritoryLedger(
+         if (receipts.putIfAbsent(r.request().operationId(), r) != null)
+           throw new IllegalArgumentException("Duplicate territory receipt");
+       }
++      if ("2".equals(p.getProperty("batches.version"))) {
++        int size = Integer.parseInt(p.getProperty("transfers.count"));
++        if (size < 1 || size > 100_000)
++          throw new IllegalArgumentException("Invalid territory transfer count");
++        for (int i = 0; i < size; i++) {
++          var receipt = readTransfer(p, "transfers." + i + ".");
++          if (transfers.putIfAbsent(receipt.request().operationId(), receipt) != null)
++            throw new IllegalArgumentException("Duplicate territory transfer");
++        }
++      }
+     }
+-    var result = new TerritoryLedger(claims, receipts);
++    if (!durable && p.stringPropertyNames().stream().anyMatch(k -> k.startsWith("transfers.")))
++      throw new IllegalArgumentException("Territory transfer envelope missing");
++    var result = new TerritoryLedger(claims, receipts, transfers);
+     if (durable && !result.properties().equals(p))
+       throw new IllegalArgumentException("Incomplete territory authority");
+     return result;
+   }
+ 
++  static void writeTransfer(
++      Properties p, String key, TerritoryTransferService.TransferReceipt receipt) {
++    var r = receipt.request();
++    p.setProperty(key + "id", r.operationId().toString());
++    p.setProperty(key + "source", r.sourceOwner());
++    p.setProperty(key + "target", r.targetOwner());
++    p.setProperty(key + "minimum", Integer.toString(r.minimumRemainingClaims()));
++    p.setProperty(key + "status", receipt.status().name());
++    p.setProperty(key + "count", Integer.toString(r.coordinates().size()));
++    for (int j = 0; j < r.coordinates().size(); j++) {
++      var c = r.coordinates().get(j);
++      String k = key + "chunk." + j + ".";
++      p.setProperty(k + "world", c.world());
++      p.setProperty(k + "x", Integer.toString(c.x()));
++      p.setProperty(k + "z", Integer.toString(c.z()));
++    }
++  }
++
++  static TerritoryTransferService.TransferReceipt readTransfer(Properties p, String key) {
++    int size = Integer.parseInt(p.getProperty(key + "count"));
++    if (size < 1 || size > 100_000) throw new IllegalArgumentException("Invalid transfer size");
++    List<ChunkCoordinate> coordinates = new ArrayList<>();
++    for (int j = 0; j < size; j++) {
++      String k = key + "chunk." + j + ".";
++      coordinates.add(
++          new ChunkCoordinate(
++              p.getProperty(k + "world"),
++              Integer.parseInt(p.getProperty(k + "x")),
++              Integer.parseInt(p.getProperty(k + "z"))));
++    }
++    return new TerritoryTransferService.TransferReceipt(
++        new TerritoryTransferService.TransferRequest(
++            UUID.fromString(p.getProperty(key + "id")),
++            p.getProperty(key + "source"),
++            p.getProperty(key + "target"),
++            coordinates,
++            Integer.parseInt(p.getProperty(key + "minimum"))),
++        TerritoryTransferService.TransferStatus.valueOf(p.getProperty(key + "status")));
++  }
++
+   static String checksum(Properties p) {
+     try {
+       var digest = java.security.MessageDigest.getInstance("SHA-256");
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryTransferService.java b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryTransferService.java
+new file mode 100644
+index 0000000..80edbcc
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryTransferService.java
+@@ -0,0 +1,46 @@
++package dev.starcore.starcore.foundation.territory;
++
++import dev.starcore.starcore.foundation.territory.model.ChunkCoordinate;
++import java.util.*;
++
++/** Transfer and immutable receipt share one authority commit. Retain the original request ID. */
++public interface TerritoryTransferService {
++  enum TransferStatus {
++    APPLIED,
++    OWNER_CHANGED,
++    REMAINING_LIMIT,
++    CANCELLED
++  }
++
++  record TransferRequest(
++      UUID operationId,
++      String sourceOwner,
++      String targetOwner,
++      List<ChunkCoordinate> coordinates,
++      int minimumRemainingClaims) {
++    public TransferRequest {
++      var validated = new TerritoryBatchService.Request(operationId, sourceOwner, coordinates, -1);
++      coordinates = validated.coordinates();
++      if (targetOwner == null
++          || targetOwner.isBlank()
++          || targetOwner.length() > 64
++          || sourceOwner.equals(targetOwner)
++          || minimumRemainingClaims < 0)
++        throw new IllegalArgumentException("Invalid territory transfer");
++    }
++  }
++
++  record TransferReceipt(TransferRequest request, TransferStatus status) {
++    public TransferReceipt {
++      Objects.requireNonNull(request);
++      Objects.requireNonNull(status);
++    }
++  }
++
++  TransferReceipt transferBatch(TransferRequest request);
++
++  /** Seals an unpublished transfer. A previously committed transfer wins. */
++  TransferReceipt cancelTransfer(TransferRequest request);
++
++  Optional<TransferReceipt> transferReceipt(UUID operationId);
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationClaimCoordinator.java b/src/main/java/dev/starcore/starcore/module/nation/NationClaimCoordinator.java
+index e588b05..800e5d1 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationClaimCoordinator.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationClaimCoordinator.java
+@@ -43,7 +43,8 @@ final class NationClaimCoordinator {
+       return advance(previous);
+     }
+     if (snapshot.claims().values().stream().anyMatch(op -> op.state().pending())
+-        || snapshot.creations().values().stream().anyMatch(op -> op.state().pending()))
++        || snapshot.creations().values().stream().anyMatch(op -> op.state().pending())
++        || snapshot.splits().values().stream().anyMatch(op -> op.state().pending()))
+       throw new IllegalStateException(
+           "Nation lifecycle recovery pending; retry its original operation ID");
+     var operation = admission.apply(snapshot.nations());
+@@ -169,7 +170,8 @@ final class NationClaimCoordinator {
+     var operations = new HashMap<>(snapshot.claims());
+     operations.put(op.request().operationId(), op);
+     var candidate =
+-        NationStateCodec.toProperties(snapshot.nations(), snapshot.creations(), operations);
++        NationStateCodec.toProperties(
++            snapshot.nations(), snapshot.creations(), operations, snapshot.splits());
+     try {
+       storage.save(candidate);
+     } catch (RuntimeException failure) {
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java b/src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java
+index b58805a..b8f2d10 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java
+@@ -47,7 +47,8 @@ final class NationCreationCoordinator {
+       return advance(existing);
+     }
+     if (snapshot.creations().values().stream().anyMatch(op -> op.state().pending())
+-        || snapshot.claims().values().stream().anyMatch(op -> op.state().pending()))
++        || snapshot.claims().values().stream().anyMatch(op -> op.state().pending())
++        || snapshot.splits().values().stream().anyMatch(op -> op.state().pending()))
+       throw new IllegalStateException(
+           "Nation creation recovery pending; retry its original operation ID");
+     var operation = admission.apply(snapshot.nations());
+@@ -143,7 +144,8 @@ final class NationCreationCoordinator {
+   private void persist(NationCreationOperation operation, List<Nation> nations) {
+     var operations = new HashMap<>(snapshot.creations());
+     operations.put(operation.request().operationId(), operation);
+-    var candidate = NationStateCodec.toProperties(nations, operations, snapshot.claims());
++    var candidate =
++        NationStateCodec.toProperties(nations, operations, snapshot.claims(), snapshot.splits());
+     try {
+       storage.save(candidate);
+     } catch (RuntimeException failure) {
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationModule.java b/src/main/java/dev/starcore/starcore/module/nation/NationModule.java
+index baf5ac3..a29b471 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationModule.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationModule.java
+@@ -83,7 +83,8 @@ public final class NationModule
+         NationService,
+         NationExperienceService,
+         NationCreationService,
+-        NationClaimService {
++        NationClaimService,
++        NationSplitService {
+   private static final String FILE_NAME = "nations.properties";
+   private static final long CACHE_REFRESH_INTERVAL_TICKS = 6000L; // 5分钟刷新一次 (300秒)
+ 
+@@ -98,7 +99,8 @@ public final class NationModule
+               ClaimToolService.class,
+               NationExperienceService.class,
+               NationCreationService.class,
+-              NationClaimService.class),
++              NationClaimService.class,
++              NationSplitService.class),
+           "Owns nation membership, identity, and strategic state boundaries.");
+ 
+   private final Map<NationId, Nation> nationsById = new ConcurrentHashMap<>();
+@@ -115,6 +117,10 @@ public final class NationModule
+   private boolean experienceAuthorityUnavailable;
+   private boolean creationExecuting;
+   private boolean claimExecuting;
++  private boolean splitExecuting;
++  private boolean publishingCatalog;
++  private Properties authoritativeCatalog = new Properties();
++  private final Map<UUID, NationSplitOperation> splitOperations = new LinkedHashMap<>();
+   private final Map<UUID, NationClaimOperation> claimOperations = new LinkedHashMap<>();
+   private final Map<UUID, NationCreationOperation> creations = new LinkedHashMap<>();
+   private NationSplitJournal splitJournal = NationSplitJournal.none();
+@@ -189,6 +195,7 @@ public final class NationModule
+     loadState();
+     recoverCreationOnStartup();
+     recoverClaimsOnStartup();
++    recoverSplitsOnStartup();
+     OptimizedMoveListener moveDispatcher =
+         context.serviceRegistry().find(OptimizedMoveListener.class).orElse(null);
+     if (moveDispatcher != null) {
+@@ -394,6 +401,7 @@ public final class NationModule
+         if (!experienceAuthorityUnavailable
+             && creations.values().stream().noneMatch(op -> op.state().pending())
+             && claimOperations.values().stream().noneMatch(op -> op.state().pending())
++            && splitOperations.values().stream().noneMatch(op -> op.state().pending())
+             && creationJournal.load().isEmpty()
+             && splitJournal.load().isEmpty()
+             && disbandJournal.load().isEmpty()) flushState();
+@@ -550,9 +558,11 @@ public final class NationModule
+   }
+ 
+   private void requireCreationAuthority() {
+-    if (experienceAuthorityUnavailable
++    if (publishingCatalog
++        || experienceAuthorityUnavailable
+         || creationExecuting
+         || claimExecuting
++        || splitExecuting
+         || stateStorage == null
+         || economyService == null)
+       throw new IllegalStateException("Nation creation authority unavailable");
+@@ -568,12 +578,28 @@ public final class NationModule
+ 
+   private void requireLifecycleReady() {
+     requireLegacyRecoveryComplete();
+-    if (experienceAuthorityUnavailable
++    if (publishingCatalog
++        || experienceAuthorityUnavailable
+         || creationExecuting
+         || claimExecuting
++        || splitExecuting
+         || creations.values().stream().anyMatch(op -> op.state().pending())
+-        || claimOperations.values().stream().anyMatch(op -> op.state().pending()))
++        || claimOperations.values().stream().anyMatch(op -> op.state().pending())
++        || splitOperations.values().stream().anyMatch(op -> op.state().pending()))
+       throw new IllegalStateException("Nation lifecycle recovery pending");
++    // A fresh check must not silently attach a new storage revision to old mutable Nation objects.
++    // Keep local caller edits only when the last published authority still matches.
++    if (stateStorage != null) {
++      var actual = NationStateCodec.snapshot(stateStorage.load());
++      var canonical =
++          NationStateCodec.toProperties(
++              actual.nations(), actual.creations(), actual.claims(), actual.splits());
++      if (!canonical.equals(authoritativeCatalog)) {
++        applySnapshot(actual);
++        throw new NationStateConflictException(
++            new IllegalStateException("Nation authority changed before mutation"));
++      }
++    }
+   }
+ 
+   private void recoverCreationOnStartup() {
+@@ -618,23 +644,118 @@ public final class NationModule
+       String newNationName,
+       Collection<ChunkCoordinate> coordinates,
+       int minimumRemainingClaims) {
+-    requireLifecycleReady();
+-    if (territoryService == null || stateStorage == null) {
+-      throw new IllegalStateException("Nation module is not ready for nation splits");
++    requireSplitAuthority();
++    loadState();
++    var request =
++        new NationSplitService.Request(
++            UUID.randomUUID(),
++            sourceNationId,
++            newFounderId,
++            newNationName,
++            List.copyOf(coordinates),
++            minimumRemainingClaims);
++    var matching =
++        splitOperations.values().stream()
++            .filter(op -> op.state().pending())
++            .map(NationSplitOperation::request)
++            .filter(
++                r ->
++                    r.sourceNationId().equals(request.sourceNationId())
++                        && r.founderId().equals(request.founderId())
++                        && r.name().equals(request.name())
++                        && r.coordinates().equals(request.coordinates())
++                        && r.minimumRemainingClaims() == request.minimumRemainingClaims())
++            .findFirst();
++    var result = split(matching.orElse(request));
++    if (result.state() == NationSplitService.State.COMPLETED)
++      return NationSplitOutcome.success(nationsById.get(result.targetNationId()));
++    return NationSplitOutcome.rejected(result.outcome());
++  }
++
++  @Override
++  public synchronized NationSplitService.Receipt split(NationSplitService.Request request) {
++    return splitAction(c -> c.split(request));
++  }
++
++  private void requireSplitAuthority() {
++    if (publishingCatalog
++        || experienceAuthorityUnavailable
++        || creationExecuting
++        || claimExecuting
++        || splitExecuting
++        || stateStorage == null
++        || !(territoryService
++            instanceof dev.starcore.starcore.foundation.territory.TerritoryTransferService))
++      throw new IllegalStateException("Nation split authority unavailable");
++    requireLegacyRecoveryComplete();
++  }
++
++  private NationSplitService.Receipt splitAction(
++      java.util.function.Function<NationSplitCoordinator, NationSplitService.Receipt> action) {
++    requireSplitAuthority();
++    splitExecuting = true;
++    try {
++      return action.apply(
++          new NationSplitCoordinator(
++              stateStorage,
++              (dev.starcore.starcore.foundation.territory.TerritoryTransferService)
++                  territoryService,
++              this::applySnapshot));
++    } finally {
++      try {
++        loadState();
++      } catch (RuntimeException failure) {
++        experienceAuthorityUnavailable = true;
++        throw failure;
++      } finally {
++        splitExecuting = false;
++      }
++    }
++  }
++
++  @Override
++  public synchronized Optional<NationSplitService.Receipt> splitOperation(UUID id) {
++    requireSplitAuthority();
++    loadState();
++    return Optional.ofNullable(splitOperations.get(Objects.requireNonNull(id)))
++        .map(NationSplitOperation::receipt);
++  }
++
++  @Override
++  public synchronized List<NationSplitService.Receipt> pendingSplits() {
++    requireSplitAuthority();
++    loadState();
++    return splitOperations.values().stream()
++        .filter(op -> op.state().pending())
++        .map(NationSplitOperation::receipt)
++        .toList();
++  }
++
++  @Override
++  public synchronized NationSplitService.Receipt recoverSplit(UUID id) {
++    return splitAction(c -> c.recover(id));
++  }
++
++  @Override
++  public synchronized NationSplitService.Receipt cancelSplit(UUID id) {
++    return splitAction(c -> c.cancel(id));
++  }
++
++  void recoverSplitsOnStartup() {
++    for (UUID id : List.copyOf(splitOperations.keySet())) {
++      if (!splitOperations.get(id).state().pending()) continue;
++      try {
++        recoverSplit(id);
++      } catch (RuntimeException failure) {
++        (context == null
++                ? java.util.logging.Logger.getLogger(NationModule.class.getName())
++                : context.plugin().getLogger())
++            .log(
++                java.util.logging.Level.SEVERE,
++                "Nation split recovery pending " + id + "; use /nation splitrecovery",
++                failure);
++      }
+     }
+-    return new NationSplitCoordinator(
+-            nationsById,
+-            names,
+-            membership,
+-            territoryService,
+-            stateStorage,
+-            splitJournal,
+-            context == null
+-                ? java.util.logging.Logger.getLogger(NationSplitCoordinator.class.getName())
+-                : context.plugin().getLogger(),
+-            creations,
+-            claimOperations)
+-        .split(sourceNationId, newFounderId, newNationName, coordinates, minimumRemainingClaims);
+   }
+ 
+   @Override
+@@ -1319,7 +1440,7 @@ public final class NationModule
+     nation.retainExperienceReceipt(receipt);
+     Properties candidate = stateProperties();
+     try {
+-      stateStorage.save(candidate);
++      saveCatalog(candidate);
+     } catch (RuntimeException uncertain) {
+       applyState(before);
+       try {
+@@ -1425,25 +1546,35 @@ public final class NationModule
+     if (stateStorage == null) {
+       return;
+     }
+-    stateStorage.save(stateProperties());
++    saveCatalog(stateProperties());
++  }
++
++  private void saveCatalog(Properties candidate) {
++    stateStorage.save(candidate);
++    authoritativeCatalog = new Properties();
++    authoritativeCatalog.putAll(candidate);
+   }
+ 
+   private synchronized void flushState() {
+     if (stateStorage == null) {
+       return;
+     }
+-    stateStorage.save(stateProperties());
++    saveCatalog(stateProperties());
+   }
+ 
+   private Properties stateProperties() {
+     if (experienceAuthorityUnavailable)
+       throw new IllegalStateException("Nation experience authority unavailable; reload required");
+-    if (creationExecuting
++    if (publishingCatalog
++        || creationExecuting
+         || claimExecuting
++        || splitExecuting
+         || creations.values().stream().anyMatch(op -> op.state().pending())
+-        || claimOperations.values().stream().anyMatch(op -> op.state().pending()))
++        || claimOperations.values().stream().anyMatch(op -> op.state().pending())
++        || splitOperations.values().stream().anyMatch(op -> op.state().pending()))
+       throw new IllegalStateException("Nation lifecycle recovery pending");
+-    return NationStateCodec.toProperties(nationsById.values(), creations, claimOperations);
++    return NationStateCodec.toProperties(
++        nationsById.values(), creations, claimOperations, splitOperations);
+   }
+ 
+   @Override
+@@ -1460,6 +1591,21 @@ public final class NationModule
+   }
+ 
+   private void applySnapshot(NationStateCodec.Snapshot snapshot) {
++    boolean previousPublishing = publishingCatalog;
++    publishingCatalog = true;
++    try {
++      publishSnapshot(snapshot);
++    } finally {
++      publishingCatalog = previousPublishing;
++    }
++  }
++
++  private void publishSnapshot(NationStateCodec.Snapshot snapshot) {
++    authoritativeCatalog =
++        NationStateCodec.toProperties(
++            snapshot.nations(), snapshot.creations(), snapshot.claims(), snapshot.splits());
++    splitOperations.clear();
++    splitOperations.putAll(snapshot.splits());
+     List<Nation> validated = snapshot.nations();
+     creations.clear();
+     creations.putAll(snapshot.creations());
+@@ -1516,7 +1662,7 @@ public final class NationModule
+ 
+   private void commitCriticalState(Properties before) {
+     try {
+-      stateStorage.save(stateProperties());
++      saveCatalog(stateProperties());
+     } catch (RuntimeException failure) {
+       applyState(before);
+       refreshStateAfterConflict(failure);
+@@ -2074,7 +2220,7 @@ public final class NationModule
+         names.remove(normalizeNationName(target.name()), target.id());
+         nationsById.remove(target.id(), target);
+       }
+-      stateStorage.save(stateProperties());
++      saveCatalog(stateProperties());
+     } catch (RuntimeException stateFailure) {
+       Set<NationId> persistedNations;
+       try {
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java b/src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java
+index 31f5e20..90be2f6 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java
+@@ -1,307 +1,201 @@
+ package dev.starcore.starcore.module.nation;
+ 
+-import dev.starcore.starcore.foundation.territory.TerritoryService;
+-import dev.starcore.starcore.foundation.territory.model.ChunkCoordinate;
+-import dev.starcore.starcore.module.nation.model.Nation;
+-import dev.starcore.starcore.module.nation.model.NationId;
+-import dev.starcore.starcore.module.nation.model.NationKind;
+-import dev.starcore.starcore.module.nation.model.NationMember;
++import static dev.starcore.starcore.module.nation.NationSplitService.State.*;
++
++import dev.starcore.starcore.foundation.territory.TerritoryTransferService;
++import dev.starcore.starcore.module.nation.model.*;
+ import java.time.Instant;
+-import java.util.Collection;
+-import java.util.HashSet;
+-import java.util.List;
+-import java.util.Locale;
+-import java.util.Map;
+-import java.util.Objects;
+-import java.util.Properties;
+-import java.util.UUID;
+-import java.util.logging.Level;
+-import java.util.logging.Logger;
++import java.util.*;
++import java.util.function.Consumer;
+ 
++/** Shared intent precedes land; committed land is completed, never reversed. */
+ final class NationSplitCoordinator {
+-  private static final Logger LOGGER = Logger.getLogger(NationSplitCoordinator.class.getName());
+-
+-  private final Map<NationId, Nation> nations;
+-  private final Map<String, NationId> names;
+-  private final Map<UUID, NationId> membership;
+-  private final TerritoryService territories;
+   private final NationStateStorage storage;
+-  private final NationSplitJournal journal;
+-  private final Logger logger;
+-  private final Map<UUID, NationCreationOperation> creations;
+-  private final Map<UUID, NationClaimOperation> claims;
+-
+-  NationSplitCoordinator(
+-      Map<NationId, Nation> nations,
+-      Map<String, NationId> names,
+-      Map<UUID, NationId> membership,
+-      TerritoryService territories,
+-      NationStateStorage storage) {
+-    this(nations, names, membership, territories, storage, NationSplitJournal.none());
+-  }
+-
+-  NationSplitCoordinator(
+-      Map<NationId, Nation> nations,
+-      Map<String, NationId> names,
+-      Map<UUID, NationId> membership,
+-      TerritoryService territories,
+-      NationStateStorage storage,
+-      NationSplitJournal journal) {
+-    this(nations, names, membership, territories, storage, journal, LOGGER);
+-  }
++  private final TerritoryTransferService territories;
++  private final Consumer<NationStateCodec.Snapshot> publish;
++  private NationStateCodec.Snapshot snapshot;
+ 
+-  NationSplitCoordinator(
+-      Map<NationId, Nation> nations,
+-      Map<String, NationId> names,
+-      Map<UUID, NationId> membership,
+-      TerritoryService territories,
+-      NationStateStorage storage,
+-      NationSplitJournal journal,
+-      Logger logger) {
+-    this(nations, names, membership, territories, storage, journal, logger, Map.of());
++  NationSplitCoordinator(NationStateStorage storage, TerritoryTransferService territories) {
++    this(storage, territories, ignored -> {});
+   }
+ 
+   NationSplitCoordinator(
+-      Map<NationId, Nation> nations,
+-      Map<String, NationId> names,
+-      Map<UUID, NationId> membership,
+-      TerritoryService territories,
+       NationStateStorage storage,
+-      NationSplitJournal journal,
+-      Logger logger,
+-      Map<UUID, NationCreationOperation> creations) {
+-    this(nations, names, membership, territories, storage, journal, logger, creations, Map.of());
++      TerritoryTransferService territories,
++      Consumer<NationStateCodec.Snapshot> publish) {
++    this.storage = Objects.requireNonNull(storage);
++    this.territories = Objects.requireNonNull(territories);
++    this.publish = Objects.requireNonNull(publish);
++    snapshot = NationStateCodec.snapshot(storage.load());
++    publish.accept(snapshot);
+   }
+ 
+-  NationSplitCoordinator(
+-      Map<NationId, Nation> nations,
+-      Map<String, NationId> names,
+-      Map<UUID, NationId> membership,
+-      TerritoryService territories,
+-      NationStateStorage storage,
+-      NationSplitJournal journal,
+-      Logger logger,
+-      Map<UUID, NationCreationOperation> creations,
+-      Map<UUID, NationClaimOperation> claims) {
+-    this.claims = Map.copyOf(claims);
+-    this.nations = Objects.requireNonNull(nations, "nations");
+-    this.names = Objects.requireNonNull(names, "names");
+-    this.membership = Objects.requireNonNull(membership, "membership");
+-    this.territories = Objects.requireNonNull(territories, "territories");
+-    this.storage = Objects.requireNonNull(storage, "storage");
+-    this.journal = Objects.requireNonNull(journal, "journal");
+-    this.logger = Objects.requireNonNull(logger, "logger");
+-    this.creations = Map.copyOf(creations);
+-  }
+-
+-  NationSplitOutcome split(
+-      NationId sourceId,
+-      UUID newFounderId,
+-      String newNationName,
+-      Collection<ChunkCoordinate> coordinates,
+-      int minimumRemainingClaims) {
+-    Objects.requireNonNull(sourceId, "sourceId");
+-    Objects.requireNonNull(newFounderId, "newFounderId");
+-    String normalizedName = normalizeName(newNationName);
+-    List<ChunkCoordinate> transfer = copyCoordinates(coordinates);
+-    if (minimumRemainingClaims < 0) {
+-      throw new IllegalArgumentException("minimumRemainingClaims must not be negative");
+-    }
+-    if (journal.load().isPresent()) {
++  NationSplitService.Receipt split(NationSplitService.Request request) {
++    Objects.requireNonNull(request);
++    var previous = snapshot.splits().get(request.operationId());
++    if (previous != null) {
++      if (!previous.request().equals(request))
++        throw new IllegalArgumentException("Conflicting split request");
++      return advance(previous);
++    }
++    if (snapshot.splits().values().stream().anyMatch(op -> op.state().pending())
++        || snapshot.claims().values().stream().anyMatch(op -> op.state().pending())
++        || snapshot.creations().values().stream().anyMatch(op -> op.state().pending()))
+       throw new IllegalStateException(
+-          "A previous nation split transaction still requires recovery");
+-    }
+-    if (creations.values().stream().anyMatch(op -> op.state().pending())
+-        || claims.values().stream().anyMatch(op -> op.state().pending()))
+-      throw new IllegalStateException("Nation creation recovery pending");
+-
+-    Nation source = nations.get(sourceId);
+-    if (source == null) {
+-      return NationSplitOutcome.rejected(NationSplitOutcome.Status.SOURCE_NOT_FOUND);
+-    }
+-    if (source.kind() != NationKind.NATION) {
+-      return NationSplitOutcome.rejected(NationSplitOutcome.Status.SOURCE_NOT_NATION);
+-    }
+-    if (names.containsKey(normalizedName)) {
+-      return NationSplitOutcome.rejected(NationSplitOutcome.Status.NAME_TAKEN);
+-    }
+-    if (!source.hasMember(newFounderId) || !sourceId.equals(membership.get(newFounderId))) {
+-      return NationSplitOutcome.rejected(NationSplitOutcome.Status.FOUNDER_NOT_MEMBER);
+-    }
+-    if (source.founderId().equals(newFounderId)) {
+-      return NationSplitOutcome.rejected(NationSplitOutcome.Status.SOURCE_FOUNDER);
+-    }
+-    boolean ownsEveryClaim =
+-        transfer.stream()
+-            .allMatch(coordinate -> territories.isOwnerOf(sourceId.toString(), coordinate));
+-    if (!ownsEveryClaim) {
+-      return NationSplitOutcome.rejected(NationSplitOutcome.Status.TERRITORY_MISMATCH);
+-    }
+-    int sourceClaimCount = territories.claimsByOwner(sourceId.toString()).size();
+-    if (sourceClaimCount - transfer.size() < minimumRemainingClaims) {
+-      return NationSplitOutcome.rejected(NationSplitOutcome.Status.SOURCE_TERRITORY_TOO_SMALL);
+-    }
+-
+-    NationMember previousMember = member(source, newFounderId);
+-    Nation created =
+-        new Nation(
++          "Nation lifecycle recovery pending; retry its original operation ID");
++    var rejection = admission(request);
++    var source =
++        snapshot.nations().stream()
++            .filter(n -> n.id().equals(request.sourceNationId()))
++            .findFirst();
++    String founderName =
++        source.stream()
++            .flatMap(n -> n.members().stream())
++            .filter(m -> m.playerId().equals(request.founderId()))
++            .map(NationMember::lastKnownName)
++            .findFirst()
++            .orElse("Unknown");
++    var operation =
++        new NationSplitOperation(
++            request,
+             NationId.random(),
+-            newNationName,
+-            newFounderId,
+-            previousMember.lastKnownName(),
+-            NationKind.NATION,
+-            null);
+-    Properties previousState = NationStateCodec.toProperties(nations.values(), creations, claims);
+-    applyCatalogChange(source, previousMember, created, normalizedName);
+-    Properties targetState = NationStateCodec.toProperties(nations.values(), creations, claims);
+-    restoreCatalog(source, previousMember, created, normalizedName);
+-    NationSplitTransaction transaction =
+-        NationSplitTransaction.prepared(
+-            UUID.randomUUID(),
+-            source.id(),
+-            created.id(),
+-            transfer,
+-            previousState,
+-            targetState,
+-            Instant.now());
+-    journal.save(transaction);
+-    applyCatalogChange(source, previousMember, created, normalizedName);
++            founderName,
++            Instant.ofEpochMilli(System.currentTimeMillis()),
++            rejection == null ? PREPARED : REJECTED,
++            rejection == null ? NationSplitOutcome.Status.TERRITORY_CHANGED : rejection,
++            rejection == null ? "prepared" : "admission-" + rejection);
++    persist(operation, snapshot.nations());
++    return advance(operation);
++  }
+ 
+-    boolean claimsTransferred;
+-    try {
+-      claimsTransferred =
+-          territories.transferClaims(sourceId.toString(), created.id().toString(), transfer);
+-    } catch (RuntimeException exception) {
+-      restoreCatalog(source, previousMember, created, normalizedName);
+-      logger.log(
+-          Level.SEVERE,
+-          "Nation split territory transfer outcome is unknown; journal retained for startup"
+-              + " recovery "
+-              + transaction.transactionId(),
+-          exception);
+-      throw new IllegalStateException(
+-          "Unable to transfer territory claims for nation split; recovery is pending for"
+-              + " transaction "
+-              + transaction.transactionId(),
+-          exception);
+-    }
+-    if (!claimsTransferred) {
+-      restoreCatalog(source, previousMember, created, normalizedName);
+-      journal.clear();
+-      return NationSplitOutcome.rejected(NationSplitOutcome.Status.TERRITORY_CHANGED);
+-    }
++  NationSplitService.Receipt recover(UUID id) {
++    return advance(required(id));
++  }
+ 
+-    try {
+-      storage.save(NationStateCodec.toProperties(nations.values(), creations, claims));
+-    } catch (RuntimeException exception) {
+-      compensateFailedSave(
+-          source, previousMember, created, normalizedName, transfer, previousState, exception);
++  NationSplitService.Receipt cancel(UUID id) {
++    var op = required(id);
++    if (!op.state().pending()) return op.receipt();
++    if (op.state() == PREPARED) {
++      op = op.state(CANCEL_PENDING, op.outcome(), "cancelled-by-administrator");
++      persist(op, snapshot.nations());
+     }
+-    try {
+-      journal.clear();
+-    } catch (RuntimeException cleanupFailure) {
+-      logger.log(
+-          Level.SEVERE,
+-          "Nation split committed but transaction journal cleanup failed; startup recovery will"
+-              + " retry "
+-              + transaction.transactionId(),
+-          cleanupFailure);
+-    }
+-    return NationSplitOutcome.success(created);
++    return advance(op);
+   }
+ 
+-  private void applyCatalogChange(
+-      Nation source, NationMember previousMember, Nation created, String normalizedName) {
+-    source.removeMember(previousMember.playerId());
+-    nations.put(created.id(), created);
+-    names.put(normalizedName, created.id());
+-    membership.put(previousMember.playerId(), created.id());
++  private NationSplitOperation required(UUID id) {
++    var op = snapshot.splits().get(Objects.requireNonNull(id));
++    if (op == null) throw new IllegalArgumentException("Unknown nation split operation " + id);
++    return op;
+   }
+ 
+-  private void restoreCatalog(
+-      Nation source, NationMember previousMember, Nation created, String normalizedName) {
+-    nations.remove(created.id());
+-    names.remove(normalizedName, created.id());
+-    membership.put(previousMember.playerId(), source.id());
+-    source.addMember(previousMember);
++  private NationSplitService.Receipt advance(NationSplitOperation op) {
++    if (!op.state().pending()) return op.receipt();
++    var conflict = admission(op.request());
++    if (snapshot.nations().stream().anyMatch(n -> n.id().equals(op.targetNationId())))
++      throw new IllegalStateException(
++          "Pending split target already exists; reconciliation required");
++    var land = land(op, op.state() == CANCEL_PENDING || conflict != null);
++    NationSplitOperation done;
++    List<Nation> nations = snapshot.nations();
++    if (land.status() == TerritoryTransferService.TransferStatus.APPLIED) {
++      if (conflict != null)
++        throw new IllegalStateException(
++            "Committed split/catalog conflict; reconciliation required");
++      nations =
++          new ArrayList<>(NationStateCodec.fromProperties(NationStateCodec.toProperties(nations)));
++      nations.stream()
++          .filter(n -> n.id().equals(op.request().sourceNationId()))
++          .findFirst()
++          .orElseThrow()
++          .removeMember(op.request().founderId());
++      nations.add(op.candidate());
++      done = op.state(COMPLETED, NationSplitOutcome.Status.SUCCESS, "split-completed");
++    } else {
++      var outcome =
++          conflict != null
++              ? conflict
++              : switch (land.status()) {
++                case OWNER_CHANGED -> NationSplitOutcome.Status.TERRITORY_MISMATCH;
++                case REMAINING_LIMIT -> NationSplitOutcome.Status.SOURCE_TERRITORY_TOO_SMALL;
++                default -> NationSplitOutcome.Status.TERRITORY_CHANGED;
++              };
++      done =
++          op.state(
++              op.state() == CANCEL_PENDING ? CANCELLED : REJECTED,
++              outcome,
++              "land-" + land.status());
++    }
++    persist(done, nations);
++    return done.receipt();
+   }
+ 
+-  private void compensateFailedSave(
+-      Nation source,
+-      NationMember previousMember,
+-      Nation created,
+-      String normalizedName,
+-      List<ChunkCoordinate> transfer,
+-      Properties previousState,
+-      RuntimeException saveFailure) {
+-    RuntimeException compensationFailure = null;
+-    try {
+-      boolean restored =
+-          territories.transferClaims(created.id().toString(), source.id().toString(), transfer);
+-      if (!restored) {
+-        compensationFailure =
+-            new IllegalStateException(
+-                "Territory rollback rejected after nation split save failure");
+-      }
+-    } catch (RuntimeException exception) {
+-      compensationFailure = exception;
+-    }
+-
+-    restoreCatalog(source, previousMember, created, normalizedName);
+-    try {
+-      storage.save(previousState);
+-    } catch (RuntimeException exception) {
+-      if (compensationFailure == null) {
+-        compensationFailure = exception;
+-      } else {
+-        compensationFailure.addSuppressed(exception);
+-      }
+-    }
+-
+-    if (compensationFailure == null) {
++  private TerritoryTransferService.TransferReceipt land(NationSplitOperation op, boolean cancel) {
++    var request = op.transfer();
++    var proof = territories.transferReceipt(request.operationId());
++    if (proof.isEmpty()) {
+       try {
+-        journal.clear();
+-      } catch (RuntimeException exception) {
+-        compensationFailure = exception;
++        if (cancel) territories.cancelTransfer(request);
++        else territories.transferBatch(request);
++      } catch (RuntimeException failure) {
++        try {
++          proof = territories.transferReceipt(request.operationId());
++        } catch (RuntimeException read) {
++          failure.addSuppressed(read);
++          throw failure;
++        }
++        if (proof.isEmpty()) throw failure;
+       }
++      if (proof.isEmpty()) proof = territories.transferReceipt(request.operationId());
+     }
+-
+-    IllegalStateException failure =
+-        new IllegalStateException("Unable to persist nation split", saveFailure);
+-    if (compensationFailure != null) {
+-      failure.addSuppressed(compensationFailure);
+-    }
+-    throw failure;
++    var receipt =
++        proof.orElseThrow(() -> new IllegalStateException("Split transfer confirmation pending"));
++    if (!receipt.request().equals(request))
++      throw new IllegalStateException("Conflicting split land receipt");
++    return receipt;
+   }
+ 
+-  private static NationMember member(Nation nation, UUID playerId) {
+-    return nation.members().stream()
+-        .filter(candidate -> candidate.playerId().equals(playerId))
+-        .findFirst()
+-        .orElseThrow(
+-            () ->
+-                new IllegalStateException(
+-                    "Nation membership index is inconsistent for " + playerId));
++  private NationSplitOutcome.Status admission(NationSplitService.Request request) {
++    Nation source =
++        snapshot.nations().stream()
++            .filter(n -> n.id().equals(request.sourceNationId()))
++            .findFirst()
++            .orElse(null);
++    if (source == null) return NationSplitOutcome.Status.SOURCE_NOT_FOUND;
++    if (source.kind() != NationKind.NATION) return NationSplitOutcome.Status.SOURCE_NOT_NATION;
++    if (snapshot.nations().stream().anyMatch(n -> n.name().trim().equalsIgnoreCase(request.name())))
++      return NationSplitOutcome.Status.NAME_TAKEN;
++    if (!source.hasMember(request.founderId())
++        || snapshot.nations().stream()
++            .anyMatch(
++                n ->
++                    n.kind() == NationKind.NATION
++                        && !n.id().equals(source.id())
++                        && n.hasMember(request.founderId())))
++      return NationSplitOutcome.Status.FOUNDER_NOT_MEMBER;
++    if (source.founderId().equals(request.founderId()))
++      return NationSplitOutcome.Status.SOURCE_FOUNDER;
++    return null;
+   }
+ 
+-  private static String normalizeName(String name) {
+-    String normalized =
+-        Objects.requireNonNull(name, "newNationName").trim().toLowerCase(Locale.ROOT);
+-    if (normalized.isEmpty()) {
+-      throw new IllegalArgumentException("newNationName must not be blank");
+-    }
+-    return normalized;
+-  }
+-
+-  private static List<ChunkCoordinate> copyCoordinates(Collection<ChunkCoordinate> coordinates) {
+-    Objects.requireNonNull(coordinates, "coordinates");
+-    if (coordinates.isEmpty()) {
+-      throw new IllegalArgumentException("Nation split coordinates must not be empty");
+-    }
+-    List<ChunkCoordinate> snapshot = List.copyOf(coordinates);
+-    if (new HashSet<>(snapshot).size() != snapshot.size()) {
+-      throw new IllegalArgumentException("Nation split contains duplicate coordinates");
++  private void persist(NationSplitOperation op, List<Nation> nations) {
++    var operations = new HashMap<>(snapshot.splits());
++    operations.put(op.request().operationId(), op);
++    var candidate =
++        NationStateCodec.toProperties(nations, snapshot.creations(), snapshot.claims(), operations);
++    try {
++      storage.save(candidate);
++    } catch (RuntimeException failure) {
++      try {
++        var actual = storage.load();
++        snapshot = NationStateCodec.snapshot(actual);
++        publish.accept(snapshot);
++        if (candidate.equals(actual)) return;
++      } catch (RuntimeException read) {
++        failure.addSuppressed(read);
++      }
++      throw failure;
+     }
+-    return snapshot;
++    snapshot = NationStateCodec.snapshot(candidate);
++    publish.accept(snapshot);
+   }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationSplitOperation.java b/src/main/java/dev/starcore/starcore/module/nation/NationSplitOperation.java
+new file mode 100644
+index 0000000..d36e382
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationSplitOperation.java
+@@ -0,0 +1,70 @@
++package dev.starcore.starcore.module.nation;
++
++import dev.starcore.starcore.foundation.territory.TerritoryTransferService;
++import dev.starcore.starcore.module.nation.model.*;
++import java.nio.charset.StandardCharsets;
++import java.time.Instant;
++import java.util.*;
++
++record NationSplitOperation(
++    NationSplitService.Request request,
++    NationId targetNationId,
++    String founderName,
++    Instant foundedAt,
++    NationSplitService.State state,
++    NationSplitOutcome.Status outcome,
++    String detail) {
++  NationSplitOperation {
++    Objects.requireNonNull(request);
++    Objects.requireNonNull(targetNationId);
++    Objects.requireNonNull(foundedAt);
++    Objects.requireNonNull(state);
++    Objects.requireNonNull(outcome);
++    if (founderName == null
++        || founderName.isBlank()
++        || founderName.length() > 128
++        || detail == null
++        || detail.length() > 512
++        || targetNationId.equals(request.sourceNationId())
++        || (state == NationSplitService.State.COMPLETED)
++            != (outcome == NationSplitOutcome.Status.SUCCESS))
++      throw new IllegalArgumentException("Invalid nation split operation");
++  }
++
++  Nation candidate() {
++    Nation nation =
++        new Nation(
++            targetNationId,
++            request.name(),
++            request.founderId(),
++            founderName,
++            NationKind.NATION,
++            null,
++            foundedAt);
++    nation.addMember(
++        new NationMember(request.founderId(), founderName, "Member", foundedAt, foundedAt));
++    return nation;
++  }
++
++  NationSplitOperation state(
++      NationSplitService.State next, NationSplitOutcome.Status result, String reason) {
++    return new NationSplitOperation(
++        request, targetNationId, founderName, foundedAt, next, result, reason);
++  }
++
++  NationSplitService.Receipt receipt() {
++    return new NationSplitService.Receipt(request, targetNationId, state, outcome, detail);
++  }
++
++  TerritoryTransferService.TransferRequest transfer() {
++    UUID id =
++        UUID.nameUUIDFromBytes(
++            ("nation-split/" + request.operationId() + "/land").getBytes(StandardCharsets.UTF_8));
++    return new TerritoryTransferService.TransferRequest(
++        id,
++        request.sourceNationId().toString(),
++        targetNationId.toString(),
++        request.coordinates(),
++        request.minimumRemainingClaims());
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationSplitOperationCodec.java b/src/main/java/dev/starcore/starcore/module/nation/NationSplitOperationCodec.java
+new file mode 100644
+index 0000000..12003d1
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationSplitOperationCodec.java
+@@ -0,0 +1,87 @@
++package dev.starcore.starcore.module.nation;
++
++import dev.starcore.starcore.foundation.territory.model.ChunkCoordinate;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.time.Instant;
++import java.util.*;
++
++final class NationSplitOperationCodec {
++  static final String PREFIX = "splitOperations.";
++
++  private NationSplitOperationCodec() {}
++
++  static void write(Properties p, Map<UUID, NationSplitOperation> operations) {
++    p.setProperty(PREFIX + "version", "1");
++    p.setProperty(PREFIX + "count", Integer.toString(operations.size()));
++    int i = 0;
++    for (var e : operations.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
++      var op = e.getValue();
++      var r = op.request();
++      if (!e.getKey().equals(r.operationId()))
++        throw new IllegalArgumentException("Split key mismatch");
++      String k = PREFIX + i++ + ".";
++      p.setProperty(k + "id", r.operationId().toString());
++      p.setProperty(k + "source", r.sourceNationId().toString());
++      p.setProperty(k + "founder", r.founderId().toString());
++      p.setProperty(k + "name", r.name());
++      p.setProperty(k + "minimum", "" + r.minimumRemainingClaims());
++      p.setProperty(k + "target", op.targetNationId().toString());
++      p.setProperty(k + "founderName", op.founderName());
++      p.setProperty(k + "foundedAt", op.foundedAt().toString());
++      p.setProperty(k + "state", op.state().name());
++      p.setProperty(k + "outcome", op.outcome().name());
++      p.setProperty(k + "detail", op.detail());
++      p.setProperty(k + "count", "" + r.coordinates().size());
++      for (int j = 0; j < r.coordinates().size(); j++) {
++        var c = r.coordinates().get(j);
++        String t = k + "chunk." + j + ".";
++        p.setProperty(t + "world", c.world());
++        p.setProperty(t + "x", "" + c.x());
++        p.setProperty(t + "z", "" + c.z());
++      }
++    }
++  }
++
++  static Map<UUID, NationSplitOperation> read(Properties p) {
++    if (!"1".equals(p.getProperty(PREFIX + "version")))
++      throw new IllegalArgumentException("Invalid split version");
++    int count = Integer.parseInt(p.getProperty(PREFIX + "count"));
++    if (count < 1 || count > 100_000) throw new IllegalArgumentException("Invalid split count");
++    Map<UUID, NationSplitOperation> result = new LinkedHashMap<>();
++    for (int i = 0; i < count; i++) {
++      String k = PREFIX + i + ".";
++      int size = Integer.parseInt(p.getProperty(k + "count"));
++      if (size < 1 || size > 100_000)
++        throw new IllegalArgumentException("Invalid split coordinates");
++      List<ChunkCoordinate> coordinates = new ArrayList<>();
++      for (int j = 0; j < size; j++) {
++        String t = k + "chunk." + j + ".";
++        coordinates.add(
++            new ChunkCoordinate(
++                p.getProperty(t + "world"),
++                Integer.parseInt(p.getProperty(t + "x")),
++                Integer.parseInt(p.getProperty(t + "z"))));
++      }
++      var request =
++          new NationSplitService.Request(
++              UUID.fromString(p.getProperty(k + "id")),
++              new NationId(UUID.fromString(p.getProperty(k + "source"))),
++              UUID.fromString(p.getProperty(k + "founder")),
++              p.getProperty(k + "name"),
++              coordinates,
++              Integer.parseInt(p.getProperty(k + "minimum")));
++      var op =
++          new NationSplitOperation(
++              request,
++              new NationId(UUID.fromString(p.getProperty(k + "target"))),
++              p.getProperty(k + "founderName"),
++              Instant.parse(p.getProperty(k + "foundedAt")),
++              NationSplitService.State.valueOf(p.getProperty(k + "state")),
++              NationSplitOutcome.Status.valueOf(p.getProperty(k + "outcome")),
++              p.getProperty(k + "detail"));
++      if (result.putIfAbsent(request.operationId(), op) != null)
++        throw new IllegalArgumentException("Duplicate split operation");
++    }
++    return Map.copyOf(result);
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationSplitService.java b/src/main/java/dev/starcore/starcore/module/nation/NationSplitService.java
+new file mode 100644
+index 0000000..740f651
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationSplitService.java
+@@ -0,0 +1,58 @@
++package dev.starcore.starcore.module.nation;
++
++import dev.starcore.starcore.foundation.territory.TerritoryBatchService;
++import dev.starcore.starcore.foundation.territory.model.ChunkCoordinate;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.util.*;
++
++/** Durable splits. Callers authorize the action and retain the original operation ID. */
++public interface NationSplitService {
++  enum State {
++    PREPARED,
++    CANCEL_PENDING,
++    COMPLETED,
++    REJECTED,
++    CANCELLED;
++
++    public boolean pending() {
++      return this == PREPARED || this == CANCEL_PENDING;
++    }
++  }
++
++  record Request(
++      UUID operationId,
++      NationId sourceNationId,
++      UUID founderId,
++      String name,
++      List<ChunkCoordinate> coordinates,
++      int minimumRemainingClaims) {
++    public Request {
++      Objects.requireNonNull(sourceNationId);
++      Objects.requireNonNull(founderId);
++      name = Objects.requireNonNull(name).trim();
++      if (name.isEmpty() || name.length() > 128 || minimumRemainingClaims < 0)
++        throw new IllegalArgumentException("Invalid nation split request");
++      coordinates =
++          new TerritoryBatchService.Request(operationId, sourceNationId.toString(), coordinates, -1)
++              .coordinates();
++    }
++  }
++
++  record Receipt(
++      Request request,
++      NationId targetNationId,
++      State state,
++      NationSplitOutcome.Status outcome,
++      String detail) {}
++
++  Receipt split(Request request);
++
++  Optional<Receipt> splitOperation(UUID operationId);
++
++  List<Receipt> pendingSplits();
++
++  Receipt recoverSplit(UUID operationId);
++
++  /** Already committed land completes the split; unpublished land is sealed against late calls. */
++  Receipt cancelSplit(UUID operationId);
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java b/src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java
+index 2a76e32..5c7ac4d 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java
+@@ -101,7 +101,15 @@ final class NationStateCodec {
+   record Snapshot(
+       List<Nation> nations,
+       java.util.Map<UUID, NationCreationOperation> creations,
+-      java.util.Map<UUID, NationClaimOperation> claims) {}
++      java.util.Map<UUID, NationClaimOperation> claims,
++      java.util.Map<UUID, NationSplitOperation> splits) {
++    Snapshot(
++        List<Nation> nations,
++        java.util.Map<UUID, NationCreationOperation> creations,
++        java.util.Map<UUID, NationClaimOperation> claims) {
++      this(nations, creations, claims, java.util.Map.of());
++    }
++  }
+ 
+   static Properties toProperties(
+       Collection<Nation> nations, java.util.Map<UUID, NationCreationOperation> creations) {
+@@ -126,7 +134,46 @@ final class NationStateCodec {
+     return result;
+   }
+ 
++  static Properties toProperties(
++      Collection<Nation> nations,
++      java.util.Map<UUID, NationCreationOperation> creations,
++      java.util.Map<UUID, NationClaimOperation> claims,
++      java.util.Map<UUID, NationSplitOperation> splits) {
++    Properties result = toProperties(nations, creations, claims);
++    if (!splits.isEmpty()) {
++      NationSplitOperationCodec.write(result, splits);
++      result.setProperty("splitOperations.sha256", checksum(result, "splitOperations.sha256"));
++    }
++    return result;
++  }
++
+   static Snapshot snapshot(Properties properties) {
++    if (properties.stringPropertyNames().stream()
++        .noneMatch(k -> k.startsWith(NationSplitOperationCodec.PREFIX)))
++      return claimSnapshot(properties);
++    if (!checksum(properties, "splitOperations.sha256")
++        .equals(properties.getProperty("splitOperations.sha256")))
++      throw new IllegalArgumentException("Nation split snapshot checksum mismatch");
++    var splits = NationSplitOperationCodec.read(properties);
++    Properties inner = new Properties();
++    properties.stringPropertyNames().stream()
++        .filter(k -> !k.startsWith(NationSplitOperationCodec.PREFIX))
++        .forEach(k -> inner.setProperty(k, properties.getProperty(k)));
++    var previous = claimSnapshot(inner);
++    if (!toProperties(previous.nations(), previous.creations(), previous.claims(), splits)
++            .equals(properties)
++        || previous.nations().stream().map(Nation::id).distinct().count()
++            != previous.nations().size()
++        || previous.nations().stream()
++                .map(n -> n.name().trim().toLowerCase(Locale.ROOT))
++                .distinct()
++                .count()
++            != previous.nations().size())
++      throw new IllegalArgumentException("Incomplete nation split authority");
++    return new Snapshot(previous.nations(), previous.creations(), previous.claims(), splits);
++  }
++
++  private static Snapshot claimSnapshot(Properties properties) {
+     if (properties.stringPropertyNames().stream()
+         .noneMatch(k -> k.startsWith(NationClaimOperationCodec.PREFIX)))
+       return creationSnapshot(properties);
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java b/src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java
+index 2ca8178..c6ea935 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java
+@@ -3,6 +3,7 @@ package dev.starcore.starcore.module.nation.command;
+ import dev.starcore.starcore.module.nation.NationClaimService;
+ import dev.starcore.starcore.module.nation.NationCreationService;
+ import dev.starcore.starcore.module.nation.NationService;
++import dev.starcore.starcore.module.nation.NationSplitService;
+ import dev.starcore.starcore.module.nation.model.Nation;
+ import dev.starcore.starcore.module.nation.model.NationMember;
+ import java.util.ArrayList;
+@@ -63,6 +64,7 @@ public final class NationLifecycleCommand implements CommandExecutor, TabComplet
+     String subcommand = arguments[0].toLowerCase(Locale.ROOT);
+     if (subcommand.equals("recovery")) return recovery(sender, arguments);
+     if (subcommand.equals("claimrecovery")) return claimRecovery(sender, arguments);
++    if (subcommand.equals("splitrecovery")) return splitRecovery(sender, arguments);
+     if (!subcommand.equals("leave")
+         && !subcommand.equals("transfer")
+         && !subcommand.equals("disband")) {
+@@ -226,6 +228,66 @@ public final class NationLifecycleCommand implements CommandExecutor, TabComplet
+     return true;
+   }
+ 
++  private boolean splitRecovery(CommandSender sender, String[] arguments) {
++    if (!sender.hasPermission("starcore.admin")) {
++      sender.sendMessage("§c需要 starcore.admin 权限。");
++      return true;
++    }
++    if (!(nations instanceof NationSplitService service)) {
++      sender.sendMessage("§c国家分裂恢复服务不可用。");
++      return true;
++    }
++    try {
++      if (arguments.length == 1
++          || (arguments.length == 2 && arguments[1].equalsIgnoreCase("list"))) {
++        var pending = service.pendingSplits();
++        sender.sendMessage("§e待恢复分裂: " + pending.size());
++        pending.forEach(
++            r ->
++                sender.sendMessage(
++                    r.request().operationId()
++                        + " "
++                        + r.request().name()
++                        + " "
++                        + r.state()
++                        + " "
++                        + r.targetNationId()
++                        + " "
++                        + r.detail()));
++        return true;
++      }
++      if (arguments.length != 3 && arguments.length != 4) {
++        sender.sendMessage("§e/nation splitrecovery <show|retry|cancel> <完整操作 UUID> [confirm]");
++        return true;
++      }
++      var id = java.util.UUID.fromString(arguments[2]);
++      if (!id.toString().equalsIgnoreCase(arguments[2]))
++        throw new IllegalArgumentException("Use full operation UUID");
++      String action = arguments[1].toLowerCase(Locale.ROOT);
++      if (action.equals("cancel")
++          && (arguments.length != 4 || !arguments[3].equalsIgnoreCase("confirm"))) {
++        sender.sendMessage(
++            "§e取消会封存未提交的转移；领土已提交则继续完成原分裂，不反向转地。执行 /nation splitrecovery cancel " + id + " confirm");
++        return true;
++      }
++      NationSplitService.Receipt result =
++          switch (action) {
++            case "show" ->
++                service
++                    .splitOperation(id)
++                    .orElseThrow(() -> new IllegalArgumentException("Unknown operation"));
++            case "retry" -> service.recoverSplit(id);
++            case "cancel" -> service.cancelSplit(id);
++            default -> throw new IllegalArgumentException("Use show, retry or cancel");
++          };
++      sender.sendMessage(
++          "§e" + result.request().operationId() + " " + result.state() + " " + result.detail());
++    } catch (RuntimeException failure) {
++      sender.sendMessage("§c分裂恢复未完成: " + failure.getMessage());
++    }
++    return true;
++  }
++
+   private boolean transfer(Player player, String[] arguments) {
+     Nation nation = nations.nationOf(player.getUniqueId()).orElse(null);
+     if (nation == null) {
+@@ -302,12 +364,14 @@ public final class NationLifecycleCommand implements CommandExecutor, TabComplet
+         var choices = new ArrayList<>(SUBCOMMANDS);
+         choices.add("recovery");
+         choices.add("claimrecovery");
++        choices.add("splitrecovery");
+         return prefixMatches(choices, arguments[0]);
+       }
+       return prefixMatches(SUBCOMMANDS, arguments[0]);
+     }
+     if (arguments[0].equalsIgnoreCase("recovery")
+-        || arguments[0].equalsIgnoreCase("claimrecovery")) {
++        || arguments[0].equalsIgnoreCase("claimrecovery")
++        || arguments[0].equalsIgnoreCase("splitrecovery")) {
+       if (!sender.hasPermission("starcore.admin")) return List.of();
+       if (arguments.length == 2)
+         return prefixMatches(List.of("list", "show", "retry", "cancel"), arguments[1]);
+diff --git a/src/test/java/dev/starcore/starcore/foundation/territory/TerritoryTransferRecoveryTest.java b/src/test/java/dev/starcore/starcore/foundation/territory/TerritoryTransferRecoveryTest.java
+new file mode 100644
+index 0000000..c0f0b49
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/foundation/territory/TerritoryTransferRecoveryTest.java
+@@ -0,0 +1,235 @@
++package dev.starcore.starcore.foundation.territory;
++
++import static dev.starcore.starcore.foundation.territory.TerritoryTransferService.TransferStatus.*;
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.foundation.territory.model.*;
++import java.nio.file.Path;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.function.Supplier;
++import org.junit.jupiter.api.*;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.*;
++import org.sqlite.SQLiteDataSource;
++
++class TerritoryTransferRecoveryTest {
++  @TempDir Path directory;
++  final ChunkCoordinate first = new ChunkCoordinate("world", 1, 0),
++      second = new ChunkCoordinate("world", 2, 0),
++      retained = new ChunkCoordinate("world", 3, 0);
++
++  SQLiteDataSource source() {
++    var ds = new SQLiteDataSource();
++    ds.setUrl("jdbc:sqlite:" + directory.resolve("land.db"));
++    return ds;
++  }
++
++  Supplier<TerritoryLedgerStorage> stores(boolean sql) throws Exception {
++    var p = mock(PersistenceService.class);
++    when(p.namespacePath("territory")).thenReturn(directory);
++    var ds = source();
++    return sql
++        ? () ->
++            new SqlTerritoryLedgerStorage(
++                () -> Optional.of(ds), () -> new TerritoryLedger(Map.of(), Map.of()))
++        : () -> new FileTerritoryLedgerStorage(p);
++  }
++
++  DurableTerritoryService land(TerritoryLedgerStorage store) {
++    return new InMemoryTerritoryService(store);
++  }
++
++  TerritoryTransferService.TransferRequest request(ChunkCoordinate... coordinates) {
++    return new TerritoryTransferService.TransferRequest(
++        UUID.randomUUID(), "source", "target", List.of(coordinates), 1);
++  }
++
++  void seed(DurableTerritoryService land) {
++    land.claim("source", first);
++    land.claim("source", second);
++    land.claim("source", retained);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void transferPreservesBatchReceiptsAndNeverReplaysLaterOwnership(boolean sql) throws Exception {
++    var stores = stores(sql);
++    var land = land(stores.get());
++    var batch =
++        new TerritoryBatchService.Request(
++            UUID.randomUUID(), "source", List.of(first, second, retained), 3);
++    land.claimBatch(batch);
++    var request = request(first, second);
++    var result = land.transferBatch(request);
++    assertThat(result.status()).isEqualTo(APPLIED);
++    assertThat(land.claimsByOwner("source"))
++        .extracting(TerritoryClaim::coordinate)
++        .containsExactly(retained);
++    assertThat(land.unclaim("target", first)).isTrue();
++    land.claim("other", first);
++    land.transferClaims("target", "other", List.of(second));
++    var restarted = land(stores.get());
++    assertThat(restarted.transferBatch(request)).isEqualTo(result);
++    assertThat(restarted.cancelTransfer(request)).isEqualTo(result);
++    assertThat(restarted.claimBatch(batch).status())
++        .isEqualTo(TerritoryBatchService.Status.APPLIED);
++    assertThat(restarted.claimsByOwner("other")).hasSize(2);
++    assertThat(restarted.claimsByOwner("target")).isEmpty();
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void cancellationAndRejectionAreTerminalAcrossRestart(boolean sql) throws Exception {
++    var stores = stores(sql);
++    var land = land(stores.get());
++    seed(land);
++    var cancel = request(first);
++    assertThat(land.cancelTransfer(cancel).status()).isEqualTo(CANCELLED);
++    assertThat(land(stores.get()).transferBatch(cancel).status()).isEqualTo(CANCELLED);
++    var limit = request(first, second, retained);
++    assertThat(land.transferBatch(limit).status()).isEqualTo(REMAINING_LIMIT);
++    land.claim("source", new ChunkCoordinate("world", 4, 0));
++    assertThat(land(stores.get()).transferBatch(limit).status()).isEqualTo(REMAINING_LIMIT);
++    var mismatch = request(first, second);
++    land.transferClaims("source", "other", List.of(second));
++    assertThat(land.transferBatch(mismatch).status()).isEqualTo(OWNER_CHANGED);
++    assertThat(land.isOwnerOf("source", first)).isTrue();
++    land.transferClaims("other", "source", List.of(second));
++    assertThat(land(stores.get()).transferBatch(mismatch).status()).isEqualTo(OWNER_CHANGED);
++    assertThatThrownBy(
++            () ->
++                land.transferBatch(
++                    new TerritoryTransferService.TransferRequest(
++                        cancel.operationId(), "source", "different", cancel.coordinates(), 1)))
++        .isInstanceOf(IllegalArgumentException.class);
++  }
++
++  @ParameterizedTest
++  @CsvSource({"false,false", "false,true", "true,false", "true,true"})
++  void interruptedCommitRecoversOriginalTransfer(boolean sql, boolean after) throws Exception {
++    var stores = stores(sql);
++    seed(land(stores.get()));
++    var fault = new TerritoryBatchRecoveryTest.FaultStore(stores.get());
++    var land = land(fault);
++    fault.fail = true;
++    fault.after = after;
++    fault.blockRead = true;
++    var request = request(first, second);
++    assertThatThrownBy(() -> land.transferBatch(request)).isInstanceOf(IllegalStateException.class);
++    var restarted = land(stores.get());
++    assertThat(restarted.transferReceipt(request.operationId()).isPresent()).isEqualTo(after);
++    assertThat(restarted.claimsByOwner(after ? "target" : "source")).hasSize(after ? 2 : 3);
++    assertThat(restarted.transferBatch(request).status()).isEqualTo(APPLIED);
++    assertThat(land(stores.get()).claimsByOwner("target")).hasSize(2);
++  }
++
++  @ParameterizedTest
++  @ValueSource(strings = {"starcore_territory_claims", "starcore_territory_transfer_receipts"})
++  void sqlFailureRollsBackLandAndReceipt(String table) throws Exception {
++    var stores = stores(true);
++    var land = land(stores.get());
++    seed(land);
++    var request = request(first, second);
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute(
++          "CREATE TRIGGER fail_transfer BEFORE INSERT ON "
++              + table
++              + " BEGIN SELECT RAISE(ABORT,'injected'); END");
++    }
++    assertThatThrownBy(() -> land.transferBatch(request)).isInstanceOf(IllegalStateException.class);
++    assertThat(land(stores.get()).claimsByOwner("source")).hasSize(3);
++    assertThat(land(stores.get()).transferReceipt(request.operationId())).isEmpty();
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute("DROP TRIGGER fail_transfer");
++    }
++    assertThat(land(stores.get()).transferBatch(request).status()).isEqualTo(APPLIED);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void concurrentTransfersCheckRemainingLimitAtCommit(boolean sql) throws Exception {
++    var stores = stores(sql);
++    var initial = land(stores.get());
++    initial.claim("source", first);
++    initial.claim("source", second);
++    var barrier = new CyclicBarrier(2);
++    var a = land(new TerritoryBatchRecoveryTest.BarrierStore(stores.get(), barrier));
++    var b = land(new TerritoryBatchRecoveryTest.BarrierStore(stores.get(), barrier));
++    var x = request(first);
++    var y = request(second);
++    try (var executor = Executors.newFixedThreadPool(2)) {
++      var one = executor.submit(() -> attempt(a, x));
++      var two = executor.submit(() -> attempt(b, y));
++      one.get(15, TimeUnit.SECONDS);
++      two.get(15, TimeUnit.SECONDS);
++    }
++    var restarted = land(stores.get());
++    assertThat(List.of(restarted.transferBatch(x).status(), restarted.transferBatch(y).status()))
++        .containsExactlyInAnyOrder(APPLIED, REMAINING_LIMIT);
++    assertThat(restarted.claimsByOwner("source")).hasSize(1);
++  }
++
++  static void attempt(DurableTerritoryService land, TerritoryTransferService.TransferRequest r) {
++    try {
++      land.transferBatch(r);
++    } catch (IllegalStateException expected) {
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void storesRefuseReceiptRemovalOrMutation(boolean sql) throws Exception {
++    var stores = stores(sql);
++    var land = land(stores.get());
++    seed(land);
++    var request = request(first);
++    land.transferBatch(request);
++    var store = stores.get();
++    var state = store.load();
++    assertThatThrownBy(() -> store.save(new TerritoryLedger(state.claims(), state.receipts())))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(land(stores.get()).transferReceipt(request.operationId())).isPresent();
++  }
++
++  @Test
++  void deletedSqlTransferAuthorityFailsAfterRestart() throws Exception {
++    var stores = stores(true);
++    var land = land(stores.get());
++    seed(land);
++    land.transferBatch(request(first));
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute("DROP TABLE starcore_territory_transfer_receipts");
++    }
++    assertThatThrownBy(() -> land(stores.get())).isInstanceOf(IllegalStateException.class);
++  }
++
++  @Test
++  void codecRejectsIncompleteTransferEnvelopeAndInvalidRequests() {
++    var request = request(first);
++    var ledger =
++        new TerritoryLedger(
++            Map.of(),
++            Map.of(),
++            Map.of(
++                request.operationId(),
++                new TerritoryTransferService.TransferReceipt(request, CANCELLED)));
++    var p = ledger.properties();
++    assertThat(TerritoryLedger.decode(p)).isEqualTo(ledger);
++    p.remove("transfers.0.source");
++    p.setProperty("batches.sha256", TerritoryLedger.checksum(p));
++    assertThatThrownBy(() -> TerritoryLedger.decode(p)).isInstanceOf(RuntimeException.class);
++    assertThatThrownBy(() -> request(first, first)).isInstanceOf(IllegalArgumentException.class);
++    assertThatThrownBy(
++            () ->
++                new TerritoryTransferService.TransferRequest(
++                    UUID.randomUUID(), "same", "same", List.of(first), 1))
++        .isInstanceOf(IllegalArgumentException.class);
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/NationDisbandTransactionTest.java b/src/test/java/dev/starcore/starcore/module/nation/NationDisbandTransactionTest.java
+index 5b31754..e7acb11 100644
+--- a/src/test/java/dev/starcore/starcore/module/nation/NationDisbandTransactionTest.java
++++ b/src/test/java/dev/starcore/starcore/module/nation/NationDisbandTransactionTest.java
+@@ -222,8 +222,9 @@ class NationDisbandTransactionTest {
+   @Test
+   void unreadableCommitOutcomeRetainsJournalAndDoesNotCleanupClaims() throws Exception {
+     Fixture fixture = fixture(true, true);
+-    fixture.storage.readFailure = new IllegalStateException("state readback unavailable");
+     RecordingDisbandJournal journal = installJournal(fixture);
++    journal.afterSave =
++        () -> fixture.storage.readFailure = new IllegalStateException("state readback unavailable");
+ 
+     assertThatThrownBy(
+             () -> fixture.module.disbandNation(fixture.root.id(), fixture.root.founderId()))
+@@ -236,6 +237,24 @@ class NationDisbandTransactionTest {
+     assertThat(journal.transaction).isNotNull();
+     verify(fixture.territory, never())
+         .unclaim(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any());
++    verify(fixture.territory, never())
++        .unclaimClaimsDurably(org.mockito.ArgumentMatchers.anyCollection());
++  }
++
++  @Test
++  void unavailableAdmissionAuthorityDoesNotWriteDisbandIntentOrCleanup() throws Exception {
++    Fixture fixture = fixture(true, false);
++    RecordingDisbandJournal journal = installJournal(fixture);
++    fixture.storage.readFailure = new IllegalStateException("authority unavailable");
++    assertThatThrownBy(
++            () -> fixture.module.disbandNation(fixture.root.id(), fixture.root.founderId()))
++        .isInstanceOf(IllegalStateException.class)
++        .hasMessageContaining("authority unavailable");
++    assertThat(journal.transaction).isNull();
++    assertThat(fixture.storage.saveCalls).isZero();
++    assertThat(fixture.module.nationById(fixture.root.id())).isPresent();
++    verify(fixture.territory, never())
++        .unclaimClaimsDurably(org.mockito.ArgumentMatchers.anyCollection());
+   }
+ 
+   @Test
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/NationSplitCoordinatorTest.java b/src/test/java/dev/starcore/starcore/module/nation/NationSplitCoordinatorTest.java
+index f68330b..829bc2d 100644
+--- a/src/test/java/dev/starcore/starcore/module/nation/NationSplitCoordinatorTest.java
++++ b/src/test/java/dev/starcore/starcore/module/nation/NationSplitCoordinatorTest.java
+@@ -1,222 +1,529 @@
+ package dev.starcore.starcore.module.nation;
+ 
+-import static org.assertj.core.api.Assertions.assertThat;
+-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
++import static dev.starcore.starcore.module.nation.NationSplitService.State.*;
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
+ 
++import dev.starcore.starcore.core.database.DatabaseService;
+ import dev.starcore.starcore.core.persistence.PersistenceService;
+-import dev.starcore.starcore.foundation.territory.InMemoryTerritoryService;
+-import dev.starcore.starcore.foundation.territory.TerritoryService;
+-import dev.starcore.starcore.foundation.territory.model.ChunkCoordinate;
+-import dev.starcore.starcore.module.nation.model.Nation;
+-import dev.starcore.starcore.module.nation.model.NationId;
+-import dev.starcore.starcore.module.nation.model.NationMember;
++import dev.starcore.starcore.foundation.territory.*;
++import dev.starcore.starcore.foundation.territory.model.*;
++import dev.starcore.starcore.module.nation.model.*;
++import java.nio.file.Path;
+ import java.time.Instant;
+-import java.util.LinkedHashMap;
+-import java.util.List;
+-import java.util.Map;
+-import java.util.Properties;
+-import java.util.UUID;
+-import java.util.concurrent.CompletableFuture;
+-import org.junit.jupiter.api.BeforeEach;
+-import org.junit.jupiter.api.Test;
++import java.util.*;
++import java.util.logging.Logger;
++import org.bukkit.plugin.java.JavaPlugin;
++import org.junit.jupiter.api.*;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.*;
++import org.sqlite.SQLiteDataSource;
+ 
+ class NationSplitCoordinatorTest {
+-  private final UUID sourceFounderId = UUID.randomUUID();
+-  private final UUID newFounderId = UUID.randomUUID();
+-  private final ChunkCoordinate first = new ChunkCoordinate("world", 0, 0);
+-  private final ChunkCoordinate second = new ChunkCoordinate("world", 1, 0);
+-  private final ChunkCoordinate retained = new ChunkCoordinate("world", 2, 0);
+-
+-  private final Map<NationId, Nation> nations = new LinkedHashMap<>();
+-  private final Map<String, NationId> names = new LinkedHashMap<>();
+-  private final Map<UUID, NationId> membership = new LinkedHashMap<>();
+-  private final TerritoryService territories =
+-      new InMemoryTerritoryService(new SilentPersistence());
+-  private final RecordingNationStorage storage = new RecordingNationStorage();
+-
+-  private Nation source;
+-  private NationMember originalMember;
+-  private NationSplitCoordinator coordinator;
+-
+-  @BeforeEach
+-  void setUp() {
+-    source = new Nation(NationId.random(), "Source", sourceFounderId, "Founder");
+-    originalMember =
+-        new NationMember(
+-            newFounderId,
+-            "Separatist",
+-            "Governor",
+-            Instant.parse("2024-03-04T05:06:07Z"),
+-            Instant.parse("2026-07-16T11:12:13Z"));
+-    source.addMember(originalMember);
+-    nations.put(source.id(), source);
+-    names.put("source", source.id());
+-    membership.put(sourceFounderId, source.id());
+-    membership.put(newFounderId, source.id());
+-    territories.claim(source.id().toString(), first);
+-    territories.claim(source.id().toString(), second);
+-    territories.claim(source.id().toString(), retained);
+-    coordinator = new NationSplitCoordinator(nations, names, membership, territories, storage);
++  @TempDir Path directory;
++  final UUID founder = UUID.randomUUID(), separatist = UUID.randomUUID();
++  final Nation sourceNation = new Nation(NationId.random(), "Source", founder, "Founder");
++  final ChunkCoordinate first = new ChunkCoordinate("world", 0, 0),
++      second = new ChunkCoordinate("world", 1, 0),
++      retained = new ChunkCoordinate("world", 2, 0);
++
++  Fixture fixture(boolean sql) {
++    sourceNation.addMember(
++        new NationMember(separatist, "Separatist", "Governor", Instant.EPOCH, Instant.EPOCH));
++    sourceNation.setExperience(100);
++    sourceNation.retainExperienceReceipt(
++        new NationExperienceService.Receipt(
++            new NationExperienceService.Grant("exercise-prior", sourceNation.id(), 100),
++            Instant.EPOCH));
++    var plugin = mock(JavaPlugin.class);
++    when(plugin.getDataFolder()).thenReturn(directory.toFile());
++    when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    var persistence = new PersistenceService(plugin, null);
++    persistence.start();
++    var ds = new SQLiteDataSource();
++    ds.setUrl("jdbc:sqlite:" + directory.resolve("shared.db"));
++    var database = mock(DatabaseService.class);
++    when(database.isRunning()).thenReturn(sql);
++    when(database.dataSource()).thenReturn(Optional.of(ds));
++    var f = new Fixture(persistence, ds, database, sql);
++    var storage = f.storage();
++    storage.load();
++    storage.save(NationStateCodec.toProperties(List.of(sourceNation)));
++    var land = f.land();
++    land.claim(sourceNation.id().toString(), first);
++    land.claim(sourceNation.id().toString(), second);
++    land.claim(sourceNation.id().toString(), retained);
++    return f;
+   }
+ 
+-  @Test
+-  void createsNationMovesFounderAndTransfersClaims() {
+-    NationSplitOutcome outcome =
+-        coordinator.split(source.id(), newFounderId, "New Nation", List.of(first, second), 1);
+-
+-    assertThat(outcome.status()).isEqualTo(NationSplitOutcome.Status.SUCCESS);
+-    Nation created = outcome.nation();
+-    assertThat(created).isNotNull();
+-    assertThat(source.hasMember(newFounderId)).isFalse();
+-    assertThat(created.founderId()).isEqualTo(newFounderId);
+-    assertThat(membership.get(newFounderId)).isEqualTo(created.id());
+-    assertThat(names.get("new nation")).isEqualTo(created.id());
+-    assertThat(territories.isOwnerOf(created.id().toString(), first)).isTrue();
+-    assertThat(territories.isOwnerOf(created.id().toString(), second)).isTrue();
+-    assertThat(territories.isOwnerOf(source.id().toString(), retained)).isTrue();
+-    assertThat(NationStateCodec.fromProperties(storage.saved)).hasSize(2);
++  NationSplitService.Request request() {
++    return new NationSplitService.Request(
++        UUID.randomUUID(), sourceNation.id(), separatist, "New Nation", List.of(first, second), 1);
+   }
+ 
+-  @Test
+-  void splitPreservesPriorExperienceReceiptOnOriginalNation() {
+-    var grant = new NationExperienceService.Grant("exercise-prior", source.id(), 100);
+-    source.setExperience(100);
+-    var receipt = new NationExperienceService.Receipt(grant, Instant.EPOCH);
+-    source.retainExperienceReceipt(receipt);
+-    var outcome =
+-        coordinator.split(source.id(), newFounderId, "New Nation", List.of(first, second), 1);
+-    assertThat(outcome.status()).isEqualTo(NationSplitOutcome.Status.SUCCESS);
+-    var restored = NationStateCodec.fromProperties(storage.saved);
+-    var original =
+-        restored.stream().filter(n -> n.id().equals(source.id())).findFirst().orElseThrow();
+-    assertThat(original.experience()).isEqualTo(100);
+-    assertThat(original.experienceReceipts()).containsEntry(grant.transactionId(), receipt);
+-    assertThat(
+-            restored.stream()
+-                .filter(n -> !n.id().equals(source.id()))
+-                .findFirst()
+-                .orElseThrow()
+-                .experienceReceipts())
+-        .isEmpty();
++  record Fixture(
++      PersistenceService persistence, SQLiteDataSource ds, DatabaseService database, boolean sql) {
++    NationStateStorage storage() {
++      return sql
++          ? new SqlNationStateStorage(ds, new Properties(), Logger.getAnonymousLogger())
++          : new PersistenceNationStateStorage("nation", persistence);
++    }
++
++    DatabaseAwareTerritoryService land() {
++      return new DatabaseAwareTerritoryService(database, persistence, Logger.getAnonymousLogger());
++    }
++
++    NationSplitCoordinator coordinator() {
++      return new NationSplitCoordinator(storage(), land());
++    }
++
++    NationModule module() {
++      return new NationModule(land(), storage());
++    }
++
++    NationStateCodec.Snapshot snapshot() {
++      return NationStateCodec.snapshot(storage().load());
++    }
+   }
+ 
+-  @Test
+-  void rejectsSourceFounderAndLeavesStateUntouched() {
+-    NationSplitOutcome outcome =
+-        coordinator.split(source.id(), sourceFounderId, "New Nation", List.of(first), 1);
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void createsOriginalTargetMovesFounderAndPreservesExperience(boolean sql) {
++    var f = fixture(sql);
++    var r = request();
++    var result = f.coordinator().split(r);
++    assertThat(result.state()).isEqualTo(COMPLETED);
++    var snapshot = f.snapshot();
++    assertThat(snapshot.nations()).hasSize(2);
++    var source =
++        snapshot.nations().stream()
++            .filter(n -> n.id().equals(sourceNation.id()))
++            .findFirst()
++            .orElseThrow();
++    var target =
++        snapshot.nations().stream()
++            .filter(n -> n.id().equals(result.targetNationId()))
++            .findFirst()
++            .orElseThrow();
++    assertThat(source.hasMember(separatist)).isFalse();
++    assertThat(source.experience()).isEqualTo(100);
++    assertThat(source.experienceReceipts()).containsKey("exercise-prior");
++    assertThat(target.founderId()).isEqualTo(separatist);
++    assertThat(target.experienceReceipts()).isEmpty();
++    assertThat(target.foundedAt()).isEqualTo(snapshot.splits().get(r.operationId()).foundedAt());
++    assertThat(f.land().claimsByOwner(target.id().toString())).hasSize(2);
++    assertThat(f.coordinator().split(r)).isEqualTo(result);
++  }
+ 
+-    assertThat(outcome.status()).isEqualTo(NationSplitOutcome.Status.SOURCE_FOUNDER);
+-    assertThat(nations).hasSize(1);
+-    assertThat(membership.get(sourceFounderId)).isEqualTo(source.id());
+-    assertThat(territories.isOwnerOf(source.id().toString(), first)).isTrue();
++  @ParameterizedTest
++  @CsvSource({
++    "false,1,false",
++    "false,1,true",
++    "false,2,false",
++    "false,2,true",
++    "true,1,false",
++    "true,1,true",
++    "true,2,false",
++    "true,2,true"
++  })
++  void catalogCommitInterruptionsRecoverOneTargetWithoutReverseLand(
++      boolean sql, int save, boolean after) {
++    var f = fixture(sql);
++    var r = request();
++    var fault = new NationClaimCoordinatorTest.FaultStorage(f.storage());
++    fault.failAt = save;
++    fault.after = after;
++    fault.blockRead = true;
++    assertThatThrownBy(() -> new NationSplitCoordinator(fault, f.land()).split(r))
++        .isInstanceOf(IllegalStateException.class);
++    var pending = f.snapshot().splits().get(r.operationId());
++    if (save == 1 && !after) {
++      assertThat(pending).isNull();
++      assertThat(f.land().claimsByOwner(sourceNation.id().toString())).hasSize(3);
++    } else assertThat(pending).isNotNull();
++    if (save == 2)
++      assertThat(f.land().claimsByOwner(pending.targetNationId().toString())).hasSize(2);
++    var result = f.coordinator().split(r);
++    assertThat(result.state()).isEqualTo(COMPLETED);
++    if (pending != null) assertThat(result.targetNationId()).isEqualTo(pending.targetNationId());
++    assertThat(f.snapshot().nations()).hasSize(2);
++    assertThat(f.land().claimsByOwner(sourceNation.id().toString())).hasSize(1);
+   }
+ 
+-  @Test
+-  void rejectsClaimsThatDoNotAllBelongToSource() {
+-    ChunkCoordinate foreign = new ChunkCoordinate("world", 9, 9);
+-    territories.claim("other", foreign);
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void cancelUnpublishedTransferSealsLateExecutor(boolean sql) {
++    var f = fixture(sql);
++    var r = request();
++    var fault = new LostTransfer(f.land());
++    fault.before = true;
++    var delayed = new NationSplitCoordinator(f.storage(), fault);
++    assertThatThrownBy(() -> delayed.split(r)).isInstanceOf(IllegalStateException.class);
++    var op = f.snapshot().splits().get(r.operationId());
++    assertThat(f.coordinator().cancel(r.operationId()).state()).isEqualTo(CANCELLED);
++    fault.before = false;
++    assertThatThrownBy(() -> delayed.recover(r.operationId()))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(f.land().transferBatch(op.transfer()).status())
++        .isEqualTo(TerritoryTransferService.TransferStatus.CANCELLED);
++    assertThat(f.coordinator().split(r).state()).isEqualTo(CANCELLED);
++    assertThat(f.snapshot().nations()).hasSize(1);
++    assertThat(f.land().claimsByOwner(sourceNation.id().toString())).hasSize(3);
++  }
+ 
+-    NationSplitOutcome outcome =
+-        coordinator.split(source.id(), newFounderId, "New Nation", List.of(first, foreign), 1);
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void lostLandReplyThenCancellationCompletesOriginalSplit(boolean sql) {
++    var f = fixture(sql);
++    var r = request();
++    var lost = new LostTransfer(f.land());
++    lost.after = true;
++    lost.block = true;
++    assertThatThrownBy(() -> new NationSplitCoordinator(f.storage(), lost).split(r))
++        .isInstanceOf(IllegalStateException.class);
++    var op = f.snapshot().splits().get(r.operationId());
++    assertThat(op.state()).isEqualTo(PREPARED);
++    var result = f.coordinator().cancel(r.operationId());
++    assertThat(result.state()).isEqualTo(COMPLETED);
++    assertThat(result.targetNationId()).isEqualTo(op.targetNationId());
++    assertThat(f.land().claimsByOwner(op.targetNationId().toString())).hasSize(2);
++    assertThat(f.coordinator().recover(r.operationId())).isEqualTo(result);
++  }
+ 
+-    assertThat(outcome.status()).isEqualTo(NationSplitOutcome.Status.TERRITORY_MISMATCH);
+-    assertThat(nations).hasSize(1);
+-    assertThat(source.hasMember(newFounderId)).isTrue();
+-    assertThat(territories.isOwnerOf(source.id().toString(), first)).isTrue();
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void cancellationCommitFailureRetainsOriginalDecision(boolean sql) {
++    var f = fixture(sql);
++    var r = request();
++    prepare(f, r);
++    var fault = new NationClaimCoordinatorTest.FaultStorage(f.storage());
++    fault.failAt = 1;
++    fault.after = true;
++    fault.blockRead = true;
++    assertThatThrownBy(() -> new NationSplitCoordinator(fault, f.land()).cancel(r.operationId()))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(f.snapshot().splits().get(r.operationId()).state()).isEqualTo(CANCEL_PENDING);
++    assertThat(f.coordinator().recover(r.operationId()).state()).isEqualTo(CANCELLED);
++    assertThat(f.land().claimsByOwner(sourceNation.id().toString())).hasSize(3);
+   }
+ 
+-  @Test
+-  void rejectsSplitThatWouldLeaveTooFewClaims() {
+-    NationSplitOutcome outcome =
+-        coordinator.split(source.id(), newFounderId, "New Nation", List.of(first, second), 2);
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void cancellationRacingDelayedTransferCannotBeOverwritten(boolean sql) {
++    var f = fixture(sql);
++    var r = request();
++    var land = new LostTransfer(f.land());
++    land.callback =
++        () -> assertThat(f.coordinator().cancel(r.operationId()).state()).isEqualTo(CANCELLED);
++    assertThatThrownBy(() -> new NationSplitCoordinator(f.storage(), land).split(r))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(f.coordinator().split(r).state()).isEqualTo(CANCELLED);
++    assertThat(f.land().claimsByOwner(sourceNation.id().toString())).hasSize(3);
++  }
+ 
+-    assertThat(outcome.status()).isEqualTo(NationSplitOutcome.Status.SOURCE_TERRITORY_TOO_SMALL);
+-    assertThat(nations).hasSize(1);
+-    assertThat(source.hasMember(newFounderId)).isTrue();
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void terminalReplayDoesNotResurrectDeletedTargetOrMovedLand(boolean sql) {
++    var f = fixture(sql);
++    var r = request();
++    var result = f.coordinator().split(r);
++    f.land()
++        .transferClaims(result.targetNationId().toString(), "later-owner", List.of(first, second));
++    var store = f.storage();
++    var s = NationStateCodec.snapshot(store.load());
++    store.save(
++        NationStateCodec.toProperties(
++            s.nations().stream().filter(n -> !n.id().equals(result.targetNationId())).toList(),
++            s.creations(),
++            s.claims(),
++            s.splits()));
++    assertThat(f.coordinator().split(r)).isEqualTo(result);
++    assertThat(f.coordinator().cancel(r.operationId())).isEqualTo(result);
++    assertThat(f.snapshot().nations()).hasSize(1);
++    assertThat(f.land().claimsByOwner("later-owner")).hasSize(2);
+   }
+ 
+-  @Test
+-  void rollsBackMembershipCatalogAndClaimsWhenNationSaveFails() {
+-    storage.failSaves = true;
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void staleOrdinaryMutationsCannotPassSharedPendingIntent(boolean sql) {
++    var f = fixture(sql);
++    var stale = f.module();
++    var r = request();
++    prepare(f, r);
++    assertThatThrownBy(() -> stale.unclaimCurrentChunk(founder, "world", 0, 0))
++        .isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(() -> stale.renameNation(sourceNation.id(), "Changed"))
++        .isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(stale::saveState).isInstanceOf(IllegalStateException.class);
++    assertThat(f.land().claimsByOwner(sourceNation.id().toString())).hasSize(3);
++    assertThat(f.snapshot().nations()).extracting(Nation::name).containsExactly("Source");
++    assertThat(f.coordinator().recover(r.operationId()).state()).isEqualTo(COMPLETED);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void mutableCallerEditsSaveOnlyAgainstTheirOriginalAuthority(boolean sql) {
++    var f = fixture(sql);
++    var a = f.module();
++    var b = f.module();
++    a.nationById(sourceNation.id()).orElseThrow().rename("Local edit");
++    a.saveState();
++    b.nationById(sourceNation.id()).orElseThrow().rename("Stale edit");
++    assertThatThrownBy(b::saveState).isInstanceOf(NationStateConflictException.class);
++    assertThat(f.snapshot().nations()).extracting(Nation::name).containsExactly("Local edit");
++    assertThat(b.nationById(sourceNation.id()).orElseThrow().name()).isEqualTo("Local edit");
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void independentAdmissionsCannotOverwriteSharedIntent(boolean sql) {
++    var f = fixture(sql);
++    var old = new NationSplitCoordinator(f.storage(), f.land());
++    var r = request();
++    prepare(f, r);
++    var other =
++        new NationSplitService.Request(
++            UUID.randomUUID(), sourceNation.id(), separatist, "Other", List.of(first), 1);
++    assertThatThrownBy(() -> old.split(other)).isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(() -> f.coordinator().split(other))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(f.snapshot().splits()).containsOnlyKeys(r.operationId());
++    assertThat(f.land().claimsByOwner(sourceNation.id().toString())).hasSize(3);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void ownerAndRemainingChecksUseCommitTimeLand(boolean sql) {
++    var f = fixture(sql);
++    var r = request();
++    prepare(f, r);
++    f.land().unclaim(sourceNation.id().toString(), retained);
++    assertThat(f.coordinator().recover(r.operationId()).outcome())
++        .isEqualTo(NationSplitOutcome.Status.SOURCE_TERRITORY_TOO_SMALL);
++    assertThat(f.snapshot().nations()).hasSize(1);
++    var other = request();
++    prepare(f, other);
++    f.land().claim(sourceNation.id().toString(), retained);
++    f.land().transferClaims(sourceNation.id().toString(), "other", List.of(second));
++    assertThat(f.coordinator().recover(other.operationId()).outcome())
++        .isEqualTo(NationSplitOutcome.Status.TERRITORY_MISMATCH);
++    assertThat(f.land().isOwnerOf(sourceNation.id().toString(), first)).isTrue();
++  }
+ 
+-    assertThatIllegalStateException()
+-        .isThrownBy(
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void admissionRejectionAndConflictingIdRemainTerminal(boolean sql) {
++    var f = fixture(sql);
++    var bad =
++        new NationSplitService.Request(
++            UUID.randomUUID(), sourceNation.id(), founder, "New", List.of(first), 1);
++    var result = f.coordinator().split(bad);
++    assertThat(result.outcome()).isEqualTo(NationSplitOutcome.Status.SOURCE_FOUNDER);
++    assertThat(result.state()).isEqualTo(REJECTED);
++    assertThat(f.coordinator().split(bad)).isEqualTo(result);
++    assertThatThrownBy(
+             () ->
+-                coordinator.split(
+-                    source.id(), newFounderId, "New Nation", List.of(first, second), 1))
+-        .withMessageContaining("nation split");
++                f.coordinator()
++                    .split(
++                        new NationSplitService.Request(
++                            bad.operationId(),
++                            sourceNation.id(),
++                            separatist,
++                            "New",
++                            List.of(first),
++                            1)))
++        .isInstanceOf(IllegalArgumentException.class);
++    assertThat(f.land().claimsByOwner(sourceNation.id().toString())).hasSize(3);
++  }
+ 
+-    assertThat(nations).containsOnlyKeys(source.id());
+-    assertThat(names).containsOnlyKeys("source");
+-    assertThat(membership.get(newFounderId)).isEqualTo(source.id());
+-    assertThat(member(source, newFounderId)).isEqualTo(originalMember);
+-    assertThat(territories.isOwnerOf(source.id().toString(), first)).isTrue();
+-    assertThat(territories.isOwnerOf(source.id().toString(), second)).isTrue();
++  @Test
++  void codecDetectsLostHistoryAndCanonicalMismatch() {
++    var f = fixture(false);
++    var r = request();
++    f.coordinator().split(r);
++    var store = f.storage();
++    var p = store.load();
++    p.remove("splitOperations.0.target");
++    assertThatThrownBy(() -> NationStateCodec.snapshot(p)).isInstanceOf(RuntimeException.class);
++    assertThatThrownBy(
++            () ->
++                new NationSplitService.Request(
++                    UUID.randomUUID(),
++                    sourceNation.id(),
++                    separatist,
++                    "N",
++                    List.of(first, first),
++                    0))
++        .isInstanceOf(IllegalArgumentException.class);
+   }
+ 
+-  private static NationMember member(Nation nation, UUID playerId) {
+-    return nation.members().stream()
+-        .filter(candidate -> candidate.playerId().equals(playerId))
+-        .findFirst()
+-        .orElseThrow();
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void startupRecoveryCompletesPendingAndDisabledReferencesCannotWrite(boolean sql) {
++    var f = fixture(sql);
++    var r = request();
++    prepare(f, r);
++    var module = f.module();
++    module.recoverSplitsOnStartup();
++    assertThat(module.splitOperation(r.operationId()).orElseThrow().state()).isEqualTo(COMPLETED);
++    assertThat(module.pendingSplits()).isEmpty();
++    module.disable(null);
++    assertThatThrownBy(() -> module.recoverSplit(r.operationId()))
++        .isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(() -> module.split(request())).isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(() -> module.cancelSplit(r.operationId()))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(f.snapshot().nations()).hasSize(2);
+   }
+ 
+-  private static final class RecordingNationStorage implements NationStateStorage {
+-    private Properties saved = new Properties();
+-    private boolean failSaves;
++  @Test
++  void stoppingPendingModulePreservesIntentForAnotherInstance() {
++    var f = fixture(false);
++    var r = request();
++    prepare(f, r);
++    var module = f.module();
++    module.disable(null);
++    assertThat(f.snapshot().splits().get(r.operationId()).state()).isEqualTo(PREPARED);
++    assertThat(f.coordinator().recover(r.operationId()).state()).isEqualTo(COMPLETED);
++  }
+ 
+-    @Override
+-    public Properties load() {
+-      return copy(saved);
+-    }
++  @Test
++  void publishingProfilesCannotReenterSplitOrOrdinaryMutation() throws Exception {
++    var f = fixture(false);
++    var module = f.module();
++    var profiles = mock(dev.starcore.starcore.foundation.player.PlayerProfileService.class);
++    var field = NationModule.class.getDeclaredField("playerProfiles");
++    field.setAccessible(true);
++    field.set(module, profiles);
++    var callbackCount = new java.util.concurrent.atomic.AtomicInteger();
++    doAnswer(
++            invocation -> {
++              callbackCount.incrementAndGet();
++              assertThatThrownBy(() -> module.split(request()))
++                  .isInstanceOf(IllegalStateException.class);
++              assertThatThrownBy(() -> module.renameNation(sourceNation.id(), "Reentrant"))
++                  .isInstanceOf(IllegalStateException.class);
++              return null;
++            })
++        .when(profiles)
++        .recordSeen(any(), anyString());
++    assertThat(module.split(request()).state()).isEqualTo(COMPLETED);
++    module.pendingSplits();
++    var retainedId = f.snapshot().splits().keySet().iterator().next();
++    module.splitOperation(retainedId);
++    assertThat(callbackCount.get()).isPositive();
++    assertThat(f.snapshot().nations())
++        .extracting(Nation::name)
++        .containsExactlyInAnyOrder("Source", "New Nation");
++  }
+ 
+-    @Override
+-    public void save(Properties properties) {
+-      if (failSaves) {
+-        throw new IllegalStateException("storage unavailable");
+-      }
+-      saved = copy(properties);
+-    }
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void claimAndCreationCoordinatorsPreserveSplitHistoryAndRespectPending(boolean sql) {
++    var f = fixture(sql);
++    var r = request();
++    prepare(f, r);
++    var money = mock(dev.starcore.starcore.foundation.economy.PlayerMoneyService.class);
++    var creator =
++        new NationCreationService.Request(
++            UUID.randomUUID(), UUID.randomUUID(), "Third Founder", "Third", NationKind.NATION);
++    var claim =
++        new NationClaimService.Request(
++            UUID.randomUUID(), founder, new ChunkClaimSelection("world", 8, 8, 0, 0));
++    assertThatThrownBy(
++            () ->
++                new NationCreationCoordinator(f.storage(), money)
++                    .create(
++                        creator,
++                        ignored -> {
++                          throw new AssertionError("Admission must be blocked");
++                        }))
++        .isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(
++            () ->
++                new NationClaimCoordinator(f.storage(), money, f.land())
++                    .claim(
++                        claim,
++                        ignored -> {
++                          throw new AssertionError("Admission must be blocked");
++                        }))
++        .isInstanceOf(IllegalStateException.class);
++    var split = f.coordinator().recover(r.operationId());
++    var created =
++        new NationCreationOperation(
++            creator,
++            NationId.random(),
++            null,
++            Instant.EPOCH,
++            java.math.BigDecimal.ZERO,
++            NationCreationService.State.PREPARED,
++            0,
++            "prepared");
++    new NationCreationCoordinator(f.storage(), money).create(creator, ignored -> created);
++    var claimed =
++        new NationClaimOperation(
++            claim,
++            sourceNation.id(),
++            "Source",
++            new ClaimPriceBreakdown(
++                java.math.BigDecimal.ZERO, java.math.BigDecimal.ZERO, 1, List.of()),
++            10,
++            NationClaimService.State.PREPARED,
++            0,
++            "prepared");
++    new NationClaimCoordinator(f.storage(), money, f.land()).claim(claim, ignored -> claimed);
++    var module = f.module();
++    module.renameNation(sourceNation.id(), "Renamed");
++    module.saveState();
++    assertThat(f.snapshot().splits().get(r.operationId()).receipt()).isEqualTo(split);
++    assertThat(f.snapshot().creations()).containsKey(creator.operationId());
++    assertThat(f.snapshot().claims()).containsKey(claim.operationId());
++    verifyNoInteractions(money);
+   }
+ 
+-  private static final class SilentPersistence extends PersistenceService {
+-    private final java.nio.file.Path territoryRoot = temporaryTerritoryRoot();
++  static void prepare(Fixture f, NationSplitService.Request r) {
++    var land = new LostTransfer(f.land());
++    land.before = true;
++    assertThatThrownBy(() -> new NationSplitCoordinator(f.storage(), land).split(r))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(f.snapshot().splits().get(r.operationId()).state()).isEqualTo(PREPARED);
++  }
+ 
+-    private static java.nio.file.Path temporaryTerritoryRoot() {
+-      try {
+-        return java.nio.file.Files.createTempDirectory("starcore-claim-test-");
+-      } catch (java.io.IOException e) {
+-        throw new java.io.UncheckedIOException(e);
+-      }
+-    }
++  static final class LostTransfer implements TerritoryTransferService {
++    final TerritoryTransferService delegate;
++    boolean before, after, block, failed;
++    Runnable callback;
+ 
+-    @Override
+-    public java.nio.file.Path namespacePath(String namespace) throws java.io.IOException {
+-      return java.nio.file.Files.createDirectories(territoryRoot.resolve(namespace));
++    LostTransfer(TerritoryTransferService delegate) {
++      this.delegate = delegate;
+     }
+ 
+-    SilentPersistence() {
+-      super(null, null);
++    public TransferReceipt transferBatch(TransferRequest request) {
++      if (callback != null) {
++        var run = callback;
++        callback = null;
++        run.run();
++      }
++      if (before) {
++        failed = true;
++        throw new IllegalStateException("land unavailable");
++      }
++      var result = delegate.transferBatch(request);
++      if (after) {
++        failed = true;
++        throw new IllegalStateException("land reply lost");
++      }
++      return result;
+     }
+ 
+-    @Override
+-    public Properties loadProperties(String namespace, String fileName) {
+-      return new Properties();
++    public TransferReceipt cancelTransfer(TransferRequest request) {
++      return delegate.cancelTransfer(request);
+     }
+ 
+-    @Override
+-    public void saveProperties(String namespace, String fileName, Properties properties) {}
+-
+-    @Override
+-    public CompletableFuture<Void> savePropertiesAsync(
+-        String namespace, String fileName, Properties properties) {
+-      return CompletableFuture.completedFuture(null);
++    public Optional<TransferReceipt> transferReceipt(UUID id) {
++      if (failed && block) throw new IllegalStateException("land read unavailable");
++      return delegate.transferReceipt(id);
+     }
+   }
+-
+-  private static Properties copy(Properties source) {
+-    Properties copy = new Properties();
+-    copy.putAll(source);
+-    return copy;
+-  }
+ }
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/NationSplitJournalTest.java b/src/test/java/dev/starcore/starcore/module/nation/NationSplitJournalTest.java
+index 7c02360..332b02d 100644
+--- a/src/test/java/dev/starcore/starcore/module/nation/NationSplitJournalTest.java
++++ b/src/test/java/dev/starcore/starcore/module/nation/NationSplitJournalTest.java
+@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+ 
+ import dev.starcore.starcore.core.persistence.PersistenceService;
+ import dev.starcore.starcore.foundation.territory.InMemoryTerritoryService;
+-import dev.starcore.starcore.foundation.territory.TerritoryService;
+ import dev.starcore.starcore.foundation.territory.model.ChunkCoordinate;
+ import dev.starcore.starcore.module.nation.model.Nation;
+ import dev.starcore.starcore.module.nation.model.NationId;
+@@ -44,167 +43,6 @@ class NationSplitJournalTest {
+     assertThat(restored).isEqualTo(transaction);
+   }
+ 
+-  @Test
+-  void coordinatorPersistsIntentBeforeTerritoryTransferAndClearsItAfterCommit() {
+-    UUID sourceFounder = UUID.randomUUID();
+-    UUID newFounder = UUID.randomUUID();
+-    Nation source = new Nation(NationId.random(), "Source", sourceFounder, "Founder");
+-    source.addMember(newFounder, "Separatist");
+-    var nations = new java.util.LinkedHashMap<NationId, Nation>();
+-    var names = new java.util.LinkedHashMap<String, NationId>();
+-    var membership = new java.util.LinkedHashMap<UUID, NationId>();
+-    nations.put(source.id(), source);
+-    names.put("source", source.id());
+-    membership.put(sourceFounder, source.id());
+-    membership.put(newFounder, source.id());
+-    InMemoryTerritoryService delegate = new InMemoryTerritoryService(new SilentPersistence());
+-    delegate.claim(source.id().toString(), first);
+-    delegate.claim(source.id().toString(), second);
+-    MemoryJournal journal = new MemoryJournal();
+-    TerritoryService territories = new JournalCheckingTerritories(delegate, journal);
+-    RecordingStorage storage = new RecordingStorage(NationStateCodec.toProperties(List.of(source)));
+-    NationSplitCoordinator coordinator =
+-        new NationSplitCoordinator(nations, names, membership, territories, storage, journal);
+-
+-    NationSplitOutcome outcome =
+-        coordinator.split(source.id(), newFounder, "New Nation", List.of(first), 1);
+-
+-    assertThat(outcome.success()).isTrue();
+-    assertThat(journal.saveCount).isEqualTo(1);
+-    assertThat(journal.load()).isEmpty();
+-  }
+-
+-  @Test
+-  void committedSplitRemainsSuccessfulWhenJournalCleanupMustWaitForRestart() {
+-    UUID sourceFounder = UUID.randomUUID();
+-    UUID newFounder = UUID.randomUUID();
+-    Nation source = new Nation(NationId.random(), "Source", sourceFounder, "Founder");
+-    source.addMember(newFounder, "Separatist");
+-    var nations = new java.util.LinkedHashMap<NationId, Nation>();
+-    var names = new java.util.LinkedHashMap<String, NationId>();
+-    var membership = new java.util.LinkedHashMap<UUID, NationId>();
+-    nations.put(source.id(), source);
+-    names.put("source", source.id());
+-    membership.put(sourceFounder, source.id());
+-    membership.put(newFounder, source.id());
+-    InMemoryTerritoryService territories = new InMemoryTerritoryService(new SilentPersistence());
+-    territories.claim(source.id().toString(), first);
+-    territories.claim(source.id().toString(), second);
+-    MemoryJournal journal = new MemoryJournal();
+-    journal.failClears = true;
+-    RecordingStorage storage = new RecordingStorage(NationStateCodec.toProperties(List.of(source)));
+-    Logger logger = Logger.getLogger("NationSplitJournalTest");
+-    logger.setLevel(Level.OFF);
+-    logger.setUseParentHandlers(false);
+-    NationSplitCoordinator coordinator =
+-        new NationSplitCoordinator(
+-            nations, names, membership, territories, storage, journal, logger);
+-
+-    NationSplitOutcome outcome =
+-        coordinator.split(source.id(), newFounder, "New Nation", List.of(first), 1);
+-
+-    assertThat(outcome.success()).isTrue();
+-    assertThat(journal.load()).isPresent();
+-    journal.failClears = false;
+-    NationSplitRecovery.recover(territories, storage, journal);
+-    assertThat(journal.load()).isEmpty();
+-  }
+-
+-  @Test
+-  void failedTerritoryTransactionRetainsIntentAndRecoveryRollsBackUnchangedClaims() {
+-    UUID sourceFounder = UUID.randomUUID();
+-    UUID newFounder = UUID.randomUUID();
+-    Nation source = new Nation(NationId.random(), "Source", sourceFounder, "Founder");
+-    source.addMember(newFounder, "Separatist");
+-    var nations = new java.util.LinkedHashMap<NationId, Nation>();
+-    var names = new java.util.LinkedHashMap<String, NationId>();
+-    var membership = new java.util.LinkedHashMap<UUID, NationId>();
+-    nations.put(source.id(), source);
+-    names.put("source", source.id());
+-    membership.put(sourceFounder, source.id());
+-    membership.put(newFounder, source.id());
+-    InMemoryTerritoryService delegate = new InMemoryTerritoryService(new SilentPersistence());
+-    delegate.claim(source.id().toString(), first);
+-    delegate.claim(source.id().toString(), second);
+-    MemoryJournal journal = new MemoryJournal();
+-    RecordingStorage storage = new RecordingStorage(NationStateCodec.toProperties(List.of(source)));
+-    NationSplitCoordinator coordinator =
+-        new NationSplitCoordinator(
+-            nations,
+-            names,
+-            membership,
+-            new JournalCheckingTerritories(delegate, journal, true),
+-            storage,
+-            journal,
+-            silentLogger());
+-
+-    assertThatIllegalStateException()
+-        .isThrownBy(
+-            () -> coordinator.split(source.id(), newFounder, "New Nation", List.of(first), 1))
+-        .withMessageContaining("territory claims");
+-
+-    assertThat(journal.load()).isPresent();
+-    assertThat(source.hasMember(newFounder)).isTrue();
+-    assertThat(delegate.isOwnerOf(source.id().toString(), first)).isTrue();
+-
+-    NationSplitRecovery.recover(delegate, storage, journal);
+-
+-    assertThat(journal.load()).isEmpty();
+-    assertThat(NationStateCodec.fromProperties(storage.load()))
+-        .extracting(Nation::id)
+-        .containsExactly(source.id());
+-  }
+-
+-  @Test
+-  void lostTransferConfirmationRetainsIntentAndRecoveryCompletesCommittedSplit() {
+-    UUID sourceFounder = UUID.randomUUID();
+-    UUID newFounder = UUID.randomUUID();
+-    Nation source = new Nation(NationId.random(), "Source", sourceFounder, "Founder");
+-    source.addMember(newFounder, "Separatist");
+-    var nations = new java.util.LinkedHashMap<NationId, Nation>();
+-    var names = new java.util.LinkedHashMap<String, NationId>();
+-    var membership = new java.util.LinkedHashMap<UUID, NationId>();
+-    nations.put(source.id(), source);
+-    names.put("source", source.id());
+-    membership.put(sourceFounder, source.id());
+-    membership.put(newFounder, source.id());
+-    InMemoryTerritoryService delegate = new InMemoryTerritoryService(new SilentPersistence());
+-    delegate.claim(source.id().toString(), first);
+-    delegate.claim(source.id().toString(), second);
+-    MemoryJournal journal = new MemoryJournal();
+-    RecordingStorage storage = new RecordingStorage(NationStateCodec.toProperties(List.of(source)));
+-    NationSplitCoordinator coordinator =
+-        new NationSplitCoordinator(
+-            nations,
+-            names,
+-            membership,
+-            new JournalCheckingTerritories(delegate, journal, false, true),
+-            storage,
+-            journal,
+-            silentLogger());
+-
+-    assertThatIllegalStateException()
+-        .isThrownBy(
+-            () -> coordinator.split(source.id(), newFounder, "New Nation", List.of(first), 1))
+-        .withMessageContaining("recovery is pending");
+-
+-    assertThat(journal.load()).isPresent();
+-    assertThat(source.hasMember(newFounder)).isTrue();
+-    assertThat(delegate.isOwnerOf(source.id().toString(), first)).isFalse();
+-    assertThat(delegate.isOwnerOf(journal.load().orElseThrow().targetNationId().toString(), first))
+-        .isTrue();
+-
+-    NationSplitRecovery.recover(delegate, storage, journal);
+-
+-    assertThat(journal.load()).isEmpty();
+-    Nation recoveredNation =
+-        NationStateCodec.fromProperties(storage.load()).stream()
+-            .filter(nation -> !nation.id().equals(source.id()))
+-            .findFirst()
+-            .orElseThrow();
+-    assertThat(recoveredNation.hasMember(newFounder)).isTrue();
+-  }
+-
+   @Test
+   void recoveryCompletesNationStateWhenTerritoryWasAlreadyTransferred() {
+     Nation source = nation("Source");
+@@ -361,83 +199,6 @@ class NationSplitJournalTest {
+     }
+   }
+ 
+-  private static final class JournalCheckingTerritories implements TerritoryService {
+-    private final TerritoryService delegate;
+-    private final NationSplitJournal journal;
+-    private final boolean failTransfers;
+-    private final boolean failAfterTransfer;
+-
+-    private JournalCheckingTerritories(TerritoryService delegate, NationSplitJournal journal) {
+-      this(delegate, journal, false);
+-    }
+-
+-    private JournalCheckingTerritories(
+-        TerritoryService delegate, NationSplitJournal journal, boolean failTransfers) {
+-      this(delegate, journal, failTransfers, false);
+-    }
+-
+-    private JournalCheckingTerritories(
+-        TerritoryService delegate,
+-        NationSplitJournal journal,
+-        boolean failTransfers,
+-        boolean failAfterTransfer) {
+-      this.delegate = delegate;
+-      this.journal = journal;
+-      this.failTransfers = failTransfers;
+-      this.failAfterTransfer = failAfterTransfer;
+-    }
+-
+-    @Override
+-    public Optional<dev.starcore.starcore.foundation.territory.model.TerritoryClaim> claimAt(
+-        ChunkCoordinate coordinate) {
+-      return delegate.claimAt(coordinate);
+-    }
+-
+-    @Override
+-    public boolean isClaimed(ChunkCoordinate coordinate) {
+-      return delegate.isClaimed(coordinate);
+-    }
+-
+-    @Override
+-    public boolean claim(String ownerId, ChunkCoordinate coordinate) {
+-      return delegate.claim(ownerId, coordinate);
+-    }
+-
+-    @Override
+-    public boolean unclaim(String ownerId, ChunkCoordinate coordinate) {
+-      return delegate.unclaim(ownerId, coordinate);
+-    }
+-
+-    @Override
+-    public boolean transferClaims(
+-        String sourceOwnerId,
+-        String targetOwnerId,
+-        java.util.Collection<ChunkCoordinate> coordinates) {
+-      assertThat(journal.load())
+-          .as("journal must be durable before territory transfer")
+-          .isPresent();
+-      if (failTransfers) {
+-        throw new IllegalStateException("territory storage unavailable");
+-      }
+-      boolean transferred = delegate.transferClaims(sourceOwnerId, targetOwnerId, coordinates);
+-      if (failAfterTransfer && transferred) {
+-        throw new IllegalStateException("territory transfer confirmation unavailable");
+-      }
+-      return transferred;
+-    }
+-
+-    @Override
+-    public int claimedChunkCount() {
+-      return delegate.claimedChunkCount();
+-    }
+-
+-    @Override
+-    public java.util.Collection<dev.starcore.starcore.foundation.territory.model.TerritoryClaim>
+-        claimsByOwner(String ownerId) {
+-      return delegate.claimsByOwner(ownerId);
+-    }
+-  }
+-
+   private static final class SilentPersistence extends PersistenceService {
+     private final java.nio.file.Path territoryRoot = temporaryTerritoryRoot();
+ 
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/command/NationSplitRecoveryCommandTest.java b/src/test/java/dev/starcore/starcore/module/nation/command/NationSplitRecoveryCommandTest.java
+new file mode 100644
+index 0000000..b7385bd
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/nation/command/NationSplitRecoveryCommandTest.java
+@@ -0,0 +1,51 @@
++package dev.starcore.starcore.module.nation.command;
++
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.module.nation.NationService;
++import dev.starcore.starcore.module.nation.NationSplitService;
++import java.util.List;
++import java.util.UUID;
++import org.bukkit.command.CommandSender;
++import org.bukkit.plugin.Plugin;
++import org.junit.jupiter.api.Test;
++
++class NationSplitRecoveryCommandTest {
++  @Test
++  void permissionsProtectConsoleQueriesAndCancellation() {
++    var nations =
++        mock(NationService.class, withSettings().extraInterfaces(NationSplitService.class));
++    var service = (NationSplitService) nations;
++    var sender = mock(CommandSender.class);
++    var command = new NationLifecycleCommand(mock(Plugin.class), nations);
++    var id = UUID.randomUUID().toString();
++    command.onCommand(
++        sender, null, "nation", new String[] {"splitrecovery", "cancel", id, "confirm"});
++    verifyNoInteractions(nations);
++    when(sender.hasPermission("starcore.admin")).thenReturn(true);
++    command.onCommand(sender, null, "nation", new String[] {"splitrecovery", "cancel", id});
++    verifyNoInteractions(nations);
++    when(service.pendingSplits()).thenReturn(List.of());
++    command.onCommand(sender, null, "nation", new String[] {"splitrecovery", "list"});
++    verify(service).pendingSplits();
++    command.onCommand(sender, null, "nation", new String[] {"splitrecovery", "retry", id});
++    verify(service).recoverSplit(UUID.fromString(id));
++    command.onCommand(
++        sender, null, "nation", new String[] {"splitrecovery", "cancel", id, "confirm"});
++    verify(service).cancelSplit(UUID.fromString(id));
++  }
++
++  @Test
++  void retiredCommandCannotRecoverOrForward() {
++    var nations =
++        mock(NationService.class, withSettings().extraInterfaces(NationSplitService.class));
++    var plugin = mock(Plugin.class);
++    var command = new NationLifecycleCommand(plugin, nations);
++    var sender = mock(CommandSender.class);
++    when(sender.hasPermission("starcore.admin")).thenReturn(true);
++    command.shutdown();
++    command.onCommand(sender, null, "nation", new String[] {"splitrecovery", "list"});
++    command.onCommand(sender, null, "nation", new String[] {"create", "New"});
++    verifyNoInteractions(nations, plugin);
++  }
++}
