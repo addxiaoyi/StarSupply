@@ -2,6 +2,10 @@
 
 更新日期：2026-11-27。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+最新源码检查点为 [Army 付费操作恢复 A3](upstream/development/ARMY-PAID-RECOVERY.md)：同 authority schema2 保存原请求、创建容量/补给目标预留、持久取消意图和完整国库永久回执；APPLIED 证明与精确军队效果原子提交。固定 proof 槽与未来 revision/字节预留在扣款前检查，补充 canonical 金额与极端 scale 拒绝。最终 880 项测试、87 个套件通过，0 失败/错误/跳过；9 个生产源和 3 个测试源空目录编译为 17、4 个 class。278 文件累计补丁独立重放后全部 3,790 个 src、API 与 pom 一致，见[机器证据](verification/workspace-army-paid-recovery-development-20261127.json)。**A3 尚未激活 ArmyService/Commander，全部阶段仍未完成。** 下一步完成战斗 session/技能冷却、国家 closing/retired 准入与解散协调及明确预算策略，再统一迁移全部 writer。当前资金策略为直接国库，不能冒充 Budget pool 消费。累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代全部旧开发补丁，不能叠加；JAR、安装序列与 review ZIP 仍第二十份。未启动实服或修改世界、玩家存档。
+
+以下 A2 段落为此前检查点，已包含在 A3 累计补丁中，其后续计划以上段为准。
+
 最新源码检查点为 [Army 权威接线边界 A2](upstream/development/ARMY-AUTHORITY-BOUNDARY.md)：在 A1 模型与 file/SQLite CAS 之上新增私有 owner、显式 readiness/永久关闭、完整确认后发布、原子多军队更新/退役、精确后勤回执重放、原始字节 bootstrap 和 detached runtime adapter。正常保存留下的被动 `.bak` 仅记录摘要，不参与导入；活动恢复文件和主文件缺失但备份存在时拒绝迁移。最终 706 项测试、83 个套件通过，0 失败/错误/跳过；3 个生产源与 4 个测试源空目录编译为 9、7 个 class。271 文件累计补丁独立重放后全部 3,783 个 src、API 与 pom 一致，见[机器证据](verification/workspace-army-authority-boundary-development-20261127.json)。**A2 尚未激活 ArmyService/Commander，全部阶段仍未完成。** 下一步先实现同一权威中的版本化付费操作、战斗 session 和技能/冷却证明，付费恢复复用现有 `NationDebitService`；明确国家生命周期准入和预算策略，再在同一检查点迁移全部直接 writer 与快照读取。真实军限和军事 receiver 仍待实现。新累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代全部旧开发补丁，不能叠加；JAR、安装序列与 review ZIP 仍第二十份。实服按用户要求待验，未启动服务器或修改世界、玩家存档。
 
 下段为此前条约 v2 检查点记录，其实现已包含在上述 Army A1 累计补丁中。
