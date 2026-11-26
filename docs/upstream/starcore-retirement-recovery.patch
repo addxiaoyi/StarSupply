@@ -1,0 +1,2259 @@
+diff --git a/docs/api/starcore-api-v1.txt b/docs/api/starcore-api-v1.txt
+index 6be3f4e..dcc9a99 100644
+--- a/docs/api/starcore-api-v1.txt
++++ b/docs/api/starcore-api-v1.txt
+@@ -276,6 +276,7 @@ METHOD dev.starcore.starcore.api.StarCoreApi#restApiServer typeParameters=<> par
+ METHOD dev.starcore.starcore.api.StarCoreApi#service typeParameters=<T> parameters=(java.lang.Class<T>) returns=java.util.Optional<T> modifiers=public,abstract
+ METHOD dev.starcore.starcore.api.StarCoreApi#technologyService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.technology.TechnologyService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#timeSyncService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.foundation.timesync.TimeSyncService> modifiers=public default=true
++METHOD dev.starcore.starcore.api.StarCoreApi#treasuryRetirementService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.treasury.TreasuryRetirementService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#treasuryRewardService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.treasury.TreasuryRewardService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#treasuryService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.treasury.TreasuryService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#version typeParameters=<> parameters=() returns=java.lang.String modifiers=public,abstract
+@@ -1135,6 +1136,14 @@ METHOD dev.starcore.starcore.module.treasury.TaxationService$TaxType#getDescript
+ METHOD dev.starcore.starcore.module.treasury.TaxationService$TaxType#getDisplayName typeParameters=<> parameters=() returns=java.lang.String modifiers=public
+ METHOD dev.starcore.starcore.module.treasury.TaxationService$TaxType#valueOf typeParameters=<> parameters=(java.lang.String) returns=dev.starcore.starcore.module.treasury.TaxationService$TaxType modifiers=public,static
+ METHOD dev.starcore.starcore.module.treasury.TaxationService$TaxType#values typeParameters=<> parameters=() returns=dev.starcore.starcore.module.treasury.TaxationService$TaxType[] modifiers=public,static
++METHOD dev.starcore.starcore.module.treasury.TreasuryRetirementService#retireTreasury typeParameters=<> parameters=(java.util.UUID,dev.starcore.starcore.module.nation.model.NationId) returns=dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt modifiers=public,abstract
++METHOD dev.starcore.starcore.module.treasury.TreasuryRetirementService#treasuryRetirementReceipt typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=java.util.Optional<dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt> modifiers=public,abstract
++METHOD dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
++METHOD dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt#hashCode typeParameters=<> parameters=() returns=int modifiers=public,final
++METHOD dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt#nationId typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationId modifiers=public
++METHOD dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt#operationId typeParameters=<> parameters=() returns=java.util.UUID modifiers=public
++METHOD dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt#retiredBalance typeParameters=<> parameters=() returns=java.math.BigDecimal modifiers=public
++METHOD dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
+ METHOD dev.starcore.starcore.module.treasury.TreasuryRewardResult#amount typeParameters=<> parameters=() returns=java.math.BigDecimal modifiers=public
+ METHOD dev.starcore.starcore.module.treasury.TreasuryRewardResult#balance typeParameters=<> parameters=() returns=java.math.BigDecimal modifiers=public
+ METHOD dev.starcore.starcore.module.treasury.TreasuryRewardResult#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
+@@ -1602,6 +1611,9 @@ RECORD_COMPONENT dev.starcore.starcore.module.treasury.TaxationService$TaxRevenu
+ RECORD_COMPONENT dev.starcore.starcore.module.treasury.TaxationService$TaxRevenue#context type=dev.starcore.starcore.module.treasury.TaxationService$TaxContext
+ RECORD_COMPONENT dev.starcore.starcore.module.treasury.TaxationService$TaxRevenue#nationId type=dev.starcore.starcore.module.nation.model.NationId
+ RECORD_COMPONENT dev.starcore.starcore.module.treasury.TaxationService$TaxRevenue#type type=dev.starcore.starcore.module.treasury.TaxationService$TaxType
++RECORD_COMPONENT dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt#nationId type=dev.starcore.starcore.module.nation.model.NationId
++RECORD_COMPONENT dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt#operationId type=java.util.UUID
++RECORD_COMPONENT dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt#retiredBalance type=java.math.BigDecimal
+ RECORD_COMPONENT dev.starcore.starcore.module.treasury.TreasuryRewardResult#amount type=java.math.BigDecimal
+ RECORD_COMPONENT dev.starcore.starcore.module.treasury.TreasuryRewardResult#balance type=java.math.BigDecimal
+ RECORD_COMPONENT dev.starcore.starcore.module.treasury.TreasuryRewardResult#eventRecorded type=boolean
+@@ -1754,6 +1766,8 @@ TYPE dev.starcore.starcore.module.treasury.TaxationService$TaxContext kind=recor
+ TYPE dev.starcore.starcore.module.treasury.TaxationService$TaxPayer kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.treasury.TaxationService$TaxRevenue kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.treasury.TaxationService$TaxType kind=enum modifiers=public,static,final typeParameters=<> extends=java.lang.Enum<dev.starcore.starcore.module.treasury.TaxationService$TaxType>
++TYPE dev.starcore.starcore.module.treasury.TreasuryRetirementService kind=interface modifiers=public,abstract typeParameters=<>
++TYPE dev.starcore.starcore.module.treasury.TreasuryRetirementService$TreasuryRetirementReceipt kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.treasury.TreasuryRewardResult kind=record modifiers=public,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.treasury.TreasuryRewardService kind=interface modifiers=public,abstract typeParameters=<>
+ TYPE dev.starcore.starcore.module.treasury.TreasuryService kind=interface modifiers=public,abstract typeParameters=<>
+diff --git a/src/main/java/dev/starcore/starcore/api/StarCoreApi.java b/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
+index fe494d9..61d665e 100644
+--- a/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
++++ b/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
+@@ -53,6 +53,11 @@ public interface StarCoreApi {
+     return service(dev.starcore.starcore.module.nation.NationSplitService.class);
+   }
+ 
++  default Optional<dev.starcore.starcore.module.treasury.TreasuryRetirementService>
++      treasuryRetirementService() {
++    return service(dev.starcore.starcore.module.treasury.TreasuryRetirementService.class);
++  }
++
+   default Optional<dev.starcore.starcore.module.nation.NationCreationService>
+       nationCreationService() {
+     return service(dev.starcore.starcore.module.nation.NationCreationService.class);
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryService.java b/src/main/java/dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryService.java
+index fb3bf03..8f7044a 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryService.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryService.java
+@@ -10,7 +10,10 @@ import java.util.logging.Logger;
+ 
+ /** The configured backend is pinned; database outages cannot silently switch the land authority. */
+ public final class DatabaseAwareTerritoryService
+-    implements TerritoryService, TerritoryBatchService, TerritoryTransferService {
++    implements TerritoryService,
++        TerritoryBatchService,
++        TerritoryTransferService,
++        TerritoryRetirementService {
+   private final StateStorageBackend backend;
+   private final DurableTerritoryService delegate;
+   private boolean closed;
+@@ -95,6 +98,14 @@ public final class DatabaseAwareTerritoryService
+     return current().transferReceipt(id);
+   }
+ 
++  public RetirementReceipt retireOwner(UUID operationId, String ownerId) {
++    return current().retireOwner(operationId, ownerId);
++  }
++
++  public Optional<RetirementReceipt> retirementReceipt(String ownerId) {
++    return current().retirementReceipt(ownerId);
++  }
++
+   public synchronized void shutdown() {
+     if (!closed) {
+       closed = true;
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/DurableTerritoryService.java b/src/main/java/dev/starcore/starcore/foundation/territory/DurableTerritoryService.java
+index a2d6e45..6c9c9db 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/DurableTerritoryService.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/DurableTerritoryService.java
+@@ -5,7 +5,10 @@ import dev.starcore.starcore.foundation.territory.model.TerritoryClaim;
+ import java.util.*;
+ 
+ abstract class DurableTerritoryService
+-    implements TerritoryService, TerritoryBatchService, TerritoryTransferService {
++    implements TerritoryService,
++        TerritoryBatchService,
++        TerritoryTransferService,
++        TerritoryRetirementService {
+   private final TerritoryLedgerStorage storage;
+   private boolean closed;
+ 
+@@ -38,10 +41,10 @@ abstract class DurableTerritoryService
+   public synchronized boolean claim(String owner, ChunkCoordinate c) {
+     new Request(UUID.randomUUID(), owner, List.of(c), -1);
+     var state = load();
+-    if (state.claims().containsKey(c)) return false;
++    if (state.retirements().containsKey(owner) || state.claims().containsKey(c)) return false;
+     var next = new HashMap<>(state.claims());
+     next.put(c, new TerritoryClaim(owner, c));
+-    commit(new TerritoryLedger(next, state.receipts(), state.transfers()));
++    commit(new TerritoryLedger(next, state.receipts(), state.transfers(), state.retirements()));
+     return true;
+   }
+ 
+@@ -51,7 +54,7 @@ abstract class DurableTerritoryService
+     if (current == null || !current.ownerId().equals(owner)) return false;
+     var next = new HashMap<>(state.claims());
+     next.remove(c);
+-    commit(new TerritoryLedger(next, state.receipts(), state.transfers()));
++    commit(new TerritoryLedger(next, state.receipts(), state.transfers(), state.retirements()));
+     return true;
+   }
+ 
+@@ -71,7 +74,7 @@ abstract class DurableTerritoryService
+       next.remove(claim.coordinate());
+     }
+     if (!next.equals(state.claims()))
+-      commit(new TerritoryLedger(next, state.receipts(), state.transfers()));
++      commit(new TerritoryLedger(next, state.receipts(), state.transfers(), state.retirements()));
+     return true;
+   }
+ 
+@@ -79,13 +82,15 @@ abstract class DurableTerritoryService
+       String source, String target, Collection<ChunkCoordinate> coordinates) {
+     var transfer = ClaimTransfer.of(source, target, coordinates);
+     var state = load();
++    if (state.retirements().containsKey(source) || state.retirements().containsKey(target))
++      return false;
+     var next = new HashMap<>(state.claims());
+     for (var c : transfer.coordinates()) {
+       var current = next.get(c);
+       if (current == null || !source.equals(current.ownerId())) return false;
+       next.put(c, new TerritoryClaim(target, c));
+     }
+-    commit(new TerritoryLedger(next, state.receipts(), state.transfers()));
++    commit(new TerritoryLedger(next, state.receipts(), state.transfers(), state.retirements()));
+     return true;
+   }
+ 
+@@ -112,7 +117,8 @@ abstract class DurableTerritoryService
+     }
+     Status status = cancel ? Status.CANCELLED : Status.APPLIED;
+     if (!cancel) {
+-      if (request.coordinates().stream().anyMatch(state.claims()::containsKey))
++      if (state.retirements().containsKey(request.ownerId())) status = Status.OWNER_RETIRED;
++      else if (request.coordinates().stream().anyMatch(state.claims()::containsKey))
+         status = Status.OVERLAP;
+       else if (request.maxOwnerClaims() >= 0
+           && state.claims().values().stream()
+@@ -127,7 +133,7 @@ abstract class DurableTerritoryService
+     receipts.put(request.operationId(), result);
+     if (status == Status.APPLIED)
+       for (var c : request.coordinates()) next.put(c, new TerritoryClaim(request.ownerId(), c));
+-    commit(new TerritoryLedger(next, receipts, state.transfers()));
++    commit(new TerritoryLedger(next, receipts, state.transfers(), state.retirements()));
+     return result;
+   }
+ 
+@@ -154,7 +160,10 @@ abstract class DurableTerritoryService
+     }
+     TransferStatus status = cancel ? TransferStatus.CANCELLED : TransferStatus.APPLIED;
+     if (!cancel) {
+-      if (request.coordinates().stream()
++      if (state.retirements().containsKey(request.sourceOwner())
++          || state.retirements().containsKey(request.targetOwner()))
++        status = TransferStatus.OWNER_RETIRED;
++      else if (request.coordinates().stream()
+           .anyMatch(
+               c -> !new TerritoryClaim(request.sourceOwner(), c).equals(state.claims().get(c))))
+         status = TransferStatus.OWNER_CHANGED;
+@@ -170,10 +179,32 @@ abstract class DurableTerritoryService
+     transfers.put(request.operationId(), result);
+     if (status == TransferStatus.APPLIED)
+       for (var c : request.coordinates()) next.put(c, new TerritoryClaim(request.targetOwner(), c));
+-    commit(new TerritoryLedger(next, state.receipts(), transfers));
++    commit(new TerritoryLedger(next, state.receipts(), transfers, state.retirements()));
+     return result;
+   }
+ 
++  public synchronized RetirementReceipt retireOwner(UUID operationId, String ownerId) {
++    new RetirementReceipt(operationId, ownerId, 0);
++    var state = load();
++    var previous = state.retirements().get(ownerId);
++    if (previous != null) {
++      if (!previous.operationId().equals(operationId))
++        throw new IllegalArgumentException("Conflicting territory retirement");
++      return previous;
++    }
++    var next = new HashMap<>(state.claims());
++    next.values().removeIf(c -> c.ownerId().equals(ownerId));
++    var receipt = new RetirementReceipt(operationId, ownerId, state.claims().size() - next.size());
++    var retired = new HashMap<>(state.retirements());
++    retired.put(ownerId, receipt);
++    commit(new TerritoryLedger(next, state.receipts(), state.transfers(), retired));
++    return receipt;
++  }
++
++  public synchronized Optional<RetirementReceipt> retirementReceipt(String ownerId) {
++    return Optional.ofNullable(load().retirements().get(Objects.requireNonNull(ownerId)));
++  }
++
+   private void commit(TerritoryLedger next) {
+     try {
+       storage.save(next);
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.java b/src/main/java/dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.java
+index 235c0ef..b060502 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.java
+@@ -76,8 +76,10 @@ final class FileTerritoryLedgerStorage implements TerritoryLedgerStorage {
+         if (!Arrays.equals(expected, current))
+           throw new IllegalStateException("Territory file changed; retry original operation");
+         var previous = TerritoryLedger.decode(decode(current));
++        ledger.requireRetirementsPreserved(previous);
+         if (!ledger.receipts().entrySet().containsAll(previous.receipts().entrySet())
+-            || !ledger.transfers().entrySet().containsAll(previous.transfers().entrySet()))
++            || !ledger.transfers().entrySet().containsAll(previous.transfers().entrySet())
++            || !ledger.retirements().entrySet().containsAll(previous.retirements().entrySet()))
+           throw new IllegalStateException("Territory receipts cannot be removed or changed");
+         var buffer = new ByteArrayOutputStream();
+         canonical.store(buffer, "STARCORE territory state");
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/SqlTerritoryLedgerStorage.java b/src/main/java/dev/starcore/starcore/foundation/territory/SqlTerritoryLedgerStorage.java
+index 38b3802..09ba367 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/SqlTerritoryLedgerStorage.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/SqlTerritoryLedgerStorage.java
+@@ -14,6 +14,7 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+   private long expected = -1;
+   private String expectedHash;
+   private boolean initialized;
++  private boolean importingLegacy;
+ 
+   SqlTerritoryLedgerStorage(
+       Supplier<Optional<DataSource>> source, Supplier<TerritoryLedger> legacy) {
+@@ -33,8 +34,9 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+     boolean claims = table(c, "starcore_territory_claims"),
+         receipts = table(c, "starcore_territory_batch_receipts"),
+         transfers = table(c, "starcore_territory_transfer_receipts"),
++        retired = table(c, "starcore_territory_retirements"),
+         revision = table(c, "starcore_territory_revision");
+-    boolean durable = receipts || transfers || revision;
++    boolean durable = receipts || transfers || retired || revision;
+     if (durable && (!claims || !receipts || !revision))
+       throw new SQLException("Missing territory authority table");
+     boolean sqlite = "SQLite".equalsIgnoreCase(c.getMetaData().getDatabaseProductName());
+@@ -56,6 +58,12 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+               + " VARCHAR(36) PRIMARY KEY,payload "
+               + (sqlite ? "TEXT" : "LONGTEXT")
+               + " NOT NULL)");
++      s.execute(
++          "CREATE TABLE IF NOT EXISTS starcore_territory_retirements (owner_id "
++              + (sqlite ? "VARCHAR(64)" : "VARCHAR(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin")
++              + " PRIMARY KEY,payload "
++              + (sqlite ? "TEXT" : "LONGTEXT")
++              + " NOT NULL)");
+       if (!durable)
+         s.execute(
+             sqlite
+@@ -95,6 +103,7 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+ 
+   public synchronized TerritoryLedger load() {
+     TerritoryLedger initial = null;
++    boolean importNeeded = false;
+     try (var c = open()) {
+       initialize(c);
+       for (int attempt = 0; attempt < 8; attempt++) {
+@@ -108,10 +117,12 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+         expected = after.value();
+         expectedHash = after.checksum();
+         if (expected != 0) return ledger;
+-        initial =
+-            ledger.claims().isEmpty() && ledger.receipts().isEmpty() && ledger.transfers().isEmpty()
+-                ? legacy.get()
+-                : ledger;
++        importNeeded =
++            ledger.claims().isEmpty()
++                && ledger.receipts().isEmpty()
++                && ledger.transfers().isEmpty()
++                && ledger.retirements().isEmpty();
++        initial = importNeeded ? legacy.get() : ledger;
+         break;
+       }
+       if (initial == null) throw new SQLException("Territory authority changed while reading");
+@@ -119,7 +130,12 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+       throw new IllegalStateException("Unable to load territory claims", e);
+     }
+     // Release the read connection before the first publication; a one-connection pool is valid.
+-    save(initial);
++    importingLegacy = importNeeded;
++    try {
++      save(initial);
++    } finally {
++      importingLegacy = false;
++    }
+     return initial;
+   }
+ 
+@@ -194,7 +210,22 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+           throw new SQLException("Invalid territory transfer receipt");
+       }
+     }
+-    return new TerritoryLedger(claims, receipts, transfers);
++    Map<String, TerritoryRetirementService.RetirementReceipt> retired = new HashMap<>();
++    try (var s = c.createStatement();
++        var rows = s.executeQuery("SELECT owner_id,payload FROM starcore_territory_retirements")) {
++      while (rows.next()) {
++        if (retired.size() >= 100_000) throw new SQLException("Too many territory retirements");
++        var p = receiptProperties(rows.getString(2));
++        var receipt = TerritoryLedger.readRetirement(p, "");
++        Properties exact = new Properties();
++        TerritoryLedger.writeRetirement(exact, "", receipt);
++        if (!p.equals(exact)
++            || !receipt.ownerId().equals(rows.getString(1))
++            || retired.putIfAbsent(receipt.ownerId(), receipt) != null)
++          throw new SQLException("Invalid territory retirement receipt");
++      }
++    }
++    return new TerritoryLedger(claims, receipts, transfers, retired);
+   }
+ 
+   private Properties receiptProperties(String payload) throws SQLException {
+@@ -234,6 +265,12 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+             throw new SQLException("Stale territory revision; retry original operation");
+         }
+         var previous = read(c);
++        if (!(importingLegacy
++            && expected == 0
++            && previous.claims().isEmpty()
++            && previous.receipts().isEmpty()
++            && previous.transfers().isEmpty()
++            && previous.retirements().isEmpty())) ledger.requireRetirementsPreserved(previous);
+         if (expected > 0
+             && !previous.properties().getProperty("batches.sha256").equals(expectedHash))
+           throw new SQLException("Territory changed outside revision protocol");
+@@ -241,6 +278,8 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+           throw new SQLException("Territory receipts cannot be removed or changed");
+         if (!ledger.transfers().entrySet().containsAll(previous.transfers().entrySet()))
+           throw new SQLException("Territory transfer receipts cannot be removed or changed");
++        if (!ledger.retirements().entrySet().containsAll(previous.retirements().entrySet()))
++          throw new SQLException("Territory retirements cannot be removed or changed");
+         try (var s = c.createStatement()) {
+           s.executeUpdate("DELETE FROM starcore_territory_claims");
+         }
+@@ -297,6 +336,25 @@ final class SqlTerritoryLedgerStorage implements TerritoryLedgerStorage {
+           }
+           insert.executeBatch();
+         }
++        try (var insert =
++            c.prepareStatement(
++                "INSERT INTO starcore_territory_retirements(owner_id,payload) VALUES(?,?)")) {
++          for (var entry : ledger.retirements().entrySet()) {
++            if (previous.retirements().containsKey(entry.getKey())) continue;
++            var p = new Properties();
++            TerritoryLedger.writeRetirement(p, "", entry.getValue());
++            var output = new StringWriter();
++            try {
++              p.store(output, "territory retirement");
++            } catch (IOException e) {
++              throw new SQLException(e);
++            }
++            insert.setString(1, entry.getKey());
++            insert.setString(2, output.toString());
++            insert.addBatch();
++          }
++          insert.executeBatch();
++        }
+         c.commit();
+         safe = true;
+         expected++;
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryBatchService.java b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryBatchService.java
+index 081ffef..822626c 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryBatchService.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryBatchService.java
+@@ -13,7 +13,8 @@ public interface TerritoryBatchService {
+     APPLIED,
+     OVERLAP,
+     LIMIT_REACHED,
+-    CANCELLED
++    CANCELLED,
++    OWNER_RETIRED
+   }
+ 
+   record Request(
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryLedger.java b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryLedger.java
+index 43e678d..f871944 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryLedger.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryLedger.java
+@@ -7,7 +7,15 @@ import java.util.*;
+ record TerritoryLedger(
+     Map<ChunkCoordinate, TerritoryClaim> claims,
+     Map<UUID, TerritoryBatchService.Receipt> receipts,
+-    Map<UUID, TerritoryTransferService.TransferReceipt> transfers) {
++    Map<UUID, TerritoryTransferService.TransferReceipt> transfers,
++    Map<String, TerritoryRetirementService.RetirementReceipt> retirements) {
++  TerritoryLedger(
++      Map<ChunkCoordinate, TerritoryClaim> claims,
++      Map<UUID, TerritoryBatchService.Receipt> receipts,
++      Map<UUID, TerritoryTransferService.TransferReceipt> transfers) {
++    this(claims, receipts, transfers, Map.of());
++  }
++
+   TerritoryLedger(
+       Map<ChunkCoordinate, TerritoryClaim> claims,
+       Map<UUID, TerritoryBatchService.Receipt> receipts) {
+@@ -18,6 +26,10 @@ record TerritoryLedger(
+     claims = Map.copyOf(claims);
+     receipts = Map.copyOf(receipts);
+     transfers = Map.copyOf(transfers);
++    retirements = Map.copyOf(retirements);
++    for (var e : retirements.entrySet())
++      if (!e.getKey().equals(e.getValue().ownerId()))
++        throw new IllegalArgumentException("Retirement owner mismatch");
+     for (var e : claims.entrySet()) {
+       var c = e.getKey();
+       var owner = e.getValue().ownerId();
+@@ -25,6 +37,7 @@ record TerritoryLedger(
+           || owner == null
+           || owner.isBlank()
+           || owner.length() > 64
++          || retirements.containsKey(owner)
+           || c.world().isBlank()
+           || c.world().length() > 191)
+         throw new IllegalArgumentException("Invalid territory claim");
+@@ -33,7 +46,8 @@ record TerritoryLedger(
+ 
+   Properties properties() {
+     Properties result = TerritoryStateCodec.toProperties(claims.values());
+-    result.setProperty("batches.version", transfers.isEmpty() ? "1" : "2");
++    result.setProperty(
++        "batches.version", !retirements.isEmpty() ? "3" : transfers.isEmpty() ? "1" : "2");
+     result.setProperty("batches.count", Integer.toString(receipts.size()));
+     int i = 0;
+     for (var entry : receipts.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
+@@ -43,7 +57,7 @@ record TerritoryLedger(
+       String key = "batches." + i++ + ".";
+       writeReceipt(result, key, receipt);
+     }
+-    if (!transfers.isEmpty()) {
++    if (!transfers.isEmpty() || !retirements.isEmpty()) {
+       result.setProperty("transfers.count", Integer.toString(transfers.size()));
+       int j = 0;
+       for (var entry : transfers.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
+@@ -52,6 +66,12 @@ record TerritoryLedger(
+         writeTransfer(result, "transfers." + j++ + ".", entry.getValue());
+       }
+     }
++    if (!retirements.isEmpty()) {
++      result.setProperty("retirements.count", Integer.toString(retirements.size()));
++      int j = 0;
++      for (var entry : retirements.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList())
++        writeRetirement(result, "retirements." + j++ + ".", entry.getValue());
++    }
+     result.setProperty("batches.sha256", checksum(result));
+     return result;
+   }
+@@ -98,7 +118,11 @@ record TerritoryLedger(
+     boolean durable = p.stringPropertyNames().stream().anyMatch(k -> k.startsWith("batches."));
+     Properties plain = new Properties();
+     p.stringPropertyNames().stream()
+-        .filter(k -> !k.startsWith("batches.") && !k.startsWith("transfers."))
++        .filter(
++            k ->
++                !k.startsWith("batches.")
++                    && !k.startsWith("transfers.")
++                    && !k.startsWith("retirements."))
+         .forEach(k -> plain.setProperty(k, p.getProperty(k)));
+     int claimCount = Integer.parseInt(plain.getProperty("count"));
+     if (claimCount < 0 || claimCount > 1_000_000)
+@@ -119,7 +143,7 @@ record TerritoryLedger(
+     Map<UUID, TerritoryBatchService.Receipt> receipts = new LinkedHashMap<>();
+     Map<UUID, TerritoryTransferService.TransferReceipt> transfers = new LinkedHashMap<>();
+     if (durable) {
+-      if (!Set.of("1", "2").contains(p.getProperty("batches.version", ""))
++      if (!Set.of("1", "2", "3").contains(p.getProperty("batches.version", ""))
+           || !checksum(p).equals(p.getProperty("batches.sha256")))
+         throw new IllegalArgumentException("Territory ledger checksum mismatch");
+       int count = Integer.parseInt(p.getProperty("batches.count"));
+@@ -130,9 +154,9 @@ record TerritoryLedger(
+         if (receipts.putIfAbsent(r.request().operationId(), r) != null)
+           throw new IllegalArgumentException("Duplicate territory receipt");
+       }
+-      if ("2".equals(p.getProperty("batches.version"))) {
++      if (!"1".equals(p.getProperty("batches.version"))) {
+         int size = Integer.parseInt(p.getProperty("transfers.count"));
+-        if (size < 1 || size > 100_000)
++        if (size < ("3".equals(p.getProperty("batches.version")) ? 0 : 1) || size > 100_000)
+           throw new IllegalArgumentException("Invalid territory transfer count");
+         for (int i = 0; i < size; i++) {
+           var receipt = readTransfer(p, "transfers." + i + ".");
+@@ -141,9 +165,22 @@ record TerritoryLedger(
+         }
+       }
+     }
+-    if (!durable && p.stringPropertyNames().stream().anyMatch(k -> k.startsWith("transfers.")))
++    if (!durable
++        && p.stringPropertyNames().stream()
++            .anyMatch(k -> k.startsWith("transfers.") || k.startsWith("retirements.")))
+       throw new IllegalArgumentException("Territory transfer envelope missing");
+-    var result = new TerritoryLedger(claims, receipts, transfers);
++    Map<String, TerritoryRetirementService.RetirementReceipt> retirements = new LinkedHashMap<>();
++    if ("3".equals(p.getProperty("batches.version"))) {
++      int count = Integer.parseInt(p.getProperty("retirements.count"));
++      if (count < 1 || count > 100_000)
++        throw new IllegalArgumentException("Invalid retirement count");
++      for (int i = 0; i < count; i++) {
++        var receipt = readRetirement(p, "retirements." + i + ".");
++        if (retirements.putIfAbsent(receipt.ownerId(), receipt) != null)
++          throw new IllegalArgumentException("Duplicate retired owner");
++      }
++    }
++    var result = new TerritoryLedger(claims, receipts, transfers, retirements);
+     if (durable && !result.properties().equals(p))
+       throw new IllegalArgumentException("Incomplete territory authority");
+     return result;
+@@ -189,6 +226,32 @@ record TerritoryLedger(
+         TerritoryTransferService.TransferStatus.valueOf(p.getProperty(key + "status")));
+   }
+ 
++  static void writeRetirement(
++      Properties p, String key, TerritoryRetirementService.RetirementReceipt r) {
++    p.setProperty(key + "id", r.operationId().toString());
++    p.setProperty(key + "owner", r.ownerId());
++    p.setProperty(key + "released", Integer.toString(r.releasedClaims()));
++  }
++
++  static TerritoryRetirementService.RetirementReceipt readRetirement(Properties p, String key) {
++    return new TerritoryRetirementService.RetirementReceipt(
++        UUID.fromString(p.getProperty(key + "id")),
++        p.getProperty(key + "owner"),
++        Integer.parseInt(p.getProperty(key + "released")));
++  }
++
++  void requireRetirementsPreserved(TerritoryLedger previous) {
++    if (!retirements.entrySet().containsAll(previous.retirements().entrySet()))
++      throw new IllegalStateException("Territory retirements cannot be removed or changed");
++    for (var receipt : retirements.values())
++      if (!previous.retirements().containsKey(receipt.ownerId())
++          && previous.claims().values().stream()
++                  .filter(c -> c.ownerId().equals(receipt.ownerId()))
++                  .count()
++              != receipt.releasedClaims())
++        throw new IllegalStateException("Retirement must capture the authoritative claim count");
++  }
++
+   static String checksum(Properties p) {
+     try {
+       var digest = java.security.MessageDigest.getInstance("SHA-256");
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryRetirementService.java b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryRetirementService.java
+new file mode 100644
+index 0000000..48abe08
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryRetirementService.java
+@@ -0,0 +1,25 @@
++package dev.starcore.starcore.foundation.territory;
++
++import java.util.Objects;
++import java.util.Optional;
++import java.util.UUID;
++
++/** Permanently closes an owner and releases its current claims in the same durable commit. */
++public interface TerritoryRetirementService {
++  record RetirementReceipt(UUID operationId, String ownerId, int releasedClaims) {
++    public RetirementReceipt {
++      Objects.requireNonNull(operationId);
++      if (ownerId == null
++          || ownerId.isBlank()
++          || ownerId.length() > 64
++          || releasedClaims < 0
++          || releasedClaims > 1_000_000)
++        throw new IllegalArgumentException("Invalid territory retirement");
++    }
++  }
++
++  /** Caller must durably authorize disband first. There is no reopen or cancellation operation. */
++  RetirementReceipt retireOwner(UUID operationId, String ownerId);
++
++  Optional<RetirementReceipt> retirementReceipt(String ownerId);
++}
+diff --git a/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryTransferService.java b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryTransferService.java
+index 80edbcc..6cbc419 100644
+--- a/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryTransferService.java
++++ b/src/main/java/dev/starcore/starcore/foundation/territory/TerritoryTransferService.java
+@@ -9,7 +9,8 @@ public interface TerritoryTransferService {
+     APPLIED,
+     OWNER_CHANGED,
+     REMAINING_LIMIT,
+-    CANCELLED
++    CANCELLED,
++    OWNER_RETIRED
+   }
+ 
+   record TransferRequest(
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java b/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java
+index 9e66a0b..1d4ec50 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java
+@@ -1,5 +1,6 @@
+ package dev.starcore.starcore.module.nation;
+ 
++import dev.starcore.starcore.foundation.territory.TerritoryRetirementService;
+ import dev.starcore.starcore.foundation.territory.TerritoryService;
+ import dev.starcore.starcore.foundation.territory.model.TerritoryClaim;
+ import dev.starcore.starcore.module.city.CityService;
+@@ -8,6 +9,7 @@ import dev.starcore.starcore.module.diplomacy.DiplomacyRelationService;
+ import dev.starcore.starcore.module.diplomacy.alliance.AllianceService;
+ import dev.starcore.starcore.module.diplomacy.military.MilitaryAllianceService;
+ import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.treasury.TreasuryRetirementService;
+ import dev.starcore.starcore.module.treasury.TreasuryService;
+ import dev.starcore.starcore.module.war.WarService;
+ import java.io.IOException;
+@@ -249,7 +251,11 @@ final class NationDisbandRecovery {
+                 coordinates.forEach(
+                     coordinate ->
+                         claimsToRelease.add(new TerritoryClaim(nationId.toString(), coordinate))));
+-    if (!claimsToRelease.isEmpty() && !territoryService.unclaimClaimsDurably(claimsToRelease)) {
++    if (territoryService instanceof TerritoryRetirementService retirement) {
++      for (NationId nationId : transaction.nationIds())
++        retirement.retireOwner(transaction.transactionId(), nationId.toString());
++    } else if (!claimsToRelease.isEmpty()
++        && !territoryService.unclaimClaimsDurably(claimsToRelease)) {
+       throw new IllegalStateException(
+           "Nation disband transaction "
+               + transaction.transactionId()
+@@ -273,6 +279,10 @@ final class NationDisbandRecovery {
+ 
+     if (!transaction.treasuryNationIds().isEmpty()) {
+       for (NationId nationId : transaction.treasuryNationIds()) {
++        if (treasuryService instanceof TreasuryRetirementService retirement) {
++          retirement.retireTreasury(transaction.transactionId(), nationId);
++          continue;
++        }
+         BigDecimal balance = treasuryService.balance(nationId);
+         if (balance.signum() > 0 && !treasuryService.withdraw(nationId, balance)) {
+           throw new IllegalStateException(
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/DatabaseAwareTreasuryStateStorage.java b/src/main/java/dev/starcore/starcore/module/treasury/DatabaseAwareTreasuryStateStorage.java
+index 13b6793..8749f77 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/DatabaseAwareTreasuryStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/DatabaseAwareTreasuryStateStorage.java
+@@ -11,7 +11,7 @@ final class DatabaseAwareTreasuryStateStorage implements TreasuryStateStorage {
+   private final DatabaseService databaseService;
+   private final TreasuryStateStorage fileStorage;
+   private final TreasuryStateStorage sqlStorage;
+-  private volatile boolean sqlPreferred;
++  private final dev.starcore.starcore.core.storage.StateStorageBackend backend;
+ 
+   DatabaseAwareTreasuryStateStorage(
+       String namespace,
+@@ -22,7 +22,7 @@ final class DatabaseAwareTreasuryStateStorage implements TreasuryStateStorage {
+     this.fileStorage = new PersistenceTreasuryStateStorage(namespace, persistenceService);
+     this.sqlStorage =
+         new SqlTreasuryStateStorage(namespace, databaseService, persistenceService, logger);
+-    this.sqlPreferred = databaseService.isRunning();
++    this.backend = new dev.starcore.starcore.core.storage.StateStorageBackend(databaseService);
+   }
+ 
+   @Override
+@@ -51,8 +51,7 @@ final class DatabaseAwareTreasuryStateStorage implements TreasuryStateStorage {
+   }
+ 
+   private TreasuryStateStorage activeStorage() {
+-    if (sqlPreferred || databaseService.isRunning()) {
+-      sqlPreferred = true;
++    if (backend.usesDatabase()) {
+       return sqlStorage;
+     }
+     return fileStorage;
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/PersistenceTreasuryStateStorage.java b/src/main/java/dev/starcore/starcore/module/treasury/PersistenceTreasuryStateStorage.java
+index 6b0fe92..79567b4 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/PersistenceTreasuryStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/PersistenceTreasuryStateStorage.java
+@@ -1,33 +1,134 @@
+ package dev.starcore.starcore.module.treasury;
+ 
++import dev.starcore.starcore.core.persistence.AtomicFilePersistence;
+ import dev.starcore.starcore.core.persistence.PersistenceService;
++import java.io.*;
++import java.nio.file.*;
++import java.util.*;
+ 
+-import java.util.Objects;
+-import java.util.Properties;
+-
++/** Single-process file authority. Missing/corrupt authority never falls back to older receipts. */
+ final class PersistenceTreasuryStateStorage implements TreasuryStateStorage {
+-    private static final String FILE_NAME = "treasury.properties";
++  private static final Object[] GUARDS = new Object[64];
+ 
+-    private final String namespace;
+-    private final PersistenceService persistenceService;
++  static {
++    Arrays.setAll(GUARDS, ignored -> new Object());
++  }
+ 
+-    PersistenceTreasuryStateStorage(String namespace, PersistenceService persistenceService) {
+-        this.namespace = Objects.requireNonNull(namespace, "namespace");
+-        this.persistenceService = Objects.requireNonNull(persistenceService, "persistenceService");
+-    }
++  private final String namespace;
++  private final PersistenceService persistence;
++  private Path path;
++  private byte[] expected;
++  private boolean loaded, failed;
++
++  PersistenceTreasuryStateStorage(String namespace, PersistenceService persistence) {
++    this.namespace = Objects.requireNonNull(namespace);
++    this.persistence = Objects.requireNonNull(persistence);
++  }
+ 
+-    @Override
+-    public Properties load() {
+-        return persistenceService.loadProperties(namespace, FILE_NAME);
++  private void resolve() throws IOException {
++    if (path == null)
++      path =
++          persistence
++              .namespacePath(namespace)
++              .resolve("treasury.properties")
++              .toAbsolutePath()
++              .normalize();
++  }
++
++  @Override
++  public synchronized Properties load() {
++    try {
++      resolve();
++      byte[] bytes = read();
++      if (bytes == null
++          && (expected != null
++              || Files.exists(AtomicFilePersistence.backup(path))
++              || Files.exists(AtomicFilePersistence.temp(path))))
++        throw new IOException("Missing treasury authority; explicit reconciliation required");
++      var properties = decode(bytes);
++      expected = bytes;
++      loaded = true;
++      failed = false;
++      return properties;
++    } catch (IOException | RuntimeException e) {
++      failed = true;
++      throw new IllegalStateException("Treasury file authority requires reconciliation", e);
+     }
++  }
+ 
+-    @Override
+-    public void save(Properties properties) {
+-        persistenceService.saveProperties(namespace, FILE_NAME, properties);
++  @Override
++  public synchronized void save(Properties properties) {
++    var candidate = new Properties();
++    candidate.putAll(properties);
++    TreasuryStateCodec.stateFromProperties(candidate);
++    try {
++      resolve();
++      synchronized (GUARDS[Math.floorMod(path.hashCode(), GUARDS.length)]) {
++        if (!loaded) load();
++        if (failed) throw new IllegalStateException("Treasury authority requires reconciliation");
++        byte[] previous = read();
++        if (!Arrays.equals(previous, expected))
++          throw new TreasuryStateConflictException(
++              new IllegalStateException("Treasury file changed"));
++        TreasuryStateCodec.requireRetirementsPreserved(decode(previous), candidate);
++        var output = new ByteArrayOutputStream();
++        candidate.store(output, "STARCORE treasury state");
++        byte[] bytes = output.toByteArray();
++        if (bytes.length > 64 * 1024 * 1024) throw new IOException("Treasury snapshot too large");
++        try {
++          AtomicFilePersistence.replace(path, temp -> Files.write(temp, bytes));
++          if (!Arrays.equals(read(), bytes))
++            throw new IOException("Treasury snapshot not published");
++          expected = bytes;
++        } catch (IOException | RuntimeException failure) {
++          try {
++            var actual = read();
++            if (Arrays.equals(actual, bytes)) {
++              expected = bytes;
++              return;
++            }
++            if (!Arrays.equals(actual, expected)) failed = true;
++          } catch (IOException readFailure) {
++            failed = true;
++            failure.addSuppressed(readFailure);
++          }
++          throw failure;
++        }
++      }
++    } catch (IOException e) {
++      throw new IllegalStateException("Treasury file write failed", e);
+     }
++  }
++
++  @Override
++  public void saveAsync(Properties properties) {
++    save(properties);
++  }
+ 
+-    @Override
+-    public void saveAsync(Properties properties) {
+-        persistenceService.savePropertiesAsync(namespace, FILE_NAME, properties);
++  private byte[] read() throws IOException {
++    if (!Files.exists(path)) return null;
++    if (!Files.isRegularFile(path) || Files.size(path) > 64 * 1024 * 1024)
++      throw new IOException("Invalid treasury file");
++    try (var input = Files.newInputStream(path)) {
++      var bytes = input.readNBytes(64 * 1024 * 1024 + 1);
++      if (bytes.length > 64 * 1024 * 1024) throw new IOException("Treasury snapshot too large");
++      return bytes;
+     }
++  }
++
++  private Properties decode(byte[] bytes) throws IOException {
++    var p =
++        new Properties() {
++          @Override
++          public synchronized Object put(Object key, Object value) {
++            if (containsKey(key)) throw new IllegalArgumentException("Duplicate treasury property");
++            return super.put(key, value);
++          }
++        };
++    if (bytes == null) return p;
++    p.load(new ByteArrayInputStream(bytes));
++    if (p.isEmpty()) throw new IOException("Empty treasury authority");
++    TreasuryStateCodec.stateFromProperties(p);
++    return p;
++  }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.java b/src/main/java/dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.java
+index 9208072..919e7fd 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/SqlTreasuryStateStorage.java
+@@ -26,18 +26,43 @@ final class SqlTreasuryStateStorage extends AbstractModuleStateStorage
+   private static final long SQLITE_BUSY_RETRY_BUDGET_NANOS = TimeUnit.MILLISECONDS.toNanos(100);
+   private long expectedRevision;
+   private boolean revisionRowExists;
++  private boolean importingLegacy;
++  private final java.util.function.Supplier<Properties> legacySnapshot;
+ 
+   SqlTreasuryStateStorage(
+       String namespace,
+       DatabaseService databaseService,
+       PersistenceService persistenceService,
+       Logger logger) {
++    this(namespace, databaseService, persistenceService, logger, null);
++  }
++
++  private SqlTreasuryStateStorage(
++      String namespace,
++      DatabaseService databaseService,
++      PersistenceService persistenceService,
++      Logger logger,
++      java.util.function.Supplier<Properties> legacySnapshot) {
+     super(namespace, databaseService, persistenceService, logger);
++    this.legacySnapshot =
++        legacySnapshot != null
++            ? legacySnapshot
++            : () -> new PersistenceTreasuryStateStorage(namespace, persistenceService).load();
+   }
+ 
+   // Test constructor.
+   SqlTreasuryStateStorage(DataSource dataSource, Properties legacyProperties, Logger logger) {
+-    this("test", mockDatabaseService(dataSource), mockPersistenceService(legacyProperties), logger);
++    this(
++        "test",
++        mockDatabaseService(dataSource),
++        mockPersistenceService(legacyProperties),
++        logger,
++        () -> legacyProperties);
++  }
++
++  @Override
++  protected Properties loadFromProperties() {
++    return legacySnapshot.get();
+   }
+ 
+   private static DatabaseService mockDatabaseService(DataSource dataSource) {
+@@ -99,7 +124,12 @@ final class SqlTreasuryStateStorage extends AbstractModuleStateStorage
+         return legacy;
+       }
+ 
+-      writeSnapshot(connection, legacy);
++      importingLegacy = true;
++      try {
++        writeSnapshot(connection, legacy);
++      } finally {
++        importingLegacy = false;
++      }
+       logger.info("[" + namespace + "] 已从 Properties 迁移数据到 SQL");
+       return legacy;
+     } catch (Exception exception) {
+@@ -125,11 +155,28 @@ final class SqlTreasuryStateStorage extends AbstractModuleStateStorage
+ 
+   @Override
+   protected void ensureTable(Connection connection) throws SQLException {
++    boolean stateExists = tableExists(connection, TABLE_NAME);
++    boolean retirementExists = tableExists(connection, "starcore_treasury_retirements");
++    if (!stateExists && retirementExists)
++      throw new SQLException("Missing treasury authority table; reconciliation required");
+     try (Statement statement = connection.createStatement()) {
+       statement.execute(
+           "CREATE TABLE IF NOT EXISTS starcore_treasury_state ("
+               + "property_key VARCHAR(191) PRIMARY KEY, "
+               + "property_value TEXT NOT NULL)");
++      statement.execute(
++          "CREATE TABLE IF NOT EXISTS starcore_treasury_retirements (nation_id VARCHAR(36) PRIMARY"
++              + " KEY, operation_id VARCHAR(36) NOT NULL, retired_balance VARCHAR(64) NOT NULL)");
++    }
++  }
++
++  private boolean tableExists(Connection connection, String name) throws SQLException {
++    try (var tables =
++        connection
++            .getMetaData()
++            .getTables(connection.getCatalog(), null, name, new String[] {"TABLE"})) {
++      while (tables.next()) if (name.equalsIgnoreCase(tables.getString("TABLE_NAME"))) return true;
++      return false;
+     }
+   }
+ 
+@@ -142,6 +189,49 @@ final class SqlTreasuryStateStorage extends AbstractModuleStateStorage
+   }
+ 
+   private DatabaseSnapshot readDatabaseSnapshot(Connection connection) throws SQLException {
++    for (int attempt = 0; attempt < 8; attempt++) {
++      var snapshot = readPropertiesSnapshot(connection);
++      var retirements = readRetirements(connection);
++      if (readRevision(connection) != snapshot.revision()) continue;
++      if ((!retirements.isEmpty() || snapshot.properties().containsKey("retirement.count"))
++          && !TreasuryStateCodec.stateFromProperties(snapshot.properties())
++              .retirements()
++              .equals(retirements))
++        throw new SQLException("Treasury retirement authority mismatch");
++      return snapshot;
++    }
++    throw new SQLException("Treasury authority changed while reading");
++  }
++
++  private java.util.Map<
++          dev.starcore.starcore.module.nation.model.NationId,
++          TreasuryRetirementService.TreasuryRetirementReceipt>
++      readRetirements(Connection connection) throws SQLException {
++    var receipts =
++        new java.util.HashMap<
++            dev.starcore.starcore.module.nation.model.NationId,
++            TreasuryRetirementService.TreasuryRetirementReceipt>();
++    try (var statement = connection.createStatement();
++        var rows =
++            statement.executeQuery(
++                "SELECT nation_id,operation_id,retired_balance FROM"
++                    + " starcore_treasury_retirements")) {
++      while (rows.next()) {
++        var nation =
++            dev.starcore.starcore.module.nation.model.NationId.fromString(rows.getString(1));
++        var receipt =
++            new TreasuryRetirementService.TreasuryRetirementReceipt(
++                java.util.UUID.fromString(rows.getString(2)),
++                nation,
++                new java.math.BigDecimal(rows.getString(3)));
++        if (receipts.size() >= 100_000 || receipts.putIfAbsent(nation, receipt) != null)
++          throw new SQLException("Invalid treasury retirement authority");
++      }
++    }
++    return receipts;
++  }
++
++  private DatabaseSnapshot readPropertiesSnapshot(Connection connection) throws SQLException {
+     Properties properties = new Properties();
+     long revision = 0L;
+     boolean hasRevisionRow = false;
+@@ -240,6 +330,10 @@ final class SqlTreasuryStateStorage extends AbstractModuleStateStorage
+                 + currentRevision);
+       }
+       long nextRevision = Math.addExact(currentRevision, 1L);
++      var previous = readDatabaseSnapshot(connection).properties();
++      if (!(importingLegacy && currentRevision == 0L && !revisionRowExists && previous.isEmpty()))
++        TreasuryStateCodec.requireRetirementsPreserved(previous, properties);
++      else TreasuryStateCodec.stateFromProperties(properties);
+       if (revisionExists(connection)) {
+         try (PreparedStatement update =
+             connection.prepareStatement(
+@@ -291,6 +385,23 @@ final class SqlTreasuryStateStorage extends AbstractModuleStateStorage
+         }
+         insert.executeBatch();
+       }
++      if (properties.containsKey("retirement.count")) {
++        var existingRetirements = readRetirements(connection);
++        var next = TreasuryStateCodec.stateFromProperties(properties).retirements();
++        try (var insert =
++            connection.prepareStatement(
++                "INSERT INTO starcore_treasury_retirements(nation_id,operation_id,retired_balance)"
++                    + " VALUES(?,?,?)")) {
++          for (var receipt : next.values()) {
++            if (existingRetirements.containsKey(receipt.nationId())) continue;
++            insert.setString(1, receipt.nationId().toString());
++            insert.setString(2, receipt.operationId().toString());
++            insert.setString(3, receipt.retiredBalance().toPlainString());
++            insert.addBatch();
++          }
++          insert.executeBatch();
++        }
++      }
+       commitAttempted = true;
+       connection.commit();
+       committed = true;
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java b/src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java
+index e6825a6..573380c 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java
+@@ -59,7 +59,8 @@ public final class TreasuryModule
+         TreasuryRewardService,
+         NationSpendingService,
+         NationCreditService,
+-        NationTransferService {
++        NationTransferService,
++        TreasuryRetirementService {
+   private static final int SCALE = 2;
+   private static final BigDecimal MIN_TREASURY_AMOUNT = new BigDecimal("0.01");
+   private static final BigDecimal MAX_TREASURY_BALANCE = new BigDecimal("1000000000000000.00");
+@@ -92,7 +93,8 @@ public final class TreasuryModule
+               TreasuryRewardService.class,
+               NationSpendingService.class,
+               NationCreditService.class,
+-              NationTransferService.class),
++              NationTransferService.class,
++              TreasuryRetirementService.class),
+           "Owns national finance, tax, budgets, and public debt abstractions.");
+ 
+   private final ConcurrentMap<NationId, BigDecimal> balances = new ConcurrentHashMap<>();
+@@ -105,6 +107,9 @@ public final class TreasuryModule
+   private final AtomicBoolean stateRefreshFailureLogged = new AtomicBoolean();
+   private TreasuryStateStorage stateStorage;
+   private boolean stateUncertain;
++  private boolean stopped;
++  private final ConcurrentMap<NationId, TreasuryRetirementReceipt> retirements =
++      new ConcurrentHashMap<>();
+   private BukkitTask stateRefreshTask;
+   private volatile boolean stateRefreshEnabled;
+   private BukkitTask dailyIncomeTask;
+@@ -140,6 +145,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public void enable(StarCoreContext context) {
++    this.stopped = false;
+     this.currentContext = context;
+     context.persistenceService().ensureNamespace(metadata().id());
+     this.stateStorage =
+@@ -205,14 +211,18 @@ public final class TreasuryModule
+   }
+ 
+   @Override
+-  public void disable(StarCoreContext context) {
++  public synchronized void disable(StarCoreContext context) {
+     stateRefreshEnabled = false;
+     cancelStateRefresh();
+     stopDailyIncomeTask();
+     stopTaxTask();
+     stopPlayerDepositRefundTask();
+-    flushState();
+-    this.currentContext = null;
++    try {
++      flushState();
++    } finally {
++      stopped = true;
++      this.currentContext = null;
++    }
+   }
+ 
+   @Override
+@@ -490,7 +500,7 @@ public final class TreasuryModule
+   @Override
+   public synchronized boolean tryDeposit(NationId nationId, BigDecimal amount) {
+     ensureStateKnown();
+-    if (nationId == null) {
++    if (nationId == null || retirements.containsKey(nationId)) {
+       return false;
+     }
+     requirePositive(amount);
+@@ -529,7 +539,7 @@ public final class TreasuryModule
+   @Override
+   public synchronized boolean withdraw(NationId nationId, BigDecimal amount) {
+     ensureStateKnown();
+-    if (nationId == null) {
++    if (nationId == null || retirements.containsKey(nationId)) {
+       return false;
+     }
+     requirePositive(amount);
+@@ -563,6 +573,10 @@ public final class TreasuryModule
+       return new SpendResult(status, request.transactionId(), balance(request.nationId()));
+     }
+ 
++    if (retirements.containsKey(request.nationId())) {
++      return new SpendResult(
++          SpendingStatus.REJECTED, request.transactionId(), balance(request.nationId()));
++    }
+     BigDecimal normalized = normalize(request.amount());
+     BigDecimal previous = balances.getOrDefault(request.nationId(), BigDecimal.ZERO);
+     if (previous.compareTo(normalized) < 0) {
+@@ -615,6 +629,7 @@ public final class TreasuryModule
+     if (existing.refunded()) {
+       return true;
+     }
++    if (retirements.containsKey(existing.nationId())) return false;
+ 
+     BigDecimal previous = balances.getOrDefault(existing.nationId(), BigDecimal.ZERO);
+     BigDecimal next = previous.add(normalize(existing.amount()));
+@@ -657,6 +672,9 @@ public final class TreasuryModule
+           existing.matches(request) ? CreditStatus.ALREADY_APPLIED : CreditStatus.REJECTED;
+       return new CreditResult(status, request.transactionId(), balance(request.nationId()));
+     }
++    if (retirements.containsKey(request.nationId()))
++      return new CreditResult(
++          CreditStatus.REJECTED, request.transactionId(), balance(request.nationId()));
+     if (request.category() == NationCreditService.CreditCategory.TERRITORY_RENT
+         && consumeSmokeRentCreditFailure()) {
+       return new CreditResult(
+@@ -764,6 +782,12 @@ public final class TreasuryModule
+           balance(request.receiverId()));
+     }
+ 
++    if (retirements.containsKey(request.payerId()) || retirements.containsKey(request.receiverId()))
++      return new TransferResult(
++          TransferStatus.REJECTED,
++          request.transactionId(),
++          balance(request.payerId()),
++          balance(request.receiverId()));
+     BigDecimal normalized = normalize(request.amount());
+     BigDecimal payerPrevious = balances.getOrDefault(request.payerId(), BigDecimal.ZERO);
+     BigDecimal receiverPrevious = balances.getOrDefault(request.receiverId(), BigDecimal.ZERO);
+@@ -944,6 +968,51 @@ public final class TreasuryModule
+     return sb.toString().trim();
+   }
+ 
++  @Override
++  public synchronized TreasuryRetirementReceipt retireTreasury(
++      UUID operationId, NationId nationId) {
++    new TreasuryRetirementReceipt(operationId, nationId, BigDecimal.ZERO);
++    ensureStateKnown();
++    if (stateStorage == null) throw new IllegalStateException("Durable treasury storage required");
++    loadState();
++    var previous = retirements.get(nationId);
++    if (previous != null) return matchingRetirement(previous, operationId);
++    var receipt =
++        new TreasuryRetirementReceipt(
++            operationId, nationId, balances.getOrDefault(nationId, BigDecimal.ZERO));
++    balances.remove(nationId);
++    retirements.put(nationId, receipt);
++    try {
++      saveStateSyncOrThrow();
++      return receipt;
++    } catch (RuntimeException failure) {
++      try {
++        loadState();
++        var committed = retirements.get(nationId);
++        if (committed != null && committed.operationId().equals(operationId)) return committed;
++      } catch (RuntimeException readFailure) {
++        failure.addSuppressed(readFailure);
++      }
++      throw failure;
++    }
++  }
++
++  private TreasuryRetirementReceipt matchingRetirement(
++      TreasuryRetirementReceipt receipt, UUID operationId) {
++    if (!receipt.operationId().equals(operationId))
++      throw new IllegalArgumentException("Conflicting treasury retirement");
++    return receipt;
++  }
++
++  @Override
++  public synchronized Optional<TreasuryRetirementReceipt> treasuryRetirementReceipt(
++      NationId nationId) {
++    java.util.Objects.requireNonNull(nationId);
++    ensureStateKnown();
++    if (stateStorage != null) loadState();
++    return Optional.ofNullable(retirements.get(nationId));
++  }
++
+   private synchronized void saveState() {
+     ensureStateKnown();
+     if (stateStorage == null) {
+@@ -1110,6 +1179,8 @@ public final class TreasuryModule
+     creditReceipts.putAll(state.creditReceipts());
+     transferReceipts.clear();
+     transferReceipts.putAll(state.transferReceipts());
++    retirements.clear();
++    retirements.putAll(state.retirements());
+   }
+ 
+   private void restoreBalance(NationId nationId, BigDecimal previous) {
+@@ -1177,12 +1248,13 @@ public final class TreasuryModule
+   }
+ 
+   private void ensureStateKnown() {
++    if (stopped) throw new IllegalStateException("Treasury service is stopped");
+     if (stateUncertain) loadState();
+   }
+ 
+   private TreasuryStateCodec.TreasuryState snapshotState() {
+     return new TreasuryStateCodec.TreasuryState(
+-        balances, spendingReceipts, creditReceipts, transferReceipts);
++        balances, spendingReceipts, creditReceipts, transferReceipts, retirements);
+   }
+ 
+   private synchronized void loadState() {
+@@ -1773,7 +1845,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public boolean canBorrow(NationId nationId, BigDecimal amount) {
+-    if (nationId == null) {
++    if (nationId == null || retirements.containsKey(nationId)) {
+       return false;
+     }
+     refreshFinancialServices();
+@@ -1840,7 +1912,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public boolean exitBankruptcy(NationId nationId) {
+-    if (nationId == null) {
++    if (nationId == null || retirements.containsKey(nationId)) {
+       return false;
+     }
+     refreshFinancialServices();
+@@ -1852,7 +1924,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public boolean isBankrupt(NationId nationId) {
+-    if (nationId == null) {
++    if (nationId == null || retirements.containsKey(nationId)) {
+       return false;
+     }
+     refreshFinancialServices();
+@@ -1888,7 +1960,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public boolean isRestricted(NationId nationId, BankruptcyService.Restriction restriction) {
+-    if (nationId == null) {
++    if (nationId == null || retirements.containsKey(nationId)) {
+       return false;
+     }
+     refreshFinancialServices();
+@@ -1912,7 +1984,7 @@ public final class TreasuryModule
+ 
+   @Override
+   public boolean earlyExitBankruptcy(NationId nationId) {
+-    if (nationId == null) {
++    if (nationId == null || retirements.containsKey(nationId)) {
+       return false;
+     }
+     refreshFinancialServices();
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/TreasuryRetirementService.java b/src/main/java/dev/starcore/starcore/module/treasury/TreasuryRetirementService.java
+new file mode 100644
+index 0000000..1dd020e
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/treasury/TreasuryRetirementService.java
+@@ -0,0 +1,28 @@
++package dev.starcore.starcore.module.treasury;
++
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.math.BigDecimal;
++import java.math.RoundingMode;
++import java.util.Objects;
++import java.util.Optional;
++import java.util.UUID;
++
++/** Permanently closes a disbanded nation's treasury while retaining every money receipt. */
++public interface TreasuryRetirementService {
++  record TreasuryRetirementReceipt(UUID operationId, NationId nationId, BigDecimal retiredBalance) {
++    public TreasuryRetirementReceipt {
++      Objects.requireNonNull(operationId);
++      Objects.requireNonNull(nationId);
++      Objects.requireNonNull(retiredBalance);
++      retiredBalance = retiredBalance.setScale(2, RoundingMode.UNNECESSARY);
++      if (retiredBalance.signum() < 0
++          || retiredBalance.compareTo(new BigDecimal("1000000000000000.00")) > 0)
++        throw new IllegalArgumentException("Invalid retired treasury balance");
++    }
++  }
++
++  /** Captures and removes the current balance atomically. Replays return that original amount. */
++  TreasuryRetirementReceipt retireTreasury(UUID operationId, NationId nationId);
++
++  Optional<TreasuryRetirementReceipt> treasuryRetirementReceipt(NationId nationId);
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/treasury/TreasuryStateCodec.java b/src/main/java/dev/starcore/starcore/module/treasury/TreasuryStateCodec.java
+index 4bc1693..3eb9e5e 100644
+--- a/src/main/java/dev/starcore/starcore/module/treasury/TreasuryStateCodec.java
++++ b/src/main/java/dev/starcore/starcore/module/treasury/TreasuryStateCodec.java
+@@ -22,12 +22,27 @@ final class TreasuryStateCodec {
+       Map<NationId, BigDecimal> balances,
+       Map<String, NationSpendingService.SpendingReceipt> spendingReceipts,
+       Map<String, NationCreditService.CreditReceipt> creditReceipts,
+-      Map<String, NationTransferService.TransferReceipt> transferReceipts) {
++      Map<String, NationTransferService.TransferReceipt> transferReceipts,
++      Map<NationId, TreasuryRetirementService.TreasuryRetirementReceipt> retirements) {
++    TreasuryState(
++        Map<NationId, BigDecimal> balances,
++        Map<String, NationSpendingService.SpendingReceipt> spendingReceipts,
++        Map<String, NationCreditService.CreditReceipt> creditReceipts,
++        Map<String, NationTransferService.TransferReceipt> transferReceipts) {
++      this(balances, spendingReceipts, creditReceipts, transferReceipts, Map.of());
++    }
++
+     TreasuryState {
+       balances = Map.copyOf(balances);
+       spendingReceipts = Map.copyOf(spendingReceipts);
+       creditReceipts = Map.copyOf(creditReceipts);
+       transferReceipts = Map.copyOf(transferReceipts);
++      retirements = Map.copyOf(retirements);
++      for (var entry : retirements.entrySet()) {
++        if (!entry.getKey().equals(entry.getValue().nationId())
++            || balances.getOrDefault(entry.getKey(), BigDecimal.ZERO).signum() != 0)
++          throw new IllegalArgumentException("Retired treasury must remain empty");
++      }
+     }
+ 
+     static TreasuryState empty() {
+@@ -41,11 +56,25 @@ final class TreasuryStateCodec {
+ 
+   static Properties toProperties(TreasuryState state) {
+     Properties properties = new Properties();
+-    properties.setProperty("receiptFormatVersion", "1");
++    properties.setProperty("receiptFormatVersion", state.retirements().isEmpty() ? "1" : "2");
+     writeBalances(properties, state.balances());
+     writeSpendingReceipts(properties, state.spendingReceipts());
+     writeCreditReceipts(properties, state.creditReceipts());
+     writeTransferReceipts(properties, state.transferReceipts());
++    if (!state.retirements().isEmpty()) {
++      properties.setProperty("retirement.count", Integer.toString(state.retirements().size()));
++      int i = 0;
++      for (var receipt :
++          state.retirements().values().stream()
++              .sorted(java.util.Comparator.comparing(r -> r.nationId().toString()))
++              .toList()) {
++        String key = "retirement." + i++ + ".";
++        properties.setProperty(key + "nation", receipt.nationId().toString());
++        properties.setProperty(key + "operation", receipt.operationId().toString());
++        properties.setProperty(key + "balance", receipt.retiredBalance().toPlainString());
++      }
++      properties.setProperty("retirement.sha256", checksum(properties));
++    }
+     return properties;
+   }
+ 
+@@ -58,8 +87,10 @@ final class TreasuryStateCodec {
+       return TreasuryState.empty();
+     }
+     String format = properties.getProperty("receiptFormatVersion");
++    if (properties.stringPropertyNames().stream().anyMatch(k -> k.startsWith("retirement."))
++        && !"2".equals(format)) throw new IllegalArgumentException("Retirement envelope missing");
+     if (format != null) {
+-      if (!format.equals("1"))
++      if (!format.equals("1") && !format.equals("2"))
+         throw new IllegalArgumentException("Unknown treasury receipt format");
+       for (String key : List.of("count", "spending.count", "credit.count", "transfer.count")) {
+         int count = Integer.parseInt(properties.getProperty(key));
+@@ -73,7 +104,8 @@ final class TreasuryStateCodec {
+             readBalances(properties),
+             readSpendingReceipts(properties),
+             readCreditReceipts(properties),
+-            readTransferReceipts(properties));
++            readTransferReceipts(properties),
++            readRetirements(properties));
+     // Newly written snapshots must round-trip without dropping an invalid receipt or field.
+     // Otherwise corruption could be mistaken for permission to apply the same money again.
+     if (format != null && !toProperties(state).equals(properties)) {
+@@ -82,6 +114,96 @@ final class TreasuryStateCodec {
+     return state;
+   }
+ 
++  private static Map<NationId, TreasuryRetirementService.TreasuryRetirementReceipt> readRetirements(
++      Properties p) {
++    if (!"2".equals(p.getProperty("receiptFormatVersion"))) return Map.of();
++    if (!checksum(p).equals(p.getProperty("retirement.sha256")))
++      throw new IllegalArgumentException("Treasury retirement checksum mismatch");
++    int count = Integer.parseInt(p.getProperty("retirement.count"));
++    if (count < 1 || count > 100_000)
++      throw new IllegalArgumentException("Invalid retirement count");
++    Map<NationId, TreasuryRetirementService.TreasuryRetirementReceipt> receipts =
++        new LinkedHashMap<>();
++    for (int i = 0; i < count; i++) {
++      String key = "retirement." + i + ".";
++      var nation = new NationId(UUID.fromString(p.getProperty(key + "nation")));
++      var receipt =
++          new TreasuryRetirementService.TreasuryRetirementReceipt(
++              UUID.fromString(p.getProperty(key + "operation")),
++              nation,
++              new BigDecimal(p.getProperty(key + "balance")));
++      if (receipts.putIfAbsent(nation, receipt) != null)
++        throw new IllegalArgumentException("Duplicate retired treasury");
++    }
++    return receipts;
++  }
++
++  /** Check inside the authority commit; ordinary writes may never erase a retirement. */
++  static void requireRetirementsPreserved(Properties before, Properties after) {
++    boolean retiredBefore =
++        before.stringPropertyNames().stream().anyMatch(k -> k.startsWith("retirement."));
++    boolean retiredAfter =
++        after.stringPropertyNames().stream().anyMatch(k -> k.startsWith("retirement."));
++    if (!retiredBefore && !retiredAfter) return;
++    var previous = stateFromProperties(before);
++    var next = stateFromProperties(after);
++    if (!next.retirements().entrySet().containsAll(previous.retirements().entrySet()))
++      throw new IllegalStateException("Treasury retirements cannot be removed or changed");
++    for (var receipt : next.retirements().values())
++      if (!previous.retirements().containsKey(receipt.nationId())
++          && receipt
++                  .retiredBalance()
++                  .compareTo(previous.balances().getOrDefault(receipt.nationId(), BigDecimal.ZERO))
++              != 0)
++        throw new IllegalStateException("Retirement must capture the authoritative balance");
++    for (var entry : previous.spendingReceipts().entrySet())
++      if (next.retirements().containsKey(entry.getValue().nationId())
++          && !entry.getValue().equals(next.spendingReceipts().get(entry.getKey())))
++        throw new IllegalStateException("Retired treasury spending receipt changed");
++    for (var entry : previous.creditReceipts().entrySet())
++      if (next.retirements().containsKey(entry.getValue().nationId())
++          && !entry.getValue().equals(next.creditReceipts().get(entry.getKey())))
++        throw new IllegalStateException("Retired treasury credit receipt changed");
++    for (var entry : previous.transferReceipts().entrySet())
++      if ((next.retirements().containsKey(entry.getValue().payerId())
++              || next.retirements().containsKey(entry.getValue().receiverId()))
++          && !entry.getValue().equals(next.transferReceipts().get(entry.getKey())))
++        throw new IllegalStateException("Retired treasury transfer receipt changed");
++    for (var entry : next.spendingReceipts().entrySet())
++      if (previous.retirements().containsKey(entry.getValue().nationId())
++          && !entry.getValue().equals(previous.spendingReceipts().get(entry.getKey())))
++        throw new IllegalStateException("New spending against retired treasury");
++    for (var entry : next.creditReceipts().entrySet())
++      if (previous.retirements().containsKey(entry.getValue().nationId())
++          && !entry.getValue().equals(previous.creditReceipts().get(entry.getKey())))
++        throw new IllegalStateException("New credit against retired treasury");
++    for (var entry : next.transferReceipts().entrySet())
++      if ((previous.retirements().containsKey(entry.getValue().payerId())
++              || previous.retirements().containsKey(entry.getValue().receiverId()))
++          && !entry.getValue().equals(previous.transferReceipts().get(entry.getKey())))
++        throw new IllegalStateException("New transfer against retired treasury");
++  }
++
++  private static String checksum(Properties properties) {
++    try {
++      var digest = java.security.MessageDigest.getInstance("SHA-256");
++      for (var key :
++          properties.stringPropertyNames().stream()
++              .filter(k -> !k.equals("retirement.sha256"))
++              .sorted()
++              .toList()) {
++        for (var value : List.of(key, properties.getProperty(key))) {
++          byte[] bytes = value.getBytes(java.nio.charset.StandardCharsets.UTF_8);
++          digest.update(java.nio.ByteBuffer.allocate(4).putInt(bytes.length).array());
++          digest.update(bytes);
++        }
++      }
++      return java.util.HexFormat.of().formatHex(digest.digest());
++    } catch (java.security.NoSuchAlgorithmException e) {
++      throw new IllegalStateException(e);
++    }
++  }
++
+   private static void writeBalances(Properties properties, Map<NationId, BigDecimal> balances) {
+     List<Map.Entry<NationId, BigDecimal>> snapshot =
+         balances.entrySet().stream()
+diff --git a/src/test/java/dev/starcore/starcore/foundation/territory/TerritoryRetirementTest.java b/src/test/java/dev/starcore/starcore/foundation/territory/TerritoryRetirementTest.java
+new file mode 100644
+index 0000000..200c496
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/foundation/territory/TerritoryRetirementTest.java
+@@ -0,0 +1,240 @@
++package dev.starcore.starcore.foundation.territory;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.foundation.territory.model.*;
++import java.nio.file.Path;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.function.Supplier;
++import org.junit.jupiter.api.*;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.*;
++import org.sqlite.SQLiteDataSource;
++
++class TerritoryRetirementTest {
++  @TempDir Path directory;
++  final ChunkCoordinate first = new ChunkCoordinate("world", 1, 0),
++      second = new ChunkCoordinate("world", 2, 0);
++
++  SQLiteDataSource source() {
++    var source = new SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + directory.resolve("land.db"));
++    return source;
++  }
++
++  Supplier<TerritoryLedgerStorage> stores(boolean sql) throws Exception {
++    var persistence = mock(PersistenceService.class);
++    when(persistence.namespacePath("territory")).thenReturn(directory);
++    return sql
++        ? () ->
++            new SqlTerritoryLedgerStorage(
++                () -> Optional.of(source()), () -> new TerritoryLedger(Map.of(), Map.of()))
++        : () -> new FileTerritoryLedgerStorage(persistence);
++  }
++
++  DurableTerritoryService land(TerritoryLedgerStorage storage) {
++    return new InMemoryTerritoryService(storage);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void closureReleasesCurrentClaimsPreservesReceiptsAndRejectsLateWrites(boolean sql)
++      throws Exception {
++    var stores = stores(sql);
++    var service = land(stores.get());
++    var batch = new TerritoryBatchService.Request(UUID.randomUUID(), "old", List.of(first), 5);
++    service.claimBatch(batch);
++    service.claim("old", second);
++    var transfer =
++        new TerritoryTransferService.TransferRequest(
++            UUID.randomUUID(), "old", "other", List.of(second), 0);
++    service.transferBatch(transfer);
++    UUID id = UUID.randomUUID();
++    var receipt = service.retireOwner(id, "old");
++    assertThat(receipt.releasedClaims()).isEqualTo(1);
++    assertThat(service.claimsByOwner("old")).isEmpty();
++    assertThat(service.claim("other", first)).isTrue();
++    var restarted = land(stores.get());
++    assertThat(restarted.retireOwner(id, "old")).isEqualTo(receipt);
++    assertThat(restarted.claimBatch(batch).status())
++        .isEqualTo(TerritoryBatchService.Status.APPLIED);
++    assertThat(restarted.transferBatch(transfer).status())
++        .isEqualTo(TerritoryTransferService.TransferStatus.APPLIED);
++    assertThat(restarted.claimsByOwner("other")).hasSize(2);
++    assertThat(restarted.claim("old", new ChunkCoordinate("world", 3, 0))).isFalse();
++    assertThat(restarted.transferClaims("other", "old", List.of(first))).isFalse();
++    assertThat(
++            restarted
++                .claimBatch(
++                    new TerritoryBatchService.Request(
++                        UUID.randomUUID(), "old", List.of(new ChunkCoordinate("world", 3, 0)), 5))
++                .status())
++        .isEqualTo(TerritoryBatchService.Status.OWNER_RETIRED);
++    assertThat(
++            restarted
++                .transferBatch(
++                    new TerritoryTransferService.TransferRequest(
++                        UUID.randomUUID(), "other", "old", List.of(first), 0))
++                .status())
++        .isEqualTo(TerritoryTransferService.TransferStatus.OWNER_RETIRED);
++    assertThatThrownBy(() -> restarted.retireOwner(UUID.randomUUID(), "old"))
++        .isInstanceOf(IllegalArgumentException.class);
++  }
++
++  @ParameterizedTest
++  @CsvSource({"false,false", "false,true", "true,false", "true,true"})
++  void lostRetirementReplyRecoversOriginalResult(boolean sql, boolean after) throws Exception {
++    var stores = stores(sql);
++    land(stores.get()).claim("old", first);
++    var fault = new TerritoryBatchRecoveryTest.FaultStore(stores.get());
++    var service = land(fault);
++    fault.fail = true;
++    fault.after = after;
++    fault.blockRead = true;
++    UUID id = UUID.randomUUID();
++    assertThatThrownBy(() -> service.retireOwner(id, "old"))
++        .isInstanceOf(IllegalStateException.class);
++    var restarted = land(stores.get());
++    assertThat(restarted.retirementReceipt("old").isPresent()).isEqualTo(after);
++    assertThat(restarted.retireOwner(id, "old").releasedClaims()).isEqualTo(1);
++    assertThat(restarted.claimsByOwner("old")).isEmpty();
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void delayedSnapshotCannotRestoreClosedOwnerEvenAfterReload(boolean sql) throws Exception {
++    var stores = stores(sql);
++    land(stores.get()).claim("old", first);
++    var stale = stores.get();
++    var before = stale.load();
++    land(stores.get()).retireOwner(UUID.randomUUID(), "old");
++    assertThatThrownBy(() -> stale.save(before)).isInstanceOf(IllegalStateException.class);
++    var closed = stale.load();
++    assertThatThrownBy(() -> stale.save(before)).isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(
++            () ->
++                new TerritoryLedger(
++                    before.claims(), closed.receipts(), closed.transfers(), closed.retirements()))
++        .isInstanceOf(IllegalArgumentException.class);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void simultaneousClaimAndRetirementAlwaysFinishClosed(boolean sql) throws Exception {
++    var stores = stores(sql);
++    var barrier = new CyclicBarrier(2);
++    var writer = land(new TerritoryBatchRecoveryTest.BarrierStore(stores.get(), barrier));
++    var closer = land(new TerritoryBatchRecoveryTest.BarrierStore(stores.get(), barrier));
++    UUID id = UUID.randomUUID();
++    try (var executor = Executors.newFixedThreadPool(2)) {
++      var one =
++          executor.submit(
++              () -> {
++                try {
++                  writer.claim("old", first);
++                } catch (IllegalStateException conflict) {
++                }
++              });
++      var two =
++          executor.submit(
++              () -> {
++                try {
++                  closer.retireOwner(id, "old");
++                } catch (IllegalStateException conflict) {
++                }
++              });
++      one.get(15, TimeUnit.SECONDS);
++      two.get(15, TimeUnit.SECONDS);
++    }
++    var current = land(stores.get());
++    current.retireOwner(id, "old");
++    assertThat(current.claimsByOwner("old")).isEmpty();
++    assertThat(current.claim("old", second)).isFalse();
++  }
++
++  @Test
++  void failedSqlReceiptInsertRollsBackReleasedClaims() throws Exception {
++    var stores = stores(true);
++    var service = land(stores.get());
++    service.claim("old", first);
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute(
++          "CREATE TRIGGER fail_retirement BEFORE INSERT ON starcore_territory_retirements BEGIN"
++              + " SELECT RAISE(ABORT,'injected'); END");
++    }
++    UUID id = UUID.randomUUID();
++    assertThatThrownBy(() -> service.retireOwner(id, "old"))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(land(stores.get()).isOwnerOf("old", first)).isTrue();
++    assertThat(land(stores.get()).retirementReceipt("old")).isEmpty();
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute("DROP TRIGGER fail_retirement");
++    }
++    assertThat(land(stores.get()).retireOwner(id, "old").releasedClaims()).isEqualTo(1);
++  }
++
++  @Test
++  void missingSqlRetirementTableCannotReopenOwner() throws Exception {
++    var stores = stores(true);
++    land(stores.get()).retireOwner(UUID.randomUUID(), "old");
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute("DROP TABLE starcore_territory_retirements");
++    }
++    assertThatThrownBy(() -> land(stores.get())).isInstanceOf(IllegalStateException.class);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void authorityRejectsRetirementWithStaleClaimCount(boolean sql) throws Exception {
++    var stores = stores(sql);
++    land(stores.get()).claim("old", first);
++    var storage = stores.get();
++    storage.load();
++    var receipt = new TerritoryRetirementService.RetirementReceipt(UUID.randomUUID(), "old", 0);
++    assertThatThrownBy(
++            () ->
++                storage.save(
++                    new TerritoryLedger(Map.of(), Map.of(), Map.of(), Map.of("old", receipt))))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(land(stores.get()).isOwnerOf("old", first)).isTrue();
++  }
++
++  @Test
++  void fileRetirementMigratesToSqlWithOriginalCount() throws Exception {
++    var files = stores(false);
++    var service = land(files.get());
++    service.claim("old", first);
++    var receipt = service.retireOwner(UUID.randomUUID(), "old");
++    var sql = new SqlTerritoryLedgerStorage(() -> Optional.of(source()), () -> files.get().load());
++    var migrated = land(sql);
++    assertThat(migrated.retirementReceipt("old")).contains(receipt);
++    assertThat(migrated.claim("old", first)).isFalse();
++    assertThat(land(stores(true).get()).retirementReceipt("old")).contains(receipt);
++  }
++
++  @Test
++  void retirementCodecRejectsMissingFieldsAndClosedOwnerClaims() {
++    var receipt = new TerritoryRetirementService.RetirementReceipt(UUID.randomUUID(), "old", 1);
++    var state = new TerritoryLedger(Map.of(), Map.of(), Map.of(), Map.of("old", receipt));
++    assertThat(TerritoryLedger.decode(state.properties())).isEqualTo(state);
++    var broken = state.properties();
++    broken.remove("retirements.0.released");
++    assertThatThrownBy(() -> TerritoryLedger.decode(broken))
++        .isInstanceOf(IllegalArgumentException.class);
++    assertThatThrownBy(
++            () ->
++                new TerritoryLedger(
++                    Map.of(first, new TerritoryClaim("old", first)),
++                    Map.of(),
++                    Map.of(),
++                    Map.of("old", receipt)))
++        .isInstanceOf(IllegalArgumentException.class);
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/NationDisbandRetirementTest.java b/src/test/java/dev/starcore/starcore/module/nation/NationDisbandRetirementTest.java
+new file mode 100644
+index 0000000..97fe253
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/nation/NationDisbandRetirementTest.java
+@@ -0,0 +1,85 @@
++package dev.starcore.starcore.module.nation;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.foundation.territory.InMemoryTerritoryService;
++import dev.starcore.starcore.foundation.territory.model.ChunkCoordinate;
++import dev.starcore.starcore.module.city.CityService;
++import dev.starcore.starcore.module.diplomacy.DiplomacyRelationService;
++import dev.starcore.starcore.module.diplomacy.alliance.AllianceService;
++import dev.starcore.starcore.module.diplomacy.military.MilitaryAllianceService;
++import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.treasury.NavyTreasuryFixture;
++import dev.starcore.starcore.module.war.WarService;
++import java.math.BigDecimal;
++import java.nio.file.Path;
++import java.util.*;
++import java.util.concurrent.atomic.AtomicInteger;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++
++class NationDisbandRetirementTest {
++  @TempDir Path directory;
++
++  @Test
++  void interruptedCleanupClosesCurrentLandAndTreasuryExactlyOnce() throws Exception {
++    var persistence = mock(PersistenceService.class);
++    when(persistence.namespacePath("territory")).thenReturn(directory.resolve("land"));
++    when(persistence.namespacePath("navy-test-treasury")).thenReturn(directory.resolve("money"));
++    var land = new InMemoryTerritoryService(persistence);
++    var treasury = NavyTreasuryFixture.open(persistence, new AtomicInteger());
++    var nation = NationId.random();
++    var other = NationId.random();
++    var first = new ChunkCoordinate("world", 1, 1);
++    var later = new ChunkCoordinate("world", 2, 1);
++    var kept = new ChunkCoordinate("world", 3, 1);
++    land.claim(nation.toString(), first);
++    treasury.deposit(nation, new BigDecimal("100.00"));
++    var transaction =
++        new NationDisbandTransaction(
++            UUID.randomUUID(),
++            List.of(nation),
++            Map.of(nation, List.of(first)),
++            List.of(),
++            List.of(nation),
++            List.of());
++    // These writes predate external retirement but postdate the old independent journal snapshot.
++    land.claim(nation.toString(), later);
++    land.claim(other.toString(), kept);
++    treasury.deposit(nation, new BigDecimal("25.00"));
++    var diplomacy = mock(DiplomacyRelationService.class);
++    doThrow(new IllegalStateException("cleanup interrupted"))
++        .doNothing()
++        .when(diplomacy)
++        .clearNationRelations(nation);
++    var alliance = mock(AllianceService.class);
++    var military = mock(MilitaryAllianceService.class);
++    var war = mock(WarService.class);
++    var cities = mock(CityService.class);
++    assertThatThrownBy(
++            () ->
++                NationDisbandRecovery.completeCommitted(
++                    transaction, land, diplomacy, treasury, alliance, military, war, cities))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(land.retirementReceipt(nation.toString())).isPresent();
++    assertThat(land.claimsByOwner(nation.toString())).isEmpty();
++    assertThat(treasury.balance(nation)).isEqualByComparingTo("125.00");
++    land.claim(other.toString(), first);
++    var restartedLand = new InMemoryTerritoryService(persistence);
++    var restartedMoney = NavyTreasuryFixture.open(persistence, new AtomicInteger());
++    NationDisbandRecovery.completeCommitted(
++        transaction, restartedLand, diplomacy, restartedMoney, alliance, military, war, cities);
++    assertThat(restartedLand.isOwnerOf(other.toString(), first)).isTrue();
++    assertThat(restartedLand.isOwnerOf(other.toString(), kept)).isTrue();
++    assertThat(restartedMoney.treasuryRetirementReceipt(nation).orElseThrow().retiredBalance())
++        .isEqualByComparingTo("125.00");
++    assertThat(restartedMoney.tryDeposit(nation, BigDecimal.ONE)).isFalse();
++    NationDisbandRecovery.completeCommitted(
++        transaction, restartedLand, diplomacy, restartedMoney, alliance, military, war, cities);
++    assertThat(restartedMoney.balance(nation)).isEqualByComparingTo("0.00");
++    assertThat(restartedLand.retirementReceipt(nation.toString()).orElseThrow().releasedClaims())
++        .isEqualTo(2);
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/treasury/TreasuryRetirementTest.java b/src/test/java/dev/starcore/starcore/module/treasury/TreasuryRetirementTest.java
+new file mode 100644
+index 0000000..19e488d
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/treasury/TreasuryRetirementTest.java
+@@ -0,0 +1,440 @@
++package dev.starcore.starcore.module.treasury;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.math.BigDecimal;
++import java.nio.file.*;
++import java.util.*;
++import java.util.function.Supplier;
++import java.util.logging.Logger;
++import org.junit.jupiter.api.*;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.*;
++import org.sqlite.SQLiteDataSource;
++
++class TreasuryRetirementTest {
++  @TempDir Path directory;
++  final NationId nation = NationId.random(), other = NationId.random();
++  final List<SqlTreasuryStateStorage> sqlStores = new ArrayList<>();
++
++  SQLiteDataSource source() {
++    var ds = new SQLiteDataSource();
++    ds.setUrl("jdbc:sqlite:" + directory.resolve("treasury.db"));
++    return ds;
++  }
++
++  Supplier<TreasuryStateStorage> stores(boolean sql) throws Exception {
++    var persistence = mock(PersistenceService.class);
++    when(persistence.namespacePath("treasury")).thenReturn(directory);
++    return () -> {
++      if (!sql) return new PersistenceTreasuryStateStorage("treasury", persistence);
++      var storage =
++          new SqlTreasuryStateStorage(source(), new Properties(), Logger.getAnonymousLogger());
++      sqlStores.add(storage);
++      return storage;
++    };
++  }
++
++  @AfterEach
++  void close() {
++    sqlStores.forEach(SqlTreasuryStateStorage::shutdown);
++  }
++
++  TreasuryModule treasury(TreasuryStateStorage storage) throws Exception {
++    var module = new TreasuryModule();
++    var field = TreasuryModule.class.getDeclaredField("stateStorage");
++    field.setAccessible(true);
++    field.set(module, storage);
++    var load = TreasuryModule.class.getDeclaredMethod("loadState");
++    load.setAccessible(true);
++    load.invoke(module);
++    return module;
++  }
++
++  NationSpendingService.SpendRequest spending(String id) {
++    return new NationSpendingService.SpendRequest(
++        id, nation, new BigDecimal("10.00"), NationSpendingService.SpendingCategory.OTHER, "test");
++  }
++
++  NationCreditService.CreditRequest credit(String id) {
++    return new NationCreditService.CreditRequest(
++        id, nation, new BigDecimal("5.00"), NationCreditService.CreditCategory.OTHER, "test");
++  }
++
++  NationTransferService.TransferRequest transfer(String id, boolean inbound) {
++    return new NationTransferService.TransferRequest(
++        id,
++        inbound ? other : nation,
++        inbound ? nation : other,
++        new BigDecimal("1.00"),
++        NationTransferService.TransferCategory.OTHER,
++        "test");
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void closureRetainsOriginalBalanceAndMoneyReceiptsAcrossRestart(boolean sql) throws Exception {
++    var stores = stores(sql);
++    var module = treasury(stores.get());
++    module.deposit(nation, new BigDecimal("100.00"));
++    module.deposit(other, new BigDecimal("50.00"));
++    assertThat(module.spend(spending("spent")).applied()).isTrue();
++    assertThat(module.credit(credit("income")).applied()).isTrue();
++    assertThat(module.transfer(transfer("transfer", false)).applied()).isTrue();
++    var persistedBeforeClosure = treasury(stores.get());
++    var spent = persistedBeforeClosure.spendingReceipt("spent");
++    var credited = persistedBeforeClosure.creditReceipt("income");
++    var transferred = persistedBeforeClosure.transferReceipt("transfer");
++    UUID id = UUID.randomUUID();
++    var receipt = module.retireTreasury(id, nation);
++    assertThat(receipt.retiredBalance()).isEqualByComparingTo("94.00");
++    var restarted = treasury(stores.get());
++    assertThat(restarted.retireTreasury(id, nation)).isEqualTo(receipt);
++    assertThat(restarted.balance(nation)).isEqualByComparingTo("0.00");
++    assertThat(restarted.balance(other)).isEqualByComparingTo("51.00");
++    assertThat(restarted.spend(spending("spent")).status())
++        .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
++    assertThat(restarted.credit(credit("income")).status())
++        .isEqualTo(NationCreditService.CreditStatus.ALREADY_APPLIED);
++    assertThat(restarted.transfer(transfer("transfer", false)).status())
++        .isEqualTo(NationTransferService.TransferStatus.ALREADY_APPLIED);
++    assertThat(restarted.spendingReceipt("spent")).isEqualTo(spent);
++    assertThat(restarted.creditReceipt("income")).isEqualTo(credited);
++    assertThat(restarted.transferReceipt("transfer")).isEqualTo(transferred);
++    assertThat(restarted.tryDeposit(nation, BigDecimal.ONE)).isFalse();
++    assertThatThrownBy(() -> restarted.deposit(nation, BigDecimal.ONE))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(restarted.withdraw(nation, BigDecimal.ONE)).isFalse();
++    assertThat(restarted.refund("spent")).isFalse();
++    assertThat(restarted.spend(spending("new-spend")).applied()).isFalse();
++    assertThat(restarted.credit(credit("new-credit")).applied()).isFalse();
++    assertThat(restarted.transfer(transfer("new-in", true)).applied()).isFalse();
++    assertThat(restarted.transfer(transfer("new-out", false)).applied()).isFalse();
++    assertThat(restarted.tryDeposit(other, BigDecimal.ONE)).isTrue();
++    assertThat(treasury(stores.get()).treasuryRetirementReceipt(nation)).contains(receipt);
++    assertThatThrownBy(() -> restarted.retireTreasury(UUID.randomUUID(), nation))
++        .isInstanceOf(IllegalArgumentException.class);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void staleInstancesCannotAddMoneyAfterClosure(boolean sql) throws Exception {
++    var stores = stores(sql);
++    var initial = treasury(stores.get());
++    initial.deposit(nation, new BigDecimal("100.00"));
++    var stale = treasury(stores.get());
++    var staleStorage = stores.get();
++    var before = staleStorage.load();
++    UUID id = UUID.randomUUID();
++    initial.retireTreasury(id, nation);
++    assertThat(stale.tryDeposit(nation, new BigDecimal("25.00"))).isFalse();
++    assertThat(stale.credit(credit("late")).applied()).isFalse();
++    assertThatThrownBy(() -> staleStorage.save(before)).isInstanceOf(IllegalStateException.class);
++    staleStorage.load();
++    assertThatThrownBy(() -> staleStorage.save(before)).isInstanceOf(IllegalStateException.class);
++    assertThat(treasury(stores.get()).retireTreasury(id, nation).retiredBalance())
++        .isEqualByComparingTo("100.00");
++  }
++
++  @ParameterizedTest
++  @CsvSource({"false,false", "false,true", "true,false", "true,true"})
++  void interruptedRetirementDoesNotGuessFromCurrentBalance(boolean sql, boolean after)
++      throws Exception {
++    var stores = stores(sql);
++    treasury(stores.get()).deposit(nation, new BigDecimal("100.00"));
++    var fault = new FaultStore(stores.get());
++    var module = treasury(fault);
++    fault.fail = true;
++    fault.after = after;
++    UUID id = UUID.randomUUID();
++    assertThatThrownBy(() -> module.retireTreasury(id, nation))
++        .isInstanceOf(IllegalStateException.class);
++    var restarted = treasury(stores.get());
++    assertThat(restarted.treasuryRetirementReceipt(nation).isPresent()).isEqualTo(after);
++    assertThat(restarted.balance(nation)).isEqualByComparingTo(after ? "0.00" : "100.00");
++    assertThat(restarted.retireTreasury(id, nation).retiredBalance())
++        .isEqualByComparingTo("100.00");
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void committedReceiptReadbackResolvesLostReply(boolean sql) throws Exception {
++    var stores = stores(sql);
++    treasury(stores.get()).deposit(nation, new BigDecimal("42.00"));
++    var fault = new FaultStore(stores.get());
++    var module = treasury(fault);
++    fault.fail = true;
++    fault.after = true;
++    fault.blockRead = false;
++    var receipt = module.retireTreasury(UUID.randomUUID(), nation);
++    assertThat(receipt.retiredBalance()).isEqualByComparingTo("42.00");
++    assertThat(module.balance(nation)).isEqualByComparingTo("0.00");
++  }
++
++  @Test
++  void failedSqlRetirementInsertRollsBackMoneyAndReceipt() throws Exception {
++    var stores = stores(true);
++    var module = treasury(stores.get());
++    module.deposit(nation, new BigDecimal("20.00"));
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute(
++          "CREATE TRIGGER fail_retirement BEFORE INSERT ON starcore_treasury_state WHEN"
++              + " NEW.property_key='retirement.0.nation' BEGIN SELECT RAISE(ABORT,'injected');"
++              + " END");
++    }
++    var id = UUID.randomUUID();
++    assertThatThrownBy(() -> module.retireTreasury(id, nation))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(treasury(stores.get()).balance(nation)).isEqualByComparingTo("20.00");
++    assertThat(treasury(stores.get()).treasuryRetirementReceipt(nation)).isEmpty();
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute("DROP TRIGGER fail_retirement");
++    }
++    assertThat(module.retireTreasury(id, nation).retiredBalance()).isEqualByComparingTo("20.00");
++  }
++
++  @Test
++  void fileAuthorityNeverSilentlyFallsBackToPreRetirementBackup() throws Exception {
++    var stores = stores(false);
++    var module = treasury(stores.get());
++    module.deposit(nation, new BigDecimal("20.00"));
++    module.retireTreasury(UUID.randomUUID(), nation);
++    var file = directory.resolve("treasury.properties");
++    var original = Files.readAllBytes(file);
++    Files.writeString(file, "receiptFormatVersion=2\n");
++    assertThatThrownBy(() -> stores.get().load()).isInstanceOf(IllegalStateException.class);
++    Files.write(file, original);
++    Files.delete(file);
++    assertThatThrownBy(() -> stores.get().load()).isInstanceOf(IllegalStateException.class);
++  }
++
++  @Test
++  void codecAndAuthorityRejectResurrectionAndLostReceipts() {
++    var receipt =
++        new TreasuryRetirementService.TreasuryRetirementReceipt(
++            UUID.randomUUID(), nation, new BigDecimal("5.00"));
++    var spent =
++        new NationSpendingService.SpendingReceipt(
++            "spent",
++            nation,
++            BigDecimal.ONE,
++            NationSpendingService.SpendingCategory.OTHER,
++            "test",
++            java.time.Instant.ofEpochMilli(1000));
++    var state =
++        new TreasuryStateCodec.TreasuryState(
++            Map.of(), Map.of("spent", spent), Map.of(), Map.of(), Map.of(nation, receipt));
++    var properties = TreasuryStateCodec.toProperties(state);
++    assertThat(TreasuryStateCodec.stateFromProperties(properties)).isEqualTo(state);
++    var broken = new Properties();
++    broken.putAll(properties);
++    broken.remove("retirement.0.balance");
++    assertThatThrownBy(() -> TreasuryStateCodec.stateFromProperties(broken))
++        .isInstanceOf(IllegalArgumentException.class);
++    assertThatThrownBy(
++            () ->
++                new TreasuryStateCodec.TreasuryState(
++                    Map.of(nation, BigDecimal.ONE),
++                    Map.of(),
++                    Map.of(),
++                    Map.of(),
++                    Map.of(nation, receipt)))
++        .isInstanceOf(IllegalArgumentException.class);
++    var erased =
++        TreasuryStateCodec.toProperties(
++            new TreasuryStateCodec.TreasuryState(
++                Map.of(), Map.of(), Map.of(), Map.of(), Map.of(nation, receipt)));
++    assertThatThrownBy(() -> TreasuryStateCodec.requireRetirementsPreserved(properties, erased))
++        .isInstanceOf(IllegalStateException.class);
++  }
++
++  @Test
++  void stoppedReferenceCannotCloseOrReopenTreasury() throws Exception {
++    var module = treasury(stores(false).get());
++    module.retireTreasury(UUID.randomUUID(), nation);
++    module.disable(null);
++    assertThatThrownBy(() -> module.tryDeposit(nation, BigDecimal.ONE))
++        .isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(() -> module.retireTreasury(UUID.randomUUID(), other))
++        .isInstanceOf(IllegalStateException.class);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void authorityRejectsRetirementWithStaleBalance(boolean sql) throws Exception {
++    var stores = stores(sql);
++    treasury(stores.get()).deposit(nation, new BigDecimal("20.00"));
++    var storage = stores.get();
++    storage.load();
++    var receipt =
++        new TreasuryRetirementService.TreasuryRetirementReceipt(
++            UUID.randomUUID(), nation, BigDecimal.ZERO);
++    var incorrect =
++        TreasuryStateCodec.toProperties(
++            new TreasuryStateCodec.TreasuryState(
++                Map.of(), Map.of(), Map.of(), Map.of(), Map.of(nation, receipt)));
++    assertThatThrownBy(() -> storage.save(incorrect)).isInstanceOf(IllegalStateException.class);
++    assertThat(treasury(stores.get()).balance(nation)).isEqualByComparingTo("20.00");
++  }
++
++  @ParameterizedTest
++  @ValueSource(strings = {"starcore_treasury_state", "starcore_treasury_retirements"})
++  void missingSqlAuthorityNeverRestoresPreRetirementState(String table) throws Exception {
++    var stores = stores(true);
++    var module = treasury(stores.get());
++    module.deposit(nation, new BigDecimal("20.00"));
++    module.retireTreasury(UUID.randomUUID(), nation);
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute("DROP TABLE " + table);
++    }
++    assertThatThrownBy(() -> stores.get().load()).isInstanceOf(IllegalStateException.class);
++  }
++
++  @Test
++  void failureInSeparateSqlRetirementAuthorityRollsBackEverything() throws Exception {
++    var stores = stores(true);
++    var module = treasury(stores.get());
++    module.deposit(nation, new BigDecimal("20.00"));
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute(
++          "CREATE TRIGGER fail_retirement BEFORE INSERT ON starcore_treasury_retirements BEGIN"
++              + " SELECT RAISE(ABORT,'injected'); END");
++    }
++    assertThatThrownBy(() -> module.retireTreasury(UUID.randomUUID(), nation))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(treasury(stores.get()).balance(nation)).isEqualByComparingTo("20.00");
++    assertThat(treasury(stores.get()).treasuryRetirementReceipt(nation)).isEmpty();
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void closingEmptyAccountPreventsLateFirstIncome(boolean sql) throws Exception {
++    var stores = stores(sql);
++    var module = treasury(stores.get());
++    var receipt = module.retireTreasury(UUID.randomUUID(), nation);
++    assertThat(receipt.retiredBalance()).isEqualByComparingTo("0.00");
++    assertThat(treasury(stores.get()).credit(credit("late-first-income")).applied()).isFalse();
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void competingIncomeAndClosureCannotReopenAccount(boolean sql) throws Exception {
++    var stores = stores(sql);
++    treasury(stores.get()).deposit(nation, new BigDecimal("100.00"));
++    var barrier = new java.util.concurrent.CyclicBarrier(2);
++    var writer = treasury(new BarrierStore(stores.get(), barrier));
++    var closer = treasury(new BarrierStore(stores.get(), barrier));
++    UUID id = UUID.randomUUID();
++    boolean deposited;
++    try (var executor = java.util.concurrent.Executors.newFixedThreadPool(2)) {
++      var one = executor.submit(() -> writer.tryDeposit(nation, new BigDecimal("25.00")));
++      var two =
++          executor.submit(
++              () -> {
++                try {
++                  closer.retireTreasury(id, nation);
++                } catch (IllegalStateException conflict) {
++                }
++              });
++      deposited = one.get(15, java.util.concurrent.TimeUnit.SECONDS);
++      two.get(15, java.util.concurrent.TimeUnit.SECONDS);
++    }
++    var restarted = treasury(stores.get());
++    var receipt = restarted.retireTreasury(id, nation);
++    assertThat(receipt.retiredBalance()).isEqualByComparingTo(deposited ? "125.00" : "100.00");
++    assertThat(restarted.balance(nation)).isEqualByComparingTo("0.00");
++    assertThat(restarted.tryDeposit(nation, BigDecimal.ONE)).isFalse();
++  }
++
++  @Test
++  void fileRetirementMigratesToSqlWithOriginalBalanceAndReceipts() throws Exception {
++    var files = stores(false);
++    var module = treasury(files.get());
++    module.deposit(nation, new BigDecimal("20.00"));
++    module.spend(spending("spent"));
++    var receipt = module.retireTreasury(UUID.randomUUID(), nation);
++    var sql =
++        new SqlTreasuryStateStorage(source(), files.get().load(), Logger.getAnonymousLogger());
++    sqlStores.add(sql);
++    var migrated = treasury(sql);
++    assertThat(migrated.treasuryRetirementReceipt(nation)).contains(receipt);
++    assertThat(migrated.spend(spending("spent")).status())
++        .isEqualTo(NationSpendingService.SpendingStatus.ALREADY_APPLIED);
++    assertThat(migrated.tryDeposit(nation, BigDecimal.ONE)).isFalse();
++    assertThat(treasury(stores(true).get()).treasuryRetirementReceipt(nation)).contains(receipt);
++  }
++
++  @Test
++  void productionSqlMigrationRejectsCorruptFileInsteadOfRestoringOlderBackup() throws Exception {
++    var files = stores(false);
++    var module = treasury(files.get());
++    module.deposit(nation, new BigDecimal("20.00"));
++    module.retireTreasury(UUID.randomUUID(), nation);
++    Files.writeString(directory.resolve("treasury.properties"), "receiptFormatVersion=2\n");
++    var database = mock(dev.starcore.starcore.core.database.DatabaseService.class);
++    when(database.dataSource()).thenReturn(Optional.of(source()));
++    var persistence = mock(PersistenceService.class);
++    when(persistence.namespacePath("treasury")).thenReturn(directory);
++    var sql =
++        new SqlTreasuryStateStorage("treasury", database, persistence, Logger.getAnonymousLogger());
++    sqlStores.add(sql);
++    assertThatThrownBy(sql::load).isInstanceOf(IllegalStateException.class);
++    verify(persistence, never()).loadProperties(anyString(), anyString());
++  }
++
++  static class BarrierStore implements TreasuryStateStorage {
++    final TreasuryStateStorage delegate;
++    final java.util.concurrent.CyclicBarrier barrier;
++
++    BarrierStore(TreasuryStateStorage delegate, java.util.concurrent.CyclicBarrier barrier) {
++      this.delegate = delegate;
++      this.barrier = barrier;
++    }
++
++    public Properties load() {
++      return delegate.load();
++    }
++
++    public void save(Properties properties) {
++      try {
++        barrier.await(10, java.util.concurrent.TimeUnit.SECONDS);
++      } catch (Exception e) {
++        throw new IllegalStateException(e);
++      }
++      delegate.save(properties);
++    }
++  }
++
++  static class FaultStore implements TreasuryStateStorage {
++    final TreasuryStateStorage delegate;
++    boolean fail, after, failed, blockRead = true;
++
++    FaultStore(TreasuryStateStorage delegate) {
++      this.delegate = delegate;
++    }
++
++    public Properties load() {
++      if (failed && blockRead) throw new IllegalStateException("read unavailable");
++      return delegate.load();
++    }
++
++    public void save(Properties properties) {
++      if (!fail) {
++        delegate.save(properties);
++        return;
++      }
++      fail = false;
++      if (after) delegate.save(properties);
++      failed = true;
++      throw new IllegalStateException("lost treasury write");
++    }
++  }
++}

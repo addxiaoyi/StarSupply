@@ -2,11 +2,17 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
+## 2026-11-26 领土与国库退役检查点
+
+第十五份[领土与国库退役补丁](upstream/RETIREMENT-RECOVERY.md)已接入现有解散清理：原编号退役、原余额/实际领土数量、永久拒绝迟到圈地/入账/退款，并保留历史回执；国库文件严格同步确认，SQL 退役表与快照同事务，后端固定。1,754 项 Core 定向回归（其中退役专项 42 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。16 个生产源空目录编译，37 个 class 与成品一致；20 文件补丁重放后全部 3,606 个 src 文件及 API 基线一致。详见[证据](verification/workspace-retirement-recovery-20261126.json)。 完整共享解散协议及其余外部退役仍待实现；全仓干净 Core、最新 MySQL 和实服仍待验。生产 Folia 声明关闭，profile 未扩大，世界和玩家存档未改动。
+
+当前 Core SHA-256：`0EDA73241CFDD372295680DE13051C8AE745839BF8ED01FCBE9C30419E5BB1B1`。以下为历史检查点。
+
 ## 2026-11-26 国家分裂恢复检查点
 
 第十四份[国家分裂恢复补丁](upstream/SPLIT-RECOVERY.md)实现共享目录意图、原编号领土转移回执、取消封存和目录终态；目录提交失败不再反向转地。新增 `/nation splitrecovery`，保留创建/圈地/经验历史，并补普通修改的权威预检和目录发布重入屏障。1,712 项 Core 定向回归（7 个独立批次）与实际最终 Core 下 StarSupply 177 项通过，均无失败、错误、跳过。16 个改动生产源空目录编译、28 个 class 一致，22 文件补丁重放后全部 3,601 个 src 文件及 API 基线一致。详见[证据](verification/workspace-split-recovery-20261126.json)。 解散外部退役、圈地耐久通知、全仓干净 Core、MySQL 和实服仍待验。生产 Folia 声明关闭，profile 未扩大，世界和玩家存档未改动。
 
-当前 Core SHA-256：`210F1DE4187CBD9D91BA7B2E2B90BFB65E3EB5025733399DE810C68465515C11`。以下为历史检查点。
+分裂恢复检查点 Core SHA-256：`210F1DE4187CBD9D91BA7B2E2B90BFB65E3EB5025733399DE810C68465515C11`。以下为历史检查点。
 
 ## 2026-11-26 圈地资金与领土回执检查点
 

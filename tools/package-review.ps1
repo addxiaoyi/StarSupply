@@ -52,6 +52,8 @@ $claimPatch = 'docs/upstream/starcore-claim-recovery.patch'
 $claimPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $claimPatch) -Algorithm SHA256).Hash
 $splitPatch = 'docs/upstream/starcore-split-recovery.patch'
 $splitPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $splitPatch) -Algorithm SHA256).Hash
+$retirementPatch = 'docs/upstream/starcore-retirement-recovery.patch'
+$retirementPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $retirementPatch) -Algorithm SHA256).Hash
 $companionSha = $null
 if ($StarCoreJar) {
     $StarCoreJar = (Resolve-Path -LiteralPath $StarCoreJar).Path
@@ -153,6 +155,8 @@ $manifest = [ordered]@{
     starcore_claim_patch_sha256 = $claimPatchSha
     starcore_split_patch = $splitPatch
     starcore_split_patch_sha256 = $splitPatchSha
+    starcore_retirement_patch = $retirementPatch
+    starcore_retirement_patch_sha256 = $retirementPatchSha
     starcore_companion_jar_sha256 = $companionSha
 }
 $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $release 'manifest.json') -Encoding utf8
