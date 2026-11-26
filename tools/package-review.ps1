@@ -56,6 +56,8 @@ $retirementPatch = 'docs/upstream/starcore-retirement-recovery.patch'
 $retirementPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $retirementPatch) -Algorithm SHA256).Hash
 $cityPatch = 'docs/upstream/starcore-city-recovery.patch'
 $cityPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $cityPatch) -Algorithm SHA256).Hash
+$cityMoneyPatch = 'docs/upstream/starcore-city-money-recovery.patch'
+$cityMoneyPatchSha = (Get-FileHash -LiteralPath (Join-Path $root $cityMoneyPatch) -Algorithm SHA256).Hash
 $companionSha = $null
 if ($StarCoreJar) {
     $StarCoreJar = (Resolve-Path -LiteralPath $StarCoreJar).Path
@@ -161,6 +163,8 @@ $manifest = [ordered]@{
     starcore_retirement_patch_sha256 = $retirementPatchSha
     starcore_city_patch = $cityPatch
     starcore_city_patch_sha256 = $cityPatchSha
+    starcore_city_money_patch = $cityMoneyPatch
+    starcore_city_money_patch_sha256 = $cityMoneyPatchSha
     starcore_companion_jar_sha256 = $companionSha
 }
 $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $release 'manifest.json') -Encoding utf8
