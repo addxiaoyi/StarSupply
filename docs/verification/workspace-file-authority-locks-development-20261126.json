@@ -1,0 +1,3998 @@
+{
+  "recorded_date": "2026-11-26",
+  "status": "development_only_not_a_release",
+  "supply_base_commit": "869726a4c9da706ceff5639a7dcbff4f0f47fd08",
+  "core_reproduction_base": "9e380d62fd94cdc54f6f703ea09e14f575660f18",
+  "change_scope": "OS sidecar file locks around file-authority reads, compare-and-save and readback in nine domain stores, plus AtomicFilePersistence replacement/recovery/deletion. Thirteen changed/new sources since previous development checkpoint, including updated stopped-treasury test.",
+  "patch": {
+    "path": "docs/upstream/development/file-authority-locks-20261126.patch",
+    "sha256": "2743385171405a2b732715993f50a64efc6a4ec87b5be1a27849c80048206f15",
+    "bytes": 978403,
+    "cumulative": true,
+    "apply_after": "checkpoint20; replaces every earlier development patch; do not stack"
+  },
+  "sources": [
+    {
+      "path": "docs/api/starcore-api-v1.txt",
+      "sha256": "d758cfabc32cc27b6fb18bd1be835131eb4bd1bd8b1a32e09099b20525b8d1df",
+      "normalized_sha256": "d758cfabc32cc27b6fb18bd1be835131eb4bd1bd8b1a32e09099b20525b8d1df"
+    },
+    {
+      "path": "pom.xml",
+      "sha256": "84b5ba191348d2cfbd5e4e1c652cae2b6e68f70b94d50cc2d350e3bbf2c3b27f",
+      "normalized_sha256": "f8c1a0d0c013eecdea9461dfa41238bf67d981cf7011323dee5a5ac06be7f565"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/StarCorePlugin.java",
+      "sha256": "a63444a5692a31772fbb02ae8842229916b76e5e324c6253eea186c3e80bc9fa",
+      "normalized_sha256": "a63444a5692a31772fbb02ae8842229916b76e5e324c6253eea186c3e80bc9fa"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/api/StarCoreApi.java",
+      "sha256": "1474e5a063a713ff2f4767b440a934fa02fe37508f373f64a0a55d7a42841b96",
+      "normalized_sha256": "1474e5a063a713ff2f4767b440a934fa02fe37508f373f64a0a55d7a42841b96"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/core/persistence/AtomicFilePersistence.java",
+      "sha256": "4319aa7d2bea8f8c8a3fc79c4dce389c30b827d86f39c665f976d8e40d976d4a",
+      "normalized_sha256": "4319aa7d2bea8f8c8a3fc79c4dce389c30b827d86f39c665f976d8e40d976d4a"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/core/persistence/DurablePropertiesStore.java",
+      "sha256": "f68f006e9bfb96a5d0ac50d5bf34d553a14eb1ac0c0abaef6ad5c707ff14e884",
+      "normalized_sha256": "f68f006e9bfb96a5d0ac50d5bf34d553a14eb1ac0c0abaef6ad5c707ff14e884"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/core/persistence/FileAuthorityLock.java",
+      "sha256": "3df0f53147c94548189d45cbeaa92d5643c654815118f0b4597f83ac4c2fa20a",
+      "normalized_sha256": "3df0f53147c94548189d45cbeaa92d5643c654815118f0b4597f83ac4c2fa20a"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/economy/insurance/EconomyInsuranceService.java",
+      "sha256": "081d6690c4d438a3796c95e689f7ba854e25118c4987746db11b8fe06d0ba357",
+      "normalized_sha256": "081d6690c4d438a3796c95e689f7ba854e25118c4987746db11b8fe06d0ba357"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/economy/transaction/EvidenceReplayService.java",
+      "sha256": "8984b93ca9aaafa652632a7e7c58e05799cdcfaf15fe26338e6c691b99c4d1bf",
+      "normalized_sha256": "8984b93ca9aaafa652632a7e7c58e05799cdcfaf15fe26338e6c691b99c4d1bf"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/economy/transaction/IncidentBundleService.java",
+      "sha256": "6cfd27c6dd36fad9cbd5cac95586ffd7687a43cbe6608869430fcf3ce977088f",
+      "normalized_sha256": "6cfd27c6dd36fad9cbd5cac95586ffd7687a43cbe6608869430fcf3ce977088f"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.java",
+      "sha256": "5186925218fd9e82567f185ad3c378eff0192a8d14647c703bd94a1616a91bb2",
+      "normalized_sha256": "5186925218fd9e82567f185ad3c378eff0192a8d14647c703bd94a1616a91bb2"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/alliance/AllianceModule.java",
+      "sha256": "efb97742db7e9e02a27c545ac8d5a6a1c26372c99055fa6a77b6d3ff2b416a22",
+      "normalized_sha256": "efb97742db7e9e02a27c545ac8d5a6a1c26372c99055fa6a77b6d3ff2b416a22"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/alliance/AllianceServiceImpl.java",
+      "sha256": "c56679f89030a06a489cebe4823617c6cc1eb4a19a600f21e888a51fa6db36c0",
+      "normalized_sha256": "c56679f89030a06a489cebe4823617c6cc1eb4a19a600f21e888a51fa6db36c0"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/alliance/AllianceStorage.java",
+      "sha256": "c634c99ec7bdfc4784ce33db86585ceeac0fc470bb8e5a2f46f84c36a18ea60a",
+      "normalized_sha256": "c634c99ec7bdfc4784ce33db86585ceeac0fc470bb8e5a2f46f84c36a18ea60a"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/alliance/FederationCodec.java",
+      "sha256": "1a5c2497223ac85086c25ff952295ad1df670b31622306c5a697fc14bc1e60ad",
+      "normalized_sha256": "1a5c2497223ac85086c25ff952295ad1df670b31622306c5a697fc14bc1e60ad"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/alliance/FederationRetirementService.java",
+      "sha256": "b088e941776ee0186a330a5bf8d24ba37e97d624a637c1f47edf208b49ea50ba",
+      "normalized_sha256": "b088e941776ee0186a330a5bf8d24ba37e97d624a637c1f47edf208b49ea50ba"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/alliance/FederationState.java",
+      "sha256": "afdba1732ba6dc796313c3d0cc80a8e1918973adae76c89d7718ef9a58b07050",
+      "normalized_sha256": "afdba1732ba6dc796313c3d0cc80a8e1918973adae76c89d7718ef9a58b07050"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/city/FileCityLedgerStorage.java",
+      "sha256": "7343b1dfb3145e27444ebb91308d533715cba98bc36b1da7bc6157d296b10505",
+      "normalized_sha256": "7343b1dfb3145e27444ebb91308d533715cba98bc36b1da7bc6157d296b10505"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/city/JsonCityStorage.java",
+      "sha256": "9babfb09815910353b388e926bfe120e1c465e1d00e88e23014f5a5296ec6564",
+      "normalized_sha256": "9babfb09815910353b388e926bfe120e1c465e1d00e88e23014f5a5296ec6564"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/PersistenceDiplomacyStateStorage.java",
+      "sha256": "2f342f289cc1fe1b9f1915b7895843183a55ae0fb4b23c8feec45c72616b55ef",
+      "normalized_sha256": "2f342f289cc1fe1b9f1915b7895843183a55ae0fb4b23c8feec45c72616b55ef"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/RelationshipAuthorityStore.java",
+      "sha256": "cf24183d7dfaab792257fe86a12f634cd6af06631cfc454fbb5204389109c56b",
+      "normalized_sha256": "cf24183d7dfaab792257fe86a12f634cd6af06631cfc454fbb5204389109c56b"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationClaimCoordinator.java",
+      "sha256": "bd7cfc5779492c85b15dfc12bee43627434c0a1fd57327418225ae12d11043e4",
+      "normalized_sha256": "bd7cfc5779492c85b15dfc12bee43627434c0a1fd57327418225ae12d11043e4"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationCreationCoordinator.java",
+      "sha256": "a736a10448bfc1366876f94d4a96aa0b16d1b61bd23b1d39a5a8b96b007f3881",
+      "normalized_sha256": "a736a10448bfc1366876f94d4a96aa0b16d1b61bd23b1d39a5a8b96b007f3881"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationDisbandCoordinator.java",
+      "sha256": "05e66ed1a11df7bd3e296323aaa41bc21938807d2f43f63bb68bca502fb6e715",
+      "normalized_sha256": "05e66ed1a11df7bd3e296323aaa41bc21938807d2f43f63bb68bca502fb6e715"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationDisbandOperation.java",
+      "sha256": "9be2d942bcfd855c1edfb681909b66b222005abb9e2725ca3e5edaa1bf1ef4f0",
+      "normalized_sha256": "9be2d942bcfd855c1edfb681909b66b222005abb9e2725ca3e5edaa1bf1ef4f0"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationDisbandOperationCodec.java",
+      "sha256": "f5ac8af8228f83c7e81b8dc906e895289d8826f2246c7d9120e78e72a50db3d4",
+      "normalized_sha256": "f5ac8af8228f83c7e81b8dc906e895289d8826f2246c7d9120e78e72a50db3d4"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java",
+      "sha256": "56c4921d8c21fb42f59b4e642ab956dff5b062636ffed51538a291b0bdf7ebe3",
+      "normalized_sha256": "56c4921d8c21fb42f59b4e642ab956dff5b062636ffed51538a291b0bdf7ebe3"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationDisbandService.java",
+      "sha256": "05d3ff3d8346491ea3d43020a2eb0bf7fa8690d5e3ae66ef15900d45d2c02c6a",
+      "normalized_sha256": "05d3ff3d8346491ea3d43020a2eb0bf7fa8690d5e3ae66ef15900d45d2c02c6a"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationDisbandTransaction.java",
+      "sha256": "357e3dbfdc57ac5f0c7377acfab267884e7c02c9fd483dc3bce19431a1370a0e",
+      "normalized_sha256": "357e3dbfdc57ac5f0c7377acfab267884e7c02c9fd483dc3bce19431a1370a0e"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationModule.java",
+      "sha256": "b18a3d8de86a816548e9c2d75dd5bd66cb61f0dd7d18ed02a135bad539f2ff43",
+      "normalized_sha256": "b18a3d8de86a816548e9c2d75dd5bd66cb61f0dd7d18ed02a135bad539f2ff43"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationSplitCoordinator.java",
+      "sha256": "7bb5c3bded0275ba1e3afb227144145bfceb01615e3d915a967d085aabf80e29",
+      "normalized_sha256": "7bb5c3bded0275ba1e3afb227144145bfceb01615e3d915a967d085aabf80e29"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/NationStateCodec.java",
+      "sha256": "133e592d7774abe723e7cc0ad7b3d514b88df406790477b0c279dbbe7cab572b",
+      "normalized_sha256": "133e592d7774abe723e7cc0ad7b3d514b88df406790477b0c279dbbe7cab572b"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/PersistenceNationDisbandJournal.java",
+      "sha256": "98200c42eaafeb387d3808f7673a7ce2e1914472ab38b0413a56f7dfc86f2f74",
+      "normalized_sha256": "98200c42eaafeb387d3808f7673a7ce2e1914472ab38b0413a56f7dfc86f2f74"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/PersistenceNationStateStorage.java",
+      "sha256": "4865421c7b6a55372a4248fa0c98e3af682b3a7e1440c2ad3f3669c6ad9c1741",
+      "normalized_sha256": "4865421c7b6a55372a4248fa0c98e3af682b3a7e1440c2ad3f3669c6ad9c1741"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/SqlNationStateStorage.java",
+      "sha256": "3dff9d48b42dece9da05bcf7a24e078f548a7ea65c2f1cf4291fae8348973e4b",
+      "normalized_sha256": "3dff9d48b42dece9da05bcf7a24e078f548a7ea65c2f1cf4291fae8348973e4b"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/nation/command/NationLifecycleCommand.java",
+      "sha256": "8d23493a6da39a4c2d1f26b3d06b3c4e983a5c7a9caa0a66d1c02087b7e19372",
+      "normalized_sha256": "8d23493a6da39a4c2d1f26b3d06b3c4e983a5c7a9caa0a66d1c02087b7e19372"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/treasury/PersistenceTreasuryStateStorage.java",
+      "sha256": "02a104dd5cc1728d4a64162861b9b29956edd8753c0bff27556659acf2a6dae7",
+      "normalized_sha256": "02a104dd5cc1728d4a64162861b9b29956edd8753c0bff27556659acf2a6dae7"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/WarDisbandAdmissionService.java",
+      "sha256": "162a4f929fb90b7b51538e5d0c01f1672c1f8e84fe8150ed68fa0cf158073440",
+      "normalized_sha256": "162a4f929fb90b7b51538e5d0c01f1672c1f8e84fe8150ed68fa0cf158073440"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/WarModule.java",
+      "sha256": "79db184798a837a7a4c631337331fbb5e801189954b7cb9a3ff0d19ac07594eb",
+      "normalized_sha256": "79db184798a837a7a4c631337331fbb5e801189954b7cb9a3ff0d19ac07594eb"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/WarRetirementReceipt.java",
+      "sha256": "021c668911a5e9d69ad11341d5f8c13627e5ecade530eea4daad84373dbd1d14",
+      "normalized_sha256": "021c668911a5e9d69ad11341d5f8c13627e5ecade530eea4daad84373dbd1d14"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/WarRetirementService.java",
+      "sha256": "6a9189c7235bad7fed63eab1ac872d9706376d6e25833c351d7904345a8c92ec",
+      "normalized_sha256": "6a9189c7235bad7fed63eab1ac872d9706376d6e25833c351d7904345a8c92ec"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/reparations/ReparationAuthorityState.java",
+      "sha256": "8b5d751e17932cefc7a8b6fadd4ef24f6f206fd8a31027a94121eb3065adac39",
+      "normalized_sha256": "8b5d751e17932cefc7a8b6fadd4ef24f6f206fd8a31027a94121eb3065adac39"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/reparations/ReparationsModule.java",
+      "sha256": "c0c3283f5d09741df8abe5774534494702a47e432552161ca2d21473e340f96b",
+      "normalized_sha256": "c0c3283f5d09741df8abe5774534494702a47e432552161ca2d21473e340f96b"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/reparations/ReparationsSnapshotCodec.java",
+      "sha256": "125ea138eb7d1388df0f8e50b6fc3cbbfc1d674c98c2fbc992be5b481b0d5f19",
+      "normalized_sha256": "125ea138eb7d1388df0f8e50b6fc3cbbfc1d674c98c2fbc992be5b481b0d5f19"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/reparations/ReparationsStateCodec.java",
+      "sha256": "d08b411fe075cf99caee1752995737ec234c0742421495c2a8139e4b5edf5924",
+      "normalized_sha256": "d08b411fe075cf99caee1752995737ec234c0742421495c2a8139e4b5edf5924"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/reparations/listener/ReparationsEventListener.java",
+      "sha256": "f887c0d6591a0966332d1fcb023fc98b7cf3a3b80b4443ca92215b104a407462",
+      "normalized_sha256": "f887c0d6591a0966332d1fcb023fc98b7cf3a3b80b4443ca92215b104a407462"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/BattlefieldRegistry.java",
+      "sha256": "f3dcbffa21793976796a1fe9bc1194c45b198cb18a87da169e2784bd0e63fb63",
+      "normalized_sha256": "f3dcbffa21793976796a1fe9bc1194c45b198cb18a87da169e2784bd0e63fb63"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/BattlefieldService.java",
+      "sha256": "5e770405966ac4e7581962388a49327f6eab9199450dd5e11c354484b6cfe3ca",
+      "normalized_sha256": "5e770405966ac4e7581962388a49327f6eab9199450dd5e11c354484b6cfe3ca"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyExecution.java",
+      "sha256": "9ec6b68813e78259f418bea65c5b3f38722fb401f41ade5b3a01917af489c91f",
+      "normalized_sha256": "9ec6b68813e78259f418bea65c5b3f38722fb401f41ade5b3a01917af489c91f"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyPayment.java",
+      "sha256": "d5aa9aedecddd57c510860e487326b2eae46038c9b4347386bbae2154ca2d474",
+      "normalized_sha256": "d5aa9aedecddd57c510860e487326b2eae46038c9b4347386bbae2154ca2d474"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyPersistence.java",
+      "sha256": "2837c8d7677c5cc26a0899f6015bbc425b991ea2f82474fe0da64e62453006b4",
+      "normalized_sha256": "2837c8d7677c5cc26a0899f6015bbc425b991ea2f82474fe0da64e62453006b4"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyService.java",
+      "sha256": "8790b9e4f2ebb1b3a31e4d47b0d373a2c354c3291e5f2f20f763a4dade82d001",
+      "normalized_sha256": "8790b9e4f2ebb1b3a31e4d47b0d373a2c354c3291e5f2f20f763a4dade82d001"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatySettlementService.java",
+      "sha256": "9a9f73cc6ab158524a4dd26362d0099e6903d5718217308ad0cba7ce6bd5334e",
+      "normalized_sha256": "9a9f73cc6ab158524a4dd26362d0099e6903d5718217308ad0cba7ce6bd5334e"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyStateCodec.java",
+      "sha256": "90c94de605be3c8db4ef1628541369ec876ad413ec3f440d390be87e2200fe55",
+      "normalized_sha256": "90c94de605be3c8db4ef1628541369ec876ad413ec3f440d390be87e2200fe55"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyTermExecutor.java",
+      "sha256": "7e6007c03f33b6b28beda6f8e1f487ec2e0c638ea0e0d613f6f4ad290d25a215",
+      "normalized_sha256": "7e6007c03f33b6b28beda6f8e1f487ec2e0c638ea0e0d613f6f4ad290d25a215"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/StrongholdRegistry.java",
+      "sha256": "88c0f11222dcf47d1a843fc9b4d7085d0a288f52141e137d631b8afcaa3e507a",
+      "normalized_sha256": "88c0f11222dcf47d1a843fc9b4d7085d0a288f52141e137d631b8afcaa3e507a"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/SupplyLineRegistry.java",
+      "sha256": "cfa5fdc3a3f645d6ca5f4c90c6b02ad4459cd1992adf5edee1a800ea4031f2f2",
+      "normalized_sha256": "cfa5fdc3a3f645d6ca5f4c90c6b02ad4459cd1992adf5edee1a800ea4031f2f2"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/War.java",
+      "sha256": "7b86234af58a27d71071da8435e011a74cfb6578b3c2ccbc4fd7b0da1fbb5664",
+      "normalized_sha256": "7b86234af58a27d71071da8435e011a74cfb6578b3c2ccbc4fd7b0da1fbb5664"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarAuthority.java",
+      "sha256": "f0ee62fa4454cd9afb25a75013beb1e8938764dd86dd6ef75f3d935079535037",
+      "normalized_sha256": "f0ee62fa4454cd9afb25a75013beb1e8938764dd86dd6ef75f3d935079535037"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarDatabaseStore.java",
+      "sha256": "92ae82d36f8591faa8ed62c2466f4cf00c246c5c5e6a1135b76eec135a9bd361",
+      "normalized_sha256": "92ae82d36f8591faa8ed62c2466f4cf00c246c5c5e6a1135b76eec135a9bd361"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarDisbandAdmission.java",
+      "sha256": "eae3bbf0d540ae4cb52cefb303061c67c83775494ed7467a72d2bb9899c7deb7",
+      "normalized_sha256": "eae3bbf0d540ae4cb52cefb303061c67c83775494ed7467a72d2bb9899c7deb7"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarFileStore.java",
+      "sha256": "994c9b7e38201ee4084bf00b2e15fbffefa8a19abce99bc34270347d58bfff29",
+      "normalized_sha256": "994c9b7e38201ee4084bf00b2e15fbffefa8a19abce99bc34270347d58bfff29"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarJsonCodec.java",
+      "sha256": "3e1f7c8f904f431895bf09ad7e5239cd18117bb1111fd7cfda78502411ae63d1",
+      "normalized_sha256": "3e1f7c8f904f431895bf09ad7e5239cd18117bb1111fd7cfda78502411ae63d1"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarPersistenceCoordinator.java",
+      "sha256": "33402e408c4beb543aa5637c9d9feabf060501790f25d570c97f9fbcde457a8a",
+      "normalized_sha256": "33402e408c4beb543aa5637c9d9feabf060501790f25d570c97f9fbcde457a8a"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarRegistry.java",
+      "sha256": "9c543915814de92be30276a342f72875a73066bed03b416fa08c3aa9d67b9063",
+      "normalized_sha256": "9c543915814de92be30276a342f72875a73066bed03b416fa08c3aa9d67b9063"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarServiceImpl.java",
+      "sha256": "e1c4aaa33a8681ec70ae09debcf40e22b73efa005ab6e637f20d856046dbd69b",
+      "normalized_sha256": "e1c4aaa33a8681ec70ae09debcf40e22b73efa005ab6e637f20d856046dbd69b"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarStateStorage.java",
+      "sha256": "e6087a88e7f48eabc743066b6d0532265233de7ef43e292222aef9f313d66c16",
+      "normalized_sha256": "e6087a88e7f48eabc743066b6d0532265233de7ef43e292222aef9f313d66c16"
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarStorageBackend.java",
+      "sha256": "cf5b2b68108aaacd523a2f1036c00f6747b04ac63bbc2efac82b010786a1792a",
+      "normalized_sha256": "cf5b2b68108aaacd523a2f1036c00f6747b04ac63bbc2efac82b010786a1792a"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/core/persistence/FileAuthorityProcessProbe.java",
+      "sha256": "ccd958a1a5f2ac8e555bcb9c891a0f86eac2e4b7793ea2423027c85345a1cfe8",
+      "normalized_sha256": "ccd958a1a5f2ac8e555bcb9c891a0f86eac2e4b7793ea2423027c85345a1cfe8"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/core/persistence/FileAuthorityProcessTest.java",
+      "sha256": "50cb162b5d80541aa9010563f1ea4b6340ab327a56e6c37ad8f79dd8ecc92139",
+      "normalized_sha256": "50cb162b5d80541aa9010563f1ea4b6340ab327a56e6c37ad8f79dd8ecc92139"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/alliance/AllianceAuthorizationBoundaryTest.java",
+      "sha256": "31280a51f5e6bbaa1fab0eba541b01db6ba18c445c630e17dfced590fba0f7e9",
+      "normalized_sha256": "31280a51f5e6bbaa1fab0eba541b01db6ba18c445c630e17dfced590fba0f7e9"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/alliance/FederationAuthorityTest.java",
+      "sha256": "b0f775266f664bfe13d58fa9a8c1be98035f382bf5b9275d1797b4b0d3d7f470",
+      "normalized_sha256": "b0f775266f664bfe13d58fa9a8c1be98035f382bf5b9275d1797b4b0d3d7f470"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/alliance/FederationLifecycleTest.java",
+      "sha256": "125ea930bd33d0b7c5758972cbb1da1a7c17396356498a24a5abd0311ebf4dd6",
+      "normalized_sha256": "125ea930bd33d0b7c5758972cbb1da1a7c17396356498a24a5abd0311ebf4dd6"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/alliance/FederationMigrationTest.java",
+      "sha256": "169766203c3b26b91d23504f025f48d3997f2bde99cef01a5b461eb7ce2e9e08",
+      "normalized_sha256": "169766203c3b26b91d23504f025f48d3997f2bde99cef01a5b461eb7ce2e9e08"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/alliance/FederationSqlCommitTest.java",
+      "sha256": "e229eb2e42de8f84c60a350ac6c85ad54160a66736a7d32066b37eda4348f65e",
+      "normalized_sha256": "e229eb2e42de8f84c60a350ac6c85ad54160a66736a7d32066b37eda4348f65e"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/alliance/FederationTestFixture.java",
+      "sha256": "f0b6a6f2783fdecb5c1689ee52520675432302050e8da169df847f14e5744ce3",
+      "normalized_sha256": "f0b6a6f2783fdecb5c1689ee52520675432302050e8da169df847f14e5744ce3"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/nation/NationDisbandAdminTest.java",
+      "sha256": "cb25a0f6bf47a59196f313b0ec96fdc25317bb19c972a847f0ffe5cb00d4a9bf",
+      "normalized_sha256": "cb25a0f6bf47a59196f313b0ec96fdc25317bb19c972a847f0ffe5cb00d4a9bf"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/nation/NationDisbandAdmissionTest.java",
+      "sha256": "1067ebe133d29257ffab8fb397223cd5a9ed17e6b3610add0745af47eba6dbe4",
+      "normalized_sha256": "1067ebe133d29257ffab8fb397223cd5a9ed17e6b3610add0745af47eba6dbe4"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/nation/NationDisbandCoordinatorTest.java",
+      "sha256": "7c83215f8e1a6ba84fb88e32c6450d2ca37bce23e0505860c0c34f428899b538",
+      "normalized_sha256": "7c83215f8e1a6ba84fb88e32c6450d2ca37bce23e0505860c0c34f428899b538"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/nation/NationDisbandFederationTest.java",
+      "sha256": "d556e0010b3154bcd488fe12485c68a7f42c3461c1ae57b3b2be629494d15f6e",
+      "normalized_sha256": "d556e0010b3154bcd488fe12485c68a7f42c3461c1ae57b3b2be629494d15f6e"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/nation/NationDisbandJointTest.java",
+      "sha256": "7d91f198c7db99d4e86af862a0982695ad3cf889508df756035493dff9bb35be",
+      "normalized_sha256": "7d91f198c7db99d4e86af862a0982695ad3cf889508df756035493dff9bb35be"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/nation/NationDisbandTestAuthorities.java",
+      "sha256": "fc18c80c2a00a7023359bf8aad66854630fe5c7943501e1d03bf46c8a444c070",
+      "normalized_sha256": "fc18c80c2a00a7023359bf8aad66854630fe5c7943501e1d03bf46c8a444c070"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/nation/NationDisbandTransactionTest.java",
+      "sha256": "4053f2480627720663f64c5ba9b45765262c461caae01751590676598205facd",
+      "normalized_sha256": "4053f2480627720663f64c5ba9b45765262c461caae01751590676598205facd"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/nation/NationDisbandWarRetirementTest.java",
+      "sha256": "21f7281206618b86d5c8810d13c6e5c519bbd8daf773fa570bf60ef340679474",
+      "normalized_sha256": "21f7281206618b86d5c8810d13c6e5c519bbd8daf773fa570bf60ef340679474"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest.java",
+      "sha256": "6250b08db1f89c2ad483f19dcc89cc5849d1b33522a70413d1345c557fbfa89c",
+      "normalized_sha256": "6250b08db1f89c2ad483f19dcc89cc5849d1b33522a70413d1345c557fbfa89c"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/nation/command/NationDisbandRecoveryCommandTest.java",
+      "sha256": "5b24ac9cf598f4da5ce7019f75a62d0b9f035262475cfa3c4521855f3380a101",
+      "normalized_sha256": "5b24ac9cf598f4da5ce7019f75a62d0b9f035262475cfa3c4521855f3380a101"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/treasury/TreasuryModuleRefreshLifecycleTest.java",
+      "sha256": "de57cb43156bc46aef6f5d07a8e3a1fc52c25f461afae12b108fbe90e451483d",
+      "normalized_sha256": "de57cb43156bc46aef6f5d07a8e3a1fc52c25f461afae12b108fbe90e451483d"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/WarModuleAuthorityTest.java",
+      "sha256": "c787c8a43f90e6ed2c19c6a0e2bbf45e91de3e47e8ab5cb769aa8404c555b37d",
+      "normalized_sha256": "c787c8a43f90e6ed2c19c6a0e2bbf45e91de3e47e8ab5cb769aa8404c555b37d"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/reparations/ReparationsAuthorityIntegrationTest.java",
+      "sha256": "0e0bbdf1a86dfc296bf41bb83678e53406a7a07e2666434f7c3688eaa5c7956b",
+      "normalized_sha256": "0e0bbdf1a86dfc296bf41bb83678e53406a7a07e2666434f7c3688eaa5c7956b"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/reparations/ReparationsCompensationConcurrencyTest.java",
+      "sha256": "f046b70b7d1914d1915563dda835adfc16ed1b02fee2166404cbc5fd29915c88",
+      "normalized_sha256": "f046b70b7d1914d1915563dda835adfc16ed1b02fee2166404cbc5fd29915c88"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/reparations/ReparationsLifecycleTest.java",
+      "sha256": "a055fab19c2325239abb4b39ed1bf23b562a5009a5947046371d34deca803f13",
+      "normalized_sha256": "a055fab19c2325239abb4b39ed1bf23b562a5009a5947046371d34deca803f13"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/reparations/ReparationsModuleAuthorityTest.java",
+      "sha256": "fb5fb3afca1c445217ee9c60c1466c3bf0270102781efded6537e151bbda9a6f",
+      "normalized_sha256": "fb5fb3afca1c445217ee9c60c1466c3bf0270102781efded6537e151bbda9a6f"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/reparations/ReparationsSettlementRecoveryTest.java",
+      "sha256": "ead1be1c0745048f5b434e9a01fd7b432c4001fd2cc00a3069071a7e9381f85e",
+      "normalized_sha256": "ead1be1c0745048f5b434e9a01fd7b432c4001fd2cc00a3069071a7e9381f85e"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/BattlefieldPersistenceIntegrationTest.java",
+      "sha256": "c0c41a3a8b0dd5816718a310940df369f8ca2d8d788cee4e2035707d9a630fda",
+      "normalized_sha256": "c0c41a3a8b0dd5816718a310940df369f8ca2d8d788cee4e2035707d9a630fda"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/PeaceTreatyPersistenceContractTest.java",
+      "sha256": "8fd757622eb57b01f0bf2b890f494d52dfc1754c99a5947c3c705b5ceea5a4b9",
+      "normalized_sha256": "8fd757622eb57b01f0bf2b890f494d52dfc1754c99a5947c3c705b5ceea5a4b9"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/PeaceTreatyRetirementIntegrationTest.java",
+      "sha256": "668be5a918e084f465c510448e08037e16040645288a87bbc6df8b4f1d56aa9b",
+      "normalized_sha256": "668be5a918e084f465c510448e08037e16040645288a87bbc6df8b4f1d56aa9b"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/PeaceTreatyServiceContractTest.java",
+      "sha256": "168565089b757de8852b230f5c281fc6c3c3f042144c9522568ee194392d1fa6",
+      "normalized_sha256": "168565089b757de8852b230f5c281fc6c3c3f042144c9522568ee194392d1fa6"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarAuthorizationBoundaryTest.java",
+      "sha256": "7261b06ffc1f41b11627a603c132cc2a766bbd877c8b6ea5405e33fb46deaf1d",
+      "normalized_sha256": "7261b06ffc1f41b11627a603c132cc2a766bbd877c8b6ea5405e33fb46deaf1d"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarConcurrentSnapshotTest.java",
+      "sha256": "86f7ffeea8d3ada269657fbae42736fd658b205994653200ae8245e6e37d9bf7",
+      "normalized_sha256": "86f7ffeea8d3ada269657fbae42736fd658b205994653200ae8245e6e37d9bf7"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarDatabaseBatchFailureTest.java",
+      "sha256": "f200327bad2c89534154167bd7ea513723f1a9b7b5f2842d16c5073ea0730b49",
+      "normalized_sha256": "f200327bad2c89534154167bd7ea513723f1a9b7b5f2842d16c5073ea0730b49"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarDisbandAdmissionTest.java",
+      "sha256": "5329ad81f6f9e926d52a2e95f3c5f641654f5e2845348d44556d6a90d8fba443",
+      "normalized_sha256": "5329ad81f6f9e926d52a2e95f3c5f641654f5e2845348d44556d6a90d8fba443"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarFileSaveIntegrationTest.java",
+      "sha256": "0d7950b4360a85074c4747b246f16b9a8379ecd153fe385f32947189e6625df4",
+      "normalized_sha256": "0d7950b4360a85074c4747b246f16b9a8379ecd153fe385f32947189e6625df4"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarOutcomeRestartIntegrationTest.java",
+      "sha256": "c60177541fd1f7dc7e1b9278ecd716a89f1c10096485b5302f1a90a7661405f5",
+      "normalized_sha256": "c60177541fd1f7dc7e1b9278ecd716a89f1c10096485b5302f1a90a7661405f5"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarPersistenceAsyncTest.java",
+      "sha256": "9f2fda06753fdc385d96e27f650385bbdede273b03d0e2c3f56876a1c5c3b7a7",
+      "normalized_sha256": "9f2fda06753fdc385d96e27f650385bbdede273b03d0e2c3f56876a1c5c3b7a7"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarPersistenceCoordinatorOrderingTest.java",
+      "sha256": "fa8aa3851b6d607449b64083693fb31a423e621036f2b2d985f4d7b4c1ed6318",
+      "normalized_sha256": "fa8aa3851b6d607449b64083693fb31a423e621036f2b2d985f4d7b4c1ed6318"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarPersistenceLockOrderTest.java",
+      "sha256": "972b772fa5a13e3ecbc6370e069047f4f847ae3d8ce3e5498cbfd5787200c592",
+      "normalized_sha256": "972b772fa5a13e3ecbc6370e069047f4f847ae3d8ce3e5498cbfd5787200c592"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarReparationTest.java",
+      "sha256": "eb9bacff8b6014c10f13387b903fa1968b98da1cefe94482b25a21baa2a2a2f0",
+      "normalized_sha256": "eb9bacff8b6014c10f13387b903fa1968b98da1cefe94482b25a21baa2a2a2f0"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarRetirementTest.java",
+      "sha256": "33476f82058b719f219ca805707faae48c2455a21df08e0839fbba6d4c476de1",
+      "normalized_sha256": "33476f82058b719f219ca805707faae48c2455a21df08e0839fbba6d4c476de1"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarScoreEventRecoveryIntegrationTest.java",
+      "sha256": "b29364bfeb0920e7c0189074512efa3a9a9e248c1d9b592919a83f9062a81e73",
+      "normalized_sha256": "b29364bfeb0920e7c0189074512efa3a9a9e248c1d9b592919a83f9062a81e73"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarServiceImplDirtyDataTest.java",
+      "sha256": "75e41043b874bf274f07090f2207b2cdb2a07eca4be68da989f8219b4cb5a83f",
+      "normalized_sha256": "75e41043b874bf274f07090f2207b2cdb2a07eca4be68da989f8219b4cb5a83f"
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarStorageDeleteFailureTest.java",
+      "sha256": "d9e222311451e9339ac0475ca278af9c19024e51fad745c0e3613b4a74b1370b",
+      "normalized_sha256": "d9e222311451e9339ac0475ca278af9c19024e51fad745c0e3613b4a74b1370b"
+    }
+  ],
+  "current_change_files": [
+    "src/main/java/dev/starcore/starcore/core/persistence/AtomicFilePersistence.java",
+    "src/main/java/dev/starcore/starcore/core/persistence/DurablePropertiesStore.java",
+    "src/main/java/dev/starcore/starcore/core/persistence/FileAuthorityLock.java",
+    "src/main/java/dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.java",
+    "src/main/java/dev/starcore/starcore/module/city/FileCityLedgerStorage.java",
+    "src/main/java/dev/starcore/starcore/module/city/JsonCityStorage.java",
+    "src/main/java/dev/starcore/starcore/module/diplomacy/PersistenceDiplomacyStateStorage.java",
+    "src/main/java/dev/starcore/starcore/module/diplomacy/RelationshipAuthorityStore.java",
+    "src/main/java/dev/starcore/starcore/module/nation/PersistenceNationStateStorage.java",
+    "src/main/java/dev/starcore/starcore/module/treasury/PersistenceTreasuryStateStorage.java",
+    "src/test/java/dev/starcore/starcore/core/persistence/FileAuthorityProcessProbe.java",
+    "src/test/java/dev/starcore/starcore/core/persistence/FileAuthorityProcessTest.java",
+    "src/test/java/dev/starcore/starcore/module/treasury/TreasuryModuleRefreshLifecycleTest.java"
+  ],
+  "fresh_compile": {
+    "main": {
+      "output": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-cumulative-main-fresh-01",
+      "sources": 66,
+      "class_count": 135,
+      "classes": [
+        {
+          "path": "dev/starcore/starcore/StarCorePlugin$1.class",
+          "sha256": "1a589c37e729f4f309023f849ccfb9f7287100c6d89a191afab1210e60afca42"
+        },
+        {
+          "path": "dev/starcore/starcore/StarCorePlugin$2.class",
+          "sha256": "8594931fc3f6fd49fce15f5a36a79a027e71316c79851897a13acb8a3ea50444"
+        },
+        {
+          "path": "dev/starcore/starcore/StarCorePlugin$StarcoreSmokeDepositFailure.class",
+          "sha256": "b797440b627e40c84d1ccedd51554ece934087852c982baf7e30271e497c9ef0"
+        },
+        {
+          "path": "dev/starcore/starcore/StarCorePlugin.class",
+          "sha256": "74c9d1ffe39752e6a70ccacabbe3fd498a93d4ba431075b4cc56502a20ba22f5"
+        },
+        {
+          "path": "dev/starcore/starcore/api/StarCoreApi.class",
+          "sha256": "d9b299ccf0051cbdca41fff42f69c2d118d06bc9487a22281f86a40063974781"
+        },
+        {
+          "path": "dev/starcore/starcore/war/BattlefieldRegistry.class",
+          "sha256": "13b6478fee289b657dac234c91462d6473737e9237e315324acfab8bf1bc86dc"
+        },
+        {
+          "path": "dev/starcore/starcore/war/BattlefieldService$BattlefieldSnapshot.class",
+          "sha256": "63067fc4d9af90afd4a839e39b6efcdd627a1c63591a21739033fa3229adb198"
+        },
+        {
+          "path": "dev/starcore/starcore/war/BattlefieldService$BattlefieldState.class",
+          "sha256": "5a80fa4b7bcf4bc6e3bb6bf3e47734a6801ffcce7a292b4970338dd3b824f6ce"
+        },
+        {
+          "path": "dev/starcore/starcore/war/BattlefieldService$LocationSnapshot.class",
+          "sha256": "8156bdf11089ce14a6a3a4766f9dfd3313f2a9ca56f9122bdb073ff9d7dc0835"
+        },
+        {
+          "path": "dev/starcore/starcore/war/BattlefieldService$StrongholdSnapshot.class",
+          "sha256": "6974743ade6fc5675d07c277084143d943de9b2ee02717d76f82f5e20caf2336"
+        },
+        {
+          "path": "dev/starcore/starcore/war/BattlefieldService$SupplyLineSnapshot.class",
+          "sha256": "ea34e3d1052642a788b954729ae85de50466261044d96c226a67f7007712f7a0"
+        },
+        {
+          "path": "dev/starcore/starcore/war/BattlefieldService$SupplyLineState.class",
+          "sha256": "587254f0af6f4fa73fb07baaf73bc8403e7c35aa1f3be9ec598f4bc489d1a4a3"
+        },
+        {
+          "path": "dev/starcore/starcore/war/BattlefieldService$WarBattlefieldState.class",
+          "sha256": "1e509dd3598296c57f1495110fc93568abaa4c349e3bef53fd49e83455ca5a8c"
+        },
+        {
+          "path": "dev/starcore/starcore/war/BattlefieldService.class",
+          "sha256": "f04cc5644a31d33220a5f5515eed1349dd7a00ef04ce536f9e58354e6e07bf00"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyExecution$Status.class",
+          "sha256": "32c972d4573791e3f5f2b236b4efe022261472368eb1bb9388a0c109e1dc0c64"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyExecution$Step.class",
+          "sha256": "92357184d57af5dd4f0b4a94e1f274b21ee6ec44fe42cfa15ac80c4b1adf8b03"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyExecution$StepStatus.class",
+          "sha256": "ecdafe3330267d62a6389a96e636c1e4492ee074df5bc30d3db8137b9e00cd71"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyExecution.class",
+          "sha256": "f2d09c1ad52c34bff3f5a6f891182670598dd5bff5767c99f665e0a3dfe8e917"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyPayment.class",
+          "sha256": "1ac2f33d1e0d01b4a4957b832661a142ba0d2085a8745c40b1c81f03cd3d6c18"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyPersistence.class",
+          "sha256": "b5d8dcdd850368692bd57f7d98c74a0506b34d6ae6143a8f3741baf6fb07d050"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyService$MilitaryRestriction.class",
+          "sha256": "d3775ec7101ff2587adf7989a8eb02aa3ab767c677c48cad4fe1cb4412e8e9ff"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyService$PeaceTreatyConfig.class",
+          "sha256": "bf4c9576a321af24c8e9f17399d028712fa13e2bd272c792ce95f809c3f72135"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyService$PoliticalRestriction.class",
+          "sha256": "b787cbddd93492e1d8607ad41bbc4d0452fba7b1789da88e91cd6656270d566f"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyService$ResourceTributeRecord.class",
+          "sha256": "3702726454274b8ee03dd11f39786dda3850ce782695d38639b9541fe7bd8814"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyService.class",
+          "sha256": "da2324230a8a9ec6c6ed950af659fe96c73cb002f585b21594702f57fb154c23"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatySettlementService.class",
+          "sha256": "7b48f3df6a518bc025c91903c9e33908bf0cc41c7162e92ea72224f5f433d6d1"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$Decoded.class",
+          "sha256": "c643a35a7d5deb72e3fe9b61cf614547fa80a6a68d9c8104761e86540b906da9"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$ExecutionDto.class",
+          "sha256": "f2cef5430566f0b48ae0a264bb38a598749b67f6277302148f4196f2fcaca515"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$PaymentDto.class",
+          "sha256": "f94ef69b86d4a776d7decb85c8f83962a8785f05e6a4ea755d4fbc549909d220"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$SnapshotDto.class",
+          "sha256": "8ec7e3febfffbda18cee12935bfd4d64d531373f58f482ac8cdb2ca752dbfbdc"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$StepDto.class",
+          "sha256": "0eab99c07fdc32563fdeffadfd2d0872a77634eb0778f49752d81d870cdc8990"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$TermDto.class",
+          "sha256": "bdf31298e6e5ad4026f7440f735661009294970994b50e1c62da4f0a15a8d803"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$TreatyDto.class",
+          "sha256": "d033b8ed8a6dbff350d12a8f84002b178004d17c17e81aef2da72cf7ad7dc562"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec.class",
+          "sha256": "7d01a05e9a59d34c828305d94655aaf34a74d6bc4f394000eb89d5f7fe67d7a7"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyTermExecutor.class",
+          "sha256": "252ce5428da6809b993c3d3d850c7037bba5c5ea82845b089c27f6f0a8753f47"
+        },
+        {
+          "path": "dev/starcore/starcore/war/StrongholdRegistry.class",
+          "sha256": "9960487ac959c2f1cd095851ef6c1d45d5a69fb459796d642e8a509ca3d4d5b8"
+        },
+        {
+          "path": "dev/starcore/starcore/war/SupplyLineRegistry.class",
+          "sha256": "89c1176b6392b1da25e74e67cc5b012ee503c5b7bca76bae6556216b506cd1bc"
+        },
+        {
+          "path": "dev/starcore/starcore/war/War$Declarer.class",
+          "sha256": "ba6e5baca958e8e10f0c564dbe0723082aa85ded5c20185c7cc9d10300c1927e"
+        },
+        {
+          "path": "dev/starcore/starcore/war/War$WarWinner.class",
+          "sha256": "7d38e4305bdad4143c941a67619afb0f4ec608c74b24101cbd41a7764f145efc"
+        },
+        {
+          "path": "dev/starcore/starcore/war/War.class",
+          "sha256": "7f481c7712c1792891cea22b5047f0471efcd2e3c15570d223f57d0aee63b7c6"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarAuthority.class",
+          "sha256": "8e2d37d6c2dfba3f89d76c954541150d1c9fb7b949929ab863e6e2234cacc3e8"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarDatabaseStore.class",
+          "sha256": "1921533cae7df1d8dee95eb04b24545b8bd8cce3a1ac303e491a5212d1a84e0b"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarDisbandAdmission.class",
+          "sha256": "a02fb4262b2235b4acf8b0b7741b611fcf24b4baacfc50d64cc2f9546398a083"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarFileStore.class",
+          "sha256": "12bfe016dfffb097fe15a74079d6ae7b524ed08a10c7fd2539a651da4fa6a28b"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarJsonCodec.class",
+          "sha256": "1850a39e7f0e35a0d051d42b83bac546dcfbb3932be1da79a50074d9f0f49636"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarPersistenceCoordinator.class",
+          "sha256": "093c20634f07679b4ee805fbdbafb04ecc7c033af7bd9dfee1c2f63aa40e790e"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarRegistry.class",
+          "sha256": "0e1446916f6e96150be9a526e9c2803a16f50108b3417fe588fe6e94ff481558"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarServiceImpl$WarConfig.class",
+          "sha256": "0021536543d8ef8a327857f86b12d19bf7384be0cffe21acb75acd7748911e20"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarServiceImpl.class",
+          "sha256": "7f2ce051b76bf2bb50099a2377172488f858eaef3c785d1f02a919a1e335d317"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarStateStorage$WarRecord.class",
+          "sha256": "c0a9ea246530331251ebc970a6adb6eb863d6ba93aca7360d3892166dcaa5ca1"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarStateStorage.class",
+          "sha256": "17975b0d2f8a6354fc90df708b7d521dbd1a968307ce3caa61d7ea544687b64b"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarStorageBackend.class",
+          "sha256": "8c9d6afc1a7f8d6c1c8d293b125f6b883d9d5555245af1e46d0a860f664dccbe"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/AtomicFilePersistence$PathValidator.class",
+          "sha256": "9277823ca20f7041883e3697d2df81976b48d667952d1579af673db6fc4ec947"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/AtomicFilePersistence$PathWriter.class",
+          "sha256": "c6352c09ba5bce7a2e99dff0d0b7be47c041e44c2fae8c93de3a6ea3f6d20f06"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/AtomicFilePersistence$RecoverySource.class",
+          "sha256": "388e126dea86ed0b066f13582dafc1b5f3949e33c5485c5bfe4cceaee63c80a4"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/AtomicFilePersistence.class",
+          "sha256": "0d67324c645963cfe1244bb8562e101777bfd83bf7251be2ead2907cd2edafa5"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/DurablePropertiesStore$1.class",
+          "sha256": "c52e914b8f4391029914fba7ea2d11707ce85d72bfe1fa90ab16cafb56ee7c02"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/DurablePropertiesStore.class",
+          "sha256": "f6825677ea3e072856920b93cba74a7401941166a13e4142b01c01374c2a3c2a"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/FileAuthorityLock$Held.class",
+          "sha256": "f987b9093cf667af8c1f467c5773c00c7ee224de99d578966fad017a9f206e30"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/FileAuthorityLock.class",
+          "sha256": "99e53721fdf4419d5d76d2bf12e9b7aa74d98abaed6baa4aeb6fc33a39376dcf"
+        },
+        {
+          "path": "dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage$1.class",
+          "sha256": "2e8babd0f94313c878ce9b88dc0c4a28d3897d785e4a92e7c972682f0b7ec61b"
+        },
+        {
+          "path": "dev/starcore/starcore/foundation/territory/FileTerritoryLedgerStorage.class",
+          "sha256": "590a518a918f1cfa093c4f743506b7911f8b0a5d001278dd80be8a5de5510b14"
+        },
+        {
+          "path": "dev/starcore/starcore/foundation/economy/insurance/EconomyInsuranceService.class",
+          "sha256": "2fff6e1786b7f4945fddbf3c1a8cf38cd0c1eede55c86e7fb9324c712c4b9a7f"
+        },
+        {
+          "path": "dev/starcore/starcore/foundation/economy/transaction/EvidenceReplayService.class",
+          "sha256": "8bea4711338afba8ded38b929bedf30c3f8913e4767939dd42ae8ac10a32f626"
+        },
+        {
+          "path": "dev/starcore/starcore/foundation/economy/transaction/IncidentBundleService$NamedProvider.class",
+          "sha256": "6109530ad84acf6af97c1a5624f2495b130ce091d28ff1e969273f8d1239341e"
+        },
+        {
+          "path": "dev/starcore/starcore/foundation/economy/transaction/IncidentBundleService.class",
+          "sha256": "68af77658538e87df192e0c26252f13c55759b54082972433514ce31913c2977"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceModule.class",
+          "sha256": "f7e3acad76afc2081ad197c46bf08232ff54aafa1a9c729689ba361a970c75ed"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceCreatedEvent.class",
+          "sha256": "e658ff4905f92635987159ed144ea71c68124557b343a7c2df4efe0e5ce0896a"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceDisbandedEvent.class",
+          "sha256": "739c6ad1abc552e11c298ba1265124c30f6999a55846d2079ac67110f4dd7b40"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceEmblemChangedEvent.class",
+          "sha256": "9e25237037ef35a246db925d419deaa0e1fc7745846bc34370640340fe0ffe41"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceInviteAcceptedEvent.class",
+          "sha256": "2042cdfc04102290a66ada51648913c59e30444f945224a88d49df50d3d7971f"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceInviteRejectedEvent.class",
+          "sha256": "ffc2b8aa87fe9ba843e2f7036c57081b2b0d324ec0ef64430ec076dcdc1a4419"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceInviteSentEvent.class",
+          "sha256": "9e179df042521dc9e4aa83b8afea3e150a4be991ce50c26f01b547536756c512"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceLeadershipChangedEvent.class",
+          "sha256": "719311cd2e6640d50e80aa2d4fa557c0c446753c7899614afb59f9c5dad68091"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceMemberJoinedEvent.class",
+          "sha256": "52e6fffcbd528ca3b01eda484ef1d923fe09272d2464e7b7f52a9ebc8cf8a217"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceMemberLeftEvent.class",
+          "sha256": "de069d6ce4fe84c9f17cb317d2172be9ec73ecfdda30d62f571c9ac7c4971971"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceMemberRemovedEvent.class",
+          "sha256": "d7bd08d2693d11889bc27cb9a84c64b23fa3301975e85ef8e09122ea5321fff2"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AlliancePairKey.class",
+          "sha256": "c62b1d4bbe7ea5fee10dc4e7584e3b0937ae1df798cc0219583ba8b86129cde0"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceRelationChangedEvent.class",
+          "sha256": "f3973fa67ca430dd56a533b69751bce068491b9aaa871a4bb8a0ada5ec05abf8"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl$AllianceRenamedEvent.class",
+          "sha256": "3636ca137828fb4be6a4b9be6e00fb4c60abbbb969a36db8500d4c20854a5855"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceServiceImpl.class",
+          "sha256": "d702c8c4af3e5c69eba30e492ddc7395a1ce7d081584db3020f5818d03858d6b"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceStorage$1.class",
+          "sha256": "986b090d42413ee1e7597d5afc7f3301a45fdf963d7d19ed0cbec7aeb61339bd"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceStorage.class",
+          "sha256": "518b7b91041c12101c84b8ccb854c9fe1f43891e0c4f6698d04ecf1500f6a3e1"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/FederationCodec.class",
+          "sha256": "3d60f04466b3bbc34261e1274f9d347c8e7b03adda54df0b16e2f53996cb5f53"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/FederationRetirementService$Receipt.class",
+          "sha256": "d231b9e7b39a02e1ce4463a5f73f79374f28114b5f18434aca5e756e9da914f0"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/FederationRetirementService.class",
+          "sha256": "46da7f7b4e90d21370b95dd46112264ab2fb508545baf411c91522f14654f07a"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/FederationState.class",
+          "sha256": "26768a1f4f5471d55f984fded3e1867926c37d983adabcb10845415b7f110cca"
+        },
+        {
+          "path": "dev/starcore/starcore/module/city/FileCityLedgerStorage.class",
+          "sha256": "55e45a38de5917d7c90fb3014957e69ae8f696d877f91aa75088ff67ca0ae072"
+        },
+        {
+          "path": "dev/starcore/starcore/module/city/JsonCityStorage.class",
+          "sha256": "77bcb310703ca6f23b8bb079712ecd903c604218efefef05d6f21cc394aee6c4"
+        },
+        {
+          "path": "dev/starcore/starcore/module/diplomacy/PersistenceDiplomacyStateStorage$1.class",
+          "sha256": "f0c580b835d738003f1367d4e2e2befe301b6ace6309a0eda4a16fa47676ddf8"
+        },
+        {
+          "path": "dev/starcore/starcore/module/diplomacy/PersistenceDiplomacyStateStorage.class",
+          "sha256": "45953deabe1cf2b638f3b6aaafdd7c92e604572a6d900667cae24fd5d7fdac5b"
+        },
+        {
+          "path": "dev/starcore/starcore/module/diplomacy/RelationshipAuthorityStore$1.class",
+          "sha256": "16dcd6f2d390e5da5f832f35096c6322a5cba1b18c34aa87401e0ecfa701f046"
+        },
+        {
+          "path": "dev/starcore/starcore/module/diplomacy/RelationshipAuthorityStore.class",
+          "sha256": "40936b58ca64c8160fee50a89e10ec4291c61d7f2c0ae1a2d18284bd58402c83"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationClaimCoordinator.class",
+          "sha256": "d0b20ac0440f4a7e52ad3b1c2153effce3102d1825c8ace4c7665e899432c1e8"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationCreationCoordinator.class",
+          "sha256": "a40c7d697233587b136ac397b76a4cc08ed1dc5034c7a5ccd49945e125652265"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandCoordinator.class",
+          "sha256": "b2a46b045594079882089ab791929c5a42999b61efeb1f25ba20e74d13d1ede5"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandOperation$State.class",
+          "sha256": "e3dbc74eac2bb0c064c95ccf6e57bf5d1ac2733cf632051e031490ca9a47d704"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandOperation.class",
+          "sha256": "4a9c5890f086c049ed16c85d7acb1f2c0ae760740f30e3ff8e00b26751f8ae55"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandOperationCodec.class",
+          "sha256": "e939081f0c0c21f58832fe4234641d3231ca509f8a919aa05f9397cd2cb8ae43"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandRecovery.class",
+          "sha256": "2e84a98b870523732b2d1c5e89018cbf5977cc3fa555d5d05a15fca24c7559bc"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandService$Recovery.class",
+          "sha256": "fe94b9493d86621b80ee8db22b2c1b0daad595a3822244e6fa256d170bfdbc32"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandService$RecoveryState.class",
+          "sha256": "6aa170a134e19bbd9346721230bb8c2ffd20b50f43380f325010481d6daa6654"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandService.class",
+          "sha256": "68071aafacdeba193dcd2370ae1c0b8eda2e46bfc0358e9dc4589d3ad47e9494"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandTransaction$RelationEndpoints.class",
+          "sha256": "ce2114a871aa0af2cd54a898e6d0c1eef30d71cf7a8fe3832a98a8809c24524b"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandTransaction.class",
+          "sha256": "61386439a91dbda19f1ea63f52a9478e5789d03927237849c101bdbd28f2e7d1"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationModule.class",
+          "sha256": "16e918c5a7ff2098a4fd0bfaafcce279510cfcb18aadbb5ec494b8840b2ceefe"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationSplitCoordinator$1.class",
+          "sha256": "ade798c18769f96fe8c6f46ec30883d0aedf46ae333eab03c7979b7938a9277c"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationSplitCoordinator.class",
+          "sha256": "35cce09de51327c2570e3838a7ac547650eb15a5ba7583b84b6527690b260492"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationStateCodec$Snapshot.class",
+          "sha256": "32dd4c9b0d571858d4e1d705fea0e343d1369a913807b0bbc3fc34b349ee1caa"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationStateCodec.class",
+          "sha256": "027c83daa36dc30d08ee05f566c056643557aeb32717f55aa2c918dbb281b826"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/PersistenceNationDisbandJournal.class",
+          "sha256": "8e652861f1ee4e0aa748dc1e6300d8325dba54ec3262b0a08eb662e12c99ab21"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/PersistenceNationStateStorage$1.class",
+          "sha256": "5e4d8ad952afd33d4ced7bb0ecc2904abf46d24df51e8e16ebc4dde1f81b80c4"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/PersistenceNationStateStorage.class",
+          "sha256": "3e9fdbceea44e9db2c0acd01c743d9e1bf6827c23fd8ae03198151898baa7027"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/SqlNationStateStorage$TestDatabaseServiceWrapper.class",
+          "sha256": "ed37e5b378acbdf68c35c88a0c3b24b76a1f5e9e8edd5b112b5c047b8582c58d"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/SqlNationStateStorage$TestPersistenceServiceWrapper.class",
+          "sha256": "3151ee1945f71c02f506e4fbd83a01d17b11456298419dc66826421a92bd49b0"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/SqlNationStateStorage.class",
+          "sha256": "b9d0de7f358fafbea0f9bac7dd3fafddc072e7aab276715f856e77163659dbd0"
+        },
+        {
+          "path": "dev/starcore/starcore/module/treasury/PersistenceTreasuryStateStorage$1.class",
+          "sha256": "3df7de31b5b189f0bc6eaaefba9bcf34ce7cfaa8a36134dcc399382f52d8800d"
+        },
+        {
+          "path": "dev/starcore/starcore/module/treasury/PersistenceTreasuryStateStorage.class",
+          "sha256": "d4981b5687eda695a1f84bde38c9684e8bf8fec869bd6a566e1b460a45188d3f"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/WarDisbandAdmissionService$Decision.class",
+          "sha256": "34d1d7a9472e52a4ec1d6a1ae7b8989bc61396d5c4662d20d571c8b6c96b5d41"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/WarDisbandAdmissionService$Receipt.class",
+          "sha256": "7a9f40294ee0bd2b739a0d730023156c86a1ef404acc6730059a45ddc9b1b239"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/WarDisbandAdmissionService$Request.class",
+          "sha256": "71a42265aeac0bf5a2a41bead806a86d12eaab27e0779a78f063aea9dbec9a2f"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/WarDisbandAdmissionService.class",
+          "sha256": "4b9f0c520a54d7b89257250ecad0f8dac1d2071b41768d0804b9f153ec89fa3b"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/WarModule.class",
+          "sha256": "cabedc80f27fe7cefbcfa6b18fea97c07da34c8b6877e92875cd9124940cc7a2"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/WarRetirementReceipt.class",
+          "sha256": "36d1634e501eccac674a82723353e803b8318aa053f17cdf5529361e17349524"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/WarRetirementService.class",
+          "sha256": "ebca9187d47f76f7b352089eddb50375faa08ad68039cd8ae3975a0992426578"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/command/NationLifecycleCommand.class",
+          "sha256": "b0f529f65b03b40a620f96cdbf3109caeffb76a71f4618ef73de5cdcd5ce1690"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationAuthorityState$1.class",
+          "sha256": "f031977060cae7f94830415d7eadbf220f8e56a4768a3a68dd9004a6241fcee5"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationAuthorityState.class",
+          "sha256": "0091f287c719408c0745fd276349003d38219b01bacc1cf0fea36bb8f4514945"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsModule$1.class",
+          "sha256": "af20dec06e5ec9e0ff68b160bdab04f70fecc6dc9c1e21c510ab1fc66a070d31"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsModule$ReparationsConfig.class",
+          "sha256": "9f1090c2f9e7977f99553622d4b7f3a2aa23f4889588a4f040ff338ff57650cd"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsModule.class",
+          "sha256": "a1cd98d4407f60c3924c716589fb832d9aab5edf7dafe7e05db3656fb509bc1d"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsSnapshotCodec$Snapshot.class",
+          "sha256": "22fa1ab6e1405b7cf2a13984977cdbe4c8d3f3c2d408f316f9f9c507b6a7484a"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsSnapshotCodec.class",
+          "sha256": "16a66673606c71145fcb13671f47e34febfcabc182f9a0fbc446903480ada817"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsStateCodec.class",
+          "sha256": "8c793ff1d732e3dda421a62e2e895b9d61eaac2ad41738c06c689c2292d5b6af"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/listener/ReparationsEventListener.class",
+          "sha256": "2f1410403ba553edeebca72c03e8046ef3a6ca6689aa7423e03301aec2be11f9"
+        }
+      ],
+      "all_equal_to_tested_output": true
+    },
+    "test": {
+      "output": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-cumulative-test-fresh-02",
+      "sources": 44,
+      "class_count": 76,
+      "classes": [
+        {
+          "path": "dev/starcore/starcore/war/BattlefieldPersistenceIntegrationTest.class",
+          "sha256": "097dfe6da0627ba3f0a4ae77958b81c6b5499a1eb1d65942e2ffcbe08e77ed2c"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyPersistenceContractTest.class",
+          "sha256": "12600c9e74a2bea3e7c50809c8c79c73ee62d5bd0d209311de88a8a70daa474d"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyRetirementIntegrationTest$1.class",
+          "sha256": "2a19b30c245c231ef8b058d22febef6188bff7e4bdf07c1f1c39d763e7682be6"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyRetirementIntegrationTest$Fixture.class",
+          "sha256": "9d6f9380b703f357e6765d5a5daf862c9015ef5c21fd39c44d360d6e1fa22827"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyRetirementIntegrationTest.class",
+          "sha256": "b7a21a6fb92f8b490c4440210d6483addcced13b8b45e5c3452cb2f4851aba38"
+        },
+        {
+          "path": "dev/starcore/starcore/war/PeaceTreatyServiceContractTest.class",
+          "sha256": "e609691a69b31ea53d8b7e5f1e343fcd83fc9f0ab1fc6579c302ef489434af79"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarAuthorizationBoundaryTest.class",
+          "sha256": "c65141e154fcfdefa648e13475de75dcdf8702cb8feca1b0a061718234bc4902"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarConcurrentSnapshotTest.class",
+          "sha256": "23b0a4e82e4c974626b0bda274437d9e7d0a8d2bb8008a3913270b091783843b"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarDatabaseBatchFailureTest.class",
+          "sha256": "5b3430575c91c52178c318b32c78053086211aa1641cd77c2d6c8f7d70202fcf"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarDisbandAdmissionTest.class",
+          "sha256": "106945787ecb257e39cc23401239f26c315aec12efe70497b00dd6e91bbf5d83"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarFileSaveIntegrationTest.class",
+          "sha256": "557b9b9ba3628f9d9c57722f4a3cc3c9c7b591b8c3eed040eec7c7c5254eefd8"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarOutcomeRestartIntegrationTest$Fixture.class",
+          "sha256": "b7e392729311c2b552317bd9c763d8f8e38a71ce75525a801a1a1c2745f68cf2"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarOutcomeRestartIntegrationTest.class",
+          "sha256": "bd9abfd0cec38db7966fd0fdae060303d1de1ed24c759324e2183e0feb74b8a7"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarPersistenceAsyncTest.class",
+          "sha256": "58dba10fa54ea626d4f5b6d9b2579347469189029e18dfce89fdc1313de86d4f"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarPersistenceCoordinatorOrderingTest.class",
+          "sha256": "523b5487418f3948e23190d881a5b2df5cb5ccee0688fb3ddf31f3f210abde45"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarPersistenceLockOrderTest.class",
+          "sha256": "c4c3b698a00dcf0df9d9caa7291d9fd6d14de706eb152b20f761e069e8615586"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarReparationTest$InstallmentTests.class",
+          "sha256": "d116204f36380bdcdb03c56d7a3836fc68a4184b4d977e58d6b2780f7599e558"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarReparationTest$PaymentTests.class",
+          "sha256": "21b7f0e9b6739852de3e428c65711ff1a6be7e0185a7ff62fa4421dea54afc01"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarReparationTest$StatusTests.class",
+          "sha256": "6532f2d530e0a16fc34536c1928439d7288ff39a586c1e7471a457f99cbc605c"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarReparationTest.class",
+          "sha256": "1819ea3f2496cf5f343927d7b491c0e543bbd308208b0912dcb0ad3ba41a4c36"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarRetirementTest$Fixture.class",
+          "sha256": "bf0d62d374855905dec8ebec5d741be633ecc3fd699743c6eb5a4ad9f81c360a"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarRetirementTest$Seed.class",
+          "sha256": "5b20fff1b5f34236643d73a4c50a19954ce52170a506f70f4610ca2cba5fedf4"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarRetirementTest.class",
+          "sha256": "cd5e6e2fdc0393838fe54042ae0888dd973d6f35d5be93eb7386feebe1ddbb59"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarScoreEventRecoveryIntegrationTest$1.class",
+          "sha256": "cfa72dd0a7631cea40e1af8b610f6ba204326413904a3ab0a558241ccaa4ffcd"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarScoreEventRecoveryIntegrationTest.class",
+          "sha256": "cd2722022c7a27a32640e5872078da509169289a73f3c123f7c99d87aeb4a434"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarServiceImplDirtyDataTest.class",
+          "sha256": "fc73eeda3fa47f5766bf1325ece3d08846e3c3f7e105dd50d5d57685b283dde0"
+        },
+        {
+          "path": "dev/starcore/starcore/war/WarStorageDeleteFailureTest.class",
+          "sha256": "5cc5821ee8cd1f376430375733af206bdb1a319d0da4ec283ab9c86fcf4a6671"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/FileAuthorityProcessProbe$1.class",
+          "sha256": "8821fadbf59add725f3aa645a14bedbddbd6baa7451b367062dec99d87fa7b23"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/FileAuthorityProcessProbe.class",
+          "sha256": "e14509d261c8e9c182145fa3578337543753f988a929485f0bd7fc02e5881f23"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/FileAuthorityProcessTest$Child.class",
+          "sha256": "71033277320fcf8b7fae902b9205e1613346ddb468722b545374182ded59c4bf"
+        },
+        {
+          "path": "dev/starcore/starcore/core/persistence/FileAuthorityProcessTest.class",
+          "sha256": "dad78bb5c925249b26f0b546bf44d442edc3066db2cdfd848ae9ec3e405444d5"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceAuthorizationBoundaryTest.class",
+          "sha256": "058ffd516efc9b79d6b571d2f2fe37dbbe23f03b8913ef715b97017fa47f5a5a"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/AllianceLifecycleRestartIntegrationTest.class",
+          "sha256": "8b1b0483708ab015217be42b5ce7e3968d97746c023f3c60161e075148df8955"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/FederationAuthorityTest.class",
+          "sha256": "e3cbe256f612f134cea25dd47b599e61a4607a10a157d36abd7301ce72f79f13"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/FederationLifecycleTest$Setup.class",
+          "sha256": "ff4094424a53c13880c0074d2b9db1a756e9e455be024bbb5acfe878054f67b2"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/FederationLifecycleTest.class",
+          "sha256": "3cd2d0178e3fc2d497ca22a3d6e22b0018d0fa6ce0f8741347a2de71c04d24b4"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/FederationMigrationTest.class",
+          "sha256": "b45bf78a4c75a38e53eedf2f5411fccca56688851cfe921e28800ec848f2e817"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/FederationSqlCommitTest.class",
+          "sha256": "7c33d95068905e30e5ff1ce31aecf3f986bdbdf06aa7a35da6d96f4a638080c3"
+        },
+        {
+          "path": "dev/starcore/starcore/module/alliance/FederationTestFixture.class",
+          "sha256": "1092ea19565affe8e3e38ab94e4f46492c7c76ac51d27997a1ff69428f1dbf7b"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandAdminTest.class",
+          "sha256": "731b15c64393d6205cb5b158609bf10e7304d51375f3845c82f76fb312baade0"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandAdmissionTest.class",
+          "sha256": "ec0bdd92e9e3fa81b10ec8b5637c5843a577fbd287f6dd0b1c50981dd1e4d428"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandCoordinatorTest$Fixture.class",
+          "sha256": "6a2059facc66e33b377d01aff3fe6838720cd0ae165efef25f6b30d2bbd2318f"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandCoordinatorTest.class",
+          "sha256": "47755eb6e09f66aa41d5f8c59d32c4e6b0052c010471ef315ca6d883134b38a3"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandFederationTest.class",
+          "sha256": "4ae5bd98aebbde68d6abf6f27621479dd9eb1a1cdeefbfbc99590c61ecbde078"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandJointTest$DirectoryFault.class",
+          "sha256": "9e974590e2b038e23df20465292e971700340e9c00ae9397146a860464ad3083"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandJointTest$Endpoint.class",
+          "sha256": "01c49b27e7c14da459bbd35c8888339bcc24505f819abf81147dc4b3fc990ced"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandJointTest$Session.class",
+          "sha256": "f8601384f99260257f9780e55171350cdd68739f24a2031a083d5959701b200b"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandJointTest.class",
+          "sha256": "71c74f1c1ee2437382aa0a6b6345025716eed61c733a16938bae44e248fcc7a2"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandTestAuthorities.class",
+          "sha256": "6851070dcab0471652b52c39b4b96a4c5d3d0235baf97a31e538658fe52a1567"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandTransactionTest$FailingStorage.class",
+          "sha256": "3c20028d1906d7345475e256bf05dace4e2bf276b2cd7cca34486994da41b9bb"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandTransactionTest$Fixture.class",
+          "sha256": "adf763f2a87d2ed1c636c972a84171e4d3351d46089d19d1e9baafb7b37c6c15"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandTransactionTest$RecordingDisbandJournal.class",
+          "sha256": "0677194889d2149fcae3d45ad4835f21f755289f4cca65dbe638558299eab8e6"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandTransactionTest$RequiredCleanupService.class",
+          "sha256": "0e7f7f023e1479eb8959f257e67d8b22a4ea21b752e96bf423674cd5811709dd"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandTransactionTest.class",
+          "sha256": "fa2623e54719a7bf221d9ea10a724b9aa6efcbe2d9b7458e249c8525f4d11b20"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationDisbandWarRetirementTest.class",
+          "sha256": "7054a3945bc7c2116ce2037b333b0444a3907d88cc008066f85df862176b13b4"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest$Actor.class",
+          "sha256": "207c0ff747ee0fc826dc51160c0a03582dfa47d8a83e4144c80af12abd069797"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest$RecordingStorage.class",
+          "sha256": "bfecd3e45a5e8cce655c16d76075b0d6a7ec18184a0a201bb760c18f6a135d67"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest$SilentPersistence.class",
+          "sha256": "98ac8c1200159636c297ed1416d383e246080842951fa773f3b64df518474840"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/NationPlayerJourneyIntegrationTest.class",
+          "sha256": "9e1be22eb6384165acdb92e0e4f2fbb1de8e2e1c9c65a17b5842230487a52d10"
+        },
+        {
+          "path": "dev/starcore/starcore/module/treasury/TreasuryModuleRefreshLifecycleTest$1.class",
+          "sha256": "f8f0eddad78ab07c5c0b506894f704ec17c1b4e9ed39e357fc92def510f87be1"
+        },
+        {
+          "path": "dev/starcore/starcore/module/treasury/TreasuryModuleRefreshLifecycleTest.class",
+          "sha256": "10a5ae7a1a4ee4239ea45a3d361f7b8f746628648cedefd6d1597876943f11a0"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/WarModuleAuthorityTest.class",
+          "sha256": "5c0bed500c02a26559beb61fd9fced91e31e475b9c6b49d48d4e8f58fbfd1c7d"
+        },
+        {
+          "path": "dev/starcore/starcore/module/nation/command/NationDisbandRecoveryCommandTest.class",
+          "sha256": "265606260442424d8dc608deab9de4a8709e919249a5fe1b0099390a1723466b"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsAuthorityIntegrationTest$1.class",
+          "sha256": "0b111e2a6125241ed15d2fc6572ad54277ada444ff6ac6efcecd3a82e72e04f7"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsAuthorityIntegrationTest$Fixture.class",
+          "sha256": "ec7d7f4b2dc875db846956ad55ddce3ee3b1e136a5b9bc1b62946520134aeea7"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsAuthorityIntegrationTest.class",
+          "sha256": "c5666ae002448ca66f6543a62939869c638ebeb6b644000b3dccad6aabbc78b2"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsCompensationConcurrencyTest.class",
+          "sha256": "2da36ff54505b9ce442f40528a2eac6c9c4c0e59373dc805be468409b49432d6"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsLifecycleTest.class",
+          "sha256": "2460fef741bf29b2a59a0f8a46223dab52af963298de769bdd5aea82a87f1b6d"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsModuleAuthorityTest.class",
+          "sha256": "083b4e8bf4058897924863cda68b891f1f661d69ce52630ce36620e58b171cca"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsSettlementRecoveryTest$1.class",
+          "sha256": "9e47a3ba9234228db995bd9c44e003aec81a1bb14c646e9ae80cdc31e0429007"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsSettlementRecoveryTest$2.class",
+          "sha256": "bbb9db008504b4eaee783c03344fc889acbde1ed34b85e982dd2030cd06f5d5b"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsSettlementRecoveryTest$3.class",
+          "sha256": "647f3b6844365fdc9967b6a4541b55b3644a1944406bbbfec219e3df8e83da5e"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsSettlementRecoveryTest$4.class",
+          "sha256": "8ec929e67db0730309ddd0af8f6444f56027188fc6b80bb044699d9c7c695de1"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsSettlementRecoveryTest$FakeTransfers.class",
+          "sha256": "9a9ac958c7ade77e3bf8d35ee39447cb2b16f8e3e5a30806fe2d4eb5918207fa"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsSettlementRecoveryTest$MemoryPersistence.class",
+          "sha256": "7502f3a99faadc5d62c8d6c670cd691ef5478c0ffc1b9bb1cd392a9d4db40070"
+        },
+        {
+          "path": "dev/starcore/starcore/module/war/reparations/ReparationsSettlementRecoveryTest.class",
+          "sha256": "02dac36cdd85d49fee14a8913cc56b11bc25bf4ffa1688830bb7ad3f06803149"
+        }
+      ],
+      "all_equal_to_tested_output": true
+    },
+    "scope": "All cumulative changed production and selected test sources compiled into empty output directories. Dependencies and unchanged classes retained; not full clean Core."
+  },
+  "tests": {
+    "batches": [
+      {
+        "log": "process-lock-focused-final-01.log",
+        "selection": "FileAuthorityProcessTest,AtomicFilePersistenceTest,AtomicFilePersistenceCoverageTest",
+        "tests": 42,
+        "suites": [
+          "dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest",
+          "dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest",
+          "dev.starcore.starcore.core.persistence.FileAuthorityProcessTest"
+        ]
+      },
+      {
+        "log": "process-lock-joint-final-01.log",
+        "selection": "NationDisbandJointTest,NationDisbandAdmissionTest,WarDisbandAdmissionTest,!FileAuthorityProcessTest,!AtomicFilePersistenceTest,!AtomicFilePersistenceCoverageTest",
+        "tests": 133,
+        "suites": [
+          "dev.starcore.starcore.module.nation.NationDisbandAdmissionTest",
+          "dev.starcore.starcore.module.nation.NationDisbandJointTest",
+          "dev.starcore.starcore.war.WarDisbandAdmissionTest"
+        ]
+      },
+      {
+        "log": "process-lock-prior-regression-01.log",
+        "selection": "NationCreation*Test,NationClaim*Test,NationSplit*Test,NationDisband*Test,NationExperience*Test,NationModule*Test,NationPlayerJourneyIntegrationTest,NationState*Test,SqlNationStateStorageTest,DatabaseAwareNationStateStorageTest,dev.starcore.starcore.war.*Test,WarModule*Test,WarDisbandCleanup*Test,*Reparation*Test,*EvidenceReplay*Test,*IncidentBundle*Test,*EconomyInsurance*Test,PublicApiCompatibilityTest,dev.starcore.starcore.module.alliance.*Test,dev.starcore.starcore.module.alliance.gui.*Test,!NationDisbandJointTest,!NationDisbandAdmissionTest,!WarDisbandAdmissionTest,!FileAuthorityProcessTest,!AtomicFilePersistenceTest,!AtomicFilePersistenceCoverageTest",
+        "tests": 817,
+        "suites": [
+          "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+          "dev.starcore.starcore.foundation.economy.insurance.EconomyInsuranceServiceTest",
+          "dev.starcore.starcore.foundation.economy.transaction.EvidenceReplayServiceTest",
+          "dev.starcore.starcore.foundation.economy.transaction.IncidentBundleServiceTest",
+          "dev.starcore.starcore.module.alliance.AllianceAuthorizationBoundaryTest",
+          "dev.starcore.starcore.module.alliance.AllianceLifecycleRestartIntegrationTest",
+          "dev.starcore.starcore.module.alliance.FederationAuthorityTest",
+          "dev.starcore.starcore.module.alliance.FederationLifecycleTest",
+          "dev.starcore.starcore.module.alliance.FederationMigrationTest",
+          "dev.starcore.starcore.module.alliance.FederationSqlCommitTest",
+          "dev.starcore.starcore.module.alliance.gui.AllianceGuiActionTest",
+          "dev.starcore.starcore.module.alliance.gui.AllianceGuiHolderContractTest",
+          "dev.starcore.starcore.module.alliance.gui.AllianceGuiI18nContractTest",
+          "dev.starcore.starcore.module.alliance.gui.AllianceGuiListenerCloseLifecycleTest",
+          "dev.starcore.starcore.module.alliance.gui.AllianceGuiListenerInventoryDragTest",
+          "dev.starcore.starcore.module.alliance.gui.AllianceJoinInvitationNavigationTest",
+          "dev.starcore.starcore.module.nation.command.NationClaimRecoveryCommandTest",
+          "dev.starcore.starcore.module.nation.command.NationCreationRecoveryCommandTest",
+          "dev.starcore.starcore.module.nation.command.NationDisbandRecoveryCommandTest",
+          "dev.starcore.starcore.module.nation.command.NationSplitRecoveryCommandTest",
+          "dev.starcore.starcore.module.nation.NationClaimCoordinatorTest",
+          "dev.starcore.starcore.module.nation.NationCreationCoordinatorTest",
+          "dev.starcore.starcore.module.nation.NationCreationRecoveryTest",
+          "dev.starcore.starcore.module.nation.NationDisbandAdminTest",
+          "dev.starcore.starcore.module.nation.NationDisbandAllianceRetirementTest",
+          "dev.starcore.starcore.module.nation.NationDisbandCityMoneyTest",
+          "dev.starcore.starcore.module.nation.NationDisbandCityRecoveryContractTest",
+          "dev.starcore.starcore.module.nation.NationDisbandCityRecoveryTest",
+          "dev.starcore.starcore.module.nation.NationDisbandCoordinatorTest",
+          "dev.starcore.starcore.module.nation.NationDisbandDiplomacyTest",
+          "dev.starcore.starcore.module.nation.NationDisbandFederationTest",
+          "dev.starcore.starcore.module.nation.NationDisbandRecoveryTest",
+          "dev.starcore.starcore.module.nation.NationDisbandRetirementTest",
+          "dev.starcore.starcore.module.nation.NationDisbandTransactionTest",
+          "dev.starcore.starcore.module.nation.NationDisbandWarRetirementTest",
+          "dev.starcore.starcore.module.nation.NationExperienceReceiptTest",
+          "dev.starcore.starcore.module.nation.NationExperienceSqlTest",
+          "dev.starcore.starcore.module.nation.NationModuleSplitTest",
+          "dev.starcore.starcore.module.nation.NationPlayerJourneyIntegrationTest",
+          "dev.starcore.starcore.module.nation.NationSplitCoordinatorTest",
+          "dev.starcore.starcore.module.nation.NationSplitJournalTest",
+          "dev.starcore.starcore.module.nation.NationStateCodecTest",
+          "dev.starcore.starcore.module.nation.NationStateConflictIntegrationTest",
+          "dev.starcore.starcore.module.war.reparations.command.ReparationsCommandTest",
+          "dev.starcore.starcore.module.war.reparations.command.ReparationsReviewCommandContractTest",
+          "dev.starcore.starcore.module.war.reparations.ReparationEconomyStateTest",
+          "dev.starcore.starcore.module.war.reparations.ReparationsAuthorityIntegrationTest",
+          "dev.starcore.starcore.module.war.reparations.ReparationsCompensationConcurrencyTest",
+          "dev.starcore.starcore.module.war.reparations.ReparationSettlementFailureStateTest",
+          "dev.starcore.starcore.module.war.reparations.ReparationSettlementManualReviewTest",
+          "dev.starcore.starcore.module.war.reparations.ReparationSettlementStateTest",
+          "dev.starcore.starcore.module.war.reparations.ReparationsLifecycleTest",
+          "dev.starcore.starcore.module.war.reparations.ReparationsModuleAuthorityTest",
+          "dev.starcore.starcore.module.war.reparations.ReparationsSettlementRecoveryTest",
+          "dev.starcore.starcore.module.war.WarDisbandCleanupContractTest",
+          "dev.starcore.starcore.module.war.WarDisbandCleanupFailureTest",
+          "dev.starcore.starcore.module.war.WarModuleAuthorityTest",
+          "dev.starcore.starcore.module.war.WarModuleRecoveryCleanupTest",
+          "dev.starcore.starcore.module.war.WarModuleTreasuryFeeContractTest",
+          "dev.starcore.starcore.security.ReparationsCommandRoleMatrixTest",
+          "dev.starcore.starcore.war.BattlefieldPersistenceIntegrationTest",
+          "dev.starcore.starcore.war.ConscriptionTest",
+          "dev.starcore.starcore.war.ConscriptionTest$ObjectMethods",
+          "dev.starcore.starcore.war.ConscriptionTest$RemainingTime",
+          "dev.starcore.starcore.war.ConscriptionTest$ProgressPercentage",
+          "dev.starcore.starcore.war.ConscriptionTest$UpdateProgress",
+          "dev.starcore.starcore.war.ConscriptionTest$Construction",
+          "dev.starcore.starcore.war.PeaceTreatyPersistenceContractTest",
+          "dev.starcore.starcore.war.PeaceTreatyRetirementIntegrationTest",
+          "dev.starcore.starcore.war.PeaceTreatyServiceContractTest",
+          "dev.starcore.starcore.war.PeaceTreatySettlementDurabilityTest",
+          "dev.starcore.starcore.war.PeaceTreatyStateCodecTest",
+          "dev.starcore.starcore.war.SupplyLineSnapshotConcurrencyTest",
+          "dev.starcore.starcore.war.SupplyLineTransitionTest",
+          "dev.starcore.starcore.war.WarAuthorizationBoundaryTest",
+          "dev.starcore.starcore.war.WarConcurrentSnapshotTest",
+          "dev.starcore.starcore.war.WarDatabaseBatchFailureTest",
+          "dev.starcore.starcore.war.WarDatabaseReadFailureTest",
+          "dev.starcore.starcore.war.WarDirtyDataManagerIntegrationTest",
+          "dev.starcore.starcore.war.WarDirtyDataManagerTest",
+          "dev.starcore.starcore.war.WarFileReadFailureTest",
+          "dev.starcore.starcore.war.WarFileSaveIntegrationTest",
+          "dev.starcore.starcore.war.WarGoalTest",
+          "dev.starcore.starcore.war.WarGoalTest$DefensiveAggressive",
+          "dev.starcore.starcore.war.WarGoalTest$CalculateRequiredScore",
+          "dev.starcore.starcore.war.WarGoalTest$BasicProperties",
+          "dev.starcore.starcore.war.WarLifecycleRestartIntegrationTest",
+          "dev.starcore.starcore.war.WarNewNationProtectionTest",
+          "dev.starcore.starcore.war.WarOutcomeAuthorityTest",
+          "dev.starcore.starcore.war.WarOutcomeRestartIntegrationTest",
+          "dev.starcore.starcore.war.WarPersistenceAsyncTest",
+          "dev.starcore.starcore.war.WarPersistenceCoordinatorOrderingTest",
+          "dev.starcore.starcore.war.WarPersistenceLockOrderTest",
+          "dev.starcore.starcore.war.WarReparationTest",
+          "dev.starcore.starcore.war.WarReparationTest$InstallmentTests",
+          "dev.starcore.starcore.war.WarReparationTest$PaymentTests",
+          "dev.starcore.starcore.war.WarReparationTest$StatusTests",
+          "dev.starcore.starcore.war.WarRetirementTest",
+          "dev.starcore.starcore.war.WarScoreEventRecoveryIntegrationTest",
+          "dev.starcore.starcore.war.WarServiceAddWarScoreInputTest",
+          "dev.starcore.starcore.war.WarServiceImplDirtyDataTest",
+          "dev.starcore.starcore.war.WarStatusTest",
+          "dev.starcore.starcore.war.WarStatusTest$StatusTransition",
+          "dev.starcore.starcore.war.WarStatusTest$StatusProperties",
+          "dev.starcore.starcore.war.WarStorageBackendTest",
+          "dev.starcore.starcore.war.WarStorageDeleteFailureTest",
+          "dev.starcore.starcore.war.WarVerificationServiceTest"
+        ]
+      },
+      {
+        "log": "process-lock-diplomacy-regression-01.log",
+        "selection": "dev.starcore.starcore.module.diplomacy.*Test",
+        "tests": 90,
+        "suites": [
+          "dev.starcore.starcore.module.diplomacy.AllianceBreakAuthorizationTest",
+          "dev.starcore.starcore.module.diplomacy.AllianceInvitationDirectionTest",
+          "dev.starcore.starcore.module.diplomacy.AllianceRetirementLifecycleTest",
+          "dev.starcore.starcore.module.diplomacy.AllianceRetirementSqlCommitTest",
+          "dev.starcore.starcore.module.diplomacy.AllianceRetirementStorageTest",
+          "dev.starcore.starcore.module.diplomacy.AllianceRetirementTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyAuthorityStorageTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyModuleLifecycleTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyNewNationProtectionTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyPlayerJourneyRestartIntegrationTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyRelationCancellationContractTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyRelationTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyRetirementLifecycleTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyRetirementTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyServiceSplitContractTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyStateCodecTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyStateConflictIntegrationTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyTemporalStateCodecTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyTimingPolicyTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyWarCodecTest",
+          "dev.starcore.starcore.module.diplomacy.DiplomacyWarRecordSynchronizationTest"
+        ]
+      },
+      {
+        "log": "process-lock-atomic-callers-01.log",
+        "selection": "dev.starcore.starcore.core.persistence.*Test,dev.starcore.starcore.persistence.*Test,dev.starcore.starcore.clan.*Test,dev.starcore.starcore.module.faith.*Test,dev.starcore.starcore.module.army.navy.*Test,dev.starcore.starcore.module.army.exercise.*Test,!dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest,!dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest,!dev.starcore.starcore.core.persistence.FileAuthorityProcessTest",
+        "tests": 487,
+        "suites": [
+          "dev.starcore.starcore.clan.ClanBankRecoveryTest",
+          "dev.starcore.starcore.clan.ClanManagerDirtyDataTest",
+          "dev.starcore.starcore.clan.ClanManagerTest",
+          "dev.starcore.starcore.clan.ClanOwnershipTest",
+          "dev.starcore.starcore.clan.ClanPermissionTest",
+          "dev.starcore.starcore.clan.ClanPersistenceConcurrencyTest",
+          "dev.starcore.starcore.clan.ClanRankTest",
+          "dev.starcore.starcore.clan.ClanTest",
+          "dev.starcore.starcore.core.persistence.AsyncPersistenceFailureTest",
+          "dev.starcore.starcore.core.persistence.PersistenceServiceAtomicRecoveryTest",
+          "dev.starcore.starcore.module.army.exercise.ExerciseCommandTest",
+          "dev.starcore.starcore.module.army.exercise.ExerciseListenerTest",
+          "dev.starcore.starcore.module.army.exercise.ExerciseModuleLifecycleTest",
+          "dev.starcore.starcore.module.army.exercise.ExerciseRecoveryTest",
+          "dev.starcore.starcore.module.army.exercise.ExerciseStateCodecTest",
+          "dev.starcore.starcore.module.army.navy.NavyBattleListenerTest",
+          "dev.starcore.starcore.module.army.navy.NavyCommandTest",
+          "dev.starcore.starcore.module.army.navy.NavyModelStorageTest",
+          "dev.starcore.starcore.module.army.navy.NavyModuleLifecycleTest",
+          "dev.starcore.starcore.module.army.navy.NavyServiceBudgetSpendingTest",
+          "dev.starcore.starcore.module.faith.FaithInteractionTest",
+          "dev.starcore.starcore.module.faith.FaithModelValidationTest",
+          "dev.starcore.starcore.module.faith.FaithModuleLifecycleTest",
+          "dev.starcore.starcore.module.faith.FaithServiceImplDirtyDataTest",
+          "dev.starcore.starcore.module.faith.FaithStatsTest",
+          "dev.starcore.starcore.module.faith.FaithTest",
+          "dev.starcore.starcore.module.faith.FaithTest$Prayer",
+          "dev.starcore.starcore.module.faith.FaithTest$FaithDataModel",
+          "dev.starcore.starcore.module.faith.FaithTest$LevelConfig",
+          "dev.starcore.starcore.module.faith.FaithTest$Config",
+          "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest",
+          "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest$PersistenceConsistencyTests",
+          "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest$ConcurrentTests",
+          "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest$TryProcessTests",
+          "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest$ProcessLoopTests",
+          "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest$MarkAndQueryTests",
+          "dev.starcore.starcore.persistence.FileSystemDataStoreTest",
+          "dev.starcore.starcore.persistence.PersistenceServiceCoverageTest",
+          "dev.starcore.starcore.persistence.StorageKeyTest"
+        ]
+      },
+      {
+        "log": "process-lock-atomic-callers-02.log",
+        "selection": "*Blueprint*Test,*DungeonRepository*Test,*DungeonStorageTest,*UGC*Test,EssentialsDataManagerAsyncSaveTest,HudPreferencesTest,MercenaryRenewalRequestJournalTest,AllianceServicePersistenceBoundaryTest,MilitaryAllianceServiceInvitationPersistenceTest",
+        "tests": 179,
+        "suites": [
+          "dev.starcore.starcore.essentials.data.EssentialsDataManagerAsyncSaveTest",
+          "dev.starcore.starcore.foundation.hud.HudPreferencesTest",
+          "dev.starcore.starcore.module.army.mercenary.command.MercenaryRenewalRequestJournalTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintAccessPolicyTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintBlockApplyTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintClipboardBlockDataTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintFailureBoundaryTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintGuiAccessPolicyTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintGuiAlertTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintModuleCommandLifecycleTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintPaletteLocaleTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintPasteThreadingTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintPersistenceRecoveryTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintRegionSelectionRoundTripTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintThreadLifecycleTest",
+          "dev.starcore.starcore.module.blueprint.BlueprintTileEntityDataTest",
+          "dev.starcore.starcore.module.blueprint.command.BlueprintCommandTest",
+          "dev.starcore.starcore.module.diplomacy.alliance.AllianceServicePersistenceBoundaryTest",
+          "dev.starcore.starcore.module.diplomacy.military.MilitaryAllianceServiceInvitationPersistenceTest",
+          "dev.starcore.starcore.module.dungeon.DungeonRepositoryIdempotencyTest",
+          "dev.starcore.starcore.module.dungeon.DungeonRepositoryLoadDiagnosticsTest",
+          "dev.starcore.starcore.module.dungeon.DungeonStorageTest",
+          "dev.starcore.starcore.module.dungeon.DungeonStorageTest$EmptyAndStats",
+          "dev.starcore.starcore.module.dungeon.DungeonStorageTest$NationDataRoundTrip",
+          "dev.starcore.starcore.module.dungeon.DungeonStorageTest$PlayerDataRoundTrip",
+          "dev.starcore.starcore.module.dungeon.DungeonStorageTest$DungeonDataRoundTrip",
+          "dev.starcore.starcore.ugc.UGCModuleLifecycleTest",
+          "dev.starcore.starcore.ugc.UGCServicePersistenceTest"
+        ]
+      },
+      {
+        "log": "process-lock-authority-regression-02.log",
+        "selection": "dev.starcore.starcore.foundation.territory.*Test,dev.starcore.starcore.module.treasury.*Test,dev.starcore.starcore.module.city.*Test,!MySqlTreasuryStateIntegrationTest",
+        "tests": 450,
+        "suites": [
+          "dev.starcore.starcore.foundation.territory.DatabaseAwareTerritoryServiceTest",
+          "dev.starcore.starcore.foundation.territory.InMemoryTerritoryServiceTest",
+          "dev.starcore.starcore.foundation.territory.SqlTerritoryServiceTest",
+          "dev.starcore.starcore.foundation.territory.TerritoryBatchRecoveryTest",
+          "dev.starcore.starcore.foundation.territory.TerritoryRetirementTest",
+          "dev.starcore.starcore.foundation.territory.TerritoryServiceTest",
+          "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$SecurityTests",
+          "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$BoundaryTests",
+          "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$NationTerritoriesTests",
+          "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$UnclaimTests",
+          "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$OwnershipTests",
+          "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$ClaimTests",
+          "dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest",
+          "dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest$FromPropertiesTests",
+          "dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest$ToPropertiesTests",
+          "dev.starcore.starcore.foundation.territory.TerritoryTransferRecoveryTest",
+          "dev.starcore.starcore.module.city.CityModelExtendedTest",
+          "dev.starcore.starcore.module.city.CityModuleLifecycleTest",
+          "dev.starcore.starcore.module.city.CityMoneyAuthorityTest",
+          "dev.starcore.starcore.module.city.CityMoneyCommandTest",
+          "dev.starcore.starcore.module.city.CityMoneyModuleRecoveryTest",
+          "dev.starcore.starcore.module.city.CityMoneyRecoveryTest",
+          "dev.starcore.starcore.module.city.CityPlaceholderExpansionLocaleTest",
+          "dev.starcore.starcore.module.city.CityPlaceholderExpansionTest",
+          "dev.starcore.starcore.module.city.CityRetirementRecoveryTest",
+          "dev.starcore.starcore.module.city.CityServiceContractTest",
+          "dev.starcore.starcore.module.city.CityServiceDurabilityTest",
+          "dev.starcore.starcore.module.city.CityServiceMembershipTest",
+          "dev.starcore.starcore.module.city.CitySnapshotPersistenceTest",
+          "dev.starcore.starcore.module.city.JsonCityStorageTest",
+          "dev.starcore.starcore.module.treasury.BankruptcyReasonTest",
+          "dev.starcore.starcore.module.treasury.BankruptcyServicePersistenceDiagnosticsTest",
+          "dev.starcore.starcore.module.treasury.BudgetAuthorityTest",
+          "dev.starcore.starcore.module.treasury.BudgetLifecycleTest",
+          "dev.starcore.starcore.module.treasury.BudgetRecoveryTest",
+          "dev.starcore.starcore.module.treasury.BudgetServiceImplSpendingTest",
+          "dev.starcore.starcore.module.treasury.BudgetStateCodecTest",
+          "dev.starcore.starcore.module.treasury.FundedTaxLedgerTest",
+          "dev.starcore.starcore.module.treasury.LoanServiceValidationTest",
+          "dev.starcore.starcore.module.treasury.NationTransferEconomyStateTest",
+          "dev.starcore.starcore.module.treasury.SqlBudgetStateStorageTest",
+          "dev.starcore.starcore.module.treasury.SqlTreasuryBusyRetryTest",
+          "dev.starcore.starcore.module.treasury.SqlTreasuryStateStorageTest",
+          "dev.starcore.starcore.module.treasury.TaxAssessmentTest",
+          "dev.starcore.starcore.module.treasury.TaxationFaithBonusTest",
+          "dev.starcore.starcore.module.treasury.TaxationServiceCompensationFailureTest",
+          "dev.starcore.starcore.module.treasury.TaxationServiceFundedTaxTest",
+          "dev.starcore.starcore.module.treasury.TaxationServiceInputValidationTest",
+          "dev.starcore.starcore.module.treasury.TaxationServiceProviderMatrixTest",
+          "dev.starcore.starcore.module.treasury.TaxCollectionWindowTest",
+          "dev.starcore.starcore.module.treasury.TaxFundingReceiptTest",
+          "dev.starcore.starcore.module.treasury.TaxQuoteFactoryTest",
+          "dev.starcore.starcore.module.treasury.TreasuryDiagnosticsTest",
+          "dev.starcore.starcore.module.treasury.TreasuryModuleRefreshLifecycleTest",
+          "dev.starcore.starcore.module.treasury.TreasuryNationBoundaryTest",
+          "dev.starcore.starcore.module.treasury.TreasuryPlayerDepositRecoveryTest",
+          "dev.starcore.starcore.module.treasury.TreasuryRequestAmountValidationTest",
+          "dev.starcore.starcore.module.treasury.TreasuryRetirementTest",
+          "dev.starcore.starcore.module.treasury.TreasuryStateCodecBoundaryTest",
+          "dev.starcore.starcore.module.treasury.TreasuryTransactionPersistenceTest"
+        ]
+      }
+    ],
+    "totals": {
+      "tests": 2198,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "reports": [
+      {
+        "suite": "dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest",
+        "tests": 22,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "89ecda76e1455237222bb89ac0210e97e881f1d53aeaa3cc362a405f558e957d"
+      },
+      {
+        "suite": "dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b28a71805afe1ecb7e5438b95539546c0862c75200108dcc2624463a248e391f"
+      },
+      {
+        "suite": "dev.starcore.starcore.core.persistence.FileAuthorityProcessTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3a633cccf0a35f51d4d7ebbadee687dac07dd0d2e375e04b8b061ca9885cbca8"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandAdmissionTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d52d5442b9ef7516f6295dfa8432a6f6986bf2ddcceb11dd38bd96b2671fb5b5"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandJointTest",
+        "tests": 96,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2822b0125ced381961c3915146f60084830584826d2ce1172e73e363b51e12cd"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarDisbandAdmissionTest",
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "01ee2d9a415cbb89574a10267524dca6886e1e28beb866337ee8bf9476210aaa"
+      },
+      {
+        "suite": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "215beadbdb79d6b91a94258ab747b87661dba8da11c78051724deb71f03f1830"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.insurance.EconomyInsuranceServiceTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ba33d9c799c3eebdd116f28cd3d5a29ba852ce1e3e28c317bcc28b1de164a8dd"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.transaction.EvidenceReplayServiceTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a98347197d8b0ae916b9298288c64f813371960b9664d621f97b8a604d9f1466"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.economy.transaction.IncidentBundleServiceTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "aa11908b39f2bc6bf931abbd498ee387a8cde8375c389dfc300027110365ddca"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.AllianceAuthorizationBoundaryTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1ec5b0efe25bd7603017311dc934743555d3e0b08e258a39b79735d5f2741bdd"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.AllianceLifecycleRestartIntegrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3263634105d8551fa7d0f3bb038ef63e478ad4ec078858e9b8267e9aa366e514"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.FederationAuthorityTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8c4f292d7b3b4b8b4e6229b78e7997e8062777d81af1f923e687df7bba62c4a6"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.FederationLifecycleTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "863e49d21cd911489efb24e4ea8bc1a04c0e80fb7c9b1d31d16bd24c55bec064"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.FederationMigrationTest",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e2e4756fec18aef8f4c860ae38e09074952db866ba10695be7c8b4cc6af78036"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.FederationSqlCommitTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "dda04664dcc4a5469e8200ae8c32be01fb3830cc867b455e99e5fc7ce17e2f41"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.gui.AllianceGuiActionTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d2792f0b664ef37f729b6eab33552e91507ef77b5934f02093117a3efd3251d7"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.gui.AllianceGuiHolderContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "166d6d9c81c595dd73696b03e31295ac5e8163bad711c6d5e6415e5ca08ee9a4"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.gui.AllianceGuiI18nContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9ccb7f2cfbb3ddac72ff3b48f24e08a0f8c92f407c8c15ad1398533200ff2eec"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.gui.AllianceGuiListenerCloseLifecycleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "147eded27dee0d2147c370167813126077b51a53857f3b9af030fa60de4f2f35"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.gui.AllianceGuiListenerInventoryDragTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e07bd67d78039860900b42194a46b018965c0a0db1849e3474b708510040946e"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.alliance.gui.AllianceJoinInvitationNavigationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2ed6d2f0ca154c61d06e42d66f8dda62c2ca1f0b424c487898a6032f84175405"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.command.NationClaimRecoveryCommandTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0a1d37d9747f98b7828a8f9d76ad5cedada96a95d811d094b4d57a6b08d500bb"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.command.NationCreationRecoveryCommandTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "661bf0d7b08d976d44f62a550f104c3a64d7c6c84b44d787a58012295d8774e3"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.command.NationDisbandRecoveryCommandTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a61b5ae8b485a7e16dfd6b0fc8605146649c176efef4933cb96c31997b5286f8"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.command.NationSplitRecoveryCommandTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6b99a1a8ddad282684b0363b6828f7f08bf62ebc72396463b6f886702217e967"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationClaimCoordinatorTest",
+        "tests": 44,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "76df0d8863c40b94b317881ca86f177d639e1667a3e5f10251995de649f4a6a6"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationCreationCoordinatorTest",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "42a61ca27243a58c77b78d079cbc1eb5e47d81e9073b7248a2cf33fbeb0a3774"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationCreationRecoveryTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9e7944bf77b60b1c3321fca0ab94bbc700e335b3640a1e7d0063a27fe17c1261"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandAdminTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c789e726a785716416e8273edb359f69670566cabc2d4c66c1118bcc0943dabe"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandAllianceRetirementTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "be4469ec92dc6ddce851b69e44b2d66c1ffe4d1d8cd51059aa45991b80092871"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandCityMoneyTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "879190deaf4dd9c47c3d4b111bfe04cb1f004bb0a38ee49a9faa5522d2b10b38"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandCityRecoveryContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "457c54a32f7f3b9d0e1bfaa6361a1f8d242e78a9cbb524ee6960886871af62f6"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandCityRecoveryTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a3981fb9006e95ab97b6c5c0dc1621dbd6bc10d896a3773426ae7c2efc46af8b"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandCoordinatorTest",
+        "tests": 28,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3651e0663584ccc6d6c8c9aaa1c1c0477022aedeb10dd30cca1a3cbb3973a380"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandDiplomacyTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "18d95ce0b97b4d65036f02785e8e5a06f430fc2e7d23357636921d5ffb18f97b"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandFederationTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "898f548455fb39ccaab72d71575f19cc39cccb8041dc34972df129a7e0ce8f18"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandRecoveryTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f8733c1f8e84bc81939c1ab217ea364b75dde6458a6409b861701f8253d73343"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandRetirementTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "710899ee7bb2f65e0ebfec2662d46385598afbad5946fb53e8d099bcc312a0fd"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandTransactionTest",
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9730599a0771bbfb1daa6fe042d995da9f7ca9c5610b1a7e8a7e419f08f77038"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationDisbandWarRetirementTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "07d94e23798e2be41b6ef80c56d9bf5020aab1c2ebd11d876905ccaa786a1a87"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationExperienceReceiptTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ff28930be4f754da4bd5f41fde3322a79dca9a1b2bef1f424f47747ca3d0d2c3"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationExperienceSqlTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2b7b9c66615ab0928c861d1c7303c19629004fa8ee08f68241c30c49b82b4789"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationModuleSplitTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "abcdeb5d534d0163777de4df73ac1270b7ebba518d7ebb42999373e401e2581c"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationPlayerJourneyIntegrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0ee6e521ed0dba33ac416e5a10c106849ff459b70f0c9cddab3f0bc35f17c663"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationSplitCoordinatorTest",
+        "tests": 37,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d2333b1c59e722da1709e7b702921542e2a517ffec4a0c7fc7d043fb34bd00d9"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationSplitJournalTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3513bb8cc611759d973646aa6e50a52a537151ebcaa1ada232cfecce8b25d4b5"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationStateCodecTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "98603f3ac2913feb5de673dc107e705fc93abf5733efc96a937bf3aa0e6f55e2"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.nation.NationStateConflictIntegrationTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "93b8cfc5ca6f5ba8ec8ed0b42b9248125560c735548df9f9033e6824137e78ef"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.command.ReparationsCommandTest",
+        "tests": 53,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b8cd22f79f4dcbd966b96431e58c0588e1d12afab68dda59645a7e43d215ffd4"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.command.ReparationsReviewCommandContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "07cf66922cbef7675228483a588cd90786136e59d174089af9b4dbfebca98808"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.ReparationEconomyStateTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c25f30a0072adce26da675f23f8d6993a800e384758b8b6d6af6b2285ee4eeb5"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.ReparationsAuthorityIntegrationTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e235a31f12a4fa56b9c146516ba86d4eadab28c28e2a0ba22ddb1427938ff8bd"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.ReparationsCompensationConcurrencyTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "830d422dcc1416953b5023eaf6ca3183da4c64a9390213f683ff9f28350424d7"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.ReparationSettlementFailureStateTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c9f181c37073f0f9b026ac51c28a6d9e6e5211ed6adbf3df890aeca30fb59bcf"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.ReparationSettlementManualReviewTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "cd18712e972282df5d95883221d621800800d85a47f666a8e06b70c929a9f89c"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.ReparationSettlementStateTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "34e8309efe24a816fe40322562600618491b7975a0cd5955749f6b7c6335e935"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.ReparationsLifecycleTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2db47400ecb60bb4eb1b632d8b77abfb958dbcb181f756eb20c4a64f3d84b728"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.ReparationsModuleAuthorityTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "208736462753ddd6bddbce3d5264c122364037654873b9da27663bb9f3c7559e"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.reparations.ReparationsSettlementRecoveryTest",
+        "tests": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "22975872fcff8a835cad522c9869c012e9762b23a467091167bfda8b2e84d02d"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.WarDisbandCleanupContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "bc6ddb6913ee8b2500660ccd6de1fd199aaf52bcc4cbe98ec36284074e4a3cb4"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.WarDisbandCleanupFailureTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1a1b143a0865b5bc07d5a85a30938e966784ca23c9452e9a11aa758af77e6272"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.WarModuleAuthorityTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "be857cfbf41fc946608f2d941f194ea4e58b89074b548b3d980e9f9ef350e08e"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.WarModuleRecoveryCleanupTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9a5b864f9070877110611224a6482b964b554563a40c4b996251055a584c6d95"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.war.WarModuleTreasuryFeeContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4ffd1a39447825aa36181b6b299697adf16081d0225c05104e86805178a7d2b7"
+      },
+      {
+        "suite": "dev.starcore.starcore.security.ReparationsCommandRoleMatrixTest",
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "fda6ea5dd1c065ae45cb9aad6feaac61b9dcb6078a00c484a76a3f505ca0b481"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.BattlefieldPersistenceIntegrationTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "02ce88ea284152ab28cbe9d4300b8f47b6d720b078681c6f4eb5f02c31c205f3"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.ConscriptionTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1c776b4cce272ef11ea5d7e25c3860589259859884937cffd9b535da84e3953d"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.ConscriptionTest$ObjectMethods",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b740f0350a9a56cf7fadeae43fd68fb7e1d3e5165bc06dfb96611f87c67c83a4"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.ConscriptionTest$RemainingTime",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "20ce55dcd1722347b65b654de21f3f590cf0bdd0f78afad97474afccd5cd25ab"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.ConscriptionTest$ProgressPercentage",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a66ffe40a23f69749348f599f7ffe353d869d2fd6aef1c7107d87efee02bf266"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.ConscriptionTest$UpdateProgress",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9ceaada020e8bb275e86ee6dee76f060ec3a52be951bb5b2af4305830b1962f4"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.ConscriptionTest$Construction",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2b701f70f89c7029332ba4e9d93b5d765e8eaf508b385a5fce083de0a3ef9634"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.PeaceTreatyPersistenceContractTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "731a942d84b63479a84151a09e1f73ca4df595f31b31cde8cccfb1979efbfebb"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.PeaceTreatyRetirementIntegrationTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "06280ce7f74a50b07bc11444188047c93f0cf61707e1bd6249e8bb18f471c3f9"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.PeaceTreatyServiceContractTest",
+        "tests": 28,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "84ba6299ac2171a74df8193371730779b17371330a55ae8f6a6f79cd21a9eca4"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.PeaceTreatySettlementDurabilityTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5e1d749e3b915cb308269ad82afda59def49af1a5d470ab09c0863f800c279fd"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.PeaceTreatyStateCodecTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4fe7fb2955efe015540904b993593227c11288ae3f5b1bc1510ab22c606b42a2"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.SupplyLineSnapshotConcurrencyTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "345a82ad8c4909b7f93ec55740327c5dc1cd89c6cab13865faea756598f7f968"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.SupplyLineTransitionTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ca8df4321efb44500cc8bd642d5c7ebe1dabcf8d503baa0605b4620da49fba89"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarAuthorizationBoundaryTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7da20ce7dc8ed9ddfef2e3a86aa3fa741f69896250a8962c79f428ca84d63c58"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarConcurrentSnapshotTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d593e42c561810d43e1ee4ecd6e175249fc2f63f2614b016212f1d147d6441cc"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarDatabaseBatchFailureTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0120477d664d39c7bf9acabe8b1e551d001cfeef6584ec1f7d79262a2156e6ca"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarDatabaseReadFailureTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "35dc26abde45ece760e3899d3e3d11e11b4ce3c66889907756c691798586ddab"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarDirtyDataManagerIntegrationTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3cbea6ed9bb75e4040889b4fb16930d728ee074f48347a7d545ac714116f7822"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarDirtyDataManagerTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1a46d37bbed289e8e7665ab4fa5db2216b2d0cd27d5b3d3e36a50e7497fadee9"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarFileReadFailureTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8fb471703f858a5df087df6779a95a4b8c04e28becfb80ddae920171260958a7"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarFileSaveIntegrationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1fbf2e8cf0e6888dbd3923792b17554532bfa37d4d26c08530608d99a53270ef"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarGoalTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "bfc9d158baf6c5048c50a6b916ca70f0d72e7722d647eb3220d5eb654deca939"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarGoalTest$DefensiveAggressive",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ed8caee6a6c11b38cfa500e824a438906d31839154221d8b4f1cb9327b198c2e"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarGoalTest$CalculateRequiredScore",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a1fe7017f1102bc12930231b683663a10de7fa7a3beff3fb6032f2166daa2804"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarGoalTest$BasicProperties",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6d7a7a4cd2260191a61698cd27110f751f5a3e54eae68cec84208f91cca8d51d"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarLifecycleRestartIntegrationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0148108909086555d65a0c44e56d8b3ec7665da62b52f3b03e5eebf488fc04e6"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarNewNationProtectionTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ac309ac183ff87f3a0241e3d39f2cd31161855a5afebc0d4dcd381558047445e"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarOutcomeAuthorityTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "13b7bfe41554d91ecd80a0ddfcbdfaacd111809e7e4d36bb92351974f53ba52c"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarOutcomeRestartIntegrationTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "fb2884ff621544fb89038a319c839875d07f4b9b73f3479b1e9df5b79f361093"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarPersistenceAsyncTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "fb0bf71954dcfc1c53643148d4ef8cad06b04b7fe12657e01f1fed35347de23c"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarPersistenceCoordinatorOrderingTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "fca85aeaa3ec8db844ab7a558cfa9df7980cf2ca6d273b16d3e983c88788826e"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarPersistenceLockOrderTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "98f449cf866d800f039ea42fc6d31f67164b886c636789ab1bd7109a6144985b"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarReparationTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b39f90c2a8cdaef6eef51d7975e5c96071a2f8c8dfcb819ef731f55e31240ef0"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarReparationTest$InstallmentTests",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8e70d384206b43076c20b7d58fcbb915f9cd82e2e85b2ea358b68a916c3c8554"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarReparationTest$PaymentTests",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5186a6e4ac7f8f0f5a51513da84c9f0a05f06d02211679672dd4a8a145c2a43d"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarReparationTest$StatusTests",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e41d2b96921f131ae0280910fc2c1b07945442fcbb07df143cd4912b0440171e"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarRetirementTest",
+        "tests": 23,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c6bdb7eb9b16425e9d15c4c296040b016465a18352a92b0dd392cfeb0dc138b9"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarScoreEventRecoveryIntegrationTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c06fa96544d5b2ef16a2bb87c1bc9340d847fbd6dc1934827e9cfdf7ba65cea9"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarServiceAddWarScoreInputTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d38af75fdf973cd80152885b394aba28985a0a2d6b80409ac9fcc96009797f23"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarServiceImplDirtyDataTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0448a2530a24d68e3aa48ba5bdeb38be3b9e27a851b116c40c17dad82c302512"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarStatusTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e83886054fc04f0e8fa3ce4a66e28b2e3582c261e9b84373dbaa222caa6e54c1"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarStatusTest$StatusTransition",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f48adcb7a73a6dbfd97354710a611318d44efdc1cbf23c0e7f38a75728bfe0f3"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarStatusTest$StatusProperties",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5f0a9b12e121ac136a623bed6a121c061f92411801432deca11efa524801ba0f"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarStorageBackendTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ece726d5997bc04f50761b5fa33d0e2fe483e36d51c37ccb083f7a82f81abb31"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarStorageDeleteFailureTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c4a089b98a3adc96be1bead1cbd17e2ed3770e3afee904b7c77c235b64a4c646"
+      },
+      {
+        "suite": "dev.starcore.starcore.war.WarVerificationServiceTest",
+        "tests": 42,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "92dcbfc4a49ee37893599b00eaa7a5eaaa8706d14f9b59c52c26f995f12d1f1b"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.AllianceBreakAuthorizationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "cccf492aadaf9272a9a6e43ddcc48bb793c348fa6d1e8eae40c80f60e7e6ce91"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.AllianceInvitationDirectionTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "573b654e5fdfdbbacef1ea4a0a427a81058ef5a26a7168b74bb156c1c0141767"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.AllianceRetirementLifecycleTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "28a86a9a68032654c58ca8cdbeb72b38552a633138c3660edaf426fa81c07706"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.AllianceRetirementSqlCommitTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "944272cb611df57266fb5aab27fabb755f72b67dd2567457a3fdb11e2df8d7f5"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.AllianceRetirementStorageTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f6592a0a77b66b871308cfee8483483e38a3a8d023fe3482af0fd8e7b43a9421"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.AllianceRetirementTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "20318a3653fbf907acdbdd6c944d6f5e6cd26212248390ec87b19f1fbc03b465"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyAuthorityStorageTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "07647e26a35e0eeaad1f849f383a08d2657a8b3e8d3c67967bf29b4f67c9b819"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyModuleLifecycleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2645e486b45bd87a9193b1b2fb8e9e3bc830b7c35336354042331de4e518e3c2"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyNewNationProtectionTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2bdb5d4efcaf65191f020704559ba4b028611e591a9aadf00def06d590a04e82"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyPlayerJourneyRestartIntegrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8d18e10f3da27717dae1f36441e176eb5d0af9124286fe8f16ebb428f71201a7"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyRelationCancellationContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d0be14904f704d04ccf9de6c917119dc8914c4c6696f4ebd8665a3b5ee2370e4"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyRelationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a94a50288e4c866c258cd07dd91f8cba2183dad2abbbbbbd22ccd029f88b2da9"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyRetirementLifecycleTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "aaead2b8c0da1d81daeac2d54a14fd632cf961894e1340c5c744e1a1c05be4c3"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyRetirementTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7793bb8a290ae0cff5aea5b764168b8ca8122a2f85de7ec87ea6b87b1f6f2a6a"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyServiceSplitContractTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "66d9edbb96b01ebbe83dd70cee0d7dff75af80b5aff97a341fef11927190b43f"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyStateCodecTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7faec6181927e2d787d460c6ee5e42207d81f2935f9ffb05c01f0577ea874064"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyStateConflictIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f0c45e8f67f7d12863ae81a15e760289ebbfa58018868246aeeb104a07140793"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyTemporalStateCodecTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "21238cc6ecdfe2b1ef8516052a99ddc4449267ffd5f0ea22cf05d2e47f51c64d"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyTimingPolicyTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "07ca4f98515f268fe8ee2777113d37fee8675d987760ace1edd392a49bd8cd14"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyWarCodecTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b68b0793fce57c1c6dd740cd8f4ff3d5453809975ce0024fb0e65593c166d255"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.DiplomacyWarRecordSynchronizationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6a7c5f46f32a16166ea7f9bdc3a5ed913d698f7019fbb630eff6466550ff43c3"
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanBankRecoveryTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9284845ba91626fb7bcb8d10cc68050586971aa730840203bfe034c5e0c15379"
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanManagerDirtyDataTest",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f90d01e3658ac826bcdeafb232c86af60b2743327d3f129e0fab17662abfc1cd"
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanManagerTest",
+        "tests": 47,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e7dabb5bdaec2ebd3b15dc726e919243b5471fa4c11604ed2318c91552239962"
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanOwnershipTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d5825035cb51f5a70cdfa8fc810794e59417c3df136a9c00959f8ce15727baf4"
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanPermissionTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e73bfe615472496b3aab9a73e19cd02e90e2f47afb180e08a3ad12d3fd58c77b"
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanPersistenceConcurrencyTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "27c631434a5458f3e7f4759b37bcac86a7e4729d0c92e93dbab9f865c6d7773e"
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanRankTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f3f36d3708b0077289d7e1967500449e6f75d17e037e260a5eb4017bc9cd4577"
+      },
+      {
+        "suite": "dev.starcore.starcore.clan.ClanTest",
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "bf493cdf8f4dca636793a4e302dba4c0e2d758a4f604ab09c4ce3bca9ae42be0"
+      },
+      {
+        "suite": "dev.starcore.starcore.core.persistence.AsyncPersistenceFailureTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "aa4d302c6a809f1adb65df2c3d216feb6819100fef00ed0eb459bc348f0d6fa7"
+      },
+      {
+        "suite": "dev.starcore.starcore.core.persistence.PersistenceServiceAtomicRecoveryTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9b16fbaca4622e1018ff84c7a4169ece86e8691534e43dec3daa39229ff12300"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.exercise.ExerciseCommandTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5ca7aba4fdb58087f1d19183060afde59c1c3a949c037c4cc1151c815bd901ae"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.exercise.ExerciseListenerTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5ca2f3a25c3d66ac29f9973468d714b364f0e4b781fe90de0821443ed95bb671"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.exercise.ExerciseModuleLifecycleTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8df4da40e2399af50b7ebe0338ce215e0588380d2015fdd02b762c892bb5d22c"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.exercise.ExerciseRecoveryTest",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "833d199f9119efecb8846830254fe36edd1b107b9856cc16cab6526095a9ba0d"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.exercise.ExerciseStateCodecTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "137b6fdba4120fc49094f5863bdd7a2239e3c5f37be5a1451377986742763af0"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.navy.NavyBattleListenerTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "72d00b8c1f8d1680df55175d2d02b1e898033d1eb36e0c7ab50a5a555b2b3526"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.navy.NavyCommandTest",
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4cc3fae44c70b742c4ecfabc6403e56c11289bb61ed4c90753de48cf9ac74622"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.navy.NavyModelStorageTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "af110bedc514fd4a868f8b12be958b0338a50042b7682aa84dfacea8b1ae31e8"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.navy.NavyModuleLifecycleTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "224043b0aabccaba30aabe060133618ed826e602633e7dfb65a6163c316f64ec"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.navy.NavyServiceBudgetSpendingTest",
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "df00c84b6d79e4dbf2fc3886262b1487e6e2bf3b8e4c0c3d94bbe10dad58e224"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithInteractionTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e0b3fa46244a685c1e802a705183d6f1110f7b377619c5a6a4bef24d4c53f078"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithModelValidationTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b9b551a2cf8a2ea4c3ba0647239a0da1919caeb73916da09255281aaa19ca3f4"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithModuleLifecycleTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2cee07df6e2659a3814a53dc2f2b2712dce37eec3a3253272f34eb1d0c4a29b9"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithServiceImplDirtyDataTest",
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "051b0e9e015a27a62afbbdeaa57a1e4d04c6c919e8ecc33041d7e8ffe65e6e22"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithStatsTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "be84d5ae8d5ead4bdab202848840391a5fb20d378b54902419272fa375e580b9"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "12616c9c5e8cbd19c9fa98e5b0763f7147c15d554058a311a709a34e0a351c6a"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithTest$Prayer",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "dd6d0edb9da40b9c27ca7db2aac4ca942a6f6462637d895c1539843e20fa07b2"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithTest$FaithDataModel",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "074d4d16cf3b03ed276393c2b2aaf34f31cef49cc7f8890e565797aa598d3d53"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithTest$LevelConfig",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4bd2b1763ccfea8e66a6c031e6c4976264f8a20c00dd699c60394fefc9ff5959"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.faith.FaithTest$Config",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b8023b2c483212c97c5e2c750e833fe634bcccf0f89a0af7c0edad16e90c8bfc"
+      },
+      {
+        "suite": "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "db075827b0e69aaf40eacffde18436b101ade067a32bc3a146c6bf447d0432d5"
+      },
+      {
+        "suite": "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest$PersistenceConsistencyTests",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c837138dda7ee81a761f6e60dd35ca39626088f6c8162968893b24609ddd8f24"
+      },
+      {
+        "suite": "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest$ConcurrentTests",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f69a94ca2748ba01fbd203891445f628290c66bda760bf3fe7782210165f7924"
+      },
+      {
+        "suite": "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest$TryProcessTests",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "792dc7f599308eb3fe269943b0556fa80b58373f45139986f4109e4abeb7aeea"
+      },
+      {
+        "suite": "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest$ProcessLoopTests",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "737853a6fa4dcf5964cd8dd283001b57ce10351a8b9582006e4d73818dc01975"
+      },
+      {
+        "suite": "dev.starcore.starcore.persistence.DirtyDataManagerClosedLoopTest$MarkAndQueryTests",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ee2c3861aeee44ee94ffffb6933170cba4a86d1ee1526a672999d7dc8df8f097"
+      },
+      {
+        "suite": "dev.starcore.starcore.persistence.FileSystemDataStoreTest",
+        "tests": 30,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "66213270ddac1af31578a6dfa115078ac481562de92b8cacc3d59bd4cbb3aa48"
+      },
+      {
+        "suite": "dev.starcore.starcore.persistence.PersistenceServiceCoverageTest",
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d732e5e86f538ae2c59cf63158e7fe3f8c5434aa1c9732e75fd16f3cb858c7bb"
+      },
+      {
+        "suite": "dev.starcore.starcore.persistence.StorageKeyTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4d584a718405e285168a510886254c27d096aa52c85352d5dc3b6ccd4dafdd69"
+      },
+      {
+        "suite": "dev.starcore.starcore.essentials.data.EssentialsDataManagerAsyncSaveTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ced24a61f8a30a1f581f5037e917b5bb6357ce8f7d0950fb94f4cb979ba72156"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.hud.HudPreferencesTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d50d8aaad0efbcc9e7c2dad0222814d62fda0ad9165c4c7a40641107e2d5b1bb"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.army.mercenary.command.MercenaryRenewalRequestJournalTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "bbbb5f4ca9ef3846c6753643a6e5a02d3d8e84cba2251871eaa10cfa43f90177"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintAccessPolicyTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "74906c39fadd6fa8a34ec3463e4d9a4f42626cedf6602e7c406f156faf6f3ff6"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintBlockApplyTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5f79cc5e7c370debd1dd3475953a8219bb8c15a6fc93550153e8bb3b40c9b94d"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintClipboardBlockDataTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "32751bda6babc7bc7c885f80d80d3daa26e1ca018881b51955e4f515ad8fc20e"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintFailureBoundaryTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5b5dd7b79cd2f798d7766ac0adb72d4ff08b343f42693981314eeed5614d2333"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintGuiAccessPolicyTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "238acf87cc0c61e3fefc6113b831081cbf7932cb4ca2b920df91a881a72f69d8"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintGuiAlertTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "14e2149dd246d318495e55c06bcebb2105708ec8261d98ff257b3a014afc6fb2"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintModuleCommandLifecycleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f5b8c8810e04e03190b947df14b05f1ec406301a887120a9405a7bb697da03df"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintPaletteLocaleTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "69e74ab2a83c830e27d6912174edac22e9171efdae202954e74e2d025c04597a"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintPasteThreadingTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "bd23dab70eb1703d4f2b0e43366165e2c8242f684784f048d5234bc9fed5cb7a"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintPersistenceRecoveryTest",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "dc56f1bfa7b25067e2fee1530a42735f2223c36d74e4cb53b1754791aeabda09"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintRegionSelectionRoundTripTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d2aa2b3d705191ad083403f9dc5ca604a8469eeadcabf8606cebaca0b3e917ed"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintThreadLifecycleTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6090dbb83f6add22a9f6abb48b7a3268cab6f7dce800509b3451135b00bff7c5"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.BlueprintTileEntityDataTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "67e6a984c9fa71da00a401df64135bdd2a2fbadd66e4f8007ad02c43cc6f7fe0"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.blueprint.command.BlueprintCommandTest",
+        "tests": 37,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "372ed367f21b738ca9ad7506c28e78b1a377c988cece7fa87eb4e695dc994ac7"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.alliance.AllianceServicePersistenceBoundaryTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e500b91e1ca2c2804b5b3f4bea0c3f3c534725f0af394c187caa0188becc9ec3"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.diplomacy.military.MilitaryAllianceServiceInvitationPersistenceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9d508ca2eada87537e4b770d390b25502fb46585c85cfafbccab77a7f78954b4"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.dungeon.DungeonRepositoryIdempotencyTest",
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7bc9199f0590e6d1906a30ab1d6308fc105b40c0fd99c54f8a1cf94796392404"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.dungeon.DungeonRepositoryLoadDiagnosticsTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b5f9f73445bbaed477f2ec0d83727503ec0ac2d6d31d8bc27596968fafdd8ef2"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.dungeon.DungeonStorageTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "df0f179c02dd5cddaec729a228c794bb5edb5892962af5e8ea9071276e782267"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.dungeon.DungeonStorageTest$EmptyAndStats",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1a442f297b67db26e2d654a7316f40991310a088a3b80e3b9ca9df2cc319d885"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.dungeon.DungeonStorageTest$NationDataRoundTrip",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "135418dc62f0ecf47ee20a16bdf8d6e278591b52180a512fdc5898d7ec6befc1"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.dungeon.DungeonStorageTest$PlayerDataRoundTrip",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8549674fb2167dbfc5758e0576d47a87cfdaaf2a7e13277609d568d44b28ac8b"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.dungeon.DungeonStorageTest$DungeonDataRoundTrip",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c0aca4c74373d6b292c41f1eaf369eb9da82293991b4c8077bb299add9b89354"
+      },
+      {
+        "suite": "dev.starcore.starcore.ugc.UGCModuleLifecycleTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3786633e37cc39148334da6270661f4a0c6bb0b99aed9cacd9cb49d8a09ce5c8"
+      },
+      {
+        "suite": "dev.starcore.starcore.ugc.UGCServicePersistenceTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b762bc78c9ca383e4512c47672525d7917889ec7a86c1511a42fa0d8f3dc3bf0"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.DatabaseAwareTerritoryServiceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "35b1e5431bd7e957abf5cb28f72ee8f3465d2da78999d328cf1a1b85f6fa77bf"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.InMemoryTerritoryServiceTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9299891ac26da8f0c5d62f1410921d33f68134aa094cfca9c24e2c5f9dd0d85f"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.SqlTerritoryServiceTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7aa907aaee0f970c87756f9a6c9758d5a31b83c5cdfb4ac07659c028ba9d9bd4"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryBatchRecoveryTest",
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "dc883a6a02d9fe765926d2673fe6fc6445ffd28d578cee6664894ceb952fb929"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryRetirementTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3d0d9920f0c6de3471a2d67ad13fef8844a8e5e52645d2fdb254247bc64b27e0"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ea551bb063da12c59933028b67b7146b5bd9b1c340ecb51e7f027e4a22c780d4"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$SecurityTests",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "197d75ce9f56b1a80874ec68e46780c4385aefc8c7116ebf054198deb8aee652"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$BoundaryTests",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9c1b481a5864aeacc8ab58d83f8f2f8922968f5fe1ed77d3db7dae50c6ff9aef"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$NationTerritoriesTests",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ade3db458fac460eed7cbbb4720a9d776a620fca8419865a7e33c3f666b8f8eb"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$UnclaimTests",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a266171a36b07fc4acfb90d5ff0d2058b80fc39d61cf5e64b0f774ddab9f04cd"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$OwnershipTests",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8956b7e6a8544fc3964dc8345c23161ffc74b315021f9264ffe235e05a636cd9"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$ClaimTests",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d29c7ebf29eac8bd39c2fcd5d0087f24242a3f933426e2f281d1a60a091d12ab"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest",
+        "tests": 0,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d212c488eda6ab4c1ab9123cd3f7c076eb27618278c45d1a7abea8ae5f93db00"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest$FromPropertiesTests",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "81f5f700fad689cba0b1faa5bd9bd771b7c79a5adf38600db2bd5ba95c4e10ae"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest$ToPropertiesTests",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d4b120602f0b5fb82ece4aaa676e29e65e8d0fc2f66e302ffc4749bd0de63f46"
+      },
+      {
+        "suite": "dev.starcore.starcore.foundation.territory.TerritoryTransferRecoveryTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b41b81cbbbb28cbff760a123c07a9675822746ebbd17dc14ea51d294585fb495"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityModelExtendedTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "16c65439306a2056f4c2b7efd526dc4f7235cbb6395e83882cb6b0991497f0cf"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityModuleLifecycleTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c8413a31aa0852d6ffcb76d6941fd9b5143033d49845041d2faa9150a9259d7b"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityMoneyAuthorityTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0dbad174ee80f0011a70c18019714ea8f4d46a095284a3f2538e225df256d70d"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityMoneyCommandTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "562767cc0348b56027c914f406781626f091ccb447935075348d0c3c74e70f53"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityMoneyModuleRecoveryTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e838a5a19facc6d35b35540e9474d24d0fc75ef94cc1e9915c9e9e4664f95faf"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityMoneyRecoveryTest",
+        "tests": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1480aa73d45a32d964812892630129041e1913d909ce17eb966f6bc42a4e877c"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityPlaceholderExpansionLocaleTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "633d5e9796ceb7561a1a5e6413ce7319df385362b0b9f533f2c796cffc6fe7fb"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityPlaceholderExpansionTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e6abe2062bebb140e6a7f965a3ec02986fe88d1f2863741d603d224bbbd22bf0"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityRetirementRecoveryTest",
+        "tests": 38,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8375dfae1a3e0b843f0eb5026c92502958e9a2164381ee471dcbd96a3a3e676d"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityServiceContractTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "058281aa578da76c234525f524e9e995b63364250ed6db6638425dc85e30567c"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityServiceDurabilityTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6d356cbc8493a813a36dfb41b6056aa5cc0f529c1ccdcf1000ef4aaab947f116"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CityServiceMembershipTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "43a8f02b6faa2a107a07388e7418fdd2731c2663a26c526f94e02db1bfb501c5"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.CitySnapshotPersistenceTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5fc2f06e12aa4eb20870ee7c42cff146507853ca6dc66c41577256b9a3fc60a0"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.city.JsonCityStorageTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "11b5a4645ff5c702e7e74563ed0921ef6def2ba92fda778429b599067cc00076"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BankruptcyReasonTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a3064bb8e9ed324fe79556988028882f1fd2640c97465bdc2498270893c32948"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BankruptcyServicePersistenceDiagnosticsTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6dc780ff9de216967ff02940a232beee39bc918fae064cdfbca431161ee95dc7"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetAuthorityTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9a96c057d05d3cee5897e4992a620601edc74fd24f9485d3d10f0ad336170191"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetLifecycleTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "928571357db787a7b152cb1d66c0f7d50b6e08703edcaec219d6324faaab353e"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetRecoveryTest",
+        "tests": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "12579a22d579b612c9810482cf92710d204d741d89fa36305aaba8dd52558dff"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetServiceImplSpendingTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "749cf3abe955e50dfb8eaaeb6e218c2555c9db2113c03041f31b1a65df5e0781"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.BudgetStateCodecTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "55ea7b36c848cb84bbe64f2bdc4b2b78d1cdfee320847ae30327c20b1002e70b"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.FundedTaxLedgerTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4c0b8af0d23fe4077bc7aa6b534319834d9c35554895195721933eb7755c2bb0"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.LoanServiceValidationTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3c19e74f3dfe1e52cad565caaf2e08ad2017f0d7eee791a46df18f6da0d51a51"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.NationTransferEconomyStateTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "938101feb630544785da0934f95e1188eb676d398212a9fa487bb0293999a88c"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.SqlBudgetStateStorageTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "fae7c8ae5e39f8978caad37806fc44d5be172d4100cb82048a869367e2138052"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.SqlTreasuryBusyRetryTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d5a52f1cc5132e842784a14eedca29208b0a6781e2fec4ed82d0c2206fdf9b17"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.SqlTreasuryStateStorageTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6f8481b3bf8f2a36dbf819c7b3b8cda4b5a5b9d85d8c3cba99e4086cca4f147d"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxAssessmentTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "88e6c72c55fb904562708dbb40ea0d3a772afa725f0ae3b38855d08019c97f3f"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationFaithBonusTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3dab179bce5c5e4f35c3349a9d6eaffceae13216e387c633ca8a87ef8d76198e"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceCompensationFailureTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2bee95e70774e04a008ef4c678308a76e4ae9a19b5f9e9be8037f942a1815cb7"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceFundedTaxTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c888557ed0cb5c1e48ab46e6409551f1c31586a106cca3a290042ebe64b5ad78"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceInputValidationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f6e566ebf50bfd1889f38d38344f1d5547266fe36f05c601eac6c8c180877927"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxationServiceProviderMatrixTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e9e5339bc2567fec599abdf6fad278b9def6f1e98491116526ef54dea43da8e9"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxCollectionWindowTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "57084aeeaad8f78ba74adc2e42c3769ebaef8b777360ddc5de56384c4c07ebb0"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxFundingReceiptTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c1b0019cedd145c63e6b3175faac4386c4921b606f26831c664bc30be036ff9e"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TaxQuoteFactoryTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c54ec160907e290b094b128a580a0a7edeb71e431269e9e21222eabd3d966ed4"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryDiagnosticsTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c924dcafb97f8510d456c3908328d33413cacbb8206f09125cacc4690626785d"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryModuleRefreshLifecycleTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a274a2f76c8de985b3418169402778d845a4c55657ddd7974e2c3127eaf58970"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryNationBoundaryTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a1fa13d681b6e01570a532406c267e177ffb3b66d3eff1e2d48d0fa60c7663f7"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryPlayerDepositRecoveryTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "727a8623b8146c6958daa96631c51d93bde903c936344a74bfd57aa88ad3beed"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryRequestAmountValidationTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "be22b244f7128f7aeb3e0793795dde8e1a7793cc61f597927e15c0a9b38c7a96"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryRetirementTest",
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2a7f265f4ccd2d1db84159a1a0ab2f7ae3307aecc72412c8f3353ef7689f0ccb"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryStateCodecBoundaryTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4d01a2dc2245868f76e3d6f43c6db5c21c936bbf94e4caaa58099f04b9c68186"
+      },
+      {
+        "suite": "dev.starcore.starcore.module.treasury.TreasuryTransactionPersistenceTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "74978a1bd6d95fd49af36b12a0b88e35aaac5244bc354d3434961ce8d14d86f2"
+      }
+    ],
+    "report_directory": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-final-reports",
+    "mode": "Disjoint 128 MiB in-process Maven batches. Joint/admission and prior-regression batches overlapped in time; all other batches ran sequentially. Child probes use 64 MiB JVMs.",
+    "process_cases": 15,
+    "atomic_utility_cases": 27,
+    "process_scope": "Nine actual file-backed domain CAS races using two independent JVMs and a third fresh reader: nation, territory, treasury, city, diplomacy, bilateral alliance, military alliance, federation, war. Competing commits and fresh reads block behind the OS lock. Killed owner, killed unfinished atomic replacement, confirmed snapshot surviving termination, delete contention, reentrant aliases, interrupted waiter, failed sidecar open. No Bukkit host and no mocked storage in child probes.",
+    "limits": "Windows local filesystem only. Process termination probes cover storage boundaries, not the complete NationModule disband lifecycle. No multi-process SQL/MySQL, network-filesystem or mixed-version writer proof. Other gameplay stores still need business-level stale-snapshot/receipt protocols."
+  },
+  "api": {
+    "added_from_prior_development": [],
+    "removed_from_prior_development": [],
+    "normal_check_passed": true,
+    "baseline_update_flag_used": false
+  },
+  "logs": [
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-focused-final-01.log",
+      "sha256": "71577e7942efea14a79c42664246471350f7c6099a2f3a07b72d5928fec5585f"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-joint-final-01.log",
+      "sha256": "69d7692736ec613de71cc411e819ca323a7e870c366ca8e56594bf06455b3299"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-prior-regression-01.log",
+      "sha256": "5ad8d78a61d7792c0674bbf05bbf9f1fc669f40409063a27d457d66dbec4f1e4"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-diplomacy-regression-01.log",
+      "sha256": "765534924eb8298773620e69e1ebba2618ccaf1ff6f604b2cec4c22204ea2be2"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-atomic-callers-01.log",
+      "sha256": "1be3f58e35792a282e2933510d3c042741c308e771ac279cbc0beed813fb1ffc"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-atomic-callers-02.log",
+      "sha256": "297a3cd421669d08affa3ae808d1a07ddb67dbc6ee8609e3ae8be8f99a1635de"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-authority-regression-02.log",
+      "sha256": "05ded920c6920e8a1dc140435dce54f4c45879a58e12e1651b1dcc7f30b0a06c"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-cumulative-main-compile-01.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-cumulative-test-compile-02.log",
+      "sha256": "c23c48c2dd84018797ed5cb28f49abca65058ab90ca9e2ebd3cfdd459de39a7a"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-format-02.log",
+      "sha256": "8bf36164f19bc69498b84bc4d90dea880c8c8de12820269fac1ef443a23ec88e"
+    }
+  ],
+  "development_attempts": [
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-authority-regression-01.log",
+      "sha256": "21af5f3386597f363fb88f9158826e847a4d3d87de88ba0fda383227932c24d0"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-cumulative-test-compile-01.log",
+      "sha256": "c23c48c2dd84018797ed5cb28f49abca65058ab90ca9e2ebd3cfdd459de39a7a"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-focus-01.log",
+      "sha256": "fb965c3b29088a3b404045d736530aaae5e3704844db41e99e344344e8ad801e"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-focus-02.log",
+      "sha256": "9d9f85d1cbce62474ee269c97c9c8d840c11d9b0724beece935d3a2fe5dc1b5a"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-format-01.log",
+      "sha256": "8df57dc13ca71cf872b0abe3de37d0e095037f0c4dfbae6ea1f0f770b4cbf1c1"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-main-compile-01.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-test-compile-01.log",
+      "sha256": "c97d78591a42c806974a480452ae86aa6deba4573f9bfda85fad92ad1bfd275f"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-test-compile-02.log",
+      "sha256": "d1eeced72a913b1c4842dc9144807c3cb0cc5bcd2e9b55ad449407760bb2837a"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-test-compile-03.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\process-lock-test-compile-04.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "found_and_fixed": [
+    "Original compare/replace guards only serialized threads in one JVM. Cooperating processes now lock a stable sidecar for the entire protected operation.",
+    "Original recovery/delete could remove another live writer temporary file. All three AtomicFilePersistence operations now use the same process lock.",
+    "Child harness changed from redirected log files to drained pipes to avoid Windows handle cleanup delays; fresh-reader probes no longer compute a new conflicting retirement.",
+    "Extended regression found an old treasury lifecycle assertion that queried a stopped service. It now verifies both that delayed refresh did not alter balances and that stopped-service access is rejected. Initial batch also skipped two environment-gated MySQL tests, which remain explicitly outside final local selections."
+  ],
+  "operational_constraints": [
+    "Keep .lock sidecars stable; do not delete or replace them while any cooperating writer may run. OS lock ownership, not file existence, determines whether a writer is active.",
+    "Stop old-version writers and both backend writers during migration. This change does not implement live file-to-SQL backend switching.",
+    "Only specified nine authority adapters protect business compare/save. Atomic file replacement locking alone does not prevent another caller from writing a stale business snapshot.",
+    "Busy/unsupported/interrupted acquisition fails closed with a five-second local/native lock-wait budget; target-file/sidecar symbolic links are rejected. Parent path is canonicalized; filesystem IO may take longer, hard-link aliasing and external directory/sidecar replacement are outside the protocol."
+  ],
+  "previous_artifacts": {
+    "core_jar": {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\starcore-1.0.0.jar",
+      "sha256": "281776212fd1a8653abc4ffb94e05047174332f48a5ea5d742c12d22ec0fd2d5"
+    },
+    "review_zip": {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply\\target\\dist\\StarSupply-0.1.0-review.zip",
+      "sha256": "77ad8ca71c73f95d5efb31c1fc2b555c9fa5786c4a0fb896a3f925ff24f60f44"
+    }
+  },
+  "known_open": [
+    "Complete disband-process kill/restart and SQL multi-process/MySQL validation remain pending; no claim of all-Core multi-server gameplay safety.",
+    "Declaration fees remain separate ordinary treasury debit/refund; the admission fence prevents new war state, not a durable fee transaction.",
+    "Ordinary alliance/diplomacy transitions and treaty political/territory/army receiver effects need original-operation receipts.",
+    "Old standalone journals/no-receipt transactions need independent evidence. Pending disband/payment safe cancellation and old-account reconciliation are not provided.",
+    "Other book inputs, permissions/threads/lifecycle; navy real troop transfer/ports; wounded generation/return; doctrine effects/durable paid switch.",
+    "Durable derived notifications, budget cancel/rollover, orphan rewards, history archival/capacity, offline-world loading.",
+    "Full historical regression union, full clean Core, latest MySQL, packaged Core/Supply177 and review ZIP pending. Paper/Folia explicitly deferred."
+  ],
+  "replay": {
+    "directory": "C:\\tmp\\starsupply-file-authority-locks-review-20261126-1752",
+    "base": "9e380d62fd94cdc54f6f703ea09e14f575660f18",
+    "forward_check": true,
+    "reverse_check": true,
+    "diff_check": true,
+    "all_src_file_count": 3689,
+    "api_baseline_equal": true,
+    "pom_equal": true,
+    "all_source_bytes_equal_after_lf_normalization": true,
+    "aggregate_sha256": "44b5720d926625205324684800d18b025c9b97c30106500787c2b65251c53342"
+  }
+}
