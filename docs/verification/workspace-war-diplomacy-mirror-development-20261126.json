@@ -1,0 +1,81 @@
+{
+  "checkpoint": "war-diplomacy-mirror-development-20261126",
+  "base_review": "C:\\tmp\\starsupply-war-declaration-review-20261126-2204",
+  "source_files": [
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/WarDiplomacyMirrorService.java",
+      "exists_in_base": false,
+      "sha256": "2af43e5ac20af9476af8362369042e3197e5bf9bf810ac75f81febb30eb6918f",
+      "bytes": 1132
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/WarDiplomacyMirrorState.java",
+      "exists_in_base": false,
+      "sha256": "20ad71cd88fdb7967d9a80ee1ee0886db7800f2aa0143bf6c15fc1209434c714",
+      "bytes": 7309
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthority.java",
+      "exists_in_base": true,
+      "sha256": "0d8883215fe405a4e7812967260084adc616fbc953193674986b418cc7e142fb",
+      "bytes": 11038
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyModule.java",
+      "exists_in_base": true,
+      "sha256": "08c2542f501d23cc5aa70afcfc9cf869e8be308b2888f5821f1a32c197465cff",
+      "bytes": 45640
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/WarModule.java",
+      "exists_in_base": true,
+      "sha256": "be8bd8ed1a1b745501c1ce4e39d803666a909650e6bb412aa58d294e9336526a",
+      "bytes": 34985
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarStateStorage.java",
+      "exists_in_base": true,
+      "sha256": "c110f7f6defa7d15f77e2394c9e87edf4572b290aa0a70c0f4d512371af08eb6",
+      "bytes": 18946
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarServiceImpl.java",
+      "exists_in_base": true,
+      "sha256": "885c87ca98a0c621a648e861f575f018ab068006eed8da88918f77e1ed0f0ff6",
+      "bytes": 26350
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/diplomacy/WarDiplomacyMirrorTest.java",
+      "exists_in_base": false,
+      "sha256": "31f279554d3a3c9e174c8970d725d7d17d365240049f6bebfe373e92b1ee4e23",
+      "bytes": 9327
+    }
+  ],
+  "patch": {
+    "path": "docs/upstream/development/war-diplomacy-mirror-20261126.patch",
+    "bytes": 39357,
+    "sha256": "8dcd97f89165e93b83c427231094d0b0199b57f3f873078fcf37098fc8492c0a"
+  },
+  "validation": {
+    "production_sources": 7,
+    "javac_exit": 0,
+    "test_class": "dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorTest",
+    "tests": 18,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "backends": [
+      "file",
+      "SQLite"
+    ],
+    "jvm": "JDK 21 low-memory javac + Maven Surefire, -Xmx128m"
+  },
+  "scope": {
+    "source_snapshot_atomic": true,
+    "archived_wars_forced_inactive": true,
+    "late_event_reconcile": true,
+    "periodic_retry": true,
+    "derived_event_outbox": false,
+    "full_folia_server": false
+  }
+}

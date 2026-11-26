@@ -1,0 +1,844 @@
+--- a/src/main/java/dev/starcore/starcore/module/diplomacy/WarDiplomacyMirrorService.java
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/WarDiplomacyMirrorService.java
+@@ -0,0 +1,27 @@
++package dev.starcore.starcore.module.diplomacy;
++
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.time.Instant;
++import java.util.*;
++
++/** Durable receiver of complete war authority snapshots, including archived wars. */
++public interface WarDiplomacyMirrorService {
++  /** Accepts one complete revision atomically; stale and contradictory revisions are rejected. */
++  SnapshotReceipt reconcile(SourceSnapshot snapshot);
++  record SourceSnapshot(long revision, List<WarEntry> wars) {
++    public SourceSnapshot {
++      if (revision < 0) throw new IllegalArgumentException("Negative source revision");
++      wars = List.copyOf(wars);
++    }
++  }
++  record WarEntry(UUID warId, NationId aggressor, NationId defender, Instant declaredAt, boolean active) {
++    public WarEntry {
++      Objects.requireNonNull(warId);
++      Objects.requireNonNull(aggressor);
++      Objects.requireNonNull(defender);
++      Objects.requireNonNull(declaredAt);
++      if (aggressor.equals(defender)) throw new IllegalArgumentException("Self war mirror");
++    }
++  }
++  record SnapshotReceipt(long revision, String fingerprint, boolean replay) {}
++}
+--- a/src/main/java/dev/starcore/starcore/module/diplomacy/WarDiplomacyMirrorState.java
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/WarDiplomacyMirrorState.java
+@@ -0,0 +1,131 @@
++package dev.starcore.starcore.module.diplomacy;
++
++import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorService.*;
++import java.nio.charset.StandardCharsets;
++import java.security.MessageDigest;
++import java.time.Instant;
++import java.util.*;
++
++/** Permanent receipts are retained after removable pair ownership is released. */
++record WarDiplomacyMirrorState(long revision, String fingerprint,
++    Map<UUID, WarEntry> receipts, Map<DiplomacyPairKey, UUID> owners) {
++  static final String PREFIX = "warMirror.";
++  WarDiplomacyMirrorState {
++    receipts = Map.copyOf(receipts);
++    owners = Map.copyOf(owners);
++  }
++  static WarDiplomacyMirrorState empty() {
++    return new WarDiplomacyMirrorState(-1, "", Map.of(), Map.of());
++  }
++  static String encode(WarEntry e) {
++    return e.aggressor() + "|" + e.defender() + "|" + e.declaredAt() + "|" + e.active();
++  }
++  static WarEntry decode(UUID id, String text) {
++    String[] parts = text.split("\\|", -1);
++    if (parts.length != 4 || !(parts[3].equals("true") || parts[3].equals("false")))
++      throw new IllegalArgumentException("Invalid war mirror receipt");
++    var e = new WarEntry(id, NationId.of(UUID.fromString(parts[0])),
++        NationId.of(UUID.fromString(parts[1])), Instant.parse(parts[2]), Boolean.parseBoolean(parts[3]));
++    if (!encode(e).equals(text)) throw new IllegalArgumentException("Noncanonical war receipt");
++    return e;
++  }
++  static String fingerprint(Collection<WarEntry> entries) {
++    try {
++      var digest = MessageDigest.getInstance("SHA-256");
++      entries.stream().sorted(Comparator.comparing(e -> e.warId().toString())).forEach(e ->
++          digest.update((e.warId() + "|" + encode(e) + "\n").getBytes(StandardCharsets.UTF_8)));
++      return HexFormat.of().formatHex(digest.digest());
++    } catch (java.security.NoSuchAlgorithmException failure) {
++      throw new IllegalStateException(failure);
++    }
++  }
++  static Map<UUID, WarEntry> entries(SourceSnapshot snapshot) {
++    var result = new HashMap<UUID, WarEntry>();
++    var activePairs = new HashSet<DiplomacyPairKey>();
++    for (var e : snapshot.wars()) {
++      if (result.putIfAbsent(e.warId(), e) != null)
++        throw new IllegalArgumentException("Duplicate war mirror identity");
++      if (e.active() && !activePairs.add(DiplomacyPairKey.of(e.aggressor(), e.defender())))
++        throw new IllegalArgumentException("Multiple active wars for diplomacy pair");
++    }
++    return result;
++  }
++  Properties write(Properties properties) {
++    var result = DiplomacyAuthority.copy(properties);
++    result.keySet().removeIf(k -> k instanceof String s && s.startsWith(PREFIX));
++    if (revision < 0) return result;
++    result.setProperty(PREFIX + "revision", Long.toString(revision));
++    result.setProperty(PREFIX + "fingerprint", fingerprint);
++    receipts.forEach((id, e) -> result.setProperty(PREFIX + "receipt." + id, encode(e)));
++    owners.forEach((pair, id) -> result.setProperty(PREFIX + "owner." + pair.left() + "." + pair.right(), id.toString()));
++    return result;
++  }
++  static WarDiplomacyMirrorState read(Properties properties) {
++    var keys = properties.stringPropertyNames().stream().filter(k -> k.startsWith(PREFIX)).toList();
++    if (keys.isEmpty()) return empty();
++    long revision = Long.parseLong(Objects.requireNonNull(properties.getProperty(PREFIX + "revision")));
++    String hash = Objects.requireNonNull(properties.getProperty(PREFIX + "fingerprint"));
++    if (revision < 0 || !Long.toString(revision).equals(properties.getProperty(PREFIX + "revision"))
++        || !hash.matches("[0-9a-f]{64}")) throw new IllegalArgumentException("Invalid war mirror fence");
++    var receipts = new HashMap<UUID, WarEntry>();
++    var owners = new HashMap<DiplomacyPairKey, UUID>();
++    for (String key : keys) {
++      String suffix = key.substring(PREFIX.length());
++      if (suffix.startsWith("receipt.")) {
++        String rawId = suffix.substring(8);
++        UUID id = UUID.fromString(rawId);
++        if (!id.toString().equals(rawId)) throw new IllegalArgumentException("Invalid receipt UUID");
++        receipts.put(id, decode(id, properties.getProperty(key)));
++      } else if (suffix.startsWith("owner.")) {
++        String[] ids = suffix.substring(6).split("\\.", -1);
++        if (ids.length != 2) throw new IllegalArgumentException("Invalid owner pair");
++        var pair = DiplomacyPairKey.of(NationId.of(UUID.fromString(ids[0])), NationId.of(UUID.fromString(ids[1])));
++        if (pair.left().equals(pair.right()) || !(pair.left() + "." + pair.right()).equals(suffix.substring(6)))
++          throw new IllegalArgumentException("Noncanonical owner pair");
++        String owner = properties.getProperty(key);
++        UUID id = UUID.fromString(owner);
++        if (!id.toString().equals(owner)) throw new IllegalArgumentException("Invalid owner UUID");
++        owners.put(pair, id);
++      } else if (!suffix.equals("revision") && !suffix.equals("fingerprint"))
++        throw new IllegalArgumentException("Unknown war mirror property");
++    }
++    if (!fingerprint(receipts.values()).equals(hash)) throw new IllegalArgumentException("War fingerprint mismatch");
++    entries(new SourceSnapshot(revision, List.copyOf(receipts.values())));
++    var retired = DiplomacyAuthority.receipts(properties);
++    var relations = DiplomacyStateCodec.fromProperties(properties);
++    var wars = DiplomacyWarCodec.fromProperties(properties);
++    owners.forEach((pair, id) -> {
++      var e = receipts.get(id);
++      var war = wars.get(pair);
++      if (e == null || !e.active() || !pair.equals(DiplomacyPairKey.of(e.aggressor(), e.defender()))
++          || retired.containsKey(pair.left()) || retired.containsKey(pair.right())
++          || relations.get(pair) != DiplomacyRelation.WAR || war == null
++          || !war.declarer().equals(e.aggressor()) || !war.target().equals(e.defender())
++          || war.declaredAt().toEpochMilli() != e.declaredAt().toEpochMilli())
++        throw new IllegalArgumentException("Invalid war mirror ownership");
++    });
++    return new WarDiplomacyMirrorState(revision, hash, receipts, owners);
++  }
++  static void transition(WarDiplomacyMirrorState before, WarDiplomacyMirrorState after) {
++    if (after.revision < before.revision) throw new IllegalArgumentException("War source revision rollback");
++    if (before.revision == after.revision && !before.fingerprint.equals(after.fingerprint))
++      throw new IllegalArgumentException("Conflicting source revision");
++    before.receipts.forEach((id, old) -> {
++      var next = after.receipts.get(id);
++      if (next == null || !old.aggressor().equals(next.aggressor())
++          || !old.defender().equals(next.defender()) || !old.declaredAt().equals(next.declaredAt())
++          || (!old.active() && next.active()))
++        throw new IllegalArgumentException("War receipt identity or terminal state changed");
++    });
++    after.owners.forEach((pair, id) -> {
++      if (!id.equals(before.owners.get(pair)) && before.receipts.containsKey(id))
++        throw new IllegalArgumentException("Released owner cannot be reacquired");
++    });
++  }
++  WarDiplomacyMirrorState release(DiplomacyPairKey pair) {
++    var next = new HashMap<>(owners);
++    next.remove(pair);
++    return new WarDiplomacyMirrorState(revision, fingerprint, receipts, next);
++  }
++}
+--- a/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthority.java
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthority.java
+@@ -87,7 +87,7 @@
+     boolean envelope =
+         value.containsKey(VERSION)
+             || value.containsKey(HASH)
+-            || value.stringPropertyNames().stream().anyMatch(k -> k.startsWith(RETIRED));
++            || value.stringPropertyNames().stream().anyMatch(k -> k.startsWith(RETIRED) || k.startsWith(WarDiplomacyMirrorState.PREFIX));
+     if (envelope
+         && (!"1".equals(value.getProperty(VERSION))
+             || !checksum(value).equals(value.getProperty(HASH))))
+@@ -119,6 +119,7 @@
+             throw new IllegalArgumentException("Diplomacy participant is not an endpoint");
+       }
+     }
++    WarDiplomacyMirrorState.read(value);
+   }
+ 
+   private static String required(Properties entry, String field) {
+@@ -175,6 +176,8 @@
+     var result = copy(previous);
+     for (var family : FAMILIES)
+       if (update.containsKey(family.count())) removeFamily(result, family);
++    if (update.containsKey(WarDiplomacyMirrorState.PREFIX + "revision"))
++      result.keySet().removeIf(k -> k instanceof String key && key.startsWith(WarDiplomacyMirrorState.PREFIX));
+     result.putAll(update);
+     result = seal(result);
+     transition(previous, result);
+@@ -189,6 +192,7 @@
+   static void transition(Properties previous, Properties next) {
+     validate(previous);
+     validate(next);
++    WarDiplomacyMirrorState.transition(WarDiplomacyMirrorState.read(previous), WarDiplomacyMirrorState.read(next));
+     var after = receipts(next);
+     receipts(previous)
+         .forEach(
+@@ -220,6 +224,10 @@
+         for (String field : keep.get(i).stringPropertyNames())
+           result.setProperty(family.prefix() + i + "." + field, keep.get(i).getProperty(field));
+     }
++    var mirror = WarDiplomacyMirrorState.read(previous);
++    for (var pair : mirror.owners().keySet())
++      if (pair.contains(nation)) mirror = mirror.release(pair);
++    result = mirror.write(result);
+     return seal(result);
+   }
+ 
+--- a/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyModule.java
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyModule.java
+@@ -33,7 +33,8 @@
+     implements StarCoreModule,
+         DiplomacyService,
+         DiplomacyAllianceService,
+-        DiplomacyRetirementService {
++        DiplomacyRetirementService,
++        WarDiplomacyMirrorService {
+   private static final ModuleMetadata METADATA =
+       new ModuleMetadata(
+           "diplomacy",
+@@ -45,6 +46,7 @@
+               DiplomacyRelationService.class,
+               DiplomacyRetirementService.class,
+               DiplomacyWarService.class,
++              WarDiplomacyMirrorService.class,
+               DiplomacyAllianceService.class,
+               DiplomacyTimingPolicy.class),
+           "Owns relations, treaties, sanctions, and international agreements.");
+@@ -65,6 +67,7 @@
+   private volatile boolean stopped, authorityUnavailable;
+   private Properties authority;
+   private Map<NationId, RetirementReceipt> retirements = Map.of();
++  private WarDiplomacyMirrorState warMirror = WarDiplomacyMirrorState.empty();
+ 
+   private NationService nationService;
+   private DiplomacyStateStorage stateStorage;
+@@ -127,6 +130,7 @@
+       context.serviceRegistry().register(DiplomacyRelationService.class, this);
+       context.serviceRegistry().register(DiplomacyRetirementService.class, this);
+       context.serviceRegistry().register(DiplomacyWarService.class, this);
++      context.serviceRegistry().register(WarDiplomacyMirrorService.class, this);
+       context.serviceRegistry().register(DiplomacyAllianceService.class, this);
+       context.serviceRegistry().register(DiplomacyTimingPolicy.class, timingPolicy);
+ 
+@@ -225,6 +229,7 @@
+     failure =
+         cleanupStep(
+             failure, () -> context.serviceRegistry().unregister(DiplomacyWarService.class, this));
++    failure = cleanupStep(failure, () -> context.serviceRegistry().unregister(WarDiplomacyMirrorService.class, this));
+     failure =
+         cleanupStep(
+             failure,
+@@ -306,10 +311,12 @@
+     DiplomacyRelation storedRelation = relations.get(key);
+     WarRecord storedWarRecord = warRecords.get(key);
+     Instant storedChangeTimestamp = relationChangeTimestamps.get(key);
++    WarDiplomacyMirrorState storedMirror = warMirror;
+     DiplomacyRelation previousRelation = relations.getOrDefault(key, DiplomacyRelation.NEUTRAL);
+ 
++    warMirror = warMirror.release(key);
+     relations.put(key, relation);
+-    if (relation == DiplomacyRelation.NEUTRAL) {
++    if (relation != DiplomacyRelation.WAR) {
+       warRecords.remove(key);
+     }
+     relationChangeTimestamps.put(key, timingPolicy.now());
+@@ -321,6 +328,7 @@
+         return DiplomacyRelation.NEUTRAL;
+       } catch (RuntimeException failure) {
+         restoreRelationState(key, storedRelation, storedWarRecord, storedChangeTimestamp);
++        warMirror = storedMirror;
+         refreshStateAfterConflict(failure);
+         throw failure;
+       }
+@@ -329,6 +337,7 @@
+     try {
+       if (!publishRelationChangedEvent(left, right, previousRelation, relation)) {
+         restoreRelationState(key, storedRelation, storedWarRecord, storedChangeTimestamp);
++        warMirror = storedMirror;
+         return previousRelation;
+       }
+ 
+@@ -337,6 +346,7 @@
+       return relation;
+     } catch (RuntimeException failure) {
+       restoreRelationState(key, storedRelation, storedWarRecord, storedChangeTimestamp);
++      warMirror = storedMirror;
+       refreshStateAfterConflict(failure);
+       throw failure;
+     }
+@@ -547,8 +557,90 @@
+         });
+   }
+ 
++  @Override
++  public SnapshotReceipt reconcile(SourceSnapshot snapshot) {
++    Objects.requireNonNull(snapshot);
++    return mutate(() -> {
++      requireStorage();
++      var entries = WarDiplomacyMirrorState.entries(snapshot);
++      String fingerprint = WarDiplomacyMirrorState.fingerprint(entries.values());
++      if (snapshot.revision() < warMirror.revision())
++        throw new IllegalArgumentException("Stale war source snapshot revision");
++      if (snapshot.revision() == warMirror.revision()) {
++        if (!fingerprint.equals(warMirror.fingerprint()))
++          throw new IllegalArgumentException("Conflicting war source snapshot revision");
++        return new SnapshotReceipt(warMirror.revision(), fingerprint, true);
++      }
++      var owners = new HashMap<>(warMirror.owners());
++      var nextRelations = new HashMap<>(relations);
++      var nextWars = new HashMap<>(warRecords);
++      var nextTimes = new HashMap<>(relationChangeTimestamps);
++      var active = new HashMap<DiplomacyPairKey, WarEntry>();
++      for (var e : entries.values()) {
++        if (e.active()) {
++          requireActive(e.aggressor(), e.defender());
++          active.put(DiplomacyPairKey.of(e.aggressor(), e.defender()), e);
++        }
++      }
++      // A legacy WAR with no UUID must be matched explicitly, never erased as an orphan.
++      for (var pair : relations.keySet()) {
++        if (relations.get(pair) == DiplomacyRelation.WAR && !owners.containsKey(pair)) {
++          var source = active.get(pair);
++          var legacy = warRecords.get(pair);
++          if (source == null || legacy == null || !legacy.declarer().equals(source.aggressor())
++              || !legacy.target().equals(source.defender())
++              || legacy.declaredAt().toEpochMilli() != source.declaredAt().toEpochMilli())
++            throw new IllegalStateException("Unidentified legacy WAR requires explicit reconciliation: " + pair);
++        }
++      }
++      for (var owned : warMirror.owners().entrySet()) {
++        var e = entries.get(owned.getValue());
++        if (e == null) throw new IllegalArgumentException("Complete source snapshot lost war history");
++        if (!e.active()) {
++          var pair = owned.getKey();
++          owners.remove(pair);
++          nextRelations.put(pair, DiplomacyRelation.NEUTRAL);
++          nextWars.remove(pair);
++          nextTimes.put(pair, timingPolicy.now());
++        }
++      }
++      for (var item : active.entrySet()) {
++        var pair = item.getKey();
++        var e = item.getValue();
++        if (!warMirror.receipts().containsKey(e.warId())) {
++          owners.put(pair, e.warId());
++          nextRelations.put(pair, DiplomacyRelation.WAR);
++          nextWars.put(pair, new WarRecord(e.aggressor(), e.defender(), e.declaredAt()));
++          nextTimes.put(pair, e.declaredAt());
++        }
++      }
++      var nextMirror = new WarDiplomacyMirrorState(snapshot.revision(), fingerprint, entries, owners);
++      WarDiplomacyMirrorState.transition(warMirror, nextMirror);
++      var update = DiplomacyCombinedStateCodec.toProperties(nextRelations, nextWars, nextTimes, allianceInvitations);
++      var candidate = DiplomacyAuthority.merge(authority, nextMirror.write(update));
++      var previousRelations = Map.copyOf(relations);
++      commitAuthority(candidate);
++      applyAuthority(candidate);
++      for (var pair : nextRelations.keySet()) {
++        var previous = previousRelations.getOrDefault(pair, DiplomacyRelation.NEUTRAL);
++        var current = nextRelations.get(pair);
++        if (previous != current) {
++          try {
++            if (publishRelationChangedEvent(pair.left(), pair.right(), previous, current))
++              publishDerivedRelationEvents(pair.left(), pair.right(), previous, current);
++          } catch (RuntimeException failure) {
++            if (plugin != null) plugin.getLogger().warning("War mirror event failed after durable commit: " + failure.getMessage());
++          }
++        }
++      }
++      return new SnapshotReceipt(snapshot.revision(), fingerprint, false);
++    });
++  }
++
+   private WarRecord recordWarDeclarationInternal(
+       NationId declarer, NationId target, Instant declaredAt) {
++    if (warMirror.revision() >= 0)
++      throw new IllegalStateException("War declarations require an authoritative numbered snapshot");
+     Objects.requireNonNull(declarer, "declarer");
+     Objects.requireNonNull(target, "target");
+     Objects.requireNonNull(declaredAt, "declaredAt");
+@@ -1014,7 +1106,7 @@
+     var update =
+         DiplomacyCombinedStateCodec.toProperties(
+             relations, warRecords, relationChangeTimestamps, allianceInvitations);
+-    return DiplomacyAuthority.merge(authority == null ? new Properties() : authority, update);
++    return DiplomacyAuthority.merge(authority == null ? new Properties() : authority, warMirror.write(update));
+   }
+ 
+   private void loadState() {
+@@ -1029,6 +1121,7 @@
+     var newTimes = DiplomacyTemporalStateCodec.relationChangesFromProperties(properties);
+     var newInvites = DiplomacyTemporalStateCodec.invitationsFromProperties(properties);
+     retirements = DiplomacyAuthority.receipts(properties);
++    warMirror = WarDiplomacyMirrorState.read(properties);
+     authority = DiplomacyAuthority.copy(properties);
+     relations.clear();
+     relations.putAll(newRelations);
+--- a/src/main/java/dev/starcore/starcore/module/war/WarModule.java
++++ b/src/main/java/dev/starcore/starcore/module/war/WarModule.java
+@@ -14,11 +14,10 @@
+ import dev.starcore.starcore.foundation.message.MessageService;
+ import dev.starcore.starcore.foundation.territory.TerritoryService;
+ import dev.starcore.starcore.module.army.ArmyService;
+-import dev.starcore.starcore.module.diplomacy.DiplomacyRelation;
+ import dev.starcore.starcore.module.diplomacy.DiplomacyRelationService;
+-import dev.starcore.starcore.module.diplomacy.DiplomacyRelationSnapshot;
+ import dev.starcore.starcore.module.diplomacy.DiplomacyService;
+ import dev.starcore.starcore.module.diplomacy.DiplomacyWarService;
++import dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorService;
+ import dev.starcore.starcore.module.nation.NationService;
+ import dev.starcore.starcore.module.nation.model.NationId;
+ import dev.starcore.starcore.module.treasury.NationDebitService;
+@@ -96,6 +95,8 @@
+   private WarConfig warConfig;
+   private DiplomacyRelationService diplomacyRelationService;
+   private DiplomacyService diplomacyService;
++  private WarDiplomacyMirrorService diplomacyMirrorService;
++  private org.bukkit.scheduler.BukkitTask diplomacyMirrorTask;
+   private NationService nationService;
+   private WarServiceImpl warServiceImpl;
+   private StarCoreEventBus eventBus;
+@@ -172,6 +173,7 @@
+     this.diplomacyRelationService =
+         context.serviceRegistry().require(DiplomacyRelationService.class);
+     this.diplomacyService = context.serviceRegistry().require(DiplomacyService.class);
++    this.diplomacyMirrorService = context.serviceRegistry().require(WarDiplomacyMirrorService.class);
+     this.nationService = context.serviceRegistry().require(NationService.class);
+     this.eventBus = context.eventBus();
+     this.messages = context.serviceRegistry().require(MessageService.class);
+@@ -251,6 +253,15 @@
+     context.serviceRegistry().register(WarDisbandAdmissionService.class, this);
+     context.serviceRegistry().register(WarDeclarationRecoveryService.class, this);
+     enabled = true;
++    long mirrorGeneration = lifecycle.get();
++    diplomacyMirrorTask = CompatScheduler.globalTimer(context.plugin(), () -> {
++      if (!enabled || lifecycle.get() != mirrorGeneration) return;
++      try {
++        reconcileDiplomacyMirror();
++      } catch (RuntimeException failure) {
++        context.plugin().getLogger().severe("War diplomacy mirror retry remains pending: " + failure.getMessage());
++      }
++    }, 1200L, 1200L);
+   }
+ 
+   /** 设置命令的 GUI 引用 */
+@@ -298,6 +309,9 @@
+           if (warSituationListener != null) HandlerList.unregisterAll(warSituationListener);
+         });
+     warSituationListener = null;
++    var mirrorTask = diplomacyMirrorTask;
++    diplomacyMirrorTask = null;
++    cleanup(failures, () -> { if (mirrorTask != null) mirrorTask.cancel(); });
+     var situation = warSituationService;
+     warSituationService = null;
+     cleanup(
+@@ -520,15 +534,8 @@
+ 
+   private void synchronizeDeclarationMirror(WarDeclarationRecoveryService.Receipt result) {
+     if (result.status() != WarDeclarationRecoveryService.Status.DECLARED) return;
+-    var current = warServiceImpl.getWar(result.warId());
+-    if (current.isEmpty() || !current.get().isActive()) return;
+     try {
+-      var r = result.request();
+-      diplomacyService.recordWarDeclaration(r.aggressor(), r.defender(), result.declaredAt());
+-      activeWars.clear();
+-      for (var war : warServiceImpl.activeWars())
+-        activeWars.put(WarPairKey.of(war.left(), war.right()), war.declaredAt());
+-      saveState();
++      reconcileDiplomacyMirror();
+     } catch (RuntimeException failure) {
+       if (plugin != null)
+         plugin
+@@ -604,6 +611,7 @@
+     requireEnabled();
+     if (warServiceImpl != null) {
+       warServiceImpl.clearNationWarState(nationId);
++      reconcileDiplomacyMirror();
+     }
+   }
+ 
+@@ -611,7 +619,7 @@
+   public WarRetirementReceipt retireNationWars(java.util.UUID operation, NationId nation) {
+     requireEnabled();
+     var receipt = warServiceImpl.retireNationWars(operation, nation);
+-    activeWars.keySet().removeIf(pair -> pair.left().equals(nation) || pair.right().equals(nation));
++    reconcileDiplomacyMirror();
+     if (peaceTreatyService != null) peaceTreatyService.reload();
+     if (battlefieldService != null) battlefieldService.reload();
+     saveState();
+@@ -750,20 +758,21 @@
+   }
+ 
+   private void synchronizeEndedWar(War war) {
+-    if (war == null) {
+-      return;
+-    }
+-    activeWars.remove(WarPairKey.of(war.aggressor(), war.defender()));
++    if (war == null) return;
+     try {
+-      diplomacyService.setRelation(war.aggressor(), war.defender(), DiplomacyRelation.NEUTRAL);
++      reconcileDiplomacyMirror();
+     } catch (RuntimeException exception) {
+-      plugin
+-          .getLogger()
+-          .severe(
+-              "Failed to synchronize ended war diplomacy state for "
+-                  + war.id()
+-                  + ": "
+-                  + exception.getMessage());
++      plugin.getLogger().severe("Failed to reconcile committed war " + war.id()
++          + "; diplomacy/index mirror remains pending: " + exception.getMessage());
++    }
++  }
++
++  private synchronized void reconcileDiplomacyMirror() {
++    var snapshot = warServiceImpl.mirrorSnapshot();
++    diplomacyMirrorService.reconcile(snapshot);
++    activeWars.clear();
++    for (var war : snapshot.wars()) {
++      if (war.active()) activeWars.put(WarPairKey.of(war.aggressor(), war.defender()), war.declaredAt());
+     }
+     saveState();
+   }
+@@ -950,42 +959,6 @@
+   }
+ 
+   private void loadState() {
+-    // 完整战争存储是权威来源；恢复外交 WarRecord 与兼容索引。
+-    Collection<WarSnapshot> activeSnapshots = warServiceImpl.activeWars();
+-    activeWars.clear();
+-    Set<WarPairKey> activePairs = new HashSet<>();
+-    for (WarSnapshot snapshot : activeSnapshots) {
+-      WarPairKey key = WarPairKey.of(snapshot.left(), snapshot.right());
+-      activePairs.add(key);
+-      activeWars.put(key, snapshot.declaredAt());
+-      diplomacyService.recordWarDeclaration(
+-          snapshot.left(), snapshot.right(), snapshot.declaredAt());
+-    }
+-
+-    // 上次结束清理若在持久化边界失败，外交存储可能残留孤立 WAR。
+-    Set<WarPairKey> reconciled = new HashSet<>();
+-    nationService
+-        .nations()
+-        .forEach(
+-            nation -> {
+-              for (DiplomacyRelationSnapshot relation : diplomacyService.relationsOf(nation.id())) {
+-                if (relation.relation() != DiplomacyRelation.WAR) {
+-                  continue;
+-                }
+-                WarPairKey key = WarPairKey.of(nation.id(), relation.target());
+-                if (activePairs.contains(key) || !reconciled.add(key)) {
+-                  continue;
+-                }
+-                diplomacyService.setRelation(
+-                    nation.id(), relation.target(), DiplomacyRelation.NEUTRAL);
+-                plugin
+-                    .getLogger()
+-                    .warning(
+-                        "Reconciled stale WAR relation without an active full war: "
+-                            + nation.id()
+-                            + " <-> "
+-                            + relation.target());
+-              }
+-            });
++    reconcileDiplomacyMirror();
+   }
+ }
+--- a/src/main/java/dev/starcore/starcore/war/WarStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/war/WarStateStorage.java
+@@ -164,6 +164,26 @@
+     var p = authority.load();
+     rebuildCache(p);
+     return List.copyOf(warCache.values());
++  }
++
++  /** Read identities and revision from one durable authority image, including retired/deleted wars. */
++  public synchronized dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorService.SourceSnapshot
++      mirrorSnapshot() {
++    var p = authority.load();
++    var entries = new ArrayList<dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorService.WarEntry>();
++    var seen = new HashSet<UUID>();
++    for (String family : List.of(WarAuthority.WAR, WarAuthority.ARCHIVED_WAR)) {
++      WarAuthority.family(p, family).forEach((id, json) -> {
++        if (!seen.add(id)) throw new IllegalStateException("Duplicate war mirror identity " + id);
++        var war = authority.decodeWar(id, json);
++        entries.add(new dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorService.WarEntry(
++            id, war.aggressor(), war.defender(), war.declaredAt(),
++            family.equals(WarAuthority.WAR) && war.isActive()));
++      });
++    }
++    entries.sort(Comparator.comparing(entry -> entry.warId().toString()));
++    return new dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorService.SourceSnapshot(
++        DurablePropertiesStore.revision(p), entries);
+   }
+ 
+   private void rebuildCache(Properties p) {
+--- a/src/main/java/dev/starcore/starcore/war/WarServiceImpl.java
++++ b/src/main/java/dev/starcore/starcore/war/WarServiceImpl.java
+@@ -548,6 +548,13 @@
+ 
+   // ==================== 内部方法 ====================
+ 
++  /** Snapshot reads must also work inside a committed war event's mutation callback. */
++  public dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorService.SourceSnapshot
++      mirrorSnapshot() {
++    if (stopped || authorityFailed) throw new IllegalStateException("War authority unavailable or stopped");
++    return storage.mirrorSnapshot();
++  }
++
+   private void loadWars() {
+     Collection<War> loaded = storage.loadAllWars();
+     registry.replace(loaded);
+--- a/src/test/java/dev/starcore/starcore/module/diplomacy/WarDiplomacyMirrorTest.java
++++ b/src/test/java/dev/starcore/starcore/module/diplomacy/WarDiplomacyMirrorTest.java
+@@ -0,0 +1,225 @@
++package dev.starcore.starcore.module.diplomacy;
++
++import static org.assertj.core.api.Assertions.*;
++
++import dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorService.*;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.nio.file.Path;
++import java.time.Instant;
++import java.util.List;
++import java.util.Properties;
++import java.util.UUID;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++
++class WarDiplomacyMirrorTest {
++  @TempDir Path root;
++  final NationId a = NationId.random(), b = NationId.random(), c = NationId.random();
++  final UUID firstId = UUID.randomUUID(), secondId = UUID.randomUUID();
++  final Instant firstTime = Instant.parse("2026-11-25T12:00:00Z");
++  final Instant secondTime = firstTime.plusSeconds(60);
++
++  WarEntry first(boolean active) {
++    return new WarEntry(firstId, a, b, firstTime, active);
++  }
++
++  WarEntry second(boolean active) {
++    return new WarEntry(secondId, a, b, secondTime, active);
++  }
++
++  SourceSnapshot snapshot(long revision, WarEntry... wars) {
++    return new SourceSnapshot(revision, List.of(wars));
++  }
++
++  WarDiplomacyMirrorService mirror(DiplomacyModule module) {
++    return (WarDiplomacyMirrorService) module;
++  }
++
++  void assertSecondWar(DiplomacyModule module) {
++    assertThat(module.relationBetween(a, b)).isEqualTo(DiplomacyRelation.WAR);
++    assertThat(module.getWarRecord(a, b)).contains(new WarRecord(a, b, secondTime));
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void endedWarReplayPreservesLaterAllianceAcrossRestart(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var module = f.open();
++      mirror(module).reconcile(snapshot(1, first(true)));
++      var ended = snapshot(2, first(false));
++      var receipt = mirror(module).reconcile(ended);
++      assertThat(module.getWarRecord(a, b)).isEmpty();
++      module.setRelation(a, b, DiplomacyRelation.ALLIED);
++      var restarted = f.open();
++      var replay = mirror(restarted).reconcile(ended);
++      assertThat(replay.revision()).isEqualTo(receipt.revision());
++      assertThat(replay.fingerprint()).isEqualTo(receipt.fingerprint());
++      assertThat(replay.replay()).isTrue();
++      assertThat(restarted.relationBetween(a, b)).isEqualTo(DiplomacyRelation.ALLIED);
++      assertThat(restarted.getWarRecord(a, b)).isEmpty();
++      mirror(restarted).reconcile(snapshot(3, first(false)));
++      assertThat(f.open().relationBetween(a, b)).isEqualTo(DiplomacyRelation.ALLIED);
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void lateFirstWarSnapshotCannotOverwriteSecondWar(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var module = f.open();
++      mirror(module).reconcile(snapshot(1, first(true)));
++      var oldEnd = snapshot(2, first(false));
++      mirror(module).reconcile(oldEnd);
++      mirror(module).reconcile(snapshot(3, first(false), second(true)));
++      assertThatThrownBy(() -> mirror(module).reconcile(oldEnd))
++          .isInstanceOf(RuntimeException.class);
++      assertSecondWar(module);
++      assertSecondWar(f.open());
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void oldDeclarationCannotResurrectEndedWar(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var module = f.open();
++      var declaration = snapshot(1, first(true));
++      mirror(module).reconcile(declaration);
++      mirror(module).reconcile(snapshot(2, first(false)));
++      module.setRelation(a, b, DiplomacyRelation.ALLIED);
++      var restart = f.open();
++      assertThatThrownBy(() -> mirror(restart).reconcile(declaration))
++          .isInstanceOf(RuntimeException.class);
++      assertThat(restart.relationBetween(a, b)).isEqualTo(DiplomacyRelation.ALLIED);
++      assertThat(restart.getWarRecord(a, b)).isEmpty();
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void sameRevisionReplaysOriginalFingerprintAndRejectsChangedContent(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var module = f.open();
++      var original = snapshot(1, first(true));
++      var receipt = mirror(module).reconcile(original);
++      assertThat(receipt.revision()).isEqualTo(1);
++      assertThat(receipt.fingerprint()).isNotBlank();
++      assertThat(receipt.replay()).isFalse();
++      var restart = f.open();
++      var replay = mirror(restart).reconcile(original);
++      assertThat(replay.fingerprint()).isEqualTo(receipt.fingerprint());
++      assertThat(replay.replay()).isTrue();
++      assertThatThrownBy(() -> mirror(restart).reconcile(snapshot(1, first(false))))
++          .isInstanceOf(RuntimeException.class);
++      assertThat(f.open().getWarRecord(a, b)).contains(new WarRecord(a, b, firstTime));
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void sourceRevisionRejectsOldSnapshotEvenForUnrelatedPair(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var module = f.open();
++      mirror(module).reconcile(snapshot(10, first(true)));
++      var unrelated = new WarEntry(UUID.randomUUID(), b, c, secondTime, true);
++      assertThatThrownBy(() -> mirror(module).reconcile(snapshot(9, unrelated)))
++          .isInstanceOf(RuntimeException.class);
++      assertThat(f.open().getWarRecord(b, c)).isEmpty();
++      assertThat(f.open().getWarRecord(a, b)).contains(new WarRecord(a, b, firstTime));
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void independentStaleWriterCannotReplaceNewerSnapshot(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var winner = f.open();
++      var stale = f.open();
++      mirror(winner).reconcile(snapshot(2, first(false), second(true)));
++      assertThatThrownBy(() -> mirror(stale).reconcile(snapshot(1, first(true))))
++          .isInstanceOf(RuntimeException.class);
++      assertSecondWar(f.open());
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void failedSaveCanRetryOriginalSnapshotAfterRestart(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var faults = new FaultStorage(new MergingDiplomacyStateStorage(f.storage()));
++      var module = f.open(faults);
++      faults.mode = "before";
++      var original = snapshot(1, first(true));
++      assertThatThrownBy(() -> mirror(module).reconcile(original))
++          .isInstanceOf(RuntimeException.class);
++      var restart = f.open();
++      assertThat(restart.getWarRecord(a, b)).isEmpty();
++      assertThat(mirror(restart).reconcile(original).replay()).isFalse();
++      assertThat(f.open().getWarRecord(a, b)).contains(new WarRecord(a, b, firstTime));
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void committedLostResponseReturnsDurableReceiptAndDoesNotRepeatEndedEffect(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var faults = new FaultStorage(new MergingDiplomacyStateStorage(f.storage()));
++      var module = f.open(faults);
++      mirror(module).reconcile(snapshot(1, first(true)));
++      faults.mode = "after";
++      var ended = snapshot(2, first(false));
++      var receipt = mirror(module).reconcile(ended);
++      faults.mode = "";
++      module.setRelation(a, b, DiplomacyRelation.ALLIED);
++      var restart = f.open();
++      var replay = mirror(restart).reconcile(ended);
++      assertThat(replay.fingerprint()).isEqualTo(receipt.fingerprint());
++      assertThat(replay.replay()).isTrue();
++      assertThat(restart.relationBetween(a, b)).isEqualTo(DiplomacyRelation.ALLIED);
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void unknownCommitFreezesWriterAndRestartReadsOriginalReceipt(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var faults = new FaultStorage(new MergingDiplomacyStateStorage(f.storage()));
++      var module = f.open(faults);
++      faults.mode = "unknown";
++      var original = snapshot(1, first(true));
++      assertThatThrownBy(() -> mirror(module).reconcile(original))
++          .isInstanceOf(RuntimeException.class);
++      faults.mode = "";
++      faults.unreadable = false;
++      assertThatThrownBy(() -> module.setRelation(b, c, DiplomacyRelation.ALLIED))
++          .isInstanceOf(RuntimeException.class);
++      var restart = f.open();
++      assertThat(mirror(restart).reconcile(original).replay()).isTrue();
++      assertThat(restart.getWarRecord(a, b)).contains(new WarRecord(a, b, firstTime));
++    }
++  }
++
++  static final class FaultStorage implements DiplomacyStateStorage {
++    final DiplomacyStateStorage delegate;
++    String mode = "";
++    boolean unreadable;
++
++    FaultStorage(DiplomacyStateStorage delegate) {
++      this.delegate = delegate;
++    }
++
++    public Properties load() {
++      if (unreadable) throw new IllegalStateException("read unavailable");
++      return delegate.load();
++    }
++
++    public void save(Properties value) {
++      if (mode.equals("before")) throw new IllegalStateException("before commit");
++      delegate.save(value);
++      if (mode.equals("unknown")) unreadable = true;
++      if (mode.equals("after") || mode.equals("unknown"))
++        throw new IllegalStateException("lost response");
++    }
++  }
++}
