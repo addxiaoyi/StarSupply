@@ -4,7 +4,9 @@
 
 当前是可继续开发的阶段检查点，**全部阶段尚未完成**。下表按需求分组汇报，验收口径以 [REQUIREMENTS](REQUIREMENTS.md)、[Paper 记录](PAPER-ACCEPTANCE.md) 和 [Folia 记录](FOLIA.md) 为准。不要把旧构建的运行记录套用于新构建，也不要把管理员准备库存的消费验收当成生存生产验收。
 
-2026-11-26 最新第十九份[外交持久退役补丁](upstream/DIPLOMACY-RETIREMENT.md)为现有国家解散清理接入原编号永久回执：外交关系、战争记录、邀请、冷却与旧停战请求同次保存，重复恢复返回原结果；普通修改和存储均拒绝退役国家迟到写入。文件/SQL 增加严格校验与版本保护，修复当前邀请/冷却数组缩短后的残留字段，后端固定并同步确认。2,075 项 Core 定向回归（12 批、280 套件，其中外交退役专项 28 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。10 个生产源空目录编译，13 个 class 与成品一致；19 文件补丁重放后全部 3,642 个 src 文件及 API 基线一致，API 新增 14 条、删除 0 条。详见[证据](verification/workspace-diplomacy-retirement-20261126.json)。 共享解散及联盟/军事联盟/战争退役、其他模块输入和剩余工作见[代码清单](CODE-CLOSURE.md)。
+2026-11-26 最新第二十份[双边联盟与军事联盟退役补丁](upstream/ALLIANCE-RETIREMENT.md)把关系、邀请、冷却与原编号永久回执同次保存，现有解散按原事务号恢复；普通修改和存储均拒绝退役国家迟到写入。文件/SQL 后端固定、严格校验、同步确认，启停与启用失败清理已接通。2,210 项 Core 定向回归（14 批、316 套件，其中新退役专项 27 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。13 个生产源空目录编译，19 个 class 与成品一致；29 文件补丁重放后全部 3,653 个 src 文件及 API 基线一致，API 新增 18 条、删除 0 条。详见[证据](verification/workspace-alliance-retirement-20261126.json)。 共享解散、实际战争/赔款、多国联盟及普通结盟一致性仍未完成，其他开发项见[代码清单](CODE-CLOSURE.md)。
+
+此前外交退役检查点：2026-11-26 第十九份[外交持久退役补丁](upstream/DIPLOMACY-RETIREMENT.md)为现有国家解散清理接入原编号永久回执：外交关系、战争记录、邀请、冷却与旧停战请求同次保存，重复恢复返回原结果；普通修改和存储均拒绝退役国家迟到写入。文件/SQL 增加严格校验与版本保护，修复当前邀请/冷却数组缩短后的残留字段，后端固定并同步确认。2,075 项 Core 定向回归（12 批、280 套件，其中外交退役专项 28 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。10 个生产源空目录编译，13 个 class 与成品一致；19 文件补丁重放后全部 3,642 个 src 文件及 API 基线一致，API 新增 14 条、删除 0 条。详见[证据](verification/workspace-diplomacy-retirement-20261126.json)。 共享解散及联盟/军事联盟/战争退役、其他模块输入和剩余工作见[代码清单](CODE-CLOSURE.md)。
 
 此前城市输入检查点：2026-11-26 第十八份[城市文本输入补丁](upstream/CITY-INPUT-RECOVERY.md)将城市名称、公告和金额输入改为 Paper 1.21.11 原生文本窗口，保留预览和显式确认，取消真实背包物品替换。输入绑定原连接和原国家/城市，发布和响应使用玩家实体调度；断线、停用、过期、退役和替换会使待处理回调失效。1,938 项 Core 定向回归（11 批、259 套件，其中输入专项 29 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。6 个生产源空目录编译，15 个 class 与成品一致；12 文件补丁重放后全部 3,635 个 src 文件与 API 基线一致。详见[证据](verification/workspace-city-input-recovery-20261126.json)。 共享解散、其他模块书本输入及其余未闭环项见[代码清单](CODE-CLOSURE.md)；全仓干净 Core、最新 MySQL 和实服待验。
 
@@ -69,7 +71,8 @@
 
 ## 最新构建与验证
 
-- 最新外交退役 Core：`665A5F1E1DE3AB11C87992CA49C372D27A718BD0D1998CA27C88F36843CA1877`（19,964,133 字节）；2,075 项 Core 和配套 177 项通过。全仓干净 Core、最新 MySQL 和实服待验。以下为历史检查点。
+- 最新联盟退役 Core：`281776212FD1A8653ABC4FFB94E05047174332F48A5EA5D742C12D22EC0FD2D5`（19,979,674 字节）；2,210 项 Core 和配套 177 项通过。全仓干净 Core、最新 MySQL 和实服待验。以下为历史检查点。
+- 第十九份外交退役 Core：`665A5F1E1DE3AB11C87992CA49C372D27A718BD0D1998CA27C88F36843CA1877`（19,964,133 字节）；2,075 项 Core 和配套 177 项通过。全仓干净 Core、最新 MySQL 和实服待验。以下为历史检查点。
 - 第十八份城市文本输入 Core：`C36A6F372057D440D7C7E701B796E0599A9A3F70FD6CDE7E0E63C5BA01DFF85F`（19,949,086 字节）；1,938 项 Core 和配套 177 项通过。全仓干净 Core、最新 MySQL 和实服待验。以下为历史检查点。
 - 第十七份城市资金 Core：`FC9563E75515AB4FC3C0696BA50B57E819D293894ECECC266B5E813FDAF5B5B8`（19,937,612 字节）；1,911 项 Core 和配套 177 项通过。全仓干净 Core、最新 MySQL 和实服未完成。以下为历史检查点。
 
@@ -131,7 +134,7 @@ $env:JAVA_HOME = 'C:\path\to\jdk-21'
 .\tools\build.ps1 -StarCoreRoot ..\starsupply-starcore-api -JavaHome $env:JAVA_HOME
 ```
 
-运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`、`starcore-religion-closure.patch`、`starcore-faith-closure.patch`、`starcore-navy-reliability.patch`、`starcore-budget-recovery.patch`、`starcore-exercise-recovery.patch`、`starcore-creation-recovery.patch`、`starcore-claim-recovery.patch`、`starcore-split-recovery.patch`、`starcore-retirement-recovery.patch`、`starcore-city-recovery.patch`、`starcore-city-money-recovery.patch`、`starcore-city-input-recovery.patch`、`starcore-diplomacy-retirement.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `665A5F1E1DE3AB11C87992CA49C372D27A718BD0D1998CA27C88F36843CA1877`。
+运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`、`starcore-religion-closure.patch`、`starcore-faith-closure.patch`、`starcore-navy-reliability.patch`、`starcore-budget-recovery.patch`、`starcore-exercise-recovery.patch`、`starcore-creation-recovery.patch`、`starcore-claim-recovery.patch`、`starcore-split-recovery.patch`、`starcore-retirement-recovery.patch`、`starcore-city-recovery.patch`、`starcore-city-money-recovery.patch`、`starcore-city-input-recovery.patch`、`starcore-diplomacy-retirement.patch`、`starcore-alliance-retirement.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `281776212FD1A8653ABC4FFB94E05047174332F48A5EA5D742C12D22EC0FD2D5`。
 
 依赖已安装时，低内存构建命令为：
 
