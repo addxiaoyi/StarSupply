@@ -2,11 +2,17 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
+## 2026-11-26 城市持久退役检查点
+
+第十六份[城市退役与恢复补丁](upstream/CITY-RECOVERY.md)已接入现有解散清理：城市快照、永久删除/国家退役回执、旧对象与服务版本保护、保存失败后索引恢复、文件迁移及 SQL 同事务提交；投票和原始时间完整保存，启用失败清理与锁顺序已验证。1,852 项 Core 定向回归（9 批，250 套件，城市恢复专项 54 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。15 个生产源空目录编译，26 个 class 与成品一致；21 文件补丁重放后全部 3,617 个 src 文件及 API 基线一致。详见[证据](verification/workspace-city-recovery-20261126.json)。 共享解散、其他外部退役和城市资金/交互仍有代码缺口；全仓干净 Core、最新 MySQL 和实服仍待验。生产 Folia 声明关闭，profile 未扩大，世界和玩家存档未改动。
+
+当前 Core SHA-256：`F75C63505CF9D686C7732C88E6BA1B462F3DCFA5E0733C4343825F79C254D5C2`。以下为历史检查点。
+
 ## 2026-11-26 领土与国库退役检查点
 
 第十五份[领土与国库退役补丁](upstream/RETIREMENT-RECOVERY.md)已接入现有解散清理：原编号退役、原余额/实际领土数量、永久拒绝迟到圈地/入账/退款，并保留历史回执；国库文件严格同步确认，SQL 退役表与快照同事务，后端固定。1,754 项 Core 定向回归（其中退役专项 42 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。16 个生产源空目录编译，37 个 class 与成品一致；20 文件补丁重放后全部 3,606 个 src 文件及 API 基线一致。详见[证据](verification/workspace-retirement-recovery-20261126.json)。 完整共享解散协议及其余外部退役仍待实现；全仓干净 Core、最新 MySQL 和实服仍待验。生产 Folia 声明关闭，profile 未扩大，世界和玩家存档未改动。
 
-当前 Core SHA-256：`0EDA73241CFDD372295680DE13051C8AE745839BF8ED01FCBE9C30419E5BB1B1`。以下为历史检查点。
+领土与国库退役检查点 Core SHA-256：`0EDA73241CFDD372295680DE13051C8AE745839BF8ED01FCBE9C30419E5BB1B1`。以下为历史检查点。
 
 ## 2026-11-26 国家分裂恢复检查点
 

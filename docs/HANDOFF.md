@@ -4,7 +4,9 @@
 
 当前是可继续开发的阶段检查点，**全部阶段尚未完成**。下表按需求分组汇报，验收口径以 [REQUIREMENTS](REQUIREMENTS.md)、[Paper 记录](PAPER-ACCEPTANCE.md) 和 [Folia 记录](FOLIA.md) 为准。不要把旧构建的运行记录套用于新构建，也不要把管理员准备库存的消费验收当成生存生产验收。
 
-2026-11-26 最新第十五份[领土与国库退役补丁](upstream/RETIREMENT-RECOVERY.md)已接入现有解散清理：原编号退役、原余额/实际领土数量、永久拒绝迟到圈地/入账/退款，并保留历史回执；国库文件严格同步确认，SQL 退役表与快照同事务，后端固定。1,754 项 Core 定向回归（其中退役专项 42 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。16 个生产源空目录编译，37 个 class 与成品一致；20 文件补丁重放后全部 3,606 个 src 文件及 API 基线一致。详见[证据](verification/workspace-retirement-recovery-20261126.json)。 当前完整国家解散 P1 尚未完成，下一步是共享目录意图/终态和其余外部权威退役。
+2026-11-26 最新第十六份[城市退役与恢复补丁](upstream/CITY-RECOVERY.md)已接入现有解散清理：城市快照、永久删除/国家退役回执、旧对象与服务版本保护、保存失败后索引恢复、文件迁移及 SQL 同事务提交；投票和原始时间完整保存，启用失败清理与锁顺序已验证。1,852 项 Core 定向回归（9 批，250 套件，城市恢复专项 54 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。15 个生产源空目录编译，26 个 class 与成品一致；21 文件补丁重放后全部 3,617 个 src 文件及 API 基线一致。详见[证据](verification/workspace-city-recovery-20261126.json)。 当前 P1：共享解散意图/终态及外交/联盟/军事联盟/战争退役；另确认城市存取款命令未接玩家余额、GUI 两账缺耐久恢复，详见[代码清单](CODE-CLOSURE.md)。
+
+此前领土与国库检查点：2026-11-26 第十五份[领土与国库退役补丁](upstream/RETIREMENT-RECOVERY.md)已接入现有解散清理：原编号退役、原余额/实际领土数量、永久拒绝迟到圈地/入账/退款，并保留历史回执；国库文件严格同步确认，SQL 退役表与快照同事务，后端固定。1,754 项 Core 定向回归（其中退役专项 42 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。16 个生产源空目录编译，37 个 class 与成品一致；20 文件补丁重放后全部 3,606 个 src 文件及 API 基线一致。详见[证据](verification/workspace-retirement-recovery-20261126.json)。 当前完整国家解散 P1 尚未完成，下一步是共享目录意图/终态和其余外部权威退役。
 
 此前分裂检查点：2026-11-26 第十四份[国家分裂恢复补丁](upstream/SPLIT-RECOVERY.md)实现共享目录意图、原编号领土转移回执、取消封存和目录终态；目录提交失败不再反向转地。新增 `/nation splitrecovery`，保留创建/圈地/经验历史，并补普通修改的权威预检和目录发布重入屏障。1,712 项 Core 定向回归（7 个独立批次）与实际最终 Core 下 StarSupply 177 项通过，均无失败、错误、跳过。16 个改动生产源空目录编译、28 个 class 一致，22 文件补丁重放后全部 3,601 个 src 文件及 API 基线一致。详见[证据](verification/workspace-split-recovery-20261126.json)。 当时下一 P1 是解散共享协议及各外部退役；当前剩余范围以顶部和[代码清单](CODE-CLOSURE.md)为准。
 
@@ -61,7 +63,9 @@
 
 ## 最新构建与验证
 
-- 最新退役保护 Core：`0EDA73241CFDD372295680DE13051C8AE745839BF8ED01FCBE9C30419E5BB1B1`（19,876,853 字节）；1,754 项 Core 与配套 177 项通过，实服未启动。以下为历史检查点。
+- 最新城市退役 Core：`F75C63505CF9D686C7732C88E6BA1B462F3DCFA5E0733C4343825F79C254D5C2`（19,912,524 字节）；1,852 项 Core 与配套 177 项通过，实服未启动。以下为历史检查点。
+
+- 第十五份退役保护 Core：`0EDA73241CFDD372295680DE13051C8AE745839BF8ED01FCBE9C30419E5BB1B1`（19,876,853 字节）；1,754 项 Core 与配套 177 项通过，实服未启动。以下为历史检查点。
 
 - 第十四份分裂恢复 Core：`210F1DE4187CBD9D91BA7B2E2B90BFB65E3EB5025733399DE810C68465515C11`（19,859,103 字节）；1,712 项 Core 与配套 177 项通过。生产 Folia 声明关闭，未启动实服。以下为历史检查点。
 
@@ -117,7 +121,7 @@ $env:JAVA_HOME = 'C:\path\to\jdk-21'
 .\tools\build.ps1 -StarCoreRoot ..\starsupply-starcore-api -JavaHome $env:JAVA_HOME
 ```
 
-运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`、`starcore-religion-closure.patch`、`starcore-faith-closure.patch`、`starcore-navy-reliability.patch`、`starcore-budget-recovery.patch`、`starcore-exercise-recovery.patch`、`starcore-creation-recovery.patch`、`starcore-claim-recovery.patch`、`starcore-split-recovery.patch`、`starcore-retirement-recovery.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `0EDA73241CFDD372295680DE13051C8AE745839BF8ED01FCBE9C30419E5BB1B1`。
+运行时则需要兼容 Core。另开原始固定提交的干净工作树，按 [上游补丁说明](upstream/README.md) 依次应用 `starcore-folia-logistics.patch`、`starcore-player-money-receipts.patch`、`starcore-tax-funding-receipts.patch`、`starcore-folia-feedback.patch`、`starcore-hud-settings.patch`、`starcore-clan-closure.patch`、`starcore-religion-closure.patch`、`starcore-faith-closure.patch`、`starcore-navy-reliability.patch`、`starcore-budget-recovery.patch`、`starcore-exercise-recovery.patch`、`starcore-creation-recovery.patch`、`starcore-claim-recovery.patch`、`starcore-split-recovery.patch`、`starcore-retirement-recovery.patch`、`starcore-city-recovery.patch`。后勤组合已包含攻城补丁，不能重复叠加旧攻城补丁。生产仍以 Paper 为目标，实验 Folia 使用后勤 profile；描述符覆盖只用于隔离测试。当前兼容 Core SHA-256 为 `F75C63505CF9D686C7732C88E6BA1B462F3DCFA5E0733C4343825F79C254D5C2`。
 
 依赖已安装时，低内存构建命令为：
 

@@ -1,0 +1,4816 @@
+diff --git a/docs/api/starcore-api-v1.txt b/docs/api/starcore-api-v1.txt
+index dcc9a99..1de9e34 100644
+--- a/docs/api/starcore-api-v1.txt
++++ b/docs/api/starcore-api-v1.txt
+@@ -255,6 +255,7 @@ FIELD dev.starcore.starcore.war.WarStatus#CEASEFIRE type=dev.starcore.starcore.w
+ FIELD dev.starcore.starcore.war.WarStatus#ENDED type=dev.starcore.starcore.war.WarStatus modifiers=public,static,final enumConstant=true
+ FIELD dev.starcore.starcore.war.WarStatus#PREPARATION type=dev.starcore.starcore.war.WarStatus modifiers=public,static,final enumConstant=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#apiAuthService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.api.v1.auth.ApiAuthService> modifiers=public default=true
++METHOD dev.starcore.starcore.api.StarCoreApi#cityRetirement typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.city.CityRetirementService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#claimToolService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.nation.claimtool.ClaimToolService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#diplomacyAllianceService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.diplomacy.DiplomacyAllianceService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#diplomacyRelationService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.diplomacy.DiplomacyRelationService> modifiers=public default=true
+@@ -410,6 +411,14 @@ METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#running typePar
+ METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#start typeParameters=<> parameters=() returns=void modifiers=public,synchronized
+ METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#stop typeParameters=<> parameters=() returns=void modifiers=public,synchronized
+ METHOD dev.starcore.starcore.foundation.timesync.TimeSyncService#summary typeParameters=<> parameters=() returns=java.lang.String modifiers=public
++METHOD dev.starcore.starcore.module.city.CityRetirementService#cityRetirementReceipt typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=java.util.Optional<dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt> modifiers=public,abstract
++METHOD dev.starcore.starcore.module.city.CityRetirementService#retireNationCities typeParameters=<> parameters=(java.util.UUID,dev.starcore.starcore.module.nation.model.NationId) returns=dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt modifiers=public,abstract
++METHOD dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt#deletedCityIds typeParameters=<> parameters=() returns=java.util.List<java.util.UUID> modifiers=public
++METHOD dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
++METHOD dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt#hashCode typeParameters=<> parameters=() returns=int modifiers=public,final
++METHOD dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt#nationId typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationId modifiers=public
++METHOD dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt#operationId typeParameters=<> parameters=() returns=java.util.UUID modifiers=public
++METHOD dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyAllianceInviteResult#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyAllianceInviteResult#hashCode typeParameters=<> parameters=() returns=int modifiers=public,final
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyAllianceInviteResult#message typeParameters=<> parameters=() returns=java.lang.String modifiers=public
+@@ -1386,6 +1395,9 @@ RECORD_COMPONENT dev.starcore.starcore.foundation.territory.model.ChunkCoordinat
+ RECORD_COMPONENT dev.starcore.starcore.foundation.territory.model.ChunkCoordinate#z type=int
+ RECORD_COMPONENT dev.starcore.starcore.foundation.territory.model.TerritoryClaim#coordinate type=dev.starcore.starcore.foundation.territory.model.ChunkCoordinate
+ RECORD_COMPONENT dev.starcore.starcore.foundation.territory.model.TerritoryClaim#ownerId type=java.lang.String
++RECORD_COMPONENT dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt#deletedCityIds type=java.util.List<java.util.UUID>
++RECORD_COMPONENT dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt#nationId type=dev.starcore.starcore.module.nation.model.NationId
++RECORD_COMPONENT dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt#operationId type=java.util.UUID
+ RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyAllianceInviteResult#message type=java.lang.String
+ RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyAllianceInviteResult#success type=boolean
+ RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyAllianceResult#message type=java.lang.String
+@@ -1678,6 +1690,8 @@ TYPE dev.starcore.starcore.foundation.territory.model.ChunkClaimSelection kind=r
+ TYPE dev.starcore.starcore.foundation.territory.model.ChunkCoordinate kind=record modifiers=public,final typeParameters=<> extends=java.lang.Record interfaces=java.io.Serializable
+ TYPE dev.starcore.starcore.foundation.territory.model.TerritoryClaim kind=record modifiers=public,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.foundation.timesync.TimeSyncService kind=class modifiers=public,final typeParameters=<>
++TYPE dev.starcore.starcore.module.city.CityRetirementService kind=interface modifiers=public,abstract typeParameters=<>
++TYPE dev.starcore.starcore.module.city.CityRetirementService$CityRetirementReceipt kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.diplomacy.DiplomacyAllianceInviteResult kind=record modifiers=public,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.diplomacy.DiplomacyAllianceResult kind=record modifiers=public,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.diplomacy.DiplomacyAllianceService kind=interface modifiers=public,abstract typeParameters=<>
+diff --git a/src/main/java/dev/starcore/starcore/api/StarCoreApi.java b/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
+index 61d665e..d4fc81e 100644
+--- a/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
++++ b/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
+@@ -53,6 +53,10 @@ public interface StarCoreApi {
+     return service(dev.starcore.starcore.module.nation.NationSplitService.class);
+   }
+ 
++  default Optional<dev.starcore.starcore.module.city.CityRetirementService> cityRetirement() {
++    return service(dev.starcore.starcore.module.city.CityRetirementService.class);
++  }
++
+   default Optional<dev.starcore.starcore.module.treasury.TreasuryRetirementService>
+       treasuryRetirementService() {
+     return service(dev.starcore.starcore.module.treasury.TreasuryRetirementService.class);
+diff --git a/src/main/java/dev/starcore/starcore/module/city/CityLedger.java b/src/main/java/dev/starcore/starcore/module/city/CityLedger.java
+new file mode 100644
+index 0000000..3e3ed5e
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/CityLedger.java
+@@ -0,0 +1,166 @@
++package dev.starcore.starcore.module.city;
++
++import com.google.gson.*;
++import dev.starcore.starcore.module.city.CityRetirementService.CityRetirementReceipt;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.util.*;
++
++/** Immutable city authority. Deleted identities and retired nations can never be reopened. */
++record CityLedger(
++    long revision,
++    Map<UUID, String> cities,
++    Set<UUID> deleted,
++    Map<NationId, CityRetirementReceipt> retirements) {
++  CityLedger {
++    if (revision < 0 || revision == Long.MAX_VALUE)
++      throw new IllegalArgumentException("Invalid city revision");
++    cities = Map.copyOf(cities);
++    deleted = Set.copyOf(deleted);
++    retirements = Map.copyOf(retirements);
++    if (cities.size() > 100_000 || deleted.size() > 100_000 || retirements.size() > 100_000)
++      throw new IllegalArgumentException("City authority capacity exceeded");
++    Set<String> names = new HashSet<>();
++    Set<UUID> residents = new HashSet<>();
++    for (var entry : cities.entrySet()) {
++      var p = CitySnapshotCodec.parse(entry.getValue());
++      CitySnapshotCodec.validate(p);
++      if (!entry.getKey().toString().equals(p.get("id").getAsString())
++          || deleted.contains(entry.getKey())
++          || retirements.containsKey(NationId.fromString(p.get("nationId").getAsString()))
++          || !entry.getValue().equals(CitySnapshotCodec.canonical(p)))
++        throw new IllegalArgumentException("Invalid live city identity");
++      if (!names.add(p.get("name").getAsString().toLowerCase(Locale.ROOT)))
++        throw new IllegalArgumentException("Duplicate city name");
++      for (var player : p.getAsJsonObject("residents").keySet())
++        if (!residents.add(UUID.fromString(player)))
++          throw new IllegalArgumentException("Resident belongs to multiple cities");
++    }
++    for (var entry : retirements.entrySet())
++      if (!entry.getKey().equals(entry.getValue().nationId())
++          || !deleted.containsAll(entry.getValue().deletedCityIds()))
++        throw new IllegalArgumentException("Invalid city retirement");
++  }
++
++  static CityLedger empty() {
++    return new CityLedger(0, Map.of(), Set.of(), Map.of());
++  }
++
++  NationId owner(UUID cityId) {
++    return NationId.fromString(
++        CitySnapshotCodec.parse(cities.get(cityId)).get("nationId").getAsString());
++  }
++
++  List<UUID> ownedBy(NationId nation) {
++    return cities.keySet().stream().filter(id -> owner(id).equals(nation)).sorted().toList();
++  }
++
++  CityLedger next(
++      Map<UUID, String> values, Set<UUID> removed, Map<NationId, CityRetirementReceipt> retired) {
++    return new CityLedger(Math.addExact(revision, 1), values, removed, retired);
++  }
++
++  void requireSuccessorOf(CityLedger previous) {
++    if (revision != previous.revision + 1
++        || !deleted.containsAll(previous.deleted)
++        || !retirements.entrySet().containsAll(previous.retirements.entrySet()))
++      throw new IllegalStateException("City revision or permanent history changed");
++    for (var id : previous.cities.keySet()) {
++      if (!cities.containsKey(id) && !deleted.contains(id))
++        throw new IllegalStateException("Missing city deletion receipt");
++      if (cities.containsKey(id) && !owner(id).equals(previous.owner(id)))
++        throw new IllegalStateException("City owner cannot change");
++    }
++    for (var e : retirements.entrySet())
++      if (!previous.retirements.containsKey(e.getKey())
++          && !e.getValue().deletedCityIds().equals(previous.ownedBy(e.getKey())))
++        throw new IllegalStateException("City retirement must record actual authority cities");
++  }
++
++  String encode() {
++    var p = new JsonObject();
++    p.addProperty("format", 1);
++    p.addProperty("revision", revision);
++    var values = new JsonObject();
++    cities.forEach((id, value) -> values.add(id.toString(), CitySnapshotCodec.parse(value)));
++    p.add("cities", values);
++    var removed = new JsonArray();
++    deleted.stream().sorted().forEach(id -> removed.add(id.toString()));
++    p.add("deleted", removed);
++    var retired = new JsonObject();
++    retirements.forEach(
++        (nation, receipt) -> {
++          var r = new JsonObject();
++          r.addProperty("operationId", receipt.operationId().toString());
++          var ids = new JsonArray();
++          receipt.deletedCityIds().forEach(id -> ids.add(id.toString()));
++          r.add("cityIds", ids);
++          retired.add(nation.toString(), r);
++        });
++    p.add("retirements", retired);
++    p.addProperty("checksum", CitySnapshotCodec.checksum(CitySnapshotCodec.canonical(p)));
++    String text = CitySnapshotCodec.canonical(p);
++    if (text.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 64 * 1024 * 1024)
++      throw new IllegalArgumentException("City authority too large");
++    return text;
++  }
++
++  String fingerprint() {
++    return CitySnapshotCodec.checksum(encode());
++  }
++
++  static CityLedger decode(String text) {
++    var p = CitySnapshotCodec.parse(text);
++    CitySnapshotCodec.fields(
++        p, Set.of("format", "revision", "cities", "deleted", "retirements", "checksum"), Set.of());
++    if (CitySnapshotCodec.number(p, "format").intValueExact() != 1)
++      throw new IllegalArgumentException("Unsupported city authority");
++    String checksum = CitySnapshotCodec.string(p, "checksum", 64);
++    p.remove("checksum");
++    if (!CitySnapshotCodec.checksum(CitySnapshotCodec.canonical(p)).equals(checksum))
++      throw new IllegalArgumentException("City authority checksum mismatch");
++    Map<UUID, String> cities = new HashMap<>();
++    p.getAsJsonObject("cities")
++        .entrySet()
++        .forEach(
++            e -> {
++              UUID id = CitySnapshotCodec.uuid(e.getKey());
++              if (cities.putIfAbsent(id, CitySnapshotCodec.canonical(e.getValue())) != null)
++                throw new IllegalArgumentException("Duplicate city");
++            });
++    Set<UUID> deleted = new HashSet<>();
++    p.getAsJsonArray("deleted")
++        .forEach(
++            id -> {
++              if (!id.isJsonPrimitive()
++                  || !id.getAsJsonPrimitive().isString()
++                  || !deleted.add(CitySnapshotCodec.uuid(id.getAsString())))
++                throw new IllegalArgumentException("Invalid city deletion");
++            });
++    Map<NationId, CityRetirementReceipt> retirements = new HashMap<>();
++    p.getAsJsonObject("retirements")
++        .entrySet()
++        .forEach(
++            e -> {
++              var nation = NationId.of(CitySnapshotCodec.uuid(e.getKey()));
++              var r = e.getValue().getAsJsonObject();
++              CitySnapshotCodec.fields(r, Set.of("operationId", "cityIds"), Set.of());
++              List<UUID> ids = new ArrayList<>();
++              r.getAsJsonArray("cityIds")
++                  .forEach(
++                      id -> {
++                        if (!id.isJsonPrimitive() || !id.getAsJsonPrimitive().isString())
++                          throw new IllegalArgumentException("Invalid retired city ID");
++                        ids.add(CitySnapshotCodec.uuid(id.getAsString()));
++                      });
++              var receipt =
++                  new CityRetirementReceipt(
++                      CitySnapshotCodec.uuid(CitySnapshotCodec.string(r, "operationId", 36)),
++                      nation,
++                      ids);
++              if (retirements.putIfAbsent(nation, receipt) != null)
++                throw new IllegalArgumentException("Duplicate city retirement");
++            });
++    return new CityLedger(
++        CitySnapshotCodec.number(p, "revision").longValueExact(), cities, deleted, retirements);
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/city/CityLedgerStorage.java b/src/main/java/dev/starcore/starcore/module/city/CityLedgerStorage.java
+new file mode 100644
+index 0000000..f6b7510
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/CityLedgerStorage.java
+@@ -0,0 +1,7 @@
++package dev.starcore.starcore.module.city;
++
++interface CityLedgerStorage {
++  CityLedger load();
++
++  void save(CityLedger ledger);
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/city/CityModule.java b/src/main/java/dev/starcore/starcore/module/city/CityModule.java
+index 1a51eb9..868f3bb 100644
+--- a/src/main/java/dev/starcore/starcore/module/city/CityModule.java
++++ b/src/main/java/dev/starcore/starcore/module/city/CityModule.java
+@@ -25,7 +25,7 @@ public final class CityModule implements StarCoreModule {
+           "城市系统",
+           ModuleLayer.FEATURE,
+           List.of("nation"),
+-          List.of(CityService.class),
++          List.of(CityService.class, CityRetirementService.class),
+           "提供城市创建、管理、成员系统");
+ 
+   private CityService cityService;
+@@ -41,6 +41,20 @@ public final class CityModule implements StarCoreModule {
+ 
+   @Override
+   public void enable(StarCoreContext context) {
++    if (cityService != null) throw new IllegalStateException("City module already enabled");
++    try {
++      enableInternal(context);
++    } catch (RuntimeException | Error failure) {
++      try {
++        cleanup(context, false);
++      } catch (RuntimeException | Error cleanup) {
++        if (cleanup != failure) failure.addSuppressed(cleanup);
++      }
++      throw failure;
++    }
++  }
++
++  private void enableInternal(StarCoreContext context) {
+     JavaPlugin plugin = context.plugin();
+ 
+     // 获取 NationService（由 nation 模块提供）
+@@ -58,13 +72,16 @@ public final class CityModule implements StarCoreModule {
+     MessageService messages = context.serviceRegistry().require(MessageService.class);
+ 
+     // 创建存储
+-    CityStateStorage storage = new JsonCityStorage(plugin);
++    CityStateStorage storage =
++        new DatabaseAwareCityStorage(
++            plugin.getDataFolder().toPath().resolve("cities"), context.databaseService());
+ 
+     // 创建服务
+     this.cityService = new CityService(storage, nationService, plugin);
+ 
+     // 注册服务到服务注册表
+     context.serviceRegistry().register(CityService.class, cityService);
++    context.serviceRegistry().register(CityRetirementService.class, cityService);
+ 
+     // 注册命令
+     this.cityCommand = new CityCommand(cityService, nationService, messages);
+@@ -147,9 +164,13 @@ public final class CityModule implements StarCoreModule {
+ 
+   @Override
+   public void disable(StarCoreContext context) {
++    cleanup(context, true);
++  }
++
++  private void cleanup(StarCoreContext context, boolean save) {
+     Throwable failure = null;
+     try {
+-      if (cityService != null) {
++      if (save && cityService != null) {
+         cityService.saveAll();
+       }
+     } catch (RuntimeException | Error saveFailure) {
+@@ -175,6 +196,10 @@ public final class CityModule implements StarCoreModule {
+     cityCommand = null;
+     if (service != null) {
+       failure = attemptCleanup(failure, service::shutdown);
++      failure =
++          attemptCleanup(
++              failure,
++              () -> context.serviceRegistry().unregister(CityRetirementService.class, service));
+       failure =
+           attemptCleanup(
+               failure, () -> context.serviceRegistry().unregister(CityService.class, service));
+@@ -214,13 +239,13 @@ public final class CityModule implements StarCoreModule {
+       plugin.getLogger().warning("Command '" + name + "' not declared in plugin.yml");
+       return;
+     }
+-    cmd.setExecutor(executor);
+     TabCompleter tabCompleter = null;
+     if (executor instanceof TabCompleter completer) {
+       tabCompleter = completer;
+-      cmd.setTabCompleter(completer);
+     }
+     commandBindings.add(new CommandBinding(cmd, executor, tabCompleter));
++    cmd.setExecutor(executor);
++    if (tabCompleter != null) cmd.setTabCompleter(tabCompleter);
+   }
+ 
+   private void clearCommandBindings() {
+diff --git a/src/main/java/dev/starcore/starcore/module/city/CityRetirementService.java b/src/main/java/dev/starcore/starcore/module/city/CityRetirementService.java
+new file mode 100644
+index 0000000..bc9fbff
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/CityRetirementService.java
+@@ -0,0 +1,23 @@
++package dev.starcore.starcore.module.city;
++
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.util.*;
++
++/** Permanent nation closure in the city authority. The caller must persist disband intent first. */
++public interface CityRetirementService {
++  record CityRetirementReceipt(UUID operationId, NationId nationId, List<UUID> deletedCityIds) {
++    public CityRetirementReceipt {
++      Objects.requireNonNull(operationId);
++      Objects.requireNonNull(nationId);
++      deletedCityIds = List.copyOf(deletedCityIds);
++      if (deletedCityIds.size() > 100_000
++          || new HashSet<>(deletedCityIds).size() != deletedCityIds.size())
++        throw new IllegalArgumentException("Invalid retired city IDs");
++      deletedCityIds = deletedCityIds.stream().sorted().toList();
++    }
++  }
++
++  CityRetirementReceipt retireNationCities(UUID operationId, NationId nationId);
++
++  Optional<CityRetirementReceipt> cityRetirementReceipt(NationId nationId);
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/city/CityRevisionStorage.java b/src/main/java/dev/starcore/starcore/module/city/CityRevisionStorage.java
+new file mode 100644
+index 0000000..ca60788
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/CityRevisionStorage.java
+@@ -0,0 +1,15 @@
++package dev.starcore.starcore.module.city;
++
++interface CityRevisionStorage extends CityStateStorage, CityRetirementService {
++  String currentFingerprint();
++
++  String loadedFingerprint();
++
++  void saveAtFingerprint(dev.starcore.starcore.module.city.model.City city, String fingerprint);
++
++  void saveAllAtFingerprint(
++      java.util.Collection<dev.starcore.starcore.module.city.model.City> cities,
++      String fingerprint);
++
++  void deleteAtFingerprint(java.util.UUID cityId, String fingerprint);
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/city/CityService.java b/src/main/java/dev/starcore/starcore/module/city/CityService.java
+index 17c5031..8fe98dd 100644
+--- a/src/main/java/dev/starcore/starcore/module/city/CityService.java
++++ b/src/main/java/dev/starcore/starcore/module/city/CityService.java
+@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
+ import org.bukkit.scheduler.BukkitTask;
+ 
+ /** 城市服务 提供城市的创建、删除、管理等功能 */
+-public final class CityService {
++public final class CityService implements CityRetirementService {
+ 
+   private final Map<UUID, City> cities = new ConcurrentHashMap<>();
+   private final Map<String, UUID> nameIndex = new ConcurrentHashMap<>();
+@@ -44,6 +44,9 @@ public final class CityService {
+   private final NationService nationService;
+   private final org.bukkit.plugin.java.JavaPlugin plugin;
+   private BukkitTask inviteCleanupTask;
++  private boolean stopped, publishing, uncertain;
++  private String fingerprint;
++  private final ThreadLocal<Boolean> externalCall = new ThreadLocal<>();
+ 
+   public CityService(CityStateStorage storage, NationService nationService) {
+     this(storage, nationService, null);
+@@ -77,53 +80,64 @@ public final class CityService {
+ 
+   /** 发送邀请 */
+   public InviteResult sendInvite(UUID cityId, UUID inviterId, UUID invitedId) {
+-    City city = cities.get(cityId);
+-    if (city == null) {
+-      return InviteResult.failed("城市不存在");
+-    }
++    NationId owner;
++    synchronized (this) {
++      ensureCurrent(false);
++      City selected = cities.get(cityId);
++      if (selected == null) return InviteResult.failed("城市不存在");
++      owner = selected.nationId();
++    }
++    Optional<Nation> cityNation = external(() -> nationService.nationById(owner));
++    Optional<Nation> targetNation = external(() -> nationService.nationOf(invitedId));
++    synchronized (this) {
++      ensureCurrent(true);
++      City city = cities.get(cityId);
++      if (city == null) {
++        return InviteResult.failed("城市不存在");
++      }
+ 
+-    if (!city.canInvite(inviterId)) {
+-      return InviteResult.failed("你没有权限邀请成员");
+-    }
++      if (!city.canInvite(inviterId)) {
++        return InviteResult.failed("你没有权限邀请成员");
++      }
+ 
+-    // 检查邀请者冷却
+-    Long lastInvite = playerInviteCooldown.get(inviterId);
+-    if (lastInvite != null && System.currentTimeMillis() - lastInvite < INVITE_COOLDOWN_MS) {
+-      long remaining = (INVITE_COOLDOWN_MS - (System.currentTimeMillis() - lastInvite)) / 1000;
+-      return InviteResult.failed("邀请过于频繁，请等待 " + remaining + " 秒");
+-    }
++      // 检查邀请者冷却
++      Long lastInvite = playerInviteCooldown.get(inviterId);
++      if (lastInvite != null && System.currentTimeMillis() - lastInvite < INVITE_COOLDOWN_MS) {
++        long remaining = (INVITE_COOLDOWN_MS - (System.currentTimeMillis() - lastInvite)) / 1000;
++        return InviteResult.failed("邀请过于频繁，请等待 " + remaining + " 秒");
++      }
+ 
+-    if (city.isResident(invitedId)) {
+-      return InviteResult.failed("该玩家已在城市中");
+-    }
++      if (city.isResident(invitedId)) {
++        return InviteResult.failed("该玩家已在城市中");
++      }
+ 
+-    // 检查是否在冷却中
+-    CityInvite existingInvite = pendingInvites.get(invitedId);
+-    if (existingInvite != null && !existingInvite.isExpired()) {
+-      return InviteResult.failed("该玩家有待处理的邀请");
+-    }
++      // 检查是否在冷却中
++      CityInvite existingInvite = pendingInvites.get(invitedId);
++      if (existingInvite != null && !existingInvite.isExpired()) {
++        return InviteResult.failed("该玩家有待处理的邀请");
++      }
+ 
+-    // 检查目标是否在国家中
+-    Optional<Nation> cityNation = nationService.nationById(city.nationId());
+-    Optional<Nation> targetNation = nationService.nationOf(invitedId);
+-    if (cityNation.isEmpty()
+-        || targetNation.isEmpty()
+-        || !cityNation.get().id().equals(targetNation.get().id())) {
+-      return InviteResult.failed("目标玩家必须在同一国家");
+-    }
++      // 检查目标是否在国家中
++      if (cityNation.isEmpty()
++          || targetNation.isEmpty()
++          || !cityNation.get().id().equals(targetNation.get().id())) {
++        return InviteResult.failed("目标玩家必须在同一国家");
++      }
+ 
+-    // 创建邀请
+-    CityInvite invite = new CityInvite(cityId, inviterId, invitedId, Instant.now());
+-    pendingInvites.put(invitedId, invite);
++      // 创建邀请
++      CityInvite invite = new CityInvite(cityId, inviterId, invitedId, Instant.now());
++      pendingInvites.put(invitedId, invite);
+ 
+-    // 记录邀请冷却
+-    playerInviteCooldown.put(inviterId, System.currentTimeMillis());
++      // 记录邀请冷却
++      playerInviteCooldown.put(inviterId, System.currentTimeMillis());
+ 
+-    return InviteResult.success(invite);
++      return InviteResult.success(invite);
++    }
+   }
+ 
+   /** 接受邀请 */
+-  public InviteResult acceptInvite(UUID playerId) {
++  public synchronized InviteResult acceptInvite(UUID playerId) {
++    ensureCurrent(true);
+     CityInvite invite = pendingInvites.remove(playerId);
+     if (invite == null) {
+       return InviteResult.failed("没有待处理的邀请");
+@@ -151,12 +165,14 @@ public final class CityService {
+   }
+ 
+   /** 拒绝邀请 */
+-  public boolean declineInvite(UUID playerId) {
++  public synchronized boolean declineInvite(UUID playerId) {
++    ensureCurrent(true);
+     return pendingInvites.remove(playerId) != null;
+   }
+ 
+   /** 获取待处理邀请 */
+-  public Optional<CityInvite> getPendingInvite(UUID playerId) {
++  public synchronized Optional<CityInvite> getPendingInvite(UUID playerId) {
++    ensureCurrent(false);
+     CityInvite invite = pendingInvites.get(playerId);
+     if (invite != null && invite.isExpired()) {
+       pendingInvites.remove(playerId);
+@@ -166,7 +182,8 @@ public final class CityService {
+   }
+ 
+   /** 清理过期邀请 */
+-  void cleanupExpiredInvites() {
++  synchronized void cleanupExpiredInvites() {
++    if (stopped) return;
+     pendingInvites.entrySet().removeIf(entry -> entry.getValue().isExpired());
+   }
+ 
+@@ -176,17 +193,21 @@ public final class CityService {
+       return;
+     }
+     inviteCleanupTask =
+-        Bukkit.getScheduler()
+-            .runTaskTimer(
+-                plugin,
+-                () -> {
+-                  cleanupExpiredInvites();
+-                },
+-                20 * 60,
+-                20 * 60); // 每分钟检查一次
++        dev.starcore.starcore.core.scheduler.CompatScheduler.globalTimer(
++            plugin,
++            () -> {
++              cleanupExpiredInvites();
++            },
++            20 * 60,
++            20 * 60); // 每分钟检查一次
+   }
+ 
+-  public void shutdown() {
++  public synchronized void shutdown() {
++    if (stopped) return;
++    if (publishing || Boolean.TRUE.equals(externalCall.get()))
++      throw new IllegalStateException("City authority is publishing");
++    stopped = true;
++    pendingInvites.clear();
+     BukkitTask task = inviteCleanupTask;
+     inviteCleanupTask = null;
+     if (task != null) {
+@@ -210,102 +231,216 @@ public final class CityService {
+ 
+   private void loadAll() {
+     Collection<City> loaded = storage.loadAll();
++    publish(loaded);
++    if (storage instanceof CityRevisionStorage revision) fingerprint = revision.loadedFingerprint();
++    uncertain = false;
++  }
++
++  private void publish(Collection<City> loaded) {
++    Map<UUID, City> next = new HashMap<>();
++    Map<String, UUID> names = new HashMap<>();
++    Map<UUID, UUID> members = new HashMap<>();
++    Map<NationId, Set<UUID>> nations = new HashMap<>();
+     for (City city : loaded) {
+-      cities.put(city.id(), city);
+-      nameIndex.put(city.name().toLowerCase(), city.id());
+-      nationCities.computeIfAbsent(city.nationId(), k -> new HashSet<>()).add(city.id());
++      if (next.putIfAbsent(city.id(), city) != null
++          || names.putIfAbsent(city.name().toLowerCase(Locale.ROOT), city.id()) != null)
++        throw new IllegalStateException("Duplicate city identity or name");
++      for (UUID player : city.residents().keySet())
++        if (members.putIfAbsent(player, city.id()) != null)
++          throw new IllegalStateException("Resident belongs to multiple cities");
++      nations.computeIfAbsent(city.nationId(), ignored -> new HashSet<>()).add(city.id());
++    }
++    cities.clear();
++    cities.putAll(next);
++    nameIndex.clear();
++    nameIndex.putAll(names);
++    playerCityMap.clear();
++    playerCityMap.putAll(members);
++    nationCities.clear();
++    nationCities.putAll(nations);
++    pendingInvites.entrySet().removeIf(e -> !cities.containsKey(e.getValue().cityId()));
++  }
+ 
+-      // 重建玩家-城市映射
+-      for (UUID playerId : city.residents().keySet()) {
+-        playerCityMap.put(playerId, city.id());
++  private void ensureCurrent(boolean writing) {
++    if (stopped || publishing || Boolean.TRUE.equals(externalCall.get()))
++      throw new IllegalStateException("City service stopped or publishing");
++    if (!(storage instanceof CityRevisionStorage revision)) return;
++    publishing = true;
++    try {
++      boolean changed = uncertain || !Objects.equals(fingerprint, revision.currentFingerprint());
++      if (changed) {
++        loadAll();
++        if (writing)
++          throw new IllegalStateException("City authority changed; retry against refreshed state");
+       }
++    } finally {
++      publishing = false;
+     }
+   }
+ 
+-  public void saveAll() {
+-    storage.saveAll(cities.values());
++  private <T> T external(java.util.function.Supplier<T> action) {
++    if (Boolean.TRUE.equals(externalCall.get()))
++      throw new IllegalStateException("Reentrant city callback");
++    externalCall.set(true);
++    try {
++      return action.get();
++    } finally {
++      externalCall.remove();
++    }
++  }
++
++  private void persist(Runnable action) {
++    publishing = true;
++    try {
++      action.run();
++      if (storage instanceof CityRevisionStorage) loadAll();
++      else publish(List.copyOf(cities.values()));
++    } catch (RuntimeException failure) {
++      if (storage instanceof CityRevisionStorage) {
++        uncertain = true;
++        try {
++          loadAll();
++        } catch (RuntimeException reload) {
++          if (reload != failure) failure.addSuppressed(reload);
++        }
++      }
++      throw failure;
++    } finally {
++      publishing = false;
++    }
++  }
++
++  private void persistCity(City city) {
++    persist(
++        () -> {
++          if (storage instanceof CityRevisionStorage revision)
++            revision.saveAtFingerprint(city, fingerprint);
++          else storage.save(city);
++        });
++  }
++
++  public synchronized void saveAll() {
++    ensureCurrent(true);
++    persist(
++        () -> {
++          if (storage instanceof CityRevisionStorage revision)
++            revision.saveAllAtFingerprint(List.copyOf(cities.values()), fingerprint);
++          else storage.saveAll(List.copyOf(cities.values()));
++        });
++  }
++
++  public synchronized boolean supportsRetirement() {
++    return storage instanceof CityRetirementService;
++  }
++
++  public synchronized CityRetirementReceipt retireNationCities(
++      UUID operationId, NationId nationId) {
++    ensureCurrent(false);
++    if (!(storage instanceof CityRetirementService retirement))
++      throw new UnsupportedOperationException("City storage has no retirement protocol");
++    CityRetirementReceipt[] result = new CityRetirementReceipt[1];
++    persist(() -> result[0] = retirement.retireNationCities(operationId, nationId));
++    return result[0];
++  }
++
++  public synchronized Optional<CityRetirementReceipt> cityRetirementReceipt(NationId nationId) {
++    ensureCurrent(false);
++    if (!(storage instanceof CityRetirementService retirement)) return Optional.empty();
++    return external(() -> retirement.cityRetirementReceipt(nationId));
+   }
+ 
+   // ==================== 创建和删除 ====================
+ 
+   /** 设置最大城市数量 */
+-  public void setMaxCitiesPerNation(int max) {
++  public synchronized void setMaxCitiesPerNation(int max) {
++    ensureCurrent(true);
+     this.maxCitiesPerNation = Math.max(1, max);
+   }
+ 
+   /** 获取最大城市数量 */
+-  public int getMaxCitiesPerNation() {
++  public synchronized int getMaxCitiesPerNation() {
++    ensureCurrent(false);
+     return maxCitiesPerNation;
+   }
+ 
+   /** 创建城市 */
+   public CreateCityResult createCity(
+       NationId nationId, String name, UUID mayorId, Location spawnChunk) {
+-    // 检查冷却
+-    Long lastCreate = playerCreateCooldown.get(mayorId);
+-    if (lastCreate != null && System.currentTimeMillis() - lastCreate < CREATE_COOLDOWN_MS) {
+-      long remaining = (CREATE_COOLDOWN_MS - (System.currentTimeMillis() - lastCreate)) / 1000;
+-      return CreateCityResult.failed("创建冷却中，请等待 " + remaining + " 秒");
+-    }
+-
+-    // 检查国家是否存在
+-    Optional<Nation> nation = nationService.nationById(nationId);
+-    if (nation.isEmpty()) {
+-      return CreateCityResult.failed("国家不存在");
+-    }
+-
+-    // 检查名称是否重复
+-    if (nameIndex.containsKey(name.toLowerCase())) {
+-      return CreateCityResult.failed("城市名称已被使用");
+-    }
++    synchronized (this) {
++      ensureCurrent(false);
++    }
++    Optional<Nation> nation = external(() -> nationService.nationById(nationId));
++    Optional<Nation> playerNation = external(() -> nationService.nationOf(mayorId));
++    synchronized (this) {
++      ensureCurrent(true);
++      // 检查冷却
++      Long lastCreate = playerCreateCooldown.get(mayorId);
++      if (lastCreate != null && System.currentTimeMillis() - lastCreate < CREATE_COOLDOWN_MS) {
++        long remaining = (CREATE_COOLDOWN_MS - (System.currentTimeMillis() - lastCreate)) / 1000;
++        return CreateCityResult.failed("创建冷却中，请等待 " + remaining + " 秒");
++      }
+ 
+-    // 检查玩家是否已是某城市成员
+-    if (playerCityMap.containsKey(mayorId)) {
+-      return CreateCityResult.failed("你已是某城市成员");
+-    }
++      // 检查国家是否存在
++      if (nation.isEmpty()) {
++        return CreateCityResult.failed("国家不存在");
++      }
+ 
+-    // 检查玩家是否是该国家成员
+-    Optional<Nation> playerNation = nationService.nationOf(mayorId);
+-    if (playerNation.isEmpty() || !playerNation.get().id().equals(nationId)) {
+-      return CreateCityResult.failed("你必须是该国家成员才能创建城市");
+-    }
++      // 检查名称是否重复
++      if (nameIndex.containsKey(name.toLowerCase(Locale.ROOT))) {
++        return CreateCityResult.failed("城市名称已被使用");
++      }
+ 
+-    // 检查城市数量上限
+-    Set<UUID> nationCitySet = nationCities.get(nationId);
+-    if (nationCitySet != null && nationCitySet.size() >= maxCitiesPerNation) {
+-      return CreateCityResult.failed("该国家已达到最大城市数量上限 (" + maxCitiesPerNation + ")");
+-    }
++      // 检查玩家是否已是某城市成员
++      if (playerCityMap.containsKey(mayorId)) {
++        return CreateCityResult.failed("你已是某城市成员");
++      }
+ 
+-    // 创建城市
+-    City city = City.create(nationId, name, mayorId, spawnChunk);
+-    cities.put(city.id(), city);
+-    nameIndex.put(name.toLowerCase(), city.id());
+-    playerCityMap.put(mayorId, city.id());
+-    nationCities.computeIfAbsent(nationId, k -> new HashSet<>()).add(city.id());
++      // 检查玩家是否是该国家成员
++      if (playerNation.isEmpty() || !playerNation.get().id().equals(nationId)) {
++        return CreateCityResult.failed("你必须是该国家成员才能创建城市");
++      }
+ 
+-    // 设置冷却
+-    playerCreateCooldown.put(mayorId, System.currentTimeMillis());
++      // 检查城市数量上限
++      Set<UUID> nationCitySet = nationCities.get(nationId);
++      if (nationCitySet != null && nationCitySet.size() >= maxCitiesPerNation) {
++        return CreateCityResult.failed("该国家已达到最大城市数量上限 (" + maxCitiesPerNation + ")");
++      }
+ 
+-    // 保存
+-    storage.save(city);
++      ensureCurrent(true);
++      // 创建城市
++      City city = City.create(nationId, name, mayorId, spawnChunk);
++      persistCity(city);
++      if (!(storage instanceof CityRevisionStorage)) {
++        cities.put(city.id(), city);
++        publish(List.copyOf(cities.values()));
++      }
++      playerCreateCooldown.put(mayorId, System.currentTimeMillis());
+ 
+-    return CreateCityResult.success(city);
++      return CreateCityResult.success(city);
++    }
+   }
+ 
+   /** 删除城市 */
+   public synchronized boolean deleteCity(UUID cityId) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+     }
+ 
+-    storage.delete(cityId);
++    persist(
++        () -> {
++          if (storage instanceof CityRevisionStorage revision)
++            revision.deleteAtFingerprint(cityId, fingerprint);
++          else storage.delete(cityId);
++        });
++    if (storage instanceof CityRevisionStorage) return true;
+     if (!cities.remove(cityId, city)) {
+       return false;
+     }
+ 
+     // 清理索引
+-    nameIndex.remove(city.name().toLowerCase());
++    nameIndex.remove(city.name().toLowerCase(Locale.ROOT));
+ 
+     // 清理玩家映射
+     for (UUID playerId : city.residents().keySet()) {
+@@ -323,21 +458,25 @@ public final class CityService {
+ 
+   // ==================== 查询 ====================
+ 
+-  public Optional<City> getCity(UUID cityId) {
++  public synchronized Optional<City> getCity(UUID cityId) {
++    ensureCurrent(false);
+     return Optional.ofNullable(cities.get(cityId));
+   }
+ 
+-  public Optional<City> getCityByName(String name) {
+-    UUID cityId = nameIndex.get(name.toLowerCase());
++  public synchronized Optional<City> getCityByName(String name) {
++    ensureCurrent(false);
++    UUID cityId = nameIndex.get(name.toLowerCase(Locale.ROOT));
+     return cityId != null ? getCity(cityId) : Optional.empty();
+   }
+ 
+-  public Optional<City> getPlayerCity(UUID playerId) {
++  public synchronized Optional<City> getPlayerCity(UUID playerId) {
++    ensureCurrent(false);
+     UUID cityId = playerCityMap.get(playerId);
+     return cityId != null ? getCity(cityId) : Optional.empty();
+   }
+ 
+-  public Collection<City> getNationCities(NationId nationId) {
++  public synchronized Collection<City> getNationCities(NationId nationId) {
++    ensureCurrent(false);
+     Set<UUID> cityIds = nationCities.get(nationId);
+     if (cityIds == null) {
+       return Collections.emptyList();
+@@ -345,14 +484,16 @@ public final class CityService {
+     return cityIds.stream().map(cities::get).filter(Objects::nonNull).collect(Collectors.toList());
+   }
+ 
+-  public Collection<City> getAllCities() {
+-    return Collections.unmodifiableCollection(cities.values());
++  public synchronized Collection<City> getAllCities() {
++    ensureCurrent(false);
++    return List.copyOf(cities.values());
+   }
+ 
+   // ==================== 成员管理 ====================
+ 
+   /** 添加居民 */
+-  public boolean addResident(UUID cityId, UUID playerId, CityRank rank) {
++  public synchronized boolean addResident(UUID cityId, UUID playerId, CityRank rank) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+@@ -364,14 +505,15 @@ public final class CityService {
+ 
+     if (city.addResident(playerId, rank)) {
+       playerCityMap.put(playerId, cityId);
+-      storage.save(city);
++      persistCity(city);
+       return true;
+     }
+     return false;
+   }
+ 
+   /** 移除居民 */
+-  public boolean removeResident(UUID cityId, UUID playerId) {
++  public synchronized boolean removeResident(UUID cityId, UUID playerId) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+@@ -390,14 +532,15 @@ public final class CityService {
+       playerCityMap.remove(playerId);
+ 
+       // 如果只剩市长一人，删除城市
+-      storage.save(city);
++      persistCity(city);
+       return true;
+     }
+     return false;
+   }
+ 
+   /** 玩家主动离开城市 */
+-  public boolean leaveCity(UUID playerId) {
++  public synchronized boolean leaveCity(UUID playerId) {
++    ensureCurrent(true);
+     UUID cityId = playerCityMap.get(playerId);
+     if (cityId == null) {
+       return false;
+@@ -419,15 +562,16 @@ public final class CityService {
+     }
+ 
+     city.removeResident(playerId);
+-    storage.save(city);
++    persistCity(city);
+     playerCityMap.remove(playerId, cityId);
+     return true;
+   }
+ 
+   /** 踢出居民 */
+-  public boolean kickResident(UUID mayorId, UUID targetId) {
++  public synchronized boolean kickResident(UUID mayorId, UUID targetId) {
++    ensureCurrent(true);
+     UUID cityId = playerCityMap.get(mayorId);
+-    City city = cities.get(cityId);
++    City city = cityId == null ? null : cities.get(cityId);
+     if (city == null || !city.isMayor(mayorId) || mayorId.equals(targetId)) {
+       return false;
+     }
+@@ -440,25 +584,30 @@ public final class CityService {
+   // ==================== 出生点 ====================
+ 
+   /** 设置城市出生点 */
+-  public boolean setSpawn(UUID cityId, Location spawnChunk) {
++  public synchronized boolean setSpawn(UUID cityId, Location spawnChunk) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+     }
+ 
+     city.setSpawnChunk(spawnChunk);
+-    storage.save(city);
++    persistCity(city);
+     return true;
+   }
+ 
+   /** 传送到城市出生点 */
+   public boolean teleportToSpawn(Player player, UUID cityId) {
+-    City city = cities.get(cityId);
+-    if (city == null || city.spawnChunk() == null) {
+-      return false;
+-    }
++    Location spawn;
++    synchronized (this) {
++      ensureCurrent(false);
++      City city = cities.get(cityId);
++      if (city == null || city.spawnChunk() == null) {
++        return false;
++      }
+ 
+-    Location spawn = city.spawnChunk().clone();
++      spawn = city.spawnChunk().clone();
++    }
+     spawn.setYaw(player.getLocation().getYaw()); // 保持玩家朝向
+     spawn.setPitch(player.getLocation().getPitch());
+     player.teleport(spawn);
+@@ -468,26 +617,28 @@ public final class CityService {
+   // ==================== 经济 ====================
+ 
+   /** 存款到城市国库 */
+-  public boolean deposit(UUID cityId, double amount) {
++  public synchronized boolean deposit(UUID cityId, double amount) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+-    if (city == null || amount <= 0) {
++    if (city == null || !Double.isFinite(amount) || amount <= 0) {
+       return false;
+     }
+ 
+     city.deposit(amount);
+-    storage.save(city);
++    persistCity(city);
+     return true;
+   }
+ 
+   /** 从城市国库取款 */
+-  public boolean withdraw(UUID cityId, double amount) {
++  public synchronized boolean withdraw(UUID cityId, double amount) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+-    if (city == null || amount <= 0) {
++    if (city == null || !Double.isFinite(amount) || amount <= 0) {
+       return false;
+     }
+ 
+     if (city.withdraw(amount)) {
+-      storage.save(city);
++      persistCity(city);
+       return true;
+     }
+     return false;
+@@ -496,45 +647,48 @@ public final class CityService {
+   // ==================== 权限升级/降级 ====================
+ 
+   /** 任命官员 */
+-  public boolean appointOfficer(UUID mayorId, UUID targetId) {
++  public synchronized boolean appointOfficer(UUID mayorId, UUID targetId) {
++    ensureCurrent(true);
+     UUID cityId = playerCityMap.get(mayorId);
+-    City city = cities.get(cityId);
++    City city = cityId == null ? null : cities.get(cityId);
+     if (city == null || !city.isMayor(mayorId)) {
+       return false;
+     }
+ 
+     if (city.promoteToOfficer(targetId)) {
+-      storage.save(city);
++      persistCity(city);
+       return true;
+     }
+     return false;
+   }
+ 
+   /** 移除官员 */
+-  public boolean removeOfficer(UUID mayorId, UUID targetId) {
++  public synchronized boolean removeOfficer(UUID mayorId, UUID targetId) {
++    ensureCurrent(true);
+     UUID cityId = playerCityMap.get(mayorId);
+-    City city = cities.get(cityId);
++    City city = cityId == null ? null : cities.get(cityId);
+     if (city == null || !city.isMayor(mayorId)) {
+       return false;
+     }
+ 
+     if (city.demoteToResident(targetId)) {
+-      storage.save(city);
++      persistCity(city);
+       return true;
+     }
+     return false;
+   }
+ 
+   /** 转让市长 */
+-  public boolean transferMayor(UUID currentMayorId, UUID newMayorId) {
++  public synchronized boolean transferMayor(UUID currentMayorId, UUID newMayorId) {
++    ensureCurrent(true);
+     UUID cityId = playerCityMap.get(currentMayorId);
+-    City city = cities.get(cityId);
++    City city = cityId == null ? null : cities.get(cityId);
+     if (city == null || !city.isMayor(currentMayorId)) {
+       return false;
+     }
+ 
+     if (city.transferMayor(newMayorId)) {
+-      storage.save(city);
++      persistCity(city);
+       return true;
+     }
+     return false;
+@@ -542,22 +696,26 @@ public final class CityService {
+ 
+   // ==================== 统计 ====================
+ 
+-  public int getTotalCities() {
++  public synchronized int getTotalCities() {
++    ensureCurrent(false);
+     return cities.size();
+   }
+ 
+-  public int getTotalResidents() {
++  public synchronized int getTotalResidents() {
++    ensureCurrent(false);
+     return playerCityMap.size();
+   }
+ 
+-  public List<City> getTopCitiesByResidents(int limit) {
++  public synchronized List<City> getTopCitiesByResidents(int limit) {
++    ensureCurrent(false);
+     return cities.values().stream()
+         .sorted((a, b) -> Integer.compare(b.residentCount(), a.residentCount()))
+         .limit(limit)
+         .toList();
+   }
+ 
+-  public List<City> getTopCitiesByTreasury(int limit) {
++  public synchronized List<City> getTopCitiesByTreasury(int limit) {
++    ensureCurrent(false);
+     return cities.values().stream()
+         .sorted((a, b) -> Double.compare(b.treasury(), a.treasury()))
+         .limit(limit)
+@@ -567,7 +725,8 @@ public final class CityService {
+   // ==================== 等级系统 ====================
+ 
+   /** 添加城市经验 */
+-  public boolean addExperience(UUID cityId, int amount) {
++  public synchronized boolean addExperience(UUID cityId, int amount) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+@@ -580,32 +739,35 @@ public final class CityService {
+       city.levelUp();
+     }
+ 
+-    storage.save(city);
++    persistCity(city);
+     return true;
+   }
+ 
+   /** 升级城市 */
+-  public boolean levelUp(UUID cityId) {
++  public synchronized boolean levelUp(UUID cityId) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+     }
+ 
+     if (city.levelUp()) {
+-      storage.save(city);
++      persistCity(city);
+       return true;
+     }
+     return false;
+   }
+ 
+   /** 获取城市等级 */
+-  public int getCityLevel(UUID cityId) {
++  public synchronized int getCityLevel(UUID cityId) {
++    ensureCurrent(false);
+     City city = cities.get(cityId);
+     return city != null ? city.level() : 0;
+   }
+ 
+   /** 获取升级所需经验 */
+-  public int getRequiredExperience(UUID cityId) {
++  public synchronized int getRequiredExperience(UUID cityId) {
++    ensureCurrent(false);
+     City city = cities.get(cityId);
+     return city != null ? city.getLevelUpExperience() : 0;
+   }
+@@ -613,7 +775,8 @@ public final class CityService {
+   // ==================== 公告 ====================
+ 
+   /** 设置城市公告 */
+-  public boolean setAnnouncement(UUID cityId, UUID playerId, String announcement) {
++  public synchronized boolean setAnnouncement(UUID cityId, UUID playerId, String announcement) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+@@ -624,23 +787,25 @@ public final class CityService {
+     }
+ 
+     city.setAnnouncement(announcement);
+-    storage.save(city);
++    persistCity(city);
+     return true;
+   }
+ 
+   /** 获取城市公告 */
+-  public String getAnnouncement(UUID cityId) {
++  public synchronized String getAnnouncement(UUID cityId) {
++    ensureCurrent(false);
+     City city = cities.get(cityId);
+     return city != null ? city.announcement() : null;
+   }
+ 
+   /** 更新城市设置 */
+-  public boolean updateSettings(
++  public synchronized boolean updateSettings(
+       UUID cityId,
+       UUID playerId,
+       Boolean pvpEnabled,
+       Boolean publicSpawn,
+       Boolean openRecruitment) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+@@ -660,12 +825,13 @@ public final class CityService {
+       city.setOpenRecruitment(openRecruitment);
+     }
+ 
+-    storage.save(city);
++    persistCity(city);
+     return true;
+   }
+ 
+   /** 获取城市设置 */
+-  public CitySettings getSettings(UUID cityId) {
++  public synchronized CitySettings getSettings(UUID cityId) {
++    ensureCurrent(false);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return null;
+@@ -679,35 +845,38 @@ public final class CityService {
+   // ==================== 领土系统 ====================
+ 
+   /** 添加领土 */
+-  public boolean addClaim(UUID cityId, String world, int x, int z) {
++  public synchronized boolean addClaim(UUID cityId, String world, int x, int z) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+     }
+ 
+     if (city.addClaim(world, x, z)) {
+-      storage.save(city);
++      persistCity(city);
+       return true;
+     }
+     return false;
+   }
+ 
+   /** 移除领土 */
+-  public boolean removeClaim(UUID cityId, String world, int x, int z) {
++  public synchronized boolean removeClaim(UUID cityId, String world, int x, int z) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+     }
+ 
+     if (city.removeClaim(world, x, z)) {
+-      storage.save(city);
++      persistCity(city);
+       return true;
+     }
+     return false;
+   }
+ 
+   /** 获取领土数量 */
+-  public int getClaimCount(UUID cityId) {
++  public synchronized int getClaimCount(UUID cityId) {
++    ensureCurrent(false);
+     City city = cities.get(cityId);
+     return city != null ? city.claimCount() : 0;
+   }
+@@ -715,8 +884,9 @@ public final class CityService {
+   // ==================== 投票系统 ====================
+ 
+   /** 创建投票 */
+-  public boolean createVote(
++  public synchronized boolean createVote(
+       UUID cityId, UUID creatorId, String title, VoteType type, int durationSeconds) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+@@ -728,12 +898,13 @@ public final class CityService {
+ 
+     String voteId = UUID.randomUUID().toString();
+     city.createVote(voteId, creatorId, title, type, durationSeconds);
+-    storage.save(city);
++    persistCity(city);
+     return true;
+   }
+ 
+   /** 投票 */
+-  public boolean castVote(UUID cityId, UUID playerId, String voteId, boolean approve) {
++  public synchronized boolean castVote(UUID cityId, UUID playerId, String voteId, boolean approve) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+@@ -753,12 +924,13 @@ public final class CityService {
+     }
+ 
+     vote.vote(playerId, approve);
+-    storage.save(city);
++    persistCity(city);
+     return true;
+   }
+ 
+   /** 获取投票结果 */
+-  public boolean getVoteResult(UUID cityId, String voteId) {
++  public synchronized boolean getVoteResult(UUID cityId, String voteId) {
++    ensureCurrent(false);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+@@ -774,14 +946,15 @@ public final class CityService {
+   }
+ 
+   /** 关闭投票 */
+-  public boolean closeVote(UUID cityId, String voteId) {
++  public synchronized boolean closeVote(UUID cityId, String voteId) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return false;
+     }
+ 
+     if (city.removeVote(voteId)) {
+-      storage.save(city);
++      persistCity(city);
+       return true;
+     }
+     return false;
+@@ -790,24 +963,31 @@ public final class CityService {
+   // ==================== 批量操作 ====================
+ 
+   /** 批量添加居民 */
+-  public int addResidents(UUID cityId, Map<UUID, CityRank> members) {
++  public synchronized int addResidents(UUID cityId, Map<UUID, CityRank> members) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return 0;
+     }
+ 
+-    int count = city.addResidents(members);
++    Map<UUID, CityRank> eligible = new HashMap<>();
++    members.forEach(
++        (id, rank) -> {
++          if (!playerCityMap.containsKey(id)) eligible.put(id, rank);
++        });
++    int count = city.addResidents(eligible);
+     if (count > 0) {
+-      for (UUID playerId : members.keySet()) {
++      for (UUID playerId : eligible.keySet()) {
+         playerCityMap.put(playerId, cityId);
+       }
+-      storage.save(city);
++      persistCity(city);
+     }
+     return count;
+   }
+ 
+   /** 批量移除居民 */
+-  public int removeResidents(UUID cityId, Collection<UUID> memberIds) {
++  public synchronized int removeResidents(UUID cityId, Collection<UUID> memberIds) {
++    ensureCurrent(true);
+     City city = cities.get(cityId);
+     if (city == null) {
+       return 0;
+@@ -816,9 +996,9 @@ public final class CityService {
+     int count = city.removeResidents(memberIds);
+     if (count > 0) {
+       for (UUID playerId : memberIds) {
+-        playerCityMap.remove(playerId);
++        if (!city.isResident(playerId)) playerCityMap.remove(playerId, cityId);
+       }
+-      storage.save(city);
++      persistCity(city);
+     }
+     return count;
+   }
+@@ -836,17 +1016,20 @@ public final class CityService {
+   }
+ 
+   /** 获取已创建的城市总数 */
+-  public int getCreatedCityCount() {
++  public synchronized int getCreatedCityCount() {
++    ensureCurrent(false);
+     return cities.size();
+   }
+ 
+   /** 获取最高城市等级 */
+-  public int getHighestCityLevel() {
++  public synchronized int getHighestCityLevel() {
++    ensureCurrent(false);
+     return cities.values().stream().mapToInt(city -> city.level()).max().orElse(0);
+   }
+ 
+   /** 获取平均城市等级 */
+-  public double getMeanCityLevel() {
++  public synchronized double getMeanCityLevel() {
++    ensureCurrent(false);
+     if (cities.isEmpty()) return 0;
+     return cities.values().stream().mapToInt(city -> city.level()).average().orElse(0);
+   }
+diff --git a/src/main/java/dev/starcore/starcore/module/city/CitySnapshotCodec.java b/src/main/java/dev/starcore/starcore/module/city/CitySnapshotCodec.java
+new file mode 100644
+index 0000000..c0ba529
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/CitySnapshotCodec.java
+@@ -0,0 +1,374 @@
++package dev.starcore.starcore.module.city;
++
++import com.google.gson.*;
++import com.google.gson.stream.JsonReader;
++import dev.starcore.starcore.module.city.model.*;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.io.*;
++import java.nio.charset.StandardCharsets;
++import java.time.Instant;
++import java.util.*;
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
++
++/** Canonical plain JSON; validation never resolves worlds. */
++final class CitySnapshotCodec {
++  private CitySnapshotCodec() {}
++
++  static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
++
++  static String encode(City city) {
++    var p = new JsonObject();
++    p.addProperty("id", city.id().toString());
++    p.addProperty("nationId", city.nationId().toString());
++    p.addProperty("name", city.name());
++    p.addProperty("treasury", city.treasury());
++    p.addProperty("createdAt", city.createdAt().toEpochMilli());
++    p.addProperty("lastUpdated", city.lastUpdated().toEpochMilli());
++    var loc = city.spawnChunk();
++    if (loc != null) {
++      if (loc.getWorld() == null)
++        throw new IllegalArgumentException("City spawn world unavailable");
++      var spawn = new JsonObject();
++      spawn.addProperty("world", loc.getWorld().getName());
++      spawn.addProperty("x", loc.getX());
++      spawn.addProperty("y", loc.getY());
++      spawn.addProperty("z", loc.getZ());
++      spawn.addProperty("yaw", loc.getYaw());
++      spawn.addProperty("pitch", loc.getPitch());
++      p.add("spawnChunk", spawn);
++    }
++    var residents = new JsonObject();
++    city.residents().forEach((id, rank) -> residents.addProperty(id.toString(), rank.name()));
++    p.add("residents", residents);
++    p.addProperty("mayorRank", city.mayorRank().name());
++    p.addProperty("level", city.level());
++    p.addProperty("maxLevel", city.maxLevel());
++    p.addProperty("experience", city.experience());
++    p.addProperty("pvpEnabled", city.isPvpEnabled());
++    p.addProperty("publicSpawn", city.isPublicSpawn());
++    p.addProperty("openRecruitment", city.isOpenRecruitment());
++    if (city.announcement() != null) p.addProperty("announcement", city.announcement());
++    var claims = new JsonArray();
++    city.claims().stream().sorted().forEach(claims::add);
++    p.add("claims", claims);
++    var votes = new JsonObject();
++    for (var vote : city.getActiveVotes()) {
++      var v = new JsonObject();
++      v.addProperty("creator", vote.creatorId().toString());
++      v.addProperty("title", vote.title());
++      v.addProperty("type", vote.type().name());
++      v.addProperty("duration", vote.durationSeconds());
++      v.addProperty("createdAt", vote.createdAt().toEpochMilli());
++      var ballots = new JsonObject();
++      vote.ballots().forEach((id, yes) -> ballots.addProperty(id.toString(), yes));
++      v.add("ballots", ballots);
++      if (votes.has(vote.id())) throw new IllegalArgumentException("Duplicate vote");
++      votes.add(vote.id(), v);
++    }
++    p.add("votes", votes);
++    validate(p);
++    return canonical(p);
++  }
++
++  static JsonObject parse(String text) {
++    if (text == null || text.length() > 64 * 1024 * 1024)
++      throw new IllegalArgumentException("City JSON too large");
++    try (var reader = new JsonReader(new StringReader(text))) {
++      reader.setLenient(false);
++      var value = read(reader, 0);
++      if (reader.peek() != com.google.gson.stream.JsonToken.END_DOCUMENT || !value.isJsonObject())
++        throw new IllegalArgumentException("Invalid city JSON document");
++      return value.getAsJsonObject();
++    } catch (IOException e) {
++      throw new IllegalArgumentException("Invalid city JSON", e);
++    }
++  }
++
++  private static JsonElement read(JsonReader r, int depth) throws IOException {
++    if (depth > 32) throw new IllegalArgumentException("City JSON nesting limit");
++    return switch (r.peek()) {
++      case BEGIN_OBJECT -> {
++        r.beginObject();
++        var value = new JsonObject();
++        while (r.hasNext()) {
++          if (value.size() >= 100_000) throw new IllegalArgumentException("City JSON object limit");
++          var key = r.nextName();
++          if (value.has(key)) throw new IllegalArgumentException("Duplicate JSON field");
++          value.add(key, read(r, depth + 1));
++        }
++        r.endObject();
++        yield value;
++      }
++      case BEGIN_ARRAY -> {
++        r.beginArray();
++        var value = new JsonArray();
++        while (r.hasNext()) {
++          if (value.size() >= 100_000) throw new IllegalArgumentException("City JSON array limit");
++          value.add(read(r, depth + 1));
++        }
++        r.endArray();
++        yield value;
++      }
++      case STRING -> new JsonPrimitive(r.nextString());
++      case NUMBER -> new JsonPrimitive(new java.math.BigDecimal(r.nextString()));
++      case BOOLEAN -> new JsonPrimitive(r.nextBoolean());
++      case NULL -> {
++        r.nextNull();
++        yield JsonNull.INSTANCE;
++      }
++      default -> throw new IllegalArgumentException("Invalid city JSON token");
++    };
++  }
++
++  static String canonical(JsonElement value) {
++    if (value.isJsonObject()) {
++      var sorted = new JsonObject();
++      value.getAsJsonObject().keySet().stream()
++          .sorted()
++          .forEach(k -> sorted.add(k, parseElementCanonical(value.getAsJsonObject().get(k))));
++      return GSON.toJson(sorted);
++    }
++    if (value.isJsonArray()) {
++      var array = new JsonArray();
++      value.getAsJsonArray().forEach(v -> array.add(parseElementCanonical(v)));
++      return GSON.toJson(array);
++    }
++    return GSON.toJson(value);
++  }
++
++  private static JsonElement parseElementCanonical(JsonElement value) {
++    return JsonParser.parseString(canonical(value));
++  }
++
++  static String normalizeLegacy(String text) {
++    var p = parse(text);
++    if (!p.has("treasury")) p.addProperty("treasury", 0.0);
++    if (!p.has("lastUpdated")) p.add("lastUpdated", p.get("createdAt"));
++    if (!p.has("residents")) p.add("residents", new JsonObject());
++    if (!p.has("mayorRank")) p.addProperty("mayorRank", "MAYOR");
++    if (!p.has("level")) p.addProperty("level", 1);
++    if (!p.has("maxLevel")) p.addProperty("maxLevel", 10);
++    if (!p.has("experience")) p.addProperty("experience", 0);
++    if (!p.has("pvpEnabled")) p.addProperty("pvpEnabled", false);
++    if (!p.has("publicSpawn")) p.addProperty("publicSpawn", true);
++    if (!p.has("openRecruitment")) p.addProperty("openRecruitment", true);
++    if (!p.has("claims")) p.add("claims", new JsonArray());
++    if (!p.has("votes")) p.add("votes", new JsonObject());
++    if (p.has("spawnChunk")) {
++      var spawn = p.getAsJsonObject("spawnChunk");
++      if (!spawn.has("yaw")) spawn.addProperty("yaw", 0.0);
++      if (!spawn.has("pitch")) spawn.addProperty("pitch", 0.0);
++    }
++    validate(p);
++    return canonical(p);
++  }
++
++  static void validate(JsonObject p) {
++    fields(
++        p,
++        Set.of(
++            "id",
++            "nationId",
++            "name",
++            "treasury",
++            "createdAt",
++            "lastUpdated",
++            "residents",
++            "mayorRank",
++            "level",
++            "maxLevel",
++            "experience",
++            "pvpEnabled",
++            "publicSpawn",
++            "openRecruitment",
++            "claims",
++            "votes"),
++        Set.of("announcement", "spawnChunk"));
++    uuid(string(p, "id", 36));
++    uuid(string(p, "nationId", 36));
++    if (string(p, "name", 128).isBlank()) throw new IllegalArgumentException("Blank city name");
++    var money = number(p, "treasury").doubleValue();
++    if (!Double.isFinite(money) || money < 0)
++      throw new IllegalArgumentException("Invalid city treasury");
++    Instant.ofEpochMilli(number(p, "createdAt").longValueExact());
++    Instant.ofEpochMilli(number(p, "lastUpdated").longValueExact());
++    var residents = p.getAsJsonObject("residents");
++    if (residents.size() > 100_000) throw new IllegalArgumentException("Too many residents");
++    residents
++        .entrySet()
++        .forEach(
++            e -> {
++              uuid(e.getKey());
++              CityRank.valueOf(string(residents, e.getKey(), 32));
++            });
++    CityRank.valueOf(string(p, "mayorRank", 32));
++    int level = number(p, "level").intValueExact(),
++        max = number(p, "maxLevel").intValueExact(),
++        xp = number(p, "experience").intValueExact();
++    if (level < 1 || max < level || max > 1000 || xp < 0)
++      throw new IllegalArgumentException("Invalid city progress");
++    for (var k : List.of("pvpEnabled", "publicSpawn", "openRecruitment")) bool(p, k);
++    if (p.has("announcement")) string(p, "announcement", 65536);
++    Set<String> claims = new HashSet<>();
++    for (var value : p.getAsJsonArray("claims")) {
++      if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isString())
++        throw new IllegalArgumentException("Expected claim text");
++      var claim = value.getAsString();
++      var parts = claim.split(",", -1);
++      if (parts.length != 3 || parts[0].isBlank() || parts[0].length() > 191 || !claims.add(claim))
++        throw new IllegalArgumentException("Invalid city claim");
++      int x = Integer.parseInt(parts[1]), z = Integer.parseInt(parts[2]);
++      if (!claim.equals(parts[0] + "," + x + "," + z))
++        throw new IllegalArgumentException("Noncanonical city claim");
++    }
++    var votes = p.getAsJsonObject("votes");
++    if (votes.size() > 100_000) throw new IllegalArgumentException("Too many votes");
++    for (var e : votes.entrySet()) {
++      if (e.getKey().isBlank() || e.getKey().length() > 128)
++        throw new IllegalArgumentException("Invalid vote ID");
++      var v = e.getValue().getAsJsonObject();
++      fields(v, Set.of("creator", "title", "type", "duration", "createdAt", "ballots"), Set.of());
++      uuid(string(v, "creator", 36));
++      string(v, "title", 65536);
++      City.VoteType.valueOf(string(v, "type", 64));
++      if (number(v, "duration").intValueExact() < 1)
++        throw new IllegalArgumentException("Invalid vote duration");
++      Instant.ofEpochMilli(number(v, "createdAt").longValueExact());
++      v.getAsJsonObject("ballots")
++          .entrySet()
++          .forEach(
++              b -> {
++                uuid(b.getKey());
++                bool(v.getAsJsonObject("ballots"), b.getKey());
++              });
++    }
++    if (p.has("spawnChunk")) {
++      var s = p.getAsJsonObject("spawnChunk");
++      fields(s, Set.of("world", "x", "y", "z", "yaw", "pitch"), Set.of());
++      if (string(s, "world", 191).isBlank())
++        throw new IllegalArgumentException("Invalid spawn world");
++      for (var k : List.of("x", "y", "z", "yaw", "pitch"))
++        if (!Double.isFinite(number(s, k).doubleValue()))
++          throw new IllegalArgumentException("Invalid spawn coordinate");
++      if (!Float.isFinite(number(s, "yaw").floatValue())
++          || !Float.isFinite(number(s, "pitch").floatValue()))
++        throw new IllegalArgumentException("Invalid spawn angle");
++    }
++  }
++
++  static City decode(String text) {
++    var p = parse(text);
++    validate(p);
++    Location loc = null;
++    if (p.has("spawnChunk")) {
++      var s = p.getAsJsonObject("spawnChunk");
++      var world = Bukkit.getWorld(s.get("world").getAsString());
++      if (world == null)
++        throw new IllegalStateException(
++            "City spawn world unavailable: " + s.get("world").getAsString());
++      loc =
++          new Location(
++              world,
++              s.get("x").getAsDouble(),
++              s.get("y").getAsDouble(),
++              s.get("z").getAsDouble(),
++              s.get("yaw").getAsFloat(),
++              s.get("pitch").getAsFloat());
++    }
++    Map<UUID, CityRank> residents = new HashMap<>();
++    p.getAsJsonObject("residents")
++        .entrySet()
++        .forEach(
++            e -> residents.put(uuid(e.getKey()), CityRank.valueOf(e.getValue().getAsString())));
++    var city =
++        new City(
++            uuid(p.get("id").getAsString()),
++            NationId.fromString(p.get("nationId").getAsString()),
++            p.get("name").getAsString(),
++            loc,
++            residents,
++            CityRank.valueOf(p.get("mayorRank").getAsString()),
++            p.get("treasury").getAsDouble(),
++            Instant.ofEpochMilli(p.get("createdAt").getAsLong()),
++            Instant.ofEpochMilli(p.get("lastUpdated").getAsLong()));
++    city.restoreProgress(
++        p.get("level").getAsInt(), p.get("maxLevel").getAsInt(), p.get("experience").getAsInt());
++    city.setPvpEnabled(p.get("pvpEnabled").getAsBoolean());
++    city.setPublicSpawn(p.get("publicSpawn").getAsBoolean());
++    city.setOpenRecruitment(p.get("openRecruitment").getAsBoolean());
++    if (p.has("announcement")) city.setAnnouncement(p.get("announcement").getAsString());
++    p.getAsJsonArray("claims")
++        .forEach(
++            c -> {
++              var a = c.getAsString().split(",", -1);
++              city.addClaim(a[0], Integer.parseInt(a[1]), Integer.parseInt(a[2]));
++            });
++    p.getAsJsonObject("votes")
++        .entrySet()
++        .forEach(
++            e -> {
++              var v = e.getValue().getAsJsonObject();
++              var vote =
++                  new City.CityVote(
++                      e.getKey(),
++                      uuid(v.get("creator").getAsString()),
++                      v.get("title").getAsString(),
++                      City.VoteType.valueOf(v.get("type").getAsString()),
++                      v.get("duration").getAsInt(),
++                      Instant.ofEpochMilli(v.get("createdAt").getAsLong()));
++              v.getAsJsonObject("ballots")
++                  .entrySet()
++                  .forEach(b -> vote.vote(uuid(b.getKey()), b.getValue().getAsBoolean()));
++              city.restoreVote(vote);
++            });
++    city.setLastUpdated(Instant.ofEpochMilli(p.get("lastUpdated").getAsLong()));
++    return city;
++  }
++
++  static void fields(JsonObject p, Set<String> required, Set<String> optional) {
++    if (!p.keySet().containsAll(required)
++        || p.keySet().stream().anyMatch(k -> !required.contains(k) && !optional.contains(k)))
++      throw new IllegalArgumentException("Invalid city snapshot fields");
++  }
++
++  static String string(JsonObject p, String key, int max) {
++    var v = p.get(key);
++    if (v == null || !v.isJsonPrimitive() || !v.getAsJsonPrimitive().isString())
++      throw new IllegalArgumentException("Expected text: " + key);
++    var s = v.getAsString();
++    if (s.length() > max) throw new IllegalArgumentException("Text too long: " + key);
++    return s;
++  }
++
++  static java.math.BigDecimal number(JsonObject p, String key) {
++    var v = p.get(key);
++    if (v == null || !v.isJsonPrimitive() || !v.getAsJsonPrimitive().isNumber())
++      throw new IllegalArgumentException("Expected number: " + key);
++    return v.getAsBigDecimal();
++  }
++
++  static boolean bool(JsonObject p, String key) {
++    var v = p.get(key);
++    if (v == null || !v.isJsonPrimitive() || !v.getAsJsonPrimitive().isBoolean())
++      throw new IllegalArgumentException("Expected boolean: " + key);
++    return v.getAsBoolean();
++  }
++
++  static UUID uuid(String text) {
++    UUID id = UUID.fromString(text);
++    if (!id.toString().equals(text)) throw new IllegalArgumentException("Noncanonical UUID");
++    return id;
++  }
++
++  static String checksum(String text) {
++    try {
++      return HexFormat.of()
++          .formatHex(
++              java.security.MessageDigest.getInstance("SHA-256")
++                  .digest(text.getBytes(StandardCharsets.UTF_8)));
++    } catch (java.security.NoSuchAlgorithmException e) {
++      throw new IllegalStateException(e);
++    }
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/city/DatabaseAwareCityStorage.java b/src/main/java/dev/starcore/starcore/module/city/DatabaseAwareCityStorage.java
+new file mode 100644
+index 0000000..b921358
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/DatabaseAwareCityStorage.java
+@@ -0,0 +1,30 @@
++package dev.starcore.starcore.module.city;
++
++import dev.starcore.starcore.core.database.DatabaseService;
++import dev.starcore.starcore.core.storage.StateStorageBackend;
++import java.nio.file.Path;
++
++final class DatabaseAwareCityStorage extends DurableCityStorage {
++  DatabaseAwareCityStorage(Path directory, DatabaseService database) {
++    super(pinned(directory, database));
++  }
++
++  private static CityLedgerStorage pinned(Path directory, DatabaseService database) {
++    var backend = new StateStorageBackend(database);
++    var file = new FileCityLedgerStorage(directory);
++    var sql = new SqlCityLedgerStorage(backend::dataSource, file::load);
++    return new CityLedgerStorage() {
++      private CityLedgerStorage active() {
++        return backend.usesDatabase() ? sql : file;
++      }
++
++      public CityLedger load() {
++        return active().load();
++      }
++
++      public void save(CityLedger ledger) {
++        active().save(ledger);
++      }
++    };
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/city/DurableCityStorage.java b/src/main/java/dev/starcore/starcore/module/city/DurableCityStorage.java
+new file mode 100644
+index 0000000..526e14a
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/DurableCityStorage.java
+@@ -0,0 +1,173 @@
++package dev.starcore.starcore.module.city;
++
++import dev.starcore.starcore.module.city.model.City;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.lang.ref.*;
++import java.util.*;
++
++/** Mutable models retain their original authority version, independent of later reads. */
++class DurableCityStorage implements CityRevisionStorage {
++  private final CityLedgerStorage storage;
++  private final ReferenceQueue<City> collected = new ReferenceQueue<>();
++  private final Map<IdentityReference, String> provenance = new HashMap<>();
++  private String loadedFingerprint;
++
++  DurableCityStorage(CityLedgerStorage storage) {
++    this.storage = Objects.requireNonNull(storage);
++  }
++
++  private static final class IdentityReference extends WeakReference<City> {
++    private final int hash;
++
++    IdentityReference(City city, ReferenceQueue<City> queue) {
++      super(city, queue);
++      hash = System.identityHashCode(city);
++    }
++
++    public int hashCode() {
++      return hash;
++    }
++
++    public boolean equals(Object other) {
++      return this == other
++          || other instanceof IdentityReference ref && get() != null && get() == ref.get();
++    }
++  }
++
++  private void remember(City city, String fingerprint) {
++    Reference<? extends City> ref;
++    while ((ref = collected.poll()) != null) provenance.remove(ref);
++    provenance.put(new IdentityReference(city, collected), fingerprint);
++  }
++
++  private City model(String value, String fingerprint) {
++    var city = CitySnapshotCodec.decode(value);
++    remember(city, fingerprint);
++    return city;
++  }
++
++  public synchronized Collection<City> loadAll() {
++    var ledger = storage.load();
++    String fingerprint = ledger.fingerprint();
++    List<City> values = new ArrayList<>();
++    for (var value : ledger.cities().values()) values.add(model(value, fingerprint));
++    loadedFingerprint = fingerprint;
++    return List.copyOf(values);
++  }
++
++  public synchronized Optional<City> find(UUID cityId) {
++    var ledger = storage.load();
++    var value = ledger.cities().get(Objects.requireNonNull(cityId));
++    return value == null ? Optional.empty() : Optional.of(model(value, ledger.fingerprint()));
++  }
++
++  public synchronized String currentFingerprint() {
++    return storage.load().fingerprint();
++  }
++
++  public synchronized String loadedFingerprint() {
++    return loadedFingerprint;
++  }
++
++  public synchronized void save(City city) {
++    saveAll(List.of(city));
++  }
++
++  public synchronized void saveAll(Collection<City> cities) {
++    saveInputs(cities, null);
++  }
++
++  public synchronized void saveAtFingerprint(City city, String fingerprint) {
++    saveAllAtFingerprint(List.of(city), fingerprint);
++  }
++
++  public synchronized void saveAllAtFingerprint(Collection<City> cities, String fingerprint) {
++    saveInputs(cities, Objects.requireNonNull(fingerprint));
++  }
++
++  private void saveInputs(Collection<City> cities, String expectedFingerprint) {
++    var inputs = List.copyOf(cities);
++    var previous = storage.load();
++    String fingerprint = previous.fingerprint();
++    if (expectedFingerprint != null && !expectedFingerprint.equals(fingerprint))
++      throw new IllegalStateException("City authority changed before write");
++    Map<UUID, String> values = new HashMap<>(previous.cities());
++    Set<UUID> seen = new HashSet<>();
++    for (var city : inputs) {
++      Objects.requireNonNull(city);
++      if (!seen.add(city.id())) throw new IllegalArgumentException("Duplicate city in save batch");
++      String original = provenance.get(new IdentityReference(city, null));
++      if (previous.cities().containsKey(city.id()) && !fingerprint.equals(original))
++        throw new IllegalStateException("Stale or detached city; reload before editing");
++      if (!previous.cities().containsKey(city.id()) && original != null)
++        throw new IllegalStateException("Previously published city cannot be recreated");
++      values.put(city.id(), CitySnapshotCodec.encode(city));
++    }
++    if (values.equals(previous.cities())) return;
++    var candidate = previous.next(values, previous.deleted(), previous.retirements());
++    commit(candidate);
++    for (var city : inputs) remember(city, candidate.fingerprint());
++  }
++
++  public synchronized void delete(UUID cityId) {
++    deleteInput(cityId, null);
++  }
++
++  public synchronized void deleteAtFingerprint(UUID cityId, String fingerprint) {
++    deleteInput(cityId, Objects.requireNonNull(fingerprint));
++  }
++
++  private void deleteInput(UUID cityId, String fingerprint) {
++    Objects.requireNonNull(cityId);
++    var previous = storage.load();
++    if (fingerprint != null && !fingerprint.equals(previous.fingerprint()))
++      throw new IllegalStateException("City authority changed before deletion");
++    if (previous.deleted().contains(cityId)) return;
++    Map<UUID, String> values = new HashMap<>(previous.cities());
++    values.remove(cityId);
++    Set<UUID> deleted = new HashSet<>(previous.deleted());
++    deleted.add(cityId);
++    commit(previous.next(values, deleted, previous.retirements()));
++  }
++
++  public synchronized CityRetirementReceipt retireNationCities(
++      UUID operationId, NationId nationId) {
++    Objects.requireNonNull(operationId);
++    Objects.requireNonNull(nationId);
++    var previous = storage.load();
++    var existing = previous.retirements().get(nationId);
++    if (existing != null) {
++      if (!existing.operationId().equals(operationId))
++        throw new IllegalStateException("Nation cities already retired by another operation");
++      return existing;
++    }
++    var ids = previous.ownedBy(nationId);
++    var receipt = new CityRetirementReceipt(operationId, nationId, ids);
++    Map<UUID, String> values = new HashMap<>(previous.cities());
++    ids.forEach(values::remove);
++    Set<UUID> deleted = new HashSet<>(previous.deleted());
++    deleted.addAll(ids);
++    Map<NationId, CityRetirementReceipt> retired = new HashMap<>(previous.retirements());
++    retired.put(nationId, receipt);
++    commit(previous.next(values, deleted, retired));
++    return receipt;
++  }
++
++  public synchronized Optional<CityRetirementReceipt> cityRetirementReceipt(NationId nationId) {
++    return Optional.ofNullable(storage.load().retirements().get(Objects.requireNonNull(nationId)));
++  }
++
++  private void commit(CityLedger candidate) {
++    try {
++      storage.save(candidate);
++    } catch (RuntimeException failure) {
++      // A lost response is success only if the complete proposed authority is observed.
++      try {
++        if (candidate.equals(storage.load())) return;
++      } catch (RuntimeException unreadable) {
++        if (unreadable != failure) failure.addSuppressed(unreadable);
++      }
++      throw failure;
++    }
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/city/FileCityLedgerStorage.java b/src/main/java/dev/starcore/starcore/module/city/FileCityLedgerStorage.java
+new file mode 100644
+index 0000000..c24834f
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/FileCityLedgerStorage.java
+@@ -0,0 +1,108 @@
++package dev.starcore.starcore.module.city;
++
++import dev.starcore.starcore.core.persistence.AtomicFilePersistence;
++import java.io.*;
++import java.nio.charset.StandardCharsets;
++import java.nio.file.*;
++import java.util.*;
++
++/** File mode is single-process; striped locks also coordinate multiple services in that process. */
++final class FileCityLedgerStorage implements CityLedgerStorage {
++  private static final Object[] GUARDS = new Object[64];
++
++  static {
++    Arrays.setAll(GUARDS, ignored -> new Object());
++  }
++
++  private final Path directory, path, marker;
++  private String expected;
++
++  FileCityLedgerStorage(Path directory) {
++    this.directory = directory.toAbsolutePath().normalize();
++    path = this.directory.resolve("ledger.json");
++    marker = this.directory.resolve("ledger.initialized");
++  }
++
++  private Object guard() {
++    return GUARDS[Math.floorMod(path.hashCode(), GUARDS.length)];
++  }
++
++  public synchronized CityLedger load() {
++    synchronized (guard()) {
++      try {
++        Files.createDirectories(directory);
++        if (Files.exists(path)) {
++          if (!Files.isRegularFile(marker) || !Files.readString(marker).equals("city-ledger-v1"))
++            throw new IOException("Missing city authority marker");
++          var data = read(path);
++          var result = CityLedger.decode(data);
++          expected = data;
++          return result;
++        }
++        if (expected != null
++            || Files.exists(marker)
++            || Files.exists(AtomicFilePersistence.temp(marker))
++            || Files.exists(AtomicFilePersistence.backup(marker))
++            || Files.exists(AtomicFilePersistence.temp(path))
++            || Files.exists(AtomicFilePersistence.backup(path)))
++          throw new IOException("Missing city authority; explicit reconciliation required");
++        var initial = legacy();
++        String data = initial.encode();
++        AtomicFilePersistence.replace(marker, temp -> Files.writeString(temp, "city-ledger-v1"));
++        AtomicFilePersistence.replace(
++            path, temp -> Files.writeString(temp, data, StandardCharsets.UTF_8));
++        if (!read(path).equals(data)) throw new IOException("City authority not published");
++        expected = data;
++        return initial;
++      } catch (IOException | RuntimeException e) {
++        throw new IllegalStateException("City authority requires reconciliation", e);
++      }
++    }
++  }
++
++  private CityLedger legacy() throws IOException {
++    Map<UUID, String> cities = new HashMap<>();
++    try (var files = Files.list(directory)) {
++      for (var file : files.filter(f -> f.getFileName().toString().endsWith(".json")).toList()) {
++        String name = file.getFileName().toString();
++        UUID id = CitySnapshotCodec.uuid(name.substring(0, name.length() - 5));
++        String value = CitySnapshotCodec.normalizeLegacy(read(file));
++        if (!CitySnapshotCodec.parse(value).get("id").getAsString().equals(id.toString())
++            || cities.putIfAbsent(id, value) != null)
++          throw new IOException("Legacy city identity mismatch");
++      }
++    }
++    return new CityLedger(0, cities, Set.of(), Map.of());
++  }
++
++  public synchronized void save(CityLedger ledger) {
++    String candidate = ledger.encode();
++    synchronized (guard()) {
++      if (expected == null) throw new IllegalStateException("Load city authority before writing");
++      try {
++        String actual = read(path);
++        if (!actual.equals(expected))
++          throw new IllegalStateException("Stale city authority; reload and retry");
++        if (!Files.isRegularFile(marker) || !Files.readString(marker).equals("city-ledger-v1"))
++          throw new IOException("Missing city authority marker");
++        ledger.requireSuccessorOf(CityLedger.decode(actual));
++        AtomicFilePersistence.replace(
++            path, temp -> Files.writeString(temp, candidate, StandardCharsets.UTF_8));
++        if (!read(path).equals(candidate)) throw new IOException("City snapshot not published");
++        expected = candidate;
++      } catch (IOException e) {
++        throw new IllegalStateException("City file save failed", e);
++      }
++    }
++  }
++
++  private String read(Path file) throws IOException {
++    if (!Files.isRegularFile(file) || Files.size(file) > 64 * 1024 * 1024)
++      throw new IOException("Invalid city authority file");
++    try (var input = Files.newInputStream(file)) {
++      byte[] bytes = input.readNBytes(64 * 1024 * 1024 + 1);
++      if (bytes.length > 64 * 1024 * 1024) throw new IOException("City file too large");
++      return StandardCharsets.UTF_8.newDecoder().decode(java.nio.ByteBuffer.wrap(bytes)).toString();
++    }
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/city/JsonCityStorage.java b/src/main/java/dev/starcore/starcore/module/city/JsonCityStorage.java
+index ba9eadd..dcaf263 100644
+--- a/src/main/java/dev/starcore/starcore/module/city/JsonCityStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/city/JsonCityStorage.java
+@@ -1,290 +1,65 @@
+ package dev.starcore.starcore.module.city;
+ 
+-import com.google.gson.Gson;
+-import com.google.gson.GsonBuilder;
+-import com.google.gson.JsonObject;
+ import dev.starcore.starcore.module.city.model.City;
+-import dev.starcore.starcore.module.city.model.CityRank;
+ import dev.starcore.starcore.module.nation.model.NationId;
+-import java.io.*;
+-import java.io.FileInputStream;
+-import java.io.FileOutputStream;
+-import java.io.InputStreamReader;
+-import java.io.OutputStreamWriter;
+-import java.io.Reader;
+-import java.io.Writer;
+-import java.nio.charset.StandardCharsets;
+-import java.nio.file.Files;
+-import java.nio.file.Path;
+-import java.time.Instant;
+ import java.util.*;
+-import java.util.Optional;
+-import org.bukkit.Bukkit;
+-import org.bukkit.Location;
+-import org.bukkit.World;
+ import org.bukkit.plugin.Plugin;
+ 
+-/** 基于 JSON 文件的城市存储实现 每个城市存储为一个 UUID.json 文件 */
+-public final class JsonCityStorage implements CityStateStorage {
+-
+-  private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+-
+-  private final Plugin plugin;
+-  private final Path dataDir;
++/** Atomic file city authority, importing old per-city JSON files once. Single-process file mode. */
++public final class JsonCityStorage implements CityRevisionStorage {
++  private final DurableCityStorage delegate;
+ 
+   public JsonCityStorage(Plugin plugin) {
+-    this.plugin = plugin;
+-    this.dataDir = plugin.getDataFolder().toPath().resolve("cities");
+-    initDataDir();
+-  }
+-
+-  private void initDataDir() {
+-    try {
+-      Files.createDirectories(dataDir);
+-    } catch (IOException e) {
+-      plugin.getLogger().severe("Failed to create cities directory: " + e.getMessage());
+-    }
++    delegate =
++        new DurableCityStorage(
++            new FileCityLedgerStorage(plugin.getDataFolder().toPath().resolve("cities")));
+   }
+ 
+-  @Override
+   public Collection<City> loadAll() {
+-    List<City> cities = new ArrayList<>();
+-    File[] files = dataDir.toFile().listFiles((dir, name) -> name.endsWith(".json"));
+-
+-    if (files == null) {
+-      return cities;
+-    }
+-
+-    for (File file : files) {
+-      try (Reader reader =
+-          new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+-        JsonObject json = GSON.fromJson(reader, JsonObject.class);
+-        City city = decodeCity(json);
+-        if (city != null) {
+-          cities.add(city);
+-        }
+-      } catch (IOException e) {
+-        plugin
+-            .getLogger()
+-            .warning("Failed to load city from " + file.getName() + ": " + e.getMessage());
+-      }
+-    }
+-
+-    plugin.getLogger().info("Loaded " + cities.size() + " cities from storage");
+-    return cities;
++    return delegate.loadAll();
+   }
+ 
+-  @Override
+   public void saveAll(Collection<City> cities) {
+-    for (City city : cities) {
+-      save(city);
+-    }
++    delegate.saveAll(cities);
+   }
+ 
+-  @Override
+   public void save(City city) {
+-    Path filePath = dataDir.resolve(city.id().toString() + ".json");
+-    try (Writer writer =
+-        new OutputStreamWriter(new FileOutputStream(filePath.toFile()), StandardCharsets.UTF_8)) {
+-      JsonObject json = encodeCity(city);
+-      GSON.toJson(json, writer);
+-    } catch (IOException e) {
+-      plugin.getLogger().severe("Failed to save city " + city.id() + ": " + e.getMessage());
+-    }
++    delegate.save(city);
+   }
+ 
+-  @Override
+   public void delete(UUID cityId) {
+-    Path filePath = dataDir.resolve(cityId.toString() + ".json");
+-    try {
+-      Files.deleteIfExists(filePath);
+-    } catch (IOException e) {
+-      throw new IllegalStateException("Failed to delete city file " + cityId, e);
+-    }
++    delegate.delete(cityId);
+   }
+ 
+-  @Override
+   public Optional<City> find(UUID cityId) {
+-    Path filePath = dataDir.resolve(cityId.toString() + ".json");
+-    if (!Files.exists(filePath)) {
+-      return Optional.empty();
+-    }
+-
+-    try (Reader reader =
+-        new InputStreamReader(new FileInputStream(filePath.toFile()), StandardCharsets.UTF_8)) {
+-      JsonObject json = GSON.fromJson(reader, JsonObject.class);
+-      return Optional.ofNullable(decodeCity(json));
+-    } catch (IOException e) {
+-      plugin.getLogger().warning("Failed to load city " + cityId + ": " + e.getMessage());
+-      return Optional.empty();
+-    }
++    return delegate.find(cityId);
+   }
+ 
+-  // ==================== 编解码 ====================
+-
+-  private JsonObject encodeCity(City city) {
+-    JsonObject json = new JsonObject();
+-
+-    json.addProperty("id", city.id().toString());
+-    json.addProperty("nationId", city.nationId().value().toString());
+-    json.addProperty("name", city.name());
+-    json.addProperty("treasury", city.treasury());
+-    json.addProperty("createdAt", city.createdAt().toEpochMilli());
+-    json.addProperty("lastUpdated", city.lastUpdated().toEpochMilli());
+-
+-    // 编码出生点
+-    if (city.spawnChunk() != null) {
+-      Location loc = city.spawnChunk();
+-      JsonObject spawn = new JsonObject();
+-      if (loc.getWorld() != null) {
+-        spawn.addProperty("world", loc.getWorld().getName());
+-        spawn.addProperty("x", loc.getBlockX());
+-        spawn.addProperty("y", loc.getBlockY());
+-        spawn.addProperty("z", loc.getBlockZ());
+-        spawn.addProperty("yaw", loc.getYaw());
+-        spawn.addProperty("pitch", loc.getPitch());
+-        json.add("spawnChunk", spawn);
+-      }
+-    }
+-
+-    // 编码居民
+-    JsonObject residents = new JsonObject();
+-    for (Map.Entry<UUID, CityRank> entry : city.residents().entrySet()) {
+-      residents.addProperty(entry.getKey().toString(), entry.getValue().name());
+-    }
+-    json.add("residents", residents);
+-
+-    // 编码市长等级
+-    json.addProperty("mayorRank", city.mayorRank().name());
+-
+-    // 编码等级系统
+-    json.addProperty("level", city.level());
+-    json.addProperty("experience", city.experience());
+-
+-    // 编码城市设置
+-    json.addProperty("pvpEnabled", city.isPvpEnabled());
+-    json.addProperty("publicSpawn", city.isPublicSpawn());
+-    json.addProperty("openRecruitment", city.isOpenRecruitment());
+-
+-    // 编码公告
+-    if (city.announcement() != null) {
+-      json.addProperty("announcement", city.announcement());
+-    }
+-
+-    // 编码领土
+-    if (!city.claims().isEmpty()) {
+-      json.add("claims", GSON.toJsonTree(city.claims()));
+-    }
+-
+-    return json;
++  public String currentFingerprint() {
++    return delegate.currentFingerprint();
+   }
+ 
+-  private City decodeCity(JsonObject json) {
+-    try {
+-      UUID id = UUID.fromString(json.get("id").getAsString());
+-      UUID nationIdUuid = UUID.fromString(json.get("nationId").getAsString());
+-      NationId nationId = NationId.of(nationIdUuid);
+-      String name = json.get("name").getAsString();
+-      double treasury = json.has("treasury") ? json.get("treasury").getAsDouble() : 0.0;
+-      long createdAt = json.get("createdAt").getAsLong();
+-      long lastUpdated = json.has("lastUpdated") ? json.get("lastUpdated").getAsLong() : createdAt;
+-
+-      // 解码出生点
+-      Location spawnChunk = null;
+-      if (json.has("spawnChunk")) {
+-        JsonObject spawn = json.getAsJsonObject("spawnChunk");
+-        String worldName = spawn.get("world").getAsString();
+-        World world = Bukkit.getWorld(worldName);
+-        if (world != null) {
+-          spawnChunk =
+-              new Location(
+-                  world,
+-                  spawn.get("x").getAsDouble(),
+-                  spawn.get("y").getAsDouble(),
+-                  spawn.get("z").getAsDouble(),
+-                  spawn.has("yaw") ? spawn.get("yaw").getAsFloat() : 0f,
+-                  spawn.has("pitch") ? spawn.get("pitch").getAsFloat() : 0f);
+-        }
+-      }
++  public String loadedFingerprint() {
++    return delegate.loadedFingerprint();
++  }
+ 
+-      // 解码居民
+-      Map<UUID, CityRank> residents = new HashMap<>();
+-      if (json.has("residents")) {
+-        JsonObject residentsJson = json.getAsJsonObject("residents");
+-        for (String key : residentsJson.keySet()) {
+-          UUID playerId = UUID.fromString(key);
+-          CityRank rank = CityRank.valueOf(residentsJson.get(key).getAsString());
+-          residents.put(playerId, rank);
+-        }
+-      }
++  public void saveAtFingerprint(City city, String fingerprint) {
++    delegate.saveAtFingerprint(city, fingerprint);
++  }
+ 
+-      // 解码市长等级
+-      CityRank mayorRank = CityRank.MAYOR;
+-      if (json.has("mayorRank")) {
+-        mayorRank = CityRank.valueOf(json.get("mayorRank").getAsString());
+-      }
++  public void saveAllAtFingerprint(Collection<City> cities, String fingerprint) {
++    delegate.saveAllAtFingerprint(cities, fingerprint);
++  }
+ 
+-      // 创建 City 对象（使用新的完整构造函数）
+-      City city =
+-          new City(
+-              id,
+-              nationId,
+-              name,
+-              spawnChunk,
+-              residents,
+-              mayorRank,
+-              treasury,
+-              Instant.ofEpochMilli(createdAt),
+-              Instant.ofEpochMilli(lastUpdated));
++  public void deleteAtFingerprint(UUID cityId, String fingerprint) {
++    delegate.deleteAtFingerprint(cityId, fingerprint);
++  }
+ 
+-      // 加载等级数据
+-      if (json.has("level")) {
+-        // 使用反射来设置等级（因为没有公开的 setter）
+-        try {
+-          var levelField = City.class.getDeclaredField("level");
+-          levelField.setAccessible(true);
+-          levelField.setInt(city, json.get("level").getAsInt());
+-        } catch (Exception e) {
+-          plugin.getLogger().warning("Failed to load city level: " + e.getMessage());
+-        }
+-      }
+-      if (json.has("experience")) {
+-        try {
+-          var expField = City.class.getDeclaredField("experience");
+-          expField.setAccessible(true);
+-          expField.setInt(city, json.get("experience").getAsInt());
+-        } catch (Exception e) {
+-          plugin.getLogger().warning("Failed to load city experience: " + e.getMessage());
+-        }
+-      }
+-      if (json.has("pvpEnabled")) {
+-        city.setPvpEnabled(json.get("pvpEnabled").getAsBoolean());
+-      }
+-      if (json.has("publicSpawn")) {
+-        city.setPublicSpawn(json.get("publicSpawn").getAsBoolean());
+-      }
+-      if (json.has("openRecruitment")) {
+-        city.setOpenRecruitment(json.get("openRecruitment").getAsBoolean());
+-      }
+-      if (json.has("announcement")) {
+-        city.setAnnouncement(json.get("announcement").getAsString());
+-      }
+-      if (json.has("claims")) {
+-        json.getAsJsonArray("claims")
+-            .forEach(
+-                el -> {
+-                  String claim = el.getAsString();
+-                  String[] parts = claim.split(",");
+-                  if (parts.length >= 3) {
+-                    city.addClaim(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+-                  }
+-                });
+-      }
++  public CityRetirementReceipt retireNationCities(UUID operationId, NationId nationId) {
++    return delegate.retireNationCities(operationId, nationId);
++  }
+ 
+-      return city;
+-    } catch (Exception e) {
+-      plugin.getLogger().severe("Failed to decode city: " + e.getMessage());
+-      return null;
+-    }
++  public Optional<CityRetirementReceipt> cityRetirementReceipt(NationId nationId) {
++    return delegate.cityRetirementReceipt(nationId);
+   }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/city/SqlCityLedgerStorage.java b/src/main/java/dev/starcore/starcore/module/city/SqlCityLedgerStorage.java
+new file mode 100644
+index 0000000..2762fc2
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/SqlCityLedgerStorage.java
+@@ -0,0 +1,157 @@
++package dev.starcore.starcore.module.city;
++
++import java.sql.*;
++import java.util.*;
++import java.util.function.Supplier;
++import javax.sql.DataSource;
++
++/** Snapshot and authority seal are committed together, including first-time file migration. */
++final class SqlCityLedgerStorage implements CityLedgerStorage {
++  private final Supplier<Optional<DataSource>> source;
++  private final Supplier<CityLedger> legacy;
++  private CityLedger expected;
++
++  SqlCityLedgerStorage(Supplier<Optional<DataSource>> source, Supplier<CityLedger> legacy) {
++    this.source = Objects.requireNonNull(source);
++    this.legacy = Objects.requireNonNull(legacy);
++  }
++
++  private Connection open() throws SQLException {
++    return source
++        .get()
++        .orElseThrow(() -> new IllegalStateException("City database unavailable"))
++        .getConnection();
++  }
++
++  private boolean table(Connection c, String name) throws SQLException {
++    try (var rows = c.getMetaData().getTables(c.getCatalog(), null, name, new String[] {"TABLE"})) {
++      while (rows.next()) if (name.equalsIgnoreCase(rows.getString("TABLE_NAME"))) return true;
++      return false;
++    }
++  }
++
++  private void initialize(Connection c) throws SQLException {
++    boolean state = table(c, "starcore_city_state"), seal = table(c, "starcore_city_authority");
++    if (state != seal) throw new SQLException("Missing city authority table");
++    if (state) return;
++    if (expected != null) throw new SQLException("City authority disappeared");
++    boolean sqlite = "SQLite".equalsIgnoreCase(c.getMetaData().getDatabaseProductName());
++    try (var s = c.createStatement()) {
++      s.execute(
++          "CREATE TABLE IF NOT EXISTS starcore_city_state (singleton INTEGER PRIMARY KEY,payload "
++              + (sqlite ? "TEXT" : "LONGTEXT")
++              + " NOT NULL)");
++      s.execute(
++          "CREATE TABLE IF NOT EXISTS starcore_city_authority (singleton INTEGER PRIMARY"
++              + " KEY,revision BIGINT NOT NULL,checksum VARCHAR(64) NOT NULL)");
++    }
++    // Interrupted initialization with empty tables requires explicit reconciliation on restart.
++    CityLedger initial = legacy.get();
++    String payload = initial.encode();
++    boolean auto = c.getAutoCommit(), safe = false;
++    c.setAutoCommit(false);
++    try {
++      try (var s =
++          c.prepareStatement("INSERT INTO starcore_city_state(singleton,payload) VALUES(1,?)")) {
++        s.setString(1, payload);
++        s.executeUpdate();
++      }
++      try (var s =
++          c.prepareStatement(
++              "INSERT INTO starcore_city_authority(singleton,revision,checksum) VALUES(1,?,?)")) {
++        s.setLong(1, initial.revision());
++        s.setString(2, initial.fingerprint());
++        s.executeUpdate();
++      }
++      c.commit();
++      safe = true;
++    } catch (SQLException | RuntimeException failure) {
++      try {
++        c.rollback();
++        safe = true;
++      } catch (SQLException rollback) {
++        failure.addSuppressed(rollback);
++      }
++      throw failure;
++    } finally {
++      if (safe) c.setAutoCommit(auto);
++    }
++  }
++
++  private CityLedger read(Connection c) throws SQLException {
++    try (var s = c.createStatement();
++        var r =
++            s.executeQuery(
++                "SELECT a.revision,a.checksum,s.payload FROM starcore_city_authority a JOIN"
++                    + " starcore_city_state s ON a.singleton=s.singleton WHERE a.singleton=1")) {
++      if (!r.next()) throw new SQLException("Missing city authority row");
++      var ledger = CityLedger.decode(r.getString(3));
++      if (ledger.revision() != r.getLong(1) || !ledger.fingerprint().equals(r.getString(2)))
++        throw new SQLException("City authority checksum mismatch");
++      return ledger;
++    }
++  }
++
++  public synchronized CityLedger load() {
++    try (var c = open()) {
++      initialize(c);
++      var ledger = read(c);
++      expected = ledger;
++      return ledger;
++    } catch (SQLException e) {
++      throw new IllegalStateException("Unable to load city authority", e);
++    }
++  }
++
++  public synchronized void save(CityLedger ledger) {
++    if (expected == null) throw new IllegalStateException("Load city authority before writing");
++    ledger.requireSuccessorOf(expected);
++    String payload = ledger.encode();
++    try (var c = open()) {
++      boolean auto = c.getAutoCommit(), safe = false;
++      c.setAutoCommit(false);
++      try {
++        // Acquire the authority lock before inspecting the old snapshot.
++        try (var s =
++            c.prepareStatement(
++                "UPDATE starcore_city_authority SET revision=?,checksum=? WHERE singleton=1 AND"
++                    + " revision=? AND checksum=?")) {
++          s.setLong(1, ledger.revision());
++          s.setString(2, ledger.fingerprint());
++          s.setLong(3, expected.revision());
++          s.setString(4, expected.fingerprint());
++          if (s.executeUpdate() != 1)
++            throw new SQLException("Stale city authority; reload and retry");
++        }
++        try (var s = c.createStatement();
++            var r = s.executeQuery("SELECT payload FROM starcore_city_state WHERE singleton=1")) {
++          if (!r.next()) throw new SQLException("Missing city state");
++          var previous = CityLedger.decode(r.getString(1));
++          if (!previous.equals(expected))
++            throw new SQLException("City changed outside authority protocol");
++          ledger.requireSuccessorOf(previous);
++        }
++        try (var s =
++            c.prepareStatement("UPDATE starcore_city_state SET payload=? WHERE singleton=1")) {
++          s.setString(1, payload);
++          if (s.executeUpdate() != 1) throw new SQLException("Missing city state");
++        }
++        c.commit();
++        safe = true;
++        expected = ledger;
++      } catch (SQLException | RuntimeException failure) {
++        try {
++          c.rollback();
++          safe = true;
++        } catch (SQLException rollback) {
++          failure.addSuppressed(rollback);
++        }
++        throw failure;
++      } finally {
++        if (safe) c.setAutoCommit(auto);
++      }
++    } catch (SQLException e) {
++      throw new IllegalStateException("Unable to persist city authority", e);
++    }
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/city/model/City.java b/src/main/java/dev/starcore/starcore/module/city/model/City.java
+index 14a0a24..b875c00 100644
+--- a/src/main/java/dev/starcore/starcore/module/city/model/City.java
++++ b/src/main/java/dev/starcore/starcore/module/city/model/City.java
+@@ -1,688 +1,681 @@
+ package dev.starcore.starcore.module.city.model;
+ 
+ import dev.starcore.starcore.module.nation.model.NationId;
+-import org.bukkit.Location;
+-
+ import java.time.Instant;
+ import java.util.*;
+ import java.util.function.Consumer;
++import org.bukkit.Location;
+ 
+-/**
+- * 城市数据模型
+- * 城市是国家的下级行政单位，属于某个国家（Nation）
+- */
++/** 城市数据模型 城市是国家的下级行政单位，属于某个国家（Nation） */
+ public final class City {
+-    private final UUID id;
+-    private final NationId nationId;
+-    private String name;
+-    private String announcement;  // 城市公告
+-    private Location spawnChunk;  // 城市出生点所在区块
+-    private final Map<UUID, CityRank> residents;  // 成员及其等级
+-    private CityRank mayorRank;  // 市长级别（固定为 MAYOR）
+-
+-    // 城市元数据
+-    private final Instant createdAt;
+-    private Instant lastUpdated;
+-
+-    // 城市经济
+-    private double treasury;
+-
+-    // 城市等级系统
+-    private int level = 1;
+-    private int maxLevel = 10;
+-    private int experience = 0;
+-
+-    // 城市领土
+-    private final Set<String> claims;  // 存储格式: "world,x,z"
+-
+-    // 城市设置
+-    private boolean pvpEnabled = false;
+-    private boolean publicSpawn = true;
+-    private boolean openRecruitment = true;
+-
+-    // 投票相关
+-    private final Map<String, CityVote> activeVotes;  // 进行中的投票
+-
+-    public City(
+-        UUID id,
+-        NationId nationId,
+-        String name,
+-        Location spawnChunk,
+-        Map<UUID, CityRank> residents,
+-        CityRank mayorRank,
+-        double treasury,
+-        Instant createdAt
+-    ) {
+-        this(id, nationId, name, spawnChunk, residents, mayorRank, treasury, createdAt, Instant.now());
+-    }
+-
+-    /**
+-     * 完整构造函数（用于反序列化）
+-     */
+-    public City(
+-        UUID id,
+-        NationId nationId,
+-        String name,
+-        Location spawnChunk,
+-        Map<UUID, CityRank> residents,
+-        CityRank mayorRank,
+-        double treasury,
+-        Instant createdAt,
+-        Instant lastUpdated
+-    ) {
+-        this.id = Objects.requireNonNull(id, "id");
+-        this.nationId = Objects.requireNonNull(nationId, "nationId");
+-        this.name = Objects.requireNonNull(name, "name");
+-        this.spawnChunk = spawnChunk;
+-        this.residents = new HashMap<>(Objects.requireNonNull(residents, "residents"));
+-        this.mayorRank = Objects.requireNonNull(mayorRank, "mayorRank");
+-        this.treasury = treasury;
+-        this.createdAt = Objects.requireNonNull(createdAt, "createdAt");
+-        this.lastUpdated = lastUpdated != null ? lastUpdated : Instant.now();
+-        this.claims = new HashSet<>();
+-        this.activeVotes = new HashMap<>();
+-    }
+-
+-    /**
+-     * 创建新城市
+-     */
+-    public static City create(NationId nationId, String name, UUID mayorId, Location spawnChunk) {
+-        UUID id = UUID.randomUUID();
+-        Map<UUID, CityRank> residents = new HashMap<>();
+-        residents.put(mayorId, CityRank.MAYOR);
+-        City city = new City(id, nationId, name, spawnChunk, residents, CityRank.MAYOR, 0.0, Instant.now());
+-        return city;
+-    }
+-
+-    // ==================== Getters ====================
+-
+-    public UUID id() {
+-        return id;
+-    }
+-
+-    public NationId nationId() {
+-        return nationId;
+-    }
+-
+-    public String name() {
+-        return name;
+-    }
+-
+-    public Location spawnChunk() {
+-        return spawnChunk;
+-    }
+-
+-    public Map<UUID, CityRank> residents() {
+-        return Collections.unmodifiableMap(residents);
+-    }
+-
+-    public CityRank mayorRank() {
+-        return mayorRank;
+-    }
+-
+-    public double treasury() {
+-        return treasury;
+-    }
+-
+-    public Instant createdAt() {
+-        return createdAt;
+-    }
+-
+-    public Instant lastUpdated() {
+-        return lastUpdated;
+-    }
+-
+-    public int residentCount() {
+-        return residents.size();
+-    }
+-
+-    // ==================== 公告 ====================
+-
+-    public String announcement() {
+-        return announcement;
+-    }
+-
+-    public void setAnnouncement(String announcement) {
+-        this.announcement = announcement;
+-        this.lastUpdated = Instant.now();
+-    }
+-
+-    // ==================== 等级系统 ====================
+-
+-    public int level() {
+-        return level;
+-    }
+-
+-    public int maxLevel() {
+-        return maxLevel;
+-    }
+-
+-    public int experience() {
+-        return experience;
+-    }
+-
+-    public int getMaxResidents() {
+-        // 根据等级计算最大居民数
+-        return 20 + (level - 1) * 5;
+-    }
+-
+-    /**
+-     * 添加经验值
+-     */
+-    public boolean addExperience(int amount) {
+-        if (amount <= 0) return false;
+-        this.experience += amount;
+-        this.lastUpdated = Instant.now();
+-        checkLevelUp();
+-        return true;
+-    }
+-
+-    /**
+-     * 检查是否可以升级
+-     */
+-    public boolean canLevelUp() {
+-        if (level >= maxLevel) return false;
+-        int requiredExp = getLevelUpExperience();
+-        return experience >= requiredExp;
+-    }
+-
+-    /**
+-     * 获取升级所需经验
+-     */
+-    public int getLevelUpExperience() {
+-        return level * 100;
+-    }
+-
+-    /**
+-     * 升级
+-     */
+-    public boolean levelUp() {
+-        if (!canLevelUp()) return false;
+-        experience -= getLevelUpExperience();
+-        level++;
+-        this.lastUpdated = Instant.now();
+-        return true;
+-    }
+-
+-    /**
+-     * 检查并执行自动升级
+-     */
+-    private void checkLevelUp() {
+-        while (canLevelUp()) {
+-            levelUp();
+-        }
+-    }
+-
+-    // ==================== 领土系统 ====================
+-
+-    public Set<String> claims() {
+-        return Collections.unmodifiableSet(claims);
+-    }
+-
+-    public int claimCount() {
+-        return claims.size();
+-    }
+-
+-    /**
+-     * 添加领土
+-     */
+-    public boolean addClaim(String world, int x, int z) {
+-        String key = world + "," + x + "," + z;
+-        if (claims.add(key)) {
+-            this.lastUpdated = Instant.now();
+-            return true;
+-        }
+-        return false;
+-    }
+-
+-    /**
+-     * 移除领土
+-     */
+-    public boolean removeClaim(String world, int x, int z) {
+-        String key = world + "," + x + "," + z;
+-        if (claims.remove(key)) {
+-            this.lastUpdated = Instant.now();
+-            return true;
+-        }
+-        return false;
+-    }
+-
+-    /**
+-     * 检查是否有指定领土
+-     */
+-    public boolean hasClaim(String world, int x, int z) {
+-        return claims.contains(world + "," + x + "," + z);
+-    }
+-
+-    // ==================== 城市设置 ====================
+-
+-    public boolean isPvpEnabled() {
+-        return pvpEnabled;
+-    }
+-
+-    public void setPvpEnabled(boolean pvpEnabled) {
+-        this.pvpEnabled = pvpEnabled;
+-        this.lastUpdated = Instant.now();
+-    }
+-
+-    public boolean isPublicSpawn() {
+-        return publicSpawn;
+-    }
+-
+-    public void setPublicSpawn(boolean publicSpawn) {
+-        this.publicSpawn = publicSpawn;
+-        this.lastUpdated = Instant.now();
+-    }
+-
+-    public boolean isOpenRecruitment() {
+-        return openRecruitment;
+-    }
+-
+-    public void setOpenRecruitment(boolean openRecruitment) {
+-        this.openRecruitment = openRecruitment;
+-        this.lastUpdated = Instant.now();
+-    }
+-
+-    // ==================== 批量成员操作 ====================
+-
+-    /**
+-     * 批量添加居民
+-     * @return 成功添加的数量
+-     */
+-    public int addResidents(Map<UUID, CityRank> members) {
+-        int count = 0;
+-        for (Map.Entry<UUID, CityRank> entry : members.entrySet()) {
+-            if (addResident(entry.getKey(), entry.getValue())) {
+-                count++;
+-            }
+-        }
+-        return count;
+-    }
+-
+-    /**
+-     * 批量移除居民
+-     * @return 成功移除的数量
+-     */
+-    public int removeResidents(Collection<UUID> memberIds) {
+-        int count = 0;
+-        for (UUID playerId : memberIds) {
+-            if (removeResident(playerId)) {
+-                count++;
+-            }
+-        }
+-        return count;
+-    }
+-
+-    /**
+-     * 获取所有居民UUID
+-     */
+-    public Set<UUID> getResidentIds() {
+-        return new HashSet<>(residents.keySet());
+-    }
+-
+-    /**
+-     * 获取特定等级的所有居民
+-     */
+-    public Set<UUID> getResidentsByRank(CityRank rank) {
+-        Set<UUID> result = new HashSet<>();
+-        for (Map.Entry<UUID, CityRank> entry : residents.entrySet()) {
+-            if (entry.getValue() == rank) {
+-                result.add(entry.getKey());
+-            }
+-        }
+-        return result;
+-    }
+-
+-    /**
+-     * 遍历所有居民（只读）
+-     */
+-    public void forEachResident(Consumer<UUID> action) {
+-        residents.keySet().forEach(action);
+-    }
+-
+-    // ==================== 权限检查 ====================
+-
+-    public boolean isMayor(UUID playerId) {
+-        CityRank rank = residents.get(playerId);
+-        return rank == CityRank.MAYOR;
+-    }
+-
+-    public boolean isOfficer(UUID playerId) {
+-        CityRank rank = residents.get(playerId);
+-        return rank == CityRank.OFFICER || rank == CityRank.MAYOR;
+-    }
+-
+-    public boolean isResident(UUID playerId) {
+-        return residents.containsKey(playerId);
+-    }
+-
+-    public CityRank getRank(UUID playerId) {
+-        return residents.getOrDefault(playerId, null);
+-    }
+-
+-    public boolean canManageCity(UUID playerId) {
+-        return isMayor(playerId);
+-    }
+-
+-    public boolean canInvite(UUID playerId) {
+-        return isOfficer(playerId);
+-    }
+-
+-    public boolean canKick(UUID playerId) {
+-        return isMayor(playerId);
+-    }
+-
+-    public boolean canSetSpawn(UUID playerId) {
+-        return isOfficer(playerId);
+-    }
+-
+-    // ==================== 成员管理 ====================
+-
+-    /**
+-     * 添加居民
+-     */
+-    public boolean addResident(UUID playerId, CityRank rank) {
+-        if (residents.containsKey(playerId)) {
+-            return false;
+-        }
+-        if (rank == null) {
+-            rank = CityRank.RESIDENT;
+-        }
+-        residents.put(playerId, rank);
+-        this.lastUpdated = Instant.now();
+-        return true;
+-    }
+-
+-    /**
+-     * 添加普通居民
+-     */
+-    public boolean addResident(UUID playerId) {
+-        return addResident(playerId, CityRank.RESIDENT);
+-    }
+-
+-    /**
+-     * 移除居民
+-     */
+-    public boolean removeResident(UUID playerId) {
+-        // 不能移除市长
+-        if (isMayor(playerId)) {
+-            return false;
+-        }
+-        boolean removed = residents.remove(playerId) != null;
+-        if (removed) {
+-            this.lastUpdated = Instant.now();
+-        }
+-        return removed;
+-    }
+-
+-    /**
+-     * 升级居民为官员
+-     */
+-    public boolean promoteToOfficer(UUID playerId) {
+-        if (!residents.containsKey(playerId)) {
+-            return false;
+-        }
+-        if (isMayor(playerId)) {
+-            return false;  // 市长不能被升级
+-        }
+-        residents.put(playerId, CityRank.OFFICER);
+-        this.lastUpdated = Instant.now();
+-        return true;
+-    }
+-
+-    /**
+-     * 降级官员为居民
+-     */
+-    public boolean demoteToResident(UUID playerId) {
+-        if (!isOfficer(playerId)) {
+-            return false;
+-        }
+-        if (isMayor(playerId)) {
+-            return false;  // 市长不能被降级
+-        }
+-        residents.put(playerId, CityRank.RESIDENT);
+-        this.lastUpdated = Instant.now();
+-        return true;
+-    }
+-
+-    /**
+-     * 转让市长
+-     */
+-    public boolean transferMayor(UUID newMayorId) {
+-        if (!residents.containsKey(newMayorId)) {
+-            return false;
+-        }
+-        // 获取当前市长
+-        UUID currentMayor = residents.entrySet().stream()
++  private final UUID id;
++  private final NationId nationId;
++  private String name;
++  private String announcement; // 城市公告
++  private Location spawnChunk; // 城市出生点所在区块
++  private final Map<UUID, CityRank> residents; // 成员及其等级
++  private CityRank mayorRank; // 市长级别（固定为 MAYOR）
++
++  // 城市元数据
++  private final Instant createdAt;
++  private Instant lastUpdated;
++
++  // 城市经济
++  private double treasury;
++
++  // 城市等级系统
++  private int level = 1;
++  private int maxLevel = 10;
++  private int experience = 0;
++
++  // 城市领土
++  private final Set<String> claims; // 存储格式: "world,x,z"
++
++  // 城市设置
++  private boolean pvpEnabled = false;
++  private boolean publicSpawn = true;
++  private boolean openRecruitment = true;
++
++  // 投票相关
++  private final Map<String, CityVote> activeVotes; // 进行中的投票
++
++  public City(
++      UUID id,
++      NationId nationId,
++      String name,
++      Location spawnChunk,
++      Map<UUID, CityRank> residents,
++      CityRank mayorRank,
++      double treasury,
++      Instant createdAt) {
++    this(id, nationId, name, spawnChunk, residents, mayorRank, treasury, createdAt, Instant.now());
++  }
++
++  /** 完整构造函数（用于反序列化） */
++  public City(
++      UUID id,
++      NationId nationId,
++      String name,
++      Location spawnChunk,
++      Map<UUID, CityRank> residents,
++      CityRank mayorRank,
++      double treasury,
++      Instant createdAt,
++      Instant lastUpdated) {
++    this.id = Objects.requireNonNull(id, "id");
++    this.nationId = Objects.requireNonNull(nationId, "nationId");
++    this.name = Objects.requireNonNull(name, "name");
++    this.spawnChunk = spawnChunk;
++    this.residents = new HashMap<>(Objects.requireNonNull(residents, "residents"));
++    this.mayorRank = Objects.requireNonNull(mayorRank, "mayorRank");
++    this.treasury = treasury;
++    this.createdAt = Objects.requireNonNull(createdAt, "createdAt");
++    this.lastUpdated = lastUpdated != null ? lastUpdated : Instant.now();
++    this.claims = new HashSet<>();
++    this.activeVotes = new HashMap<>();
++  }
++
++  /** 创建新城市 */
++  public static City create(NationId nationId, String name, UUID mayorId, Location spawnChunk) {
++    UUID id = UUID.randomUUID();
++    Map<UUID, CityRank> residents = new HashMap<>();
++    residents.put(mayorId, CityRank.MAYOR);
++    City city =
++        new City(id, nationId, name, spawnChunk, residents, CityRank.MAYOR, 0.0, Instant.now());
++    return city;
++  }
++
++  // ==================== Getters ====================
++
++  public UUID id() {
++    return id;
++  }
++
++  public NationId nationId() {
++    return nationId;
++  }
++
++  public String name() {
++    return name;
++  }
++
++  public Location spawnChunk() {
++    return spawnChunk;
++  }
++
++  public Map<UUID, CityRank> residents() {
++    return Collections.unmodifiableMap(residents);
++  }
++
++  public CityRank mayorRank() {
++    return mayorRank;
++  }
++
++  public double treasury() {
++    return treasury;
++  }
++
++  public Instant createdAt() {
++    return createdAt;
++  }
++
++  public Instant lastUpdated() {
++    return lastUpdated;
++  }
++
++  public int residentCount() {
++    return residents.size();
++  }
++
++  // ==================== 公告 ====================
++
++  public String announcement() {
++    return announcement;
++  }
++
++  public void setAnnouncement(String announcement) {
++    this.announcement = announcement;
++    this.lastUpdated = Instant.now();
++  }
++
++  // ==================== 等级系统 ====================
++
++  public int level() {
++    return level;
++  }
++
++  public int maxLevel() {
++    return maxLevel;
++  }
++
++  public int experience() {
++    return experience;
++  }
++
++  /** Restore validated progress without replaying experience awards or level-up actions. */
++  public void restoreProgress(int level, int maxLevel, int experience) {
++    if (level < 1 || maxLevel < level || maxLevel > 1000 || experience < 0)
++      throw new IllegalArgumentException("Invalid city progress");
++    this.level = level;
++    this.maxLevel = maxLevel;
++    this.experience = experience;
++  }
++
++  public int getMaxResidents() {
++    // 根据等级计算最大居民数
++    return 20 + (level - 1) * 5;
++  }
++
++  /** 添加经验值 */
++  public boolean addExperience(int amount) {
++    if (amount <= 0) return false;
++    this.experience += amount;
++    this.lastUpdated = Instant.now();
++    checkLevelUp();
++    return true;
++  }
++
++  /** 检查是否可以升级 */
++  public boolean canLevelUp() {
++    if (level >= maxLevel) return false;
++    int requiredExp = getLevelUpExperience();
++    return experience >= requiredExp;
++  }
++
++  /** 获取升级所需经验 */
++  public int getLevelUpExperience() {
++    return level * 100;
++  }
++
++  /** 升级 */
++  public boolean levelUp() {
++    if (!canLevelUp()) return false;
++    experience -= getLevelUpExperience();
++    level++;
++    this.lastUpdated = Instant.now();
++    return true;
++  }
++
++  /** 检查并执行自动升级 */
++  private void checkLevelUp() {
++    while (canLevelUp()) {
++      levelUp();
++    }
++  }
++
++  // ==================== 领土系统 ====================
++
++  public Set<String> claims() {
++    return Collections.unmodifiableSet(claims);
++  }
++
++  public int claimCount() {
++    return claims.size();
++  }
++
++  /** 添加领土 */
++  public boolean addClaim(String world, int x, int z) {
++    String key = world + "," + x + "," + z;
++    if (claims.add(key)) {
++      this.lastUpdated = Instant.now();
++      return true;
++    }
++    return false;
++  }
++
++  /** 移除领土 */
++  public boolean removeClaim(String world, int x, int z) {
++    String key = world + "," + x + "," + z;
++    if (claims.remove(key)) {
++      this.lastUpdated = Instant.now();
++      return true;
++    }
++    return false;
++  }
++
++  /** 检查是否有指定领土 */
++  public boolean hasClaim(String world, int x, int z) {
++    return claims.contains(world + "," + x + "," + z);
++  }
++
++  // ==================== 城市设置 ====================
++
++  public boolean isPvpEnabled() {
++    return pvpEnabled;
++  }
++
++  public void setPvpEnabled(boolean pvpEnabled) {
++    this.pvpEnabled = pvpEnabled;
++    this.lastUpdated = Instant.now();
++  }
++
++  public boolean isPublicSpawn() {
++    return publicSpawn;
++  }
++
++  public void setPublicSpawn(boolean publicSpawn) {
++    this.publicSpawn = publicSpawn;
++    this.lastUpdated = Instant.now();
++  }
++
++  public boolean isOpenRecruitment() {
++    return openRecruitment;
++  }
++
++  public void setOpenRecruitment(boolean openRecruitment) {
++    this.openRecruitment = openRecruitment;
++    this.lastUpdated = Instant.now();
++  }
++
++  // ==================== 批量成员操作 ====================
++
++  /**
++   * 批量添加居民
++   *
++   * @return 成功添加的数量
++   */
++  public int addResidents(Map<UUID, CityRank> members) {
++    int count = 0;
++    for (Map.Entry<UUID, CityRank> entry : members.entrySet()) {
++      if (addResident(entry.getKey(), entry.getValue())) {
++        count++;
++      }
++    }
++    return count;
++  }
++
++  /**
++   * 批量移除居民
++   *
++   * @return 成功移除的数量
++   */
++  public int removeResidents(Collection<UUID> memberIds) {
++    int count = 0;
++    for (UUID playerId : memberIds) {
++      if (removeResident(playerId)) {
++        count++;
++      }
++    }
++    return count;
++  }
++
++  /** 获取所有居民UUID */
++  public Set<UUID> getResidentIds() {
++    return new HashSet<>(residents.keySet());
++  }
++
++  /** 获取特定等级的所有居民 */
++  public Set<UUID> getResidentsByRank(CityRank rank) {
++    Set<UUID> result = new HashSet<>();
++    for (Map.Entry<UUID, CityRank> entry : residents.entrySet()) {
++      if (entry.getValue() == rank) {
++        result.add(entry.getKey());
++      }
++    }
++    return result;
++  }
++
++  /** 遍历所有居民（只读） */
++  public void forEachResident(Consumer<UUID> action) {
++    residents.keySet().forEach(action);
++  }
++
++  // ==================== 权限检查 ====================
++
++  public boolean isMayor(UUID playerId) {
++    CityRank rank = residents.get(playerId);
++    return rank == CityRank.MAYOR;
++  }
++
++  public boolean isOfficer(UUID playerId) {
++    CityRank rank = residents.get(playerId);
++    return rank == CityRank.OFFICER || rank == CityRank.MAYOR;
++  }
++
++  public boolean isResident(UUID playerId) {
++    return residents.containsKey(playerId);
++  }
++
++  public CityRank getRank(UUID playerId) {
++    return residents.getOrDefault(playerId, null);
++  }
++
++  public boolean canManageCity(UUID playerId) {
++    return isMayor(playerId);
++  }
++
++  public boolean canInvite(UUID playerId) {
++    return isOfficer(playerId);
++  }
++
++  public boolean canKick(UUID playerId) {
++    return isMayor(playerId);
++  }
++
++  public boolean canSetSpawn(UUID playerId) {
++    return isOfficer(playerId);
++  }
++
++  // ==================== 成员管理 ====================
++
++  /** 添加居民 */
++  public boolean addResident(UUID playerId, CityRank rank) {
++    if (residents.containsKey(playerId)) {
++      return false;
++    }
++    if (rank == null) {
++      rank = CityRank.RESIDENT;
++    }
++    residents.put(playerId, rank);
++    this.lastUpdated = Instant.now();
++    return true;
++  }
++
++  /** 添加普通居民 */
++  public boolean addResident(UUID playerId) {
++    return addResident(playerId, CityRank.RESIDENT);
++  }
++
++  /** 移除居民 */
++  public boolean removeResident(UUID playerId) {
++    // 不能移除市长
++    if (isMayor(playerId)) {
++      return false;
++    }
++    boolean removed = residents.remove(playerId) != null;
++    if (removed) {
++      this.lastUpdated = Instant.now();
++    }
++    return removed;
++  }
++
++  /** 升级居民为官员 */
++  public boolean promoteToOfficer(UUID playerId) {
++    if (!residents.containsKey(playerId)) {
++      return false;
++    }
++    if (isMayor(playerId)) {
++      return false; // 市长不能被升级
++    }
++    residents.put(playerId, CityRank.OFFICER);
++    this.lastUpdated = Instant.now();
++    return true;
++  }
++
++  /** 降级官员为居民 */
++  public boolean demoteToResident(UUID playerId) {
++    if (!isOfficer(playerId)) {
++      return false;
++    }
++    if (isMayor(playerId)) {
++      return false; // 市长不能被降级
++    }
++    residents.put(playerId, CityRank.RESIDENT);
++    this.lastUpdated = Instant.now();
++    return true;
++  }
++
++  /** 转让市长 */
++  public boolean transferMayor(UUID newMayorId) {
++    if (!residents.containsKey(newMayorId)) {
++      return false;
++    }
++    // 获取当前市长
++    UUID currentMayor =
++        residents.entrySet().stream()
+             .filter(e -> e.getValue() == CityRank.MAYOR)
+             .map(Map.Entry::getKey)
+             .findFirst()
+             .orElse(null);
+ 
+-        if (currentMayor == null) {
+-            return false;
+-        }
++    if (currentMayor == null) {
++      return false;
++    }
++
++    // 交换权限
++    residents.put(currentMayor, CityRank.OFFICER);
++    residents.put(newMayorId, CityRank.MAYOR);
++    this.lastUpdated = Instant.now();
++    return true;
++  }
++
++  // ==================== 经济管理 ====================
++
++  public void deposit(double amount) {
++    if (amount > 0) {
++      this.treasury += amount;
++      this.lastUpdated = Instant.now();
++    }
++  }
++
++  public boolean withdraw(double amount) {
++    if (amount > 0 && treasury >= amount) {
++      this.treasury -= amount;
++      this.lastUpdated = Instant.now();
++      return true;
++    }
++    return false;
++  }
++
++  // ==================== 设置方法 ====================
++
++  public void setName(String name) {
++    this.name = Objects.requireNonNull(name, "name");
++    this.lastUpdated = Instant.now();
++  }
++
++  public void setSpawnChunk(Location spawnChunk) {
++    this.spawnChunk = spawnChunk;
++    this.lastUpdated = Instant.now();
++  }
++
++  public void setTreasury(double treasury) {
++    this.treasury = treasury;
++    this.lastUpdated = Instant.now();
++  }
++
++  public void setLastUpdated(Instant lastUpdated) {
++    this.lastUpdated = lastUpdated;
++  }
++
++  // ==================== 工具方法 ====================
++
++  @Override
++  public boolean equals(Object o) {
++    if (this == o) return true;
++    if (!(o instanceof City city)) return false;
++    return id.equals(city.id);
++  }
++
++  @Override
++  public int hashCode() {
++    return id.hashCode();
++  }
++
++  @Override
++  public String toString() {
++    return String.format(
++        "City{id=%s, nationId=%s, name=%s, residents=%d}", id, nationId, name, residentCount());
++  }
++
++  // ==================== 投票系统 ====================
++
++  /** 创建投票 */
++  public CityVote createVote(
++      String voteId, UUID creatorId, String title, VoteType type, int durationSeconds) {
++    CityVote vote = new CityVote(voteId, creatorId, title, type, durationSeconds, Instant.now());
++    activeVotes.put(voteId, vote);
++    this.lastUpdated = Instant.now();
++    return vote;
++  }
++
++  /** 获取投票 */
++  public CityVote getVote(String voteId) {
++    return activeVotes.get(voteId);
++  }
++
++  /** 移除投票 */
++  public boolean removeVote(String voteId) {
++    if (activeVotes.remove(voteId) != null) {
++      this.lastUpdated = Instant.now();
++      return true;
++    }
++    return false;
++  }
++
++  /** 获取所有活跃投票 */
++  public Collection<CityVote> getActiveVotes() {
++    return new ArrayList<>(activeVotes.values());
++  }
++
++  /** Restore a vote with its original timestamp and ballots. */
++  public void restoreVote(CityVote vote) {
++    Objects.requireNonNull(vote);
++    if (activeVotes.putIfAbsent(vote.id(), vote) != null)
++      throw new IllegalArgumentException("Duplicate city vote");
++  }
++
++  /** 清理过期投票 */
++  public int cleanupExpiredVotes() {
++    int removed = 0;
++    for (Iterator<Map.Entry<String, CityVote>> it = activeVotes.entrySet().iterator();
++        it.hasNext(); ) {
++      Map.Entry<String, CityVote> entry = it.next();
++      if (entry.getValue().isExpired()) {
++        it.remove();
++        removed++;
++      }
++    }
++    if (removed > 0) {
++      this.lastUpdated = Instant.now();
++    }
++    return removed;
++  }
++
++  // ==================== 内部类 ====================
++
++  /** 投票类型 */
++  public enum VoteType {
++    KICK_MEMBER("踢出成员"),
++    CHANGE_SETTINGS("修改设置"),
++    PROMOTE_MEMBER("晋升成员"),
++    WAR_DECLARATION("宣战"),
++    EXPULSION("驱逐成员");
++
++    private final String displayName;
++
++    VoteType(String displayName) {
++      this.displayName = displayName;
++    }
++
++    public String displayName() {
++      return displayName;
++    }
++  }
++
++  /** 城市投票 */
++  public static class CityVote {
++    private final String id;
++    private final UUID creatorId;
++    private final String title;
++    private final VoteType type;
++    private final int durationSeconds;
++    private final Instant createdAt;
++    private final Map<UUID, Boolean> votes; // true=赞成, false=反对
+ 
+-        // 交换权限
+-        residents.put(currentMayor, CityRank.OFFICER);
+-        residents.put(newMayorId, CityRank.MAYOR);
+-        this.lastUpdated = Instant.now();
+-        return true;
++    public CityVote(
++        String id,
++        UUID creatorId,
++        String title,
++        VoteType type,
++        int durationSeconds,
++        Instant createdAt) {
++      this.id = id;
++      this.creatorId = creatorId;
++      this.title = title;
++      this.type = type;
++      this.durationSeconds = durationSeconds;
++      this.createdAt = createdAt;
++      this.votes = new HashMap<>();
+     }
+ 
+-    // ==================== 经济管理 ====================
+-
+-    public void deposit(double amount) {
+-        if (amount > 0) {
+-            this.treasury += amount;
+-            this.lastUpdated = Instant.now();
+-        }
++    public String id() {
++      return id;
+     }
+ 
+-    public boolean withdraw(double amount) {
+-        if (amount > 0 && treasury >= amount) {
+-            this.treasury -= amount;
+-            this.lastUpdated = Instant.now();
+-            return true;
+-        }
+-        return false;
++    public UUID creatorId() {
++      return creatorId;
+     }
+ 
+-    // ==================== 设置方法 ====================
+-
+-    public void setName(String name) {
+-        this.name = Objects.requireNonNull(name, "name");
+-        this.lastUpdated = Instant.now();
++    public String title() {
++      return title;
+     }
+ 
+-    public void setSpawnChunk(Location spawnChunk) {
+-        this.spawnChunk = spawnChunk;
+-        this.lastUpdated = Instant.now();
++    public VoteType type() {
++      return type;
+     }
+ 
+-    public void setTreasury(double treasury) {
+-        this.treasury = treasury;
+-        this.lastUpdated = Instant.now();
++    public int durationSeconds() {
++      return durationSeconds;
+     }
+ 
+-    public void setLastUpdated(Instant lastUpdated) {
+-        this.lastUpdated = lastUpdated;
++    public Instant createdAt() {
++      return createdAt;
+     }
+ 
+-    // ==================== 工具方法 ====================
+-
+-    @Override
+-    public boolean equals(Object o) {
+-        if (this == o) return true;
+-        if (!(o instanceof City city)) return false;
+-        return id.equals(city.id);
++    public Map<UUID, Boolean> ballots() {
++      return Map.copyOf(votes);
+     }
+ 
+-    @Override
+-    public int hashCode() {
+-        return id.hashCode();
++    public boolean isExpired() {
++      return Instant.now().isAfter(createdAt.plusSeconds(durationSeconds));
+     }
+ 
+-    @Override
+-    public String toString() {
+-        return String.format("City{id=%s, nationId=%s, name=%s, residents=%d}",
+-            id, nationId, name, residentCount());
++    public int getRemainingSeconds() {
++      long remaining =
++          durationSeconds - (Instant.now().getEpochSecond() - createdAt.getEpochSecond());
++      return Math.max(0, (int) remaining);
+     }
+ 
+-    // ==================== 投票系统 ====================
+-
+-    /**
+-     * 创建投票
+-     */
+-    public CityVote createVote(String voteId, UUID creatorId, String title, VoteType type, int durationSeconds) {
+-        CityVote vote = new CityVote(voteId, creatorId, title, type, durationSeconds, Instant.now());
+-        activeVotes.put(voteId, vote);
+-        this.lastUpdated = Instant.now();
+-        return vote;
++    public void vote(UUID playerId, boolean approve) {
++      votes.put(playerId, approve);
+     }
+ 
+-    /**
+-     * 获取投票
+-     */
+-    public CityVote getVote(String voteId) {
+-        return activeVotes.get(voteId);
++    public void removeVote(UUID playerId) {
++      votes.remove(playerId);
+     }
+ 
+-    /**
+-     * 移除投票
+-     */
+-    public boolean removeVote(String voteId) {
+-        if (activeVotes.remove(voteId) != null) {
+-            this.lastUpdated = Instant.now();
+-            return true;
+-        }
+-        return false;
++    public Boolean getVote(UUID playerId) {
++      return votes.get(playerId);
+     }
+ 
+-    /**
+-     * 获取所有活跃投票
+-     */
+-    public Collection<CityVote> getActiveVotes() {
+-        return new ArrayList<>(activeVotes.values());
++    public boolean hasVoted(UUID playerId) {
++      return votes.containsKey(playerId);
+     }
+ 
+-    /**
+-     * 清理过期投票
+-     */
+-    public int cleanupExpiredVotes() {
+-        int removed = 0;
+-        for (Iterator<Map.Entry<String, CityVote>> it = activeVotes.entrySet().iterator(); it.hasNext(); ) {
+-            Map.Entry<String, CityVote> entry = it.next();
+-            if (entry.getValue().isExpired()) {
+-                it.remove();
+-                removed++;
+-            }
+-        }
+-        if (removed > 0) {
+-            this.lastUpdated = Instant.now();
+-        }
+-        return removed;
+-    }
+-
+-    // ==================== 内部类 ====================
+-
+-    /**
+-     * 投票类型
+-     */
+-    public enum VoteType {
+-        KICK_MEMBER("踢出成员"),
+-        CHANGE_SETTINGS("修改设置"),
+-        PROMOTE_MEMBER("晋升成员"),
+-        WAR_DECLARATION("宣战"),
+-        EXPULSION("驱逐成员");
+-
+-        private final String displayName;
++    public int getYesVotes() {
++      return (int) votes.values().stream().filter(Boolean::booleanValue).count();
++    }
+ 
+-        VoteType(String displayName) {
+-            this.displayName = displayName;
+-        }
++    public int getNoVotes() {
++      return (int) votes.values().stream().filter(v -> !v.booleanValue()).count();
++    }
+ 
+-        public String displayName() {
+-            return displayName;
+-        }
++    public int getTotalVotes() {
++      return votes.size();
+     }
+ 
+     /**
+-     * 城市投票
++     * 计算投票结果
++     *
++     * @param requiredPercent 赞成票所需的最低百分比（0-100）
++     * @return true=通过, false=未通过
+      */
+-    public static class CityVote {
+-        private final String id;
+-        private final UUID creatorId;
+-        private final String title;
+-        private final VoteType type;
+-        private final int durationSeconds;
+-        private final Instant createdAt;
+-        private final Map<UUID, Boolean> votes;  // true=赞成, false=反对
+-
+-        public CityVote(String id, UUID creatorId, String title, VoteType type, int durationSeconds, Instant createdAt) {
+-            this.id = id;
+-            this.creatorId = creatorId;
+-            this.title = title;
+-            this.type = type;
+-            this.durationSeconds = durationSeconds;
+-            this.createdAt = createdAt;
+-            this.votes = new HashMap<>();
+-        }
+-
+-        public String id() { return id; }
+-        public UUID creatorId() { return creatorId; }
+-        public String title() { return title; }
+-        public VoteType type() { return type; }
+-        public int durationSeconds() { return durationSeconds; }
+-        public Instant createdAt() { return createdAt; }
+-
+-        public boolean isExpired() {
+-            return Instant.now().isAfter(createdAt.plusSeconds(durationSeconds));
+-        }
+-
+-        public int getRemainingSeconds() {
+-            long remaining = durationSeconds - (Instant.now().getEpochSecond() - createdAt.getEpochSecond());
+-            return Math.max(0, (int) remaining);
+-        }
+-
+-        public void vote(UUID playerId, boolean approve) {
+-            votes.put(playerId, approve);
+-        }
+-
+-        public void removeVote(UUID playerId) {
+-            votes.remove(playerId);
+-        }
+-
+-        public Boolean getVote(UUID playerId) {
+-            return votes.get(playerId);
+-        }
+-
+-        public boolean hasVoted(UUID playerId) {
+-            return votes.containsKey(playerId);
+-        }
+-
+-        public int getYesVotes() {
+-            return (int) votes.values().stream().filter(Boolean::booleanValue).count();
+-        }
+-
+-        public int getNoVotes() {
+-            return (int) votes.values().stream().filter(v -> !v.booleanValue()).count();
+-        }
+-
+-        public int getTotalVotes() {
+-            return votes.size();
+-        }
+-
+-        /**
+-         * 计算投票结果
+-         * @param requiredPercent 赞成票所需的最低百分比（0-100）
+-         * @return true=通过, false=未通过
+-         */
+-        public boolean isApproved(int requiredPercent) {
+-            if (votes.isEmpty()) return false;
+-            int yes = getYesVotes();
+-            int total = getTotalVotes();
+-            return (yes * 100 / total) >= requiredPercent;
+-        }
++    public boolean isApproved(int requiredPercent) {
++      if (votes.isEmpty()) return false;
++      int yes = getYesVotes();
++      int total = getTotalVotes();
++      return (yes * 100 / total) >= requiredPercent;
+     }
++  }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java b/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java
+index 1d4ec50..b273751 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java
+@@ -220,15 +220,16 @@ final class NationDisbandRecovery {
+           "Treasury service is required to finish nation disband recovery");
+     }
+ 
++    boolean cityRetirement = cityService != null && cityService.supportsRetirement();
+     Set<UUID> cityIds = new LinkedHashSet<>(transaction.cityIds());
+-    if (cityService != null && !transaction.citySnapshotComplete()) {
++    if (!cityRetirement && cityService != null && !transaction.citySnapshotComplete()) {
+       for (NationId nationId : transaction.nationIds()) {
+         for (City city : cityService.getNationCities(nationId)) {
+           cityIds.add(city.id());
+         }
+       }
+     }
+-    if (cityService != null && !cityIds.isEmpty()) {
++    if (!cityRetirement && cityService != null && !cityIds.isEmpty()) {
+       Set<NationId> disbandedNations = new HashSet<>(transaction.nationIds());
+       for (UUID cityId : cityIds) {
+         cityService
+@@ -262,7 +263,10 @@ final class NationDisbandRecovery {
+               + " could not durably release all claims because a claim is owned by another nation");
+     }
+ 
+-    if (!cityIds.isEmpty()) {
++    if (cityRetirement) {
++      for (NationId nationId : transaction.nationIds())
++        cityService.retireNationCities(transaction.transactionId(), nationId);
++    } else if (!cityIds.isEmpty()) {
+       for (UUID cityId : cityIds) {
+         if (!cityService.deleteCity(cityId) && cityService.getCity(cityId).isPresent()) {
+           throw new IllegalStateException("Failed to delete disbanded city " + cityId);
+diff --git a/src/test/java/dev/starcore/starcore/module/city/CityModuleLifecycleTest.java b/src/test/java/dev/starcore/starcore/module/city/CityModuleLifecycleTest.java
+index 18fe8fc..0e883e6 100644
+--- a/src/test/java/dev/starcore/starcore/module/city/CityModuleLifecycleTest.java
++++ b/src/test/java/dev/starcore/starcore/module/city/CityModuleLifecycleTest.java
+@@ -40,13 +40,16 @@ class CityModuleLifecycleTest {
+ 
+   @Test
+   void metadataDeclaresTheRegisteredCityService() {
+-    assertThat(new CityModule().metadata().providedServices()).containsExactly(CityService.class);
++    assertThat(new CityModule().metadata().providedServices())
++        .containsExactly(CityService.class, CityRetirementService.class);
+   }
+ 
+   @Test
+   void disableCleansOwnedResourcesWhenSavingFails() throws Exception {
+     CityModule module = new CityModule();
+     StarCoreContext context = mock(StarCoreContext.class);
++    when(context.databaseService())
++        .thenReturn(mock(dev.starcore.starcore.core.database.DatabaseService.class));
+     ServiceRegistry registry = new ServiceRegistry();
+     CityService cityService = mock(CityService.class);
+     doThrow(new IllegalStateException("city storage unavailable")).when(cityService).saveAll();
+@@ -138,6 +141,8 @@ class CityModuleLifecycleTest {
+       throws Exception {
+     CityModule module = new CityModule();
+     StarCoreContext context = mock(StarCoreContext.class);
++    when(context.databaseService())
++        .thenReturn(mock(dev.starcore.starcore.core.database.DatabaseService.class));
+     ServiceRegistry registry = new ServiceRegistry();
+     registry.register(NationService.class, mock(NationService.class));
+     registry.register(MessageService.class, mock(MessageService.class));
+@@ -176,6 +181,8 @@ class CityModuleLifecycleTest {
+       throws Exception {
+     CityModule module = new CityModule();
+     StarCoreContext context = mock(StarCoreContext.class);
++    when(context.databaseService())
++        .thenReturn(mock(dev.starcore.starcore.core.database.DatabaseService.class));
+     ServiceRegistry registry = new ServiceRegistry();
+     registry.register(NationService.class, mock(NationService.class));
+     registry.register(MessageService.class, mock(MessageService.class));
+@@ -217,6 +224,52 @@ class CityModuleLifecycleTest {
+     bind.invoke(module, plugin, name, executor);
+   }
+ 
++  @Test
++  void partialCommandRegistrationFailureStopsServiceAndUnregistersBothApis(
++      @TempDir Path dataDirectory) {
++    var context = mock(StarCoreContext.class);
++    var plugin = mock(JavaPlugin.class);
++    var registry = new ServiceRegistry();
++    when(context.plugin()).thenReturn(plugin);
++    when(context.serviceRegistry()).thenReturn(registry);
++    when(context.databaseService())
++        .thenReturn(mock(dev.starcore.starcore.core.database.DatabaseService.class));
++    when(plugin.getDataFolder()).thenReturn(dataDirectory.toFile());
++    when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    registry.register(NationService.class, mock(NationService.class));
++    registry.register(MessageService.class, mock(MessageService.class));
++    var command = mock(PluginCommand.class);
++    when(plugin.getCommand("city")).thenReturn(command);
++    CityService[] captured = new CityService[1];
++    CommandExecutor[] executor = new CommandExecutor[1];
++    org.mockito.Mockito.doAnswer(
++            call -> {
++              executor[0] = call.getArgument(0);
++              return null;
++            })
++        .when(command)
++        .setExecutor(any());
++    when(command.getExecutor()).thenAnswer(call -> executor[0]);
++    org.mockito.Mockito.doAnswer(
++            call -> {
++              captured[0] = registry.require(CityService.class);
++              throw new IllegalStateException("tab binding failed");
++            })
++        .when(command)
++        .setTabCompleter(any(org.bukkit.command.TabCompleter.class));
++    try (var bukkit = mockStatic(Bukkit.class)) {
++      var failure = catchThrowable(() -> new CityModule().enable(context));
++      assertThat(failure)
++          .isInstanceOf(IllegalStateException.class)
++          .hasMessage("tab binding failed");
++    }
++    verify(command).setExecutor(null);
++    assertThat(registry.find(CityService.class)).isEmpty();
++    assertThat(registry.find(CityRetirementService.class)).isEmpty();
++    org.assertj.core.api.Assertions.assertThatThrownBy(captured[0]::saveAll)
++        .isInstanceOf(IllegalStateException.class);
++  }
++
+   private static Object field(Object target, String name) throws Exception {
+     Field field = target.getClass().getDeclaredField(name);
+     field.setAccessible(true);
+diff --git a/src/test/java/dev/starcore/starcore/module/city/CityRetirementRecoveryTest.java b/src/test/java/dev/starcore/starcore/module/city/CityRetirementRecoveryTest.java
+new file mode 100644
+index 0000000..2f41492
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/city/CityRetirementRecoveryTest.java
+@@ -0,0 +1,516 @@
++package dev.starcore.starcore.module.city;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.database.DatabaseService;
++import dev.starcore.starcore.module.city.model.*;
++import dev.starcore.starcore.module.nation.NationService;
++import dev.starcore.starcore.module.nation.model.*;
++import java.nio.file.*;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.function.Supplier;
++import org.junit.jupiter.api.*;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.*;
++import org.sqlite.SQLiteDataSource;
++
++class CityRetirementRecoveryTest {
++  @TempDir Path directory;
++
++  SQLiteDataSource source() {
++    var source = new SQLiteDataSource();
++    source.setUrl("jdbc:sqlite:" + directory.resolve("cities.db"));
++    return source;
++  }
++
++  Supplier<CityLedgerStorage> stores(boolean sql) {
++    return sql
++        ? () -> new SqlCityLedgerStorage(() -> Optional.of(source()), CityLedger::empty)
++        : () -> new FileCityLedgerStorage(directory.resolve("cities"));
++  }
++
++  City city(NationId nation, String name) {
++    return City.create(nation, name, UUID.randomUUID(), null);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void closesActualCitiesPermanentlyAndRetainsOriginalResult(boolean sql) {
++    var stores = stores(sql);
++    var storage = new DurableCityStorage(stores.get());
++    var nation = NationId.random();
++    var first = city(nation, "first");
++    var later = city(nation, "later");
++    var kept = city(NationId.random(), "kept");
++    storage.saveAll(List.of(first, later, kept));
++    var stale = storage.find(first.id()).orElseThrow();
++    var id = UUID.randomUUID();
++    var receipt = storage.retireNationCities(id, nation);
++    assertThat(receipt.deletedCityIds()).containsExactlyInAnyOrder(first.id(), later.id());
++    var restarted = new DurableCityStorage(stores.get());
++    assertThat(restarted.retireNationCities(id, nation)).isEqualTo(receipt);
++    assertThat(restarted.loadAll()).extracting(City::id).containsExactly(kept.id());
++    assertThatThrownBy(() -> storage.save(stale)).isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(() -> restarted.save(first)).isInstanceOf(IllegalArgumentException.class);
++    assertThatThrownBy(() -> restarted.save(city(nation, "late")))
++        .isInstanceOf(IllegalArgumentException.class);
++    assertThatThrownBy(() -> restarted.retireNationCities(UUID.randomUUID(), nation))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(restarted.cityRetirementReceipt(nation)).contains(receipt);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void emptyNationAndAbsentCityAreSealed(boolean sql) {
++    var stores = stores(sql);
++    var storage = new DurableCityStorage(stores.get());
++    var nation = NationId.random();
++    var id = UUID.randomUUID();
++    assertThat(storage.retireNationCities(id, nation).deletedCityIds()).isEmpty();
++    var city = city(NationId.random(), "deleted-before-create");
++    storage.delete(city.id());
++    var restarted = new DurableCityStorage(stores.get());
++    assertThatThrownBy(() -> restarted.save(city)).isInstanceOf(IllegalArgumentException.class);
++    assertThatThrownBy(() -> restarted.save(city(nation, "late")))
++        .isInstanceOf(IllegalArgumentException.class);
++    assertThat(restarted.retireNationCities(id, nation).deletedCityIds()).isEmpty();
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void unrelatedReadsCannotLendFreshVersionToAnOldObject(boolean sql) {
++    var stores = stores(sql);
++    var left = new DurableCityStorage(stores.get());
++    var city = city(NationId.random(), "old");
++    left.save(city);
++    var old = left.find(city.id()).orElseThrow();
++    var right = new DurableCityStorage(stores.get());
++    var changed = right.find(city.id()).orElseThrow();
++    changed.setName("new");
++    right.save(changed);
++    left.currentFingerprint();
++    left.loadAll();
++    left.find(city.id());
++    old.deposit(5);
++    assertThatThrownBy(() -> left.save(old)).isInstanceOf(IllegalStateException.class);
++    assertThat(left.find(city.id()).orElseThrow().name()).isEqualTo("new");
++    var detached = CitySnapshotCodec.decode(CitySnapshotCodec.encode(changed));
++    assertThatThrownBy(() -> left.save(detached)).isInstanceOf(IllegalStateException.class);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void saveBatchIsAtomicAndKeepsOmittedCities(boolean sql) {
++    var stores = stores(sql);
++    var storage = new DurableCityStorage(stores.get());
++    var nation = NationId.random();
++    var first = city(nation, "first");
++    var kept = city(nation, "kept");
++    storage.saveAll(List.of(first, kept));
++    var changed = storage.find(first.id()).orElseThrow();
++    changed.deposit(10);
++    var duplicate = city(nation, "kept");
++    assertThatThrownBy(() -> storage.saveAll(List.of(changed, duplicate)))
++        .isInstanceOf(IllegalArgumentException.class);
++    assertThat(storage.find(first.id()).orElseThrow().treasury()).isZero();
++    storage.save(changed);
++    assertThat(storage.loadAll()).hasSize(2);
++    assertThat(storage.find(first.id()).orElseThrow().treasury()).isEqualTo(10);
++    var sameResident = city(nation, "other");
++    sameResident.addResident(kept.residents().keySet().iterator().next(), CityRank.RESIDENT);
++    assertThatThrownBy(() -> storage.save(sameResident))
++        .isInstanceOf(IllegalArgumentException.class);
++    assertThat(storage.loadAll()).hasSize(2);
++  }
++
++  static final class FaultStore implements CityLedgerStorage {
++    final CityLedgerStorage delegate;
++    boolean fail, after, blockRead, unreadable;
++
++    FaultStore(CityLedgerStorage delegate) {
++      this.delegate = delegate;
++    }
++
++    public CityLedger load() {
++      if (unreadable) throw new IllegalStateException("read unavailable");
++      return delegate.load();
++    }
++
++    public void save(CityLedger ledger) {
++      if (!fail) {
++        delegate.save(ledger);
++        return;
++      }
++      fail = false;
++      if (after) delegate.save(ledger);
++      unreadable = blockRead;
++      throw new IllegalStateException("lost response");
++    }
++  }
++
++  @ParameterizedTest
++  @CsvSource({"false,false", "false,true", "true,false", "true,true"})
++  void interruptedRetirementResumesFromActualAuthority(boolean sql, boolean after) {
++    var stores = stores(sql);
++    var fault = new FaultStore(stores.get());
++    var storage = new DurableCityStorage(fault);
++    var city = city(NationId.random(), "city");
++    storage.save(city);
++    var id = UUID.randomUUID();
++    fault.fail = true;
++    fault.after = after;
++    fault.blockRead = true;
++    assertThatThrownBy(() -> storage.retireNationCities(id, city.nationId()))
++        .isInstanceOf(IllegalStateException.class);
++    var restarted = new DurableCityStorage(stores.get());
++    assertThat(restarted.cityRetirementReceipt(city.nationId()).isPresent()).isEqualTo(after);
++    assertThat(restarted.retireNationCities(id, city.nationId()).deletedCityIds())
++        .containsExactly(city.id());
++    fault.unreadable = false;
++    assertThat(storage.retireNationCities(id, city.nationId()).deletedCityIds())
++        .containsExactly(city.id());
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void confirmedCommitAfterLostResponseReturnsSuccess(boolean sql) {
++    var fault = new FaultStore(stores(sql).get());
++    var storage = new DurableCityStorage(fault);
++    var nation = NationId.random();
++    var city = city(nation, "city");
++    storage.save(city);
++    fault.fail = true;
++    fault.after = true;
++    var receipt = storage.retireNationCities(UUID.randomUUID(), nation);
++    assertThat(receipt.deletedCityIds()).containsExactly(city.id());
++    assertThat(storage.loadAll()).isEmpty();
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void authorityRejectsStaleOrForgedRetirement(boolean sql) {
++    var stores = stores(sql);
++    var storage = new DurableCityStorage(stores.get());
++    var city = city(NationId.random(), "city");
++    storage.save(city);
++    var left = stores.get();
++    var before = left.load();
++    var right = stores.get();
++    var original = right.load();
++    var updated = new HashMap<>(original.cities());
++    var model = CitySnapshotCodec.decode(updated.get(city.id()));
++    model.deposit(5);
++    updated.put(city.id(), CitySnapshotCodec.encode(model));
++    right.save(original.next(updated, original.deleted(), original.retirements()));
++    assertThatThrownBy(
++            () -> left.save(before.next(before.cities(), before.deleted(), before.retirements())))
++        .isInstanceOf(IllegalStateException.class);
++    var current = left.load();
++    var forged =
++        new CityRetirementService.CityRetirementReceipt(
++            UUID.randomUUID(), city.nationId(), List.of());
++    var candidate = current.next(Map.of(), Set.of(city.id()), Map.of(city.nationId(), forged));
++    assertThatThrownBy(() -> left.save(candidate)).isInstanceOf(IllegalStateException.class);
++    assertThat(new DurableCityStorage(stores.get()).find(city.id()).orElseThrow().treasury())
++        .isEqualTo(5);
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void simultaneousCreateAndRetireCannotReopenNation(boolean sql) throws Exception {
++    var stores = stores(sql);
++    stores.get().load();
++    var barrier = new CyclicBarrier(2);
++    Supplier<CityLedgerStorage> racing =
++        () ->
++            new CityLedgerStorage() {
++              final CityLedgerStorage delegate = stores.get();
++              boolean first = true;
++
++              public CityLedger load() {
++                return delegate.load();
++              }
++
++              public void save(CityLedger ledger) {
++                if (first) {
++                  first = false;
++                  try {
++                    barrier.await(10, TimeUnit.SECONDS);
++                  } catch (Exception e) {
++                    throw new IllegalStateException(e);
++                  }
++                }
++                delegate.save(ledger);
++              }
++            };
++    var writer = new DurableCityStorage(racing.get());
++    var closer = new DurableCityStorage(racing.get());
++    var nation = NationId.random();
++    var id = UUID.randomUUID();
++    try (var executor = Executors.newFixedThreadPool(2)) {
++      var one =
++          executor.submit(
++              () -> {
++                try {
++                  writer.save(city(nation, "racing"));
++                } catch (IllegalStateException conflict) {
++                }
++              });
++      var two =
++          executor.submit(
++              () -> {
++                try {
++                  closer.retireNationCities(id, nation);
++                } catch (IllegalStateException conflict) {
++                }
++              });
++      one.get(15, TimeUnit.SECONDS);
++      two.get(15, TimeUnit.SECONDS);
++    }
++    var restarted = new DurableCityStorage(stores.get());
++    restarted.retireNationCities(id, nation);
++    assertThat(restarted.loadAll()).isEmpty();
++    assertThatThrownBy(() -> restarted.save(city(nation, "late")))
++        .isInstanceOf(IllegalArgumentException.class);
++  }
++
++  @Test
++  void sqlFailureRollsBackBothSealAndCities() throws Exception {
++    var storage = new DurableCityStorage(stores(true).get());
++    var city = city(NationId.random(), "city");
++    storage.save(city);
++    var before = storage.currentFingerprint();
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute(
++          "CREATE TRIGGER fail_city BEFORE UPDATE ON starcore_city_state BEGIN SELECT"
++              + " RAISE(ABORT,'injected'); END");
++    }
++    assertThatThrownBy(() -> storage.retireNationCities(UUID.randomUUID(), city.nationId()))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(storage.currentFingerprint()).isEqualTo(before);
++    assertThat(storage.find(city.id())).isPresent();
++    assertThat(storage.cityRetirementReceipt(city.nationId())).isEmpty();
++  }
++
++  @ParameterizedTest
++  @ValueSource(
++      strings = {
++        "DELETE FROM starcore_city_state",
++        "DELETE FROM starcore_city_authority",
++        "DROP TABLE starcore_city_state",
++        "DROP TABLE starcore_city_authority"
++      })
++  void missingSqlAuthorityNeverReimportsLegacy(String damage) throws Exception {
++    var storage = new DurableCityStorage(stores(true).get());
++    storage.retireNationCities(UUID.randomUUID(), NationId.random());
++    try (var c = source().getConnection();
++        var s = c.createStatement()) {
++      s.execute(damage);
++    }
++    assertThatThrownBy(() -> new DurableCityStorage(stores(true).get()).loadAll())
++        .isInstanceOf(IllegalStateException.class);
++  }
++
++  @ParameterizedTest
++  @ValueSource(strings = {"ledger.json", "ledger.initialized"})
++  void missingFileAuthorityNeverResurrectsLegacy(String missing) throws Exception {
++    Path dir = directory.resolve("cities");
++    Files.createDirectories(dir);
++    var city = city(NationId.random(), "old");
++    Files.writeString(dir.resolve(city.id() + ".json"), CitySnapshotCodec.encode(city));
++    var storage = new DurableCityStorage(stores(false).get());
++    storage.retireNationCities(UUID.randomUUID(), city.nationId());
++    Files.delete(dir.resolve(missing));
++    assertThatThrownBy(() -> new DurableCityStorage(stores(false).get()).loadAll())
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(Files.exists(dir.resolve(city.id() + ".json"))).isTrue();
++  }
++
++  @Test
++  void migrationPreservesRetirementsAndIgnoresLaterLegacyEdits() throws Exception {
++    var file = stores(false).get();
++    var storage = new DurableCityStorage(file);
++    var nation = NationId.random();
++    var city = city(nation, "retired");
++    storage.save(city);
++    var id = UUID.randomUUID();
++    var receipt = storage.retireNationCities(id, nation);
++    var sql =
++        new DurableCityStorage(new SqlCityLedgerStorage(() -> Optional.of(source()), file::load));
++    assertThat(sql.cityRetirementReceipt(nation)).contains(receipt);
++    Files.writeString(directory.resolve("cities").resolve(city.id() + ".json"), "broken legacy");
++    assertThat(
++            new DurableCityStorage(
++                    new SqlCityLedgerStorage(() -> Optional.of(source()), file::load))
++                .retireNationCities(id, nation))
++        .isEqualTo(receipt);
++  }
++
++  @Test
++  void databaseModeIsPinnedForOldReferences() {
++    var database = mock(DatabaseService.class);
++    var storage = new DatabaseAwareCityStorage(directory, database);
++    storage.loadAll();
++    when(database.isRunning()).thenReturn(true);
++    assertThatThrownBy(storage::loadAll)
++        .isInstanceOf(IllegalStateException.class)
++        .hasMessage("STATE_STORAGE_BACKEND_UNAVAILABLE");
++    assertThatThrownBy(() -> storage.retireNationCities(UUID.randomUUID(), NationId.random()))
++        .isInstanceOf(IllegalStateException.class);
++  }
++
++  @ParameterizedTest
++  @CsvSource({"false,false", "false,true", "true,false", "true,true"})
++  void failedServiceSaveRefreshesActualCityAndMemberIndexes(boolean sql, boolean after) {
++    var fault = new FaultStore(stores(sql).get());
++    var storage = new DurableCityStorage(fault);
++    var city = city(NationId.random(), "city");
++    storage.save(city);
++    var service = new CityService(storage, mock(NationService.class));
++    var member = UUID.randomUUID();
++    fault.fail = true;
++    fault.after = after;
++    fault.blockRead = true;
++    assertThatThrownBy(() -> service.addResident(city.id(), member, CityRank.RESIDENT))
++        .isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(service::getAllCities).isInstanceOf(IllegalStateException.class);
++    fault.unreadable = false;
++    assertThat(service.getPlayerCity(member).isPresent()).isEqualTo(after);
++    assertThat(service.getCity(city.id()).orElseThrow().isResident(member)).isEqualTo(after);
++    assertThat(service.addResident(city.id(), member, CityRank.RESIDENT)).isEqualTo(!after);
++  }
++
++  @Test
++  void crossInstanceRetirementRefreshesServiceAndStoppedRefsCannotWrite() {
++    var stores = stores(false);
++    var storage = new DurableCityStorage(stores.get());
++    var city = city(NationId.random(), "city");
++    storage.save(city);
++    var service = new CityService(storage, mock(NationService.class));
++    new DurableCityStorage(stores.get()).retireNationCities(UUID.randomUUID(), city.nationId());
++    assertThatThrownBy(() -> service.deposit(city.id(), 1))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(service.getCity(city.id())).isEmpty();
++    assertThat(service.getTotalResidents()).isZero();
++    service.shutdown();
++    service.shutdown();
++    assertThatThrownBy(service::saveAll).isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(() -> service.retireNationCities(UUID.randomUUID(), NationId.random()))
++        .isInstanceOf(IllegalStateException.class);
++  }
++
++  @Test
++  void failedCreationDoesNotPublishCityOrConsumeCooldown() {
++    var fault = new FaultStore(stores(false).get());
++    var storage = new DurableCityStorage(fault);
++    var nations = mock(NationService.class);
++    var nation = mock(Nation.class);
++    var nationId = NationId.random();
++    var mayor = UUID.randomUUID();
++    when(nation.id()).thenReturn(nationId);
++    when(nations.nationById(nationId)).thenReturn(Optional.of(nation));
++    when(nations.nationOf(mayor)).thenReturn(Optional.of(nation));
++    var service = new CityService(storage, nations);
++    fault.fail = true;
++    assertThatThrownBy(() -> service.createCity(nationId, "city", mayor, null))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(service.getAllCities()).isEmpty();
++    assertThat(service.getPlayerCity(mayor)).isEmpty();
++    assertThat(service.createCity(nationId, "city", mayor, null).success()).isTrue();
++  }
++
++  @Test
++  void bulkMembershipKeepsMayorAndForeignCityIndexes() {
++    var storage = new DurableCityStorage(stores(false).get());
++    var first = city(NationId.random(), "first");
++    var other = city(NationId.random(), "other");
++    storage.saveAll(List.of(first, other));
++    var service = new CityService(storage, mock(NationService.class));
++    var mayor = first.residents().keySet().iterator().next();
++    var foreign = other.residents().keySet().iterator().next();
++    var member = UUID.randomUUID();
++    assertThat(
++            service.addResidents(
++                first.id(), Map.of(member, CityRank.RESIDENT, foreign, CityRank.RESIDENT)))
++        .isEqualTo(1);
++    assertThat(service.removeResidents(first.id(), List.of(mayor, member, foreign))).isEqualTo(1);
++    assertThat(service.getPlayerCity(mayor)).contains(first);
++    assertThat(service.getPlayerCity(foreign)).contains(other);
++    assertThat(service.getPlayerCity(member)).isEmpty();
++    assertThat(service.kickResident(UUID.randomUUID(), member)).isFalse();
++  }
++
++  @Test
++  void creationDoesNotHoldCityMonitorWhileWaitingForNation() throws Exception {
++    var storage = new DurableCityStorage(stores(false).get());
++    var nation = NationId.random();
++    var nations = mock(NationService.class);
++    var entered = new CountDownLatch(1);
++    var release = new CountDownLatch(1);
++    when(nations.nationById(nation))
++        .thenAnswer(
++            call -> {
++              entered.countDown();
++              if (!release.await(5, TimeUnit.SECONDS)) throw new IllegalStateException("deadlock");
++              return Optional.empty();
++            });
++    var service = new CityService(storage, nations);
++    try (var executor = Executors.newFixedThreadPool(2)) {
++      var create =
++          executor.submit(() -> service.createCity(nation, "city", UUID.randomUUID(), null));
++      assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
++      try {
++        assertThat(
++                executor
++                    .submit(() -> service.retireNationCities(UUID.randomUUID(), nation))
++                    .get(2, TimeUnit.SECONDS)
++                    .deletedCityIds())
++            .isEmpty();
++      } finally {
++        release.countDown();
++      }
++      assertThat(create.get(5, TimeUnit.SECONDS).success()).isFalse();
++    }
++  }
++
++  @Test
++  void externalCallbackCannotReenterCityMutations() {
++    var storage = new DurableCityStorage(stores(false).get());
++    var nation = NationId.random();
++    var nations = mock(NationService.class);
++    var service = new CityService(storage, nations);
++    when(nations.nationById(nation))
++        .thenAnswer(
++            call -> {
++              assertThatThrownBy(
++                      () -> service.createCity(nation, "nested", UUID.randomUUID(), null))
++                  .isInstanceOf(IllegalStateException.class);
++              assertThatThrownBy(service::shutdown).isInstanceOf(IllegalStateException.class);
++              return Optional.empty();
++            });
++    assertThat(service.createCity(nation, "outer", UUID.randomUUID(), null).success()).isFalse();
++    assertThat(service.getAllCities()).isEmpty();
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void staleCreationAndDeletionCannotBorrowLatestAuthority(boolean sql) {
++    var stores = stores(sql);
++    var left = new DurableCityStorage(stores.get());
++    left.loadAll();
++    var expected = left.loadedFingerprint();
++    var right = new DurableCityStorage(stores.get());
++    var city = city(NationId.random(), "other");
++    right.save(city);
++    left.currentFingerprint();
++    assertThatThrownBy(() -> left.saveAtFingerprint(city(NationId.random(), "stale"), expected))
++        .isInstanceOf(IllegalStateException.class);
++    assertThatThrownBy(() -> left.deleteAtFingerprint(city.id(), expected))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(left.loadAll()).containsExactly(city);
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/city/CitySnapshotPersistenceTest.java b/src/test/java/dev/starcore/starcore/module/city/CitySnapshotPersistenceTest.java
+new file mode 100644
+index 0000000..de87226
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/city/CitySnapshotPersistenceTest.java
+@@ -0,0 +1,161 @@
++package dev.starcore.starcore.module.city;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.module.city.model.*;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.nio.file.*;
++import java.time.Instant;
++import java.util.*;
++import org.bukkit.*;
++import org.junit.jupiter.api.*;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.*;
++
++class CitySnapshotPersistenceTest {
++  @TempDir Path directory;
++
++  City city() {
++    return City.create(NationId.random(), "城市", UUID.randomUUID(), null);
++  }
++
++  @Test
++  void votesProgressFractionalSpawnAndOriginalTimestampsSurviveReload() {
++    var world = mock(World.class);
++    when(world.getName()).thenReturn("world");
++    var city = city();
++    city.setSpawnChunk(new Location(world, 1.25, 64.75, -8.125, 15.5f, -2.25f));
++    city.restoreProgress(8, 20, 100);
++    city.deposit(1.25);
++    city.setAnnouncement("公告<&>");
++    city.setPvpEnabled(true);
++    city.setPublicSpawn(false);
++    city.setOpenRecruitment(false);
++    city.addClaim("world", -4, 2);
++    var vote =
++        new City.CityVote(
++            "vote",
++            UUID.randomUUID(),
++            "投票",
++            City.VoteType.CHANGE_SETTINGS,
++            3600,
++            Instant.ofEpochMilli(123456));
++    vote.vote(UUID.randomUUID(), true);
++    vote.vote(UUID.randomUUID(), false);
++    city.restoreVote(vote);
++    city.setLastUpdated(Instant.ofEpochMilli(234567));
++    var storage = new DurableCityStorage(new FileCityLedgerStorage(directory));
++    storage.save(city);
++    try (var bukkit = mockStatic(Bukkit.class)) {
++      bukkit.when(() -> Bukkit.getWorld("world")).thenReturn(world);
++      var restored = storage.find(city.id()).orElseThrow();
++      assertThat(restored.maxLevel()).isEqualTo(20);
++      assertThat(restored.level()).isEqualTo(8);
++      assertThat(restored.experience()).isEqualTo(100);
++      assertThat(restored.spawnChunk()).isEqualTo(city.spawnChunk());
++      assertThat(restored.lastUpdated()).isEqualTo(city.lastUpdated());
++      assertThat(restored.getVote("vote").ballots()).isEqualTo(vote.ballots());
++      assertThat(restored.getVote("vote").createdAt()).isEqualTo(vote.createdAt());
++      assertThat(CitySnapshotCodec.encode(restored)).isEqualTo(CitySnapshotCodec.encode(city));
++    }
++  }
++
++  @Test
++  void unavailableWorldDoesNotDropSpawnAndRetirementNeedsNoWorld() {
++    var world = mock(World.class);
++    when(world.getName()).thenReturn("offline");
++    var city = city();
++    city.setSpawnChunk(new Location(world, 1.25, 60, 4));
++    var storage = new DurableCityStorage(new FileCityLedgerStorage(directory));
++    storage.save(city);
++    try (var bukkit = mockStatic(Bukkit.class)) {
++      assertThatThrownBy(storage::loadAll)
++          .isInstanceOf(IllegalStateException.class)
++          .hasMessageContaining("world unavailable");
++      assertThat(storage.retireNationCities(UUID.randomUUID(), city.nationId()).deletedCityIds())
++          .containsExactly(city.id());
++      assertThat(storage.loadAll()).isEmpty();
++    }
++  }
++
++  @Test
++  void legacyImportsOnceWithoutChangingOriginalSource() throws Exception {
++    var city = city();
++    var json = CitySnapshotCodec.parse(CitySnapshotCodec.encode(city));
++    json.remove("votes");
++    json.remove("maxLevel");
++    json.remove("claims");
++    String legacy = CitySnapshotCodec.canonical(json);
++    var file = directory.resolve(city.id() + ".json");
++    Files.writeString(file, legacy);
++    var storage = new DurableCityStorage(new FileCityLedgerStorage(directory));
++    assertThat(storage.loadAll()).hasSize(1);
++    storage.delete(city.id());
++    Files.writeString(file, "corrupted old copy");
++    assertThat(new DurableCityStorage(new FileCityLedgerStorage(directory)).loadAll()).isEmpty();
++    assertThat(Files.readString(file)).isEqualTo("corrupted old copy");
++  }
++
++  @ParameterizedTest
++  @ValueSource(strings = {"duplicate", "wrong-id", "invalid", "unknown-field"})
++  void invalidLegacyPreventsPartialMigration(String damage) throws Exception {
++    var good = city();
++    Files.writeString(directory.resolve(good.id() + ".json"), CitySnapshotCodec.encode(good));
++    var bad = city();
++    bad.setName("other");
++    String data = CitySnapshotCodec.encode(bad);
++    UUID filename = bad.id();
++    switch (damage) {
++      case "duplicate" -> data = data.replace("\"id\":", "\"id\":\"" + bad.id() + "\",\"id\":");
++      case "wrong-id" -> filename = UUID.randomUUID();
++      case "invalid" -> data = "{broken";
++      case "unknown-field" -> data = data.substring(0, data.length() - 1) + ",\"unexpected\":1}";
++    }
++    Files.writeString(directory.resolve(filename + ".json"), data);
++    assertThatThrownBy(() -> new DurableCityStorage(new FileCityLedgerStorage(directory)).loadAll())
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(Files.exists(directory.resolve("ledger.json"))).isFalse();
++    assertThat(Files.exists(directory.resolve("ledger.initialized"))).isFalse();
++  }
++
++  @ParameterizedTest
++  @ValueSource(
++      strings = {
++        "{\"a\":1,\"a\":2}",
++        "{}{}",
++        "{/*x*/\"a\":1}",
++        "{\"a\":NaN}",
++        "{a:1}",
++        "{\"a\":'x'}",
++        "{\"a\":01}"
++      })
++  void rejectsNonJsonOrDuplicateProperties(String input) {
++    assertThatThrownBy(() -> CitySnapshotCodec.parse(input)).isInstanceOf(RuntimeException.class);
++  }
++
++  @Test
++  void corruptCurrentSnapshotDoesNotFallBackToPreRetirementBackup() throws Exception {
++    var storage = new DurableCityStorage(new FileCityLedgerStorage(directory));
++    var city = city();
++    storage.save(city);
++    storage.retireNationCities(UUID.randomUUID(), city.nationId());
++    var file = directory.resolve("ledger.json");
++    String data = Files.readString(file);
++    Files.writeString(file, data.replace("\"revision\":2", "\"revision\":1"));
++    assertThat(Files.exists(directory.resolve("ledger.json.bak"))).isTrue();
++    assertThatThrownBy(() -> new DurableCityStorage(new FileCityLedgerStorage(directory)).loadAll())
++        .isInstanceOf(IllegalStateException.class);
++  }
++
++  @Test
++  void saveCannotPersistNonfiniteMoney() {
++    var storage = new DurableCityStorage(new FileCityLedgerStorage(directory));
++    var city = city();
++    storage.save(city);
++    city.setTreasury(Double.NaN);
++    assertThatThrownBy(() -> storage.save(city)).isInstanceOf(RuntimeException.class);
++    assertThat(storage.find(city.id()).orElseThrow().treasury()).isZero();
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/city/JsonCityStorageTest.java b/src/test/java/dev/starcore/starcore/module/city/JsonCityStorageTest.java
+index a7988f2..00069a8 100644
+--- a/src/test/java/dev/starcore/starcore/module/city/JsonCityStorageTest.java
++++ b/src/test/java/dev/starcore/starcore/module/city/JsonCityStorageTest.java
+@@ -16,7 +16,8 @@ import org.junit.jupiter.api.io.TempDir;
+ class JsonCityStorageTest {
+ 
+   @Test
+-  void propagatesCityFileDeleteFailure(@TempDir Path dataFolder) throws IOException {
++  void refusesMalformedLegacyCityInsteadOfDeletingPastIt(@TempDir Path dataFolder)
++      throws IOException {
+     Plugin plugin = mock(Plugin.class);
+     when(plugin.getDataFolder()).thenReturn(dataFolder.toFile());
+     JsonCityStorage storage = new JsonCityStorage(plugin);
+@@ -26,7 +27,7 @@ class JsonCityStorageTest {
+ 
+     assertThatThrownBy(() -> storage.delete(cityId))
+         .isInstanceOf(IllegalStateException.class)
+-        .hasMessageContaining("Failed to delete city file " + cityId)
++        .hasMessageContaining("City authority requires reconciliation")
+         .hasCauseInstanceOf(IOException.class);
+     assertThat(Files.exists(cityFile)).isTrue();
+   }
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/NationDisbandRetirementTest.java b/src/test/java/dev/starcore/starcore/module/nation/NationDisbandRetirementTest.java
+index 97fe253..400a4ab 100644
+--- a/src/test/java/dev/starcore/starcore/module/nation/NationDisbandRetirementTest.java
++++ b/src/test/java/dev/starcore/starcore/module/nation/NationDisbandRetirementTest.java
+@@ -23,6 +23,54 @@ import org.junit.jupiter.api.io.TempDir;
+ class NationDisbandRetirementTest {
+   @TempDir Path directory;
+ 
++  @Test
++  void cityRetirementUsesCurrentOwnershipAndSurvivesLaterCleanupFailure() {
++    var plugin = mock(org.bukkit.plugin.Plugin.class);
++    when(plugin.getDataFolder()).thenReturn(directory.toFile());
++    var storage = new dev.starcore.starcore.module.city.JsonCityStorage(plugin);
++    var nation = NationId.random();
++    var other = NationId.random();
++    var id = UUID.randomUUID();
++    var first =
++        dev.starcore.starcore.module.city.model.City.create(
++            nation, "first", UUID.randomUUID(), null);
++    var late =
++        dev.starcore.starcore.module.city.model.City.create(
++            nation, "late", UUID.randomUUID(), null);
++    var foreign =
++        dev.starcore.starcore.module.city.model.City.create(
++            other, "foreign", UUID.randomUUID(), null);
++    storage.saveAll(List.of(first, late, foreign));
++    var transaction =
++        new NationDisbandTransaction(
++            id, List.of(nation), Map.of(), List.of(), List.of(), List.of(first.id(), foreign.id()));
++    var service = new CityService(storage, mock(NationService.class));
++    var diplomacy = mock(DiplomacyRelationService.class);
++    doThrow(new IllegalStateException("interrupted"))
++        .doNothing()
++        .when(diplomacy)
++        .clearNationRelations(nation);
++    var land = mock(dev.starcore.starcore.foundation.territory.TerritoryService.class);
++    var alliance = mock(AllianceService.class);
++    var military = mock(MilitaryAllianceService.class);
++    var war = mock(WarService.class);
++    assertThatThrownBy(
++            () ->
++                NationDisbandRecovery.completeCommitted(
++                    transaction, land, diplomacy, null, alliance, military, war, service))
++        .isInstanceOf(IllegalStateException.class);
++    assertThat(storage.cityRetirementReceipt(nation).orElseThrow().deletedCityIds())
++        .containsExactlyInAnyOrder(first.id(), late.id());
++    var restarted =
++        new CityService(
++            new dev.starcore.starcore.module.city.JsonCityStorage(plugin),
++            mock(NationService.class));
++    NationDisbandRecovery.completeCommitted(
++        transaction, land, diplomacy, null, alliance, military, war, restarted);
++    assertThat(restarted.getAllCities()).containsExactly(foreign);
++    assertThatThrownBy(() -> storage.save(first)).isInstanceOf(IllegalStateException.class);
++  }
++
+   @Test
+   void interruptedCleanupClosesCurrentLandAndTreasuryExactlyOnce() throws Exception {
+     var persistence = mock(PersistenceService.class);
