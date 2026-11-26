@@ -1,0 +1,3422 @@
+{
+  "checkpoint": "native-input-outbox-development-20261127",
+  "date": "2026-11-27",
+  "timezone": "Asia/Shanghai",
+  "base": "9e380d62fd94cdc54f6f703ea09e14f575660f18",
+  "patch": {
+    "path": "docs/upstream/development/native-input-outbox-20261127.patch",
+    "bytes": 1520178,
+    "sha256": "f509b15ae762e1e91770af986b3a53a2aa5ebde6e9390427b15ff4be08eaba0b",
+    "file_diffs": 179
+  },
+  "source_changes_since_mirror": [
+    {
+      "path": "src/main/java/dev/starcore/starcore/essentials/listener/EssentialsGuiListener.java",
+      "bytes": 13667,
+      "sha256": "c198b9fda78374ac88387913d2310fbb47b01bf06108d2b994c58233bb1b894e",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/gui/BookInputSupport.java",
+      "bytes": 1651,
+      "sha256": "4e95f54a8be0df28f3d037294898e23c32e637a67359d975dde796d3548d6c23",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/gui/NativeTextInput.java",
+      "bytes": 7081,
+      "sha256": "8f93d55022d5c26b86725380b8dcfd0b47b4d87342d32a30397ca36e744cd70c",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/gui/PaperTextDialog.java",
+      "bytes": 2858,
+      "sha256": "5745fc627bfaf0ecc2e56f8fe036f86031a6d17706fd01823cda064084f0ed68",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/alliance/AllianceModule.java",
+      "bytes": 6845,
+      "sha256": "4bdbac5093e3f007e734b482d4ffa954d2a51cbabb239aaabbca3caa638a9d1e",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/alliance/gui/AllianceGuiListener.java",
+      "bytes": 22284,
+      "sha256": "210f6424ea27330c482c72943b6a0561c9b5c59435153b238bb902b67c5b4bd3",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/arbitration/ArbitrationModule.java",
+      "bytes": 5857,
+      "sha256": "2a17d4415ed2a5b98b9f7b54142af541063dd3cd6c5592d24c74d6a7679f8f08",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/arbitration/gui/ArbitrationGuiListener.java",
+      "bytes": 18248,
+      "sha256": "e74b9dc5dd106ebaec7aff7f9fd83db6a202f8449c49b015e97fd5d2706aab14",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthority.java",
+      "bytes": 11879,
+      "sha256": "6a6b66b1445a60b79f4a70702c58007d91a208a8cee291dad253ce46efc00e17",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyDerivedEventService.java",
+      "bytes": 134,
+      "sha256": "a7e5cfc869bb4414a42e437d48385b2b30509105854cc02d95e811c590de7751",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyDerivedEventState.java",
+      "bytes": 5870,
+      "sha256": "6f0230efb89730e4367c73b40667427ba0c94f23625451678bcf1febcb2350a7",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyModule.java",
+      "bytes": 51903,
+      "sha256": "5f49d2961331ffb31c88c1f1039b10cf42ec4f4d0e7a7323c40e057ccb57eee4",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/event/AllianceBrokenEvent.java",
+      "bytes": 1962,
+      "sha256": "5c34258108b7b8f13056d57b3a540478414bb3d0751f61220468529510eef710",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/event/AllianceFormedEvent.java",
+      "bytes": 1433,
+      "sha256": "ef17108ffd4af74b473f561ca521aa10f683a68bb0285fea795fd15fd0acd6a3",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/diplomacy/gui/DiplomacyNetworkListener.java",
+      "bytes": 21492,
+      "sha256": "b2792542c72e27e747f952e2447f52c3695bc657db9c3541e17d6600f9ebe74a",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/event/DatabaseAwareEventStateStorage.java",
+      "bytes": 1093,
+      "sha256": "48ffb15cc5785321e98b9e7d3081dfde2c6d6de8c0861a4bfad9974c153d3e33",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/event/EventAuthorityState.java",
+      "bytes": 8672,
+      "sha256": "97de9cd6106985fc27cb2d32c6ae39d5d253ba0fcf07cc7afcf7cb5d46cc2b3f",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/event/EventAuthorityStorage.java",
+      "bytes": 2471,
+      "sha256": "6ad7f6965c9848275ec0f819bccc21cf8d903892a94d6930738944ab4ed0be5d",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/event/EventModule.java",
+      "bytes": 11220,
+      "sha256": "c37367a9e15dc0f823ad1f506788dbc86f4fc5cbff8e3617165dd01aa8df8ab8",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/event/EventModuleListener.java",
+      "bytes": 12501,
+      "sha256": "1d1494605f25ef2ba27889fc860aa802d5b6e60494b482525d89a35053240d9c",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/event/EventService.java",
+      "bytes": 656,
+      "sha256": "273e0935b75992421b6a28b8d65c59506d5342abc50e279441ca4d0588ab4c5f",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/event/PersistenceEventStateStorage.java",
+      "bytes": 1080,
+      "sha256": "254cf27f19d55c65b2451bab31ce9ca1ee0292ff5bda89374c148f7cf255869b",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/event/SqlEventStateStorage.java",
+      "bytes": 2886,
+      "sha256": "9c386ef0b8422963bca80f1440fcda0cdcf067f50b487f21e2e6dbcc8adf7550",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/resource/gui/PlayerTradeGui.java",
+      "bytes": 27066,
+      "sha256": "37ad00920a50c7ebbdc133a6418d2315b536fe657a7683249f88aa8004790c6e",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/resource/gui/PlayerTradeGuiListener.java",
+      "bytes": 568,
+      "sha256": "da108d8c45d6d4ae026ed940ebd9ede029b608d5956729a92134fd1daf64ae0f",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java",
+      "bytes": 83670,
+      "sha256": "9edd7c093a0ffb590f39799a501f7cb3d920cc20ff5f981bf76655c8fa61fd77",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/treasury/gui/TreasuryMenuListener.java",
+      "bytes": 46785,
+      "sha256": "2623a8f5bd5ada217ae884fa3f498cbd74b64466886851c5c99a9af15cf2d7ec",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/pet/PetListener.java",
+      "bytes": 18495,
+      "sha256": "67729e9c75864e2657b787e478658f1ecc5a2f491193c095d0aaea16704d307b",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/social/gui/ActivityRecommendationListener.java",
+      "bytes": 11426,
+      "sha256": "05f55e634a3f4b9f47586176a402ef0fa50c9add7538b5a3fd7bcfb1fa585ed7",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/storage/WarehouseGUI.java",
+      "bytes": 35185,
+      "sha256": "96797d0556df3d60a2110e41b8214608410c26b63ff0c2e2b83101d99b7bb9f8",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/storage/WarehouseListener.java",
+      "bytes": 10847,
+      "sha256": "3a206d38e96929753a9e2aa4e52ce216f8173a96e5a46fe41aa703528cfb4302",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/zone/ZoneModule.java",
+      "bytes": 23067,
+      "sha256": "6f557e11a86695d40ea38a49bee29e54bfb491404871576aba52a31738f5b2ab",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/zone/gui/ZoneGuiListener.java",
+      "bytes": 21088,
+      "sha256": "8dd5c1fbda8201f053fccca85904b6661fb18c2ff5ed0bff8b952bde6d402221",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/essentials/listener/EssentialsGuiListenerInputContractTest.java",
+      "bytes": 965,
+      "sha256": "99c649068a44fc376248a77118c5bfba2d1e95e1797d6bf98429dc5260a37809",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/foundation/gui/BookInputSupportTest.java",
+      "bytes": 2023,
+      "sha256": "656e2a7dc4ecbbeb92038bc6eacbc88cd71c377046eaf325e66c8e5bb994abfb",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/foundation/gui/NativeTextInputRoutingTest.java",
+      "bytes": 4885,
+      "sha256": "a53b68f424bc63334ae44bd859b0150d36ed6e827103d21d4cd76db3bad057c9",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/foundation/gui/NativeTextInputTest.java",
+      "bytes": 9826,
+      "sha256": "6f46da9dfc5d0e7c030ac73445a49ee97a36fbc28a1db0e3a11a53ba83c2b477",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/foundation/gui/PaperTextDialogTest.java",
+      "bytes": 9014,
+      "sha256": "985d5d179a73c2e2ed473acedf1b8f524ed1c298f194d05355c74da57d3183f6",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/alliance/gui/AllianceNativeInputContextTest.java",
+      "bytes": 5242,
+      "sha256": "e8dd4dc789a744b4d3e33c4a1489002ab5373804052cffd33459038f72f794e7",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/arbitration/gui/ArbitrationNativeInputContextTest.java",
+      "bytes": 4977,
+      "sha256": "7f154ac7cc4fa3be597342ee90c54a7530fde08caa5c109a17b098acd43f3b6f",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyDerivedEventRecoveryTest.java",
+      "bytes": 20634,
+      "sha256": "b4280aa6c1514f3aa7c0a21e33bf1bf1b60395c9dacae0e32dcf7a842fd0cba8",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRelationCancellationContractTest.java",
+      "bytes": 11035,
+      "sha256": "b2a199ad6e0c8ab15664e3783516b671898d7a79681c1080b4aed31e737fd43c",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementLifecycleTest.java",
+      "bytes": 5936,
+      "sha256": "2c72447de64867a481e8323a11a43805a04aed69d25910ba22fd87b09435bfe9",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/event/EventAllianceInboxTest.java",
+      "bytes": 13349,
+      "sha256": "9b92f42159014c59bf109574bf51fe4ce32930a91dd3d72d2d412766dec623a9",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/event/EventModuleLifecycleTest.java",
+      "bytes": 15133,
+      "sha256": "ef08c406ba9a5c2adcbd274887a1abf5954e4bef9e33d4ff924fcb47ba54b5c9",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/event/EventModuleListenerBusTest.java",
+      "bytes": 2430,
+      "sha256": "964350e706b906a6027bf5a050b4de16cb1f99ca942a9170ed0ad1430038e428",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/resource/gui/PlayerTradeNativeInputReopenTest.java",
+      "bytes": 6265,
+      "sha256": "8b7c2dc129cbe886a101577bf21a62ec9424934cb821b4a511442549c33212d4",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/treasury/gui/TreasuryNativeInputContextTest.java",
+      "bytes": 24656,
+      "sha256": "5b94775a7f0025273152db8c3f32765aa0f0e4f1a91fdf6e4a660446277ac6a3",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/social/gui/SocialMenuSummaryContractTest.java",
+      "bytes": 4759,
+      "sha256": "0f2f52f7708818b5c3ed03ba8421777fcf1e04264713c7f955ea61aa13e50642",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/storage/WarehouseNativeInputReopenTest.java",
+      "bytes": 10377,
+      "sha256": "7ff9093918508b60ab44a5a8e62f2fabb1f3b85b73fb83fef3cf27371c6d7b2d",
+      "exists_in_mirror_base": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/zone/ZoneGuiInputContractTest.java",
+      "bytes": 1255,
+      "sha256": "19d35408b6a13d69d09e8a0316959cc259d6a6709533d786352662655e1f4895",
+      "exists_in_mirror_base": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/zone/gui/ZoneNativeInputContextTest.java",
+      "bytes": 3326,
+      "sha256": "e8d2c783983097bc5f74bb762ad97802dcade251b60700169c38f2a2f58b1216",
+      "exists_in_mirror_base": false
+    }
+  ],
+  "validation": {
+    "tests": 1162,
+    "suites": 197,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "batch_totals_match_xml_and_logs": true,
+    "deduplicated_by_class_and_case_name": true,
+    "batches": [
+      {
+        "label": "native-gui-regression-07",
+        "tests": 710,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-native-gui-regression-07.log",
+          "bytes": 116703,
+          "sha256": "7335263e6de64bad05902f6dd6617cf9a47d82a3150ecb391ffe66a3e1045db2"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.city.CityTypeTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.city.CityTypeTest.xml",
+              "bytes": 22207,
+              "sha256": "7b23ce237fc4bb4dd3f041336d4d7131e4c4e27a1fec6c92670549943e523d7c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.essentials.listener.EssentialsGuiListenerInputContractTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.essentials.listener.EssentialsGuiListenerInputContractTest.xml",
+              "bytes": 21742,
+              "sha256": "cf1d7b0c8e595a604e7dad3869a38d0b777886e2f239aa4db3df4e53739d07b8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.essentials.listener.EssentialsGuiListenerInventorySafetyTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.essentials.listener.EssentialsGuiListenerInventorySafetyTest.xml",
+              "bytes": 22612,
+              "sha256": "76e50faae6bc4008aaaa76c9d8d5dc3e3e3d43ab0682e9919adb0d2dd3ba79bf"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.gui.BaseGuiActionGuardTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.foundation.gui.BaseGuiActionGuardTest.xml",
+              "bytes": 22420,
+              "sha256": "579f9782ca4a0485f9943ca3bed1a3e4ff02d5d82ac12671a4820dbd3df89fdd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.gui.BaseGuiListenerRegistrationTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.foundation.gui.BaseGuiListenerRegistrationTest.xml",
+              "bytes": 21698,
+              "sha256": "90feb319e1e2a8f802afa66de2bda4759cd8306c7165b3d43ecf8da17279973c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.gui.BaseGuiListenerTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.foundation.gui.BaseGuiListenerTest.xml",
+              "bytes": 22609,
+              "sha256": "0867c13fa8793d6768e28b965567def9eaf56caf041c93f414aae3da095235ae"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.gui.BookInputSupportTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.foundation.gui.BookInputSupportTest.xml",
+              "bytes": 21865,
+              "sha256": "960f17c6616bafe8d287e7cade689cf9d66db0a9b3da997d631bbe78f6784a0c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.gui.PaperTextDialogTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.foundation.gui.PaperTextDialogTest.xml",
+              "bytes": 22240,
+              "sha256": "d178ed3623ff6bfe71f128eed16d900851c562c13d21e404d7a97320745eefbd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.AllianceAuthorizationBoundaryTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.AllianceAuthorizationBoundaryTest.xml",
+              "bytes": 22038,
+              "sha256": "2b259a09c8e3bf97a06e3d6d87ea8cb0447babd0984601668419b676d926f233"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.AllianceLifecycleRestartIntegrationTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.AllianceLifecycleRestartIntegrationTest.xml",
+              "bytes": 21728,
+              "sha256": "39656891bc30fcf87b468321a638529cd96c5ca87471bbeacfffc91bad12d189"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.FederationAuthorityTest",
+            "tests": 17,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.FederationAuthorityTest.xml",
+              "bytes": 24676,
+              "sha256": "305a9fbb55853add6d0803d795fb6467afb742ed0f10217a41a24b47d72d1386"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.FederationLifecycleTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.FederationLifecycleTest.xml",
+              "bytes": 23236,
+              "sha256": "f3106117631380217bd2c63fe428c4b6c331f0c6dd314aed088465391e55249f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.FederationMigrationTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.FederationMigrationTest.xml",
+              "bytes": 25583,
+              "sha256": "846655bd5a885d066964db9f72f3bb6200d1246aacb49b7adf6cb31a44c248a9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.FederationSqlCommitTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.FederationSqlCommitTest.xml",
+              "bytes": 21883,
+              "sha256": "ee9e6aa3ca74a7633c715f3edf035ffde2bc1b3bb4324dae5f22e0f068388f70"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.gui.AllianceGuiActionTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.gui.AllianceGuiActionTest.xml",
+              "bytes": 22007,
+              "sha256": "6800c6fdc9721b1eecdff7d2776bae4f4ece9bc71258bf8358df376180b3b5dc"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.gui.AllianceGuiHolderContractTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.gui.AllianceGuiHolderContractTest.xml",
+              "bytes": 21727,
+              "sha256": "4c72e8fd37b773c4fe735d2fc62c816148381017e312eb5e9a4d605bf104b40d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.gui.AllianceGuiI18nContractTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.gui.AllianceGuiI18nContractTest.xml",
+              "bytes": 21703,
+              "sha256": "5dd462a90cb0040947d5cde40855579ad1b0d01b68f7bd89036b509a596ef2cb"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.gui.AllianceGuiListenerCloseLifecycleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.gui.AllianceGuiListenerCloseLifecycleTest.xml",
+              "bytes": 21931,
+              "sha256": "9002d170bb7aba7da25893f214a6a50629d7286be2c832c909a53f22e4534bef"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.gui.AllianceGuiListenerInventoryDragTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.gui.AllianceGuiListenerInventoryDragTest.xml",
+              "bytes": 21914,
+              "sha256": "48d0cec712861b765762b9f53c7f97376676f113907161d72220ac34ba0cb8df"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.gui.AllianceJoinInvitationNavigationTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.gui.AllianceJoinInvitationNavigationTest.xml",
+              "bytes": 21743,
+              "sha256": "8ad0127405c765e6a87554e90f2a32ccd4b2f04ce1373f06ab81b74cb4837be2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.alliance.gui.AllianceNativeInputContextTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.alliance.gui.AllianceNativeInputContextTest.xml",
+              "bytes": 21741,
+              "sha256": "567e14793e4a42fcd682c3473be2db4c4f58c020fb79a275816386f2328f992a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationIntegrationTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationIntegrationTest.xml",
+              "bytes": 23537,
+              "sha256": "b1a4bb72f2dd93f1bd394a984d93e2d4d85a510a6423c90566b8d08cdbaec66d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationModuleLifecycleTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationModuleLifecycleTest.xml",
+              "bytes": 21552,
+              "sha256": "02bb241b0d6abbb69fc3c013599b9363a829a6408ae7fd77e21a3905fc29d143"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationModuleLifecycleTest$DisableTests",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationModuleLifecycleTest$DisableTests.xml",
+              "bytes": 22985,
+              "sha256": "687e350a0579e9637bcfb8855a27d4c98a6bbe7a0f5b68668e073b22522bd4de"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationModuleLifecycleTest$EnableTests",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationModuleLifecycleTest$EnableTests.xml",
+              "bytes": 24354,
+              "sha256": "564a8e7110050f332a26789e485908f04e2ba312b623d104450849281fbb3e92"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationModuleLifecycleTest$ModuleMetadataTests",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationModuleLifecycleTest$ModuleMetadataTests.xml",
+              "bytes": 22425,
+              "sha256": "f569e7b69d7585e00806d4b4633462949fd691cf901e3111f84989525dfaaeda"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationModuleLifecycleTest$StateTransitionTests",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationModuleLifecycleTest$StateTransitionTests.xml",
+              "bytes": 23367,
+              "sha256": "539094ce546f499aef89221291453bed38685291b987e3e8a90f39edfd90c061"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationServiceImplTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationServiceImplTest.xml",
+              "bytes": 21547,
+              "sha256": "e4c0afdb8d0d2fdbdceeeb36b54b45541db08aae76cd48a2ef4f519b041cee14"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationServiceImplTest$PersistenceBehavior",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationServiceImplTest$PersistenceBehavior.xml",
+              "bytes": 22207,
+              "sha256": "4243ecff9e90a64c419e83948c6bee0b5ed553f4a5640d5d33f45e63177db790"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationServiceImplTest$Queries",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationServiceImplTest$Queries.xml",
+              "bytes": 23195,
+              "sha256": "10d946d023da8e30c869a8f13d0c3d300c0571e73a05cb4f5cfef781703ab5eb"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationServiceImplTest$StateMachine",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationServiceImplTest$StateMachine.xml",
+              "bytes": 26170,
+              "sha256": "e666e0953d7e8db8ea8f74f8d9c5c10fe66cf7b4f9ee3ae39fa219f746db1bd1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.ArbitrationServiceImplTest$SubmitCase",
+            "tests": 10,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.ArbitrationServiceImplTest$SubmitCase.xml",
+              "bytes": 24289,
+              "sha256": "6201d234c64d04981537b6c3b3e2964fc64935328aaec70be425196d557071f2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.gui.ArbitrationNativeInputContextTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.gui.ArbitrationNativeInputContextTest.xml",
+              "bytes": 21929,
+              "sha256": "66f2b59f1f02dec852077d1c7e7ef5347091dc333214fca9f8b977edd4230fa5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest.xml",
+              "bytes": 21547,
+              "sha256": "c1f320530ec0336314791c1c43dcf34cd69951bd67344552acdc5f79cb24bf5b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Assignment",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Assignment.xml",
+              "bytes": 21823,
+              "sha256": "f14de998e1f6d75b3730a8388404c0cc0e671dc1f9a7cc835a7a9e5c7c339593"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Construction",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Construction.xml",
+              "bytes": 21991,
+              "sha256": "b7ffdb07e396673ee29571a902a698e3cebe0eefe7cc2c1326c64cb7fc16a591"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Defense",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Defense.xml",
+              "bytes": 21819,
+              "sha256": "37f42907d3cd7157e19ef6fa06340bd71559f270541caba34389766889284433"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$EqualityAndBuilder",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$EqualityAndBuilder.xml",
+              "bytes": 22017,
+              "sha256": "ad21d7594889075cd1d50be9950551de939e7bef74aeea92ff40000e43e238ea"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Evidence",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Evidence.xml",
+              "bytes": 21833,
+              "sha256": "2d637e2296b1733b808882b7f533e9e4d44e9e4f5058a0518b7a50543901870c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$PartyChecks",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$PartyChecks.xml",
+              "bytes": 21694,
+              "sha256": "2616270a5717042955ce77e26d51c905bd1738f326f35f9986abc8f36aa2dc82"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Ruling",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Ruling.xml",
+              "bytes": 21821,
+              "sha256": "03c07296c06167eae3d6e9ecd3c5eb66cd8ce377585b8b912c700b1cc101859d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Withdrawal",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.model.ArbitrationCaseTest$Withdrawal.xml",
+              "bytes": 21836,
+              "sha256": "5c858f3dd1b548a340f30ff7e2ecc593dde29c2362f3294367282c86af4ecb51"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.arbitration.model.ArbitrationEnumsTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.arbitration.model.ArbitrationEnumsTest.xml",
+              "bytes": 21934,
+              "sha256": "67eaa6616142204efa887986835f775ed12cd122553f3dcbec1ebdc8e75bf6b5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityModelExtendedTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityModelExtendedTest.xml",
+              "bytes": 21773,
+              "sha256": "f1bd4029a44112f2ec3923369d10b4543cb87bf979ae2897758fd57c7d4a4253"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityModuleLifecycleTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityModuleLifecycleTest.xml",
+              "bytes": 34637,
+              "sha256": "2ea669413a291f72446b093964a94633bf98bf7a649c4c48423977c88843fe9a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityMoneyAuthorityTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityMoneyAuthorityTest.xml",
+              "bytes": 31801,
+              "sha256": "f67cb28205a90fd2d42244e46d9c5a7cc104e9e1cc09fafc575bb6cb6c2fae10"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityMoneyCommandTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityMoneyCommandTest.xml",
+              "bytes": 22875,
+              "sha256": "74a7e52082215d1f6e34c8e58487010b77a0ea7303e8cbe6cae12f69f5c786bc"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityMoneyModuleRecoveryTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityMoneyModuleRecoveryTest.xml",
+              "bytes": 22990,
+              "sha256": "e5edc11882e175ba2ff4f7e08e312a7b1806cd54a3326e79aa37f5ff47166fbd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityMoneyRecoveryTest",
+            "tests": 29,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityMoneyRecoveryTest.xml",
+              "bytes": 31825,
+              "sha256": "c6c26ab8022952e0a8e9193923d3b6a7d843a4f8651bfdc94d8d793652d8a03c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityPlaceholderExpansionLocaleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityPlaceholderExpansionLocaleTest.xml",
+              "bytes": 21889,
+              "sha256": "1d8f4384522cdb857a0feecc439c1239a462241fd854e663bb5c4bb36b58eab6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityPlaceholderExpansionTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityPlaceholderExpansionTest.xml",
+              "bytes": 21990,
+              "sha256": "39b70566e59e27f56e1571b9e20e8df252e9b48f40f35bae5564837fc06323f0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityRetirementRecoveryTest",
+            "tests": 38,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityRetirementRecoveryTest.xml",
+              "bytes": 27789,
+              "sha256": "15a928a97e0e48ec9eb76869d6bc6d67531de6f6b221fc68603e3929cc4786da"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityServiceContractTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityServiceContractTest.xml",
+              "bytes": 22842,
+              "sha256": "26a3fce5a63dd705a7dfa60ec535964ec07f71fd901bc0010008f7e99b5b5e76"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityServiceDurabilityTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityServiceDurabilityTest.xml",
+              "bytes": 21849,
+              "sha256": "34fd991433f4dad691e7639d549d5860af0036cf242e07312678a9f3c06aeef4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CityServiceMembershipTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CityServiceMembershipTest.xml",
+              "bytes": 21704,
+              "sha256": "83b028da9756adf11bde19e7b5a7fc75dab8465c58067f7786ee4c50e7591c64"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.CitySnapshotPersistenceTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.CitySnapshotPersistenceTest.xml",
+              "bytes": 24054,
+              "sha256": "eb53dc12e1465bf2d85a5a23c668f5f1ec058b3ae1018899ac005dd18f5b3580"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.gui.CityAmountInputTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.gui.CityAmountInputTest.xml",
+              "bytes": 22553,
+              "sha256": "af969f3596347b05eee9d569941229cae032334beaa4a5bc816cc4184a377202"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.gui.CityAmountParserTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.gui.CityAmountParserTest.xml",
+              "bytes": 21819,
+              "sha256": "c972d277d73a7913140e2fb8fd06ec1d555e69bafc12ec8e9339f9e8dcbdb376"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.gui.CityAnnouncementBookInputContractTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.gui.CityAnnouncementBookInputContractTest.xml",
+              "bytes": 22632,
+              "sha256": "73b9ccbb78041d7f4aa34a1096ffadc7b6f3df503ba8fffeb6777122263f40a7"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.gui.CityInviteConfirmationEventTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.gui.CityInviteConfirmationEventTest.xml",
+              "bytes": 21720,
+              "sha256": "610ab413e8fad9c00b40812e5127b00e9ab035465932cd21c96da72a15c42580"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.gui.CityMenuListenerInventorySafetyTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.gui.CityMenuListenerInventorySafetyTest.xml",
+              "bytes": 21911,
+              "sha256": "bfb94dd948117006fe8da654b706c3ffe64071b41dee127d52950035656b7e6c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.gui.CityMoneyInventoryTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.gui.CityMoneyInventoryTest.xml",
+              "bytes": 22901,
+              "sha256": "245a8c68da60ede690f699483e2558073fd9199410a5310dadfe9e54b9907d62"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.gui.CityNameBookInputContractTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.gui.CityNameBookInputContractTest.xml",
+              "bytes": 22579,
+              "sha256": "5a8097f2bd7675e2b6dfe3667008a343f5b7e4054b89c1bd9a95e17bda81b09c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.gui.CitySettingsI18nContractTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.gui.CitySettingsI18nContractTest.xml",
+              "bytes": 21708,
+              "sha256": "47cec8bc79a6f71209f0bf0ec258894f3a55c4f55fd55c689c6f8ecbbf48d32a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.gui.CitySettingsNavigationEventTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.gui.CitySettingsNavigationEventTest.xml",
+              "bytes": 23308,
+              "sha256": "337e2760e26b08ce43943e5bca7a5ea2f11c30b6803cb34693b249af650dc2dd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.city.gui.CityTextInputTest",
+            "tests": 11,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.city.gui.CityTextInputTest.xml",
+              "bytes": 23268,
+              "sha256": "387b1a4f92b3018fca764c15cb416d5aff6967c54082c200cfca774b94ca81dd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.AllianceBreakAuthorizationTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.AllianceBreakAuthorizationTest.xml",
+              "bytes": 21782,
+              "sha256": "6b13dcd32b9b844da1239ba0962cbc5c8f706c43e09ef517959685a10a0a4574"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.AllianceInvitationDirectionTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.AllianceInvitationDirectionTest.xml",
+              "bytes": 21774,
+              "sha256": "b5a322fc6fcb65b1da8d42f240781ecd0db5745a658a59a742ed53449080f906"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.AllianceRetirementLifecycleTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.AllianceRetirementLifecycleTest.xml",
+              "bytes": 23658,
+              "sha256": "04b1a69aead72110f230677867462f387295fb1c7b11357de85372d0be628ada"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.AllianceRetirementSqlCommitTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.AllianceRetirementSqlCommitTest.xml",
+              "bytes": 23027,
+              "sha256": "c005627ede75b6930f5f86befe68973c06b4dde040fb0d14f5e381e31ff84316"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.AllianceRetirementStorageTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.AllianceRetirementStorageTest.xml",
+              "bytes": 26890,
+              "sha256": "768f1bfcc08f5a7b4fcf75eb1e17df09fc73c00fd5fea8b2ce47b6ca4139624e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.AllianceRetirementTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.AllianceRetirementTest.xml",
+              "bytes": 24371,
+              "sha256": "97c72c1c5de3ce90ad4b0e7754d5d1bff85d4a5d0a371c9dfece86bb12e42674"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.alliance.AllianceServiceDatabaseConflictTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.alliance.AllianceServiceDatabaseConflictTest.xml",
+              "bytes": 22527,
+              "sha256": "1b4217a57c53f3efe029f56eb5a9b3578f4932ba13207b33ea23f18bf2985c92"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.alliance.AllianceServiceDisbandDurabilityTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.alliance.AllianceServiceDisbandDurabilityTest.xml",
+              "bytes": 22009,
+              "sha256": "6a61f1263be7bb35be5ca6a496e9d3efa1f35d83947624a7bef194f2a296724c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.alliance.AllianceServiceInvitationDirectionTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.alliance.AllianceServiceInvitationDirectionTest.xml",
+              "bytes": 21811,
+              "sha256": "dde33a442d3b326467d35a2c009389e1a6518681cf42f794ed61dbc96b6f93ce"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.alliance.AllianceServicePersistenceBoundaryTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.alliance.AllianceServicePersistenceBoundaryTest.xml",
+              "bytes": 22205,
+              "sha256": "618ccfe6454ce5927f75e63a9390b5a70f35448429c68a25c6e2beab47f3898d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.alliance.gui.AllianceMenuListenerInventoryDragTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.alliance.gui.AllianceMenuListenerInventoryDragTest.xml",
+              "bytes": 21991,
+              "sha256": "b0d858347e65d2ba14bc09d53719be094c00a3460a5e127ab8cd210e7bed12ff"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.alliance.storage.AllianceStorageDatabaseTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.alliance.storage.AllianceStorageDatabaseTest.xml",
+              "bytes": 24339,
+              "sha256": "a6e5fef5d6d02dec2b6cee876dc7ffc0be75a99aaec8a407774592a7da7d6f78"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.gui.AllianceActionStatusEventTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.gui.AllianceActionStatusEventTest.xml",
+              "bytes": 21799,
+              "sha256": "abba8782f04048799c09c886b268b65a2201104bac89e7f265335031ab416b73"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.gui.AllianceInviteConfirmationEventTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.gui.AllianceInviteConfirmationEventTest.xml",
+              "bytes": 21810,
+              "sha256": "127b4bd818fc020b1bea660361f13780a27ea9cf0ee8d46d90803538df1fc06a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.gui.AllianceMenuGuideContractTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.gui.AllianceMenuGuideContractTest.xml",
+              "bytes": 22479,
+              "sha256": "ec0f74c21e05dca33baa2372973f88afc6d2822420acf236fe1b911069f808b4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.gui.AllianceMenuListenerHolderIsolationTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.gui.AllianceMenuListenerHolderIsolationTest.xml",
+              "bytes": 21812,
+              "sha256": "21a5afc483bea3530f7e7b5914532cc6512e897e51ebf5021b68fd665ecb2726"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.gui.AllianceMenuPermissionContractTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.gui.AllianceMenuPermissionContractTest.xml",
+              "bytes": 21787,
+              "sha256": "2a5625b8f8c37362a9c3502287ab2f3458579d6874ea4058e0707d6ec79e66b4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.resource.PlayerTradeAuthorizationBoundaryTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.resource.PlayerTradeAuthorizationBoundaryTest.xml",
+              "bytes": 22142,
+              "sha256": "52a5f6315e330f68dace047d85d20ac3bc6233a28d2379b22d5be7c8be1352a6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.resource.PlayerTradeCompensationRecoveryTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.resource.PlayerTradeCompensationRecoveryTest.xml",
+              "bytes": 22702,
+              "sha256": "785e102b428434c554aacf0b40fd7d473637cd09fb687322c5efed98024c6f5f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.resource.PlayerTradeGuiContractTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.resource.PlayerTradeGuiContractTest.xml",
+              "bytes": 22593,
+              "sha256": "15dcb68cdc19e950f6211397ee638273ab0c7fc5cbaf14a7e75d5a6de032c235"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.resource.PlayerTradeOfferTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.resource.PlayerTradeOfferTest.xml",
+              "bytes": 21741,
+              "sha256": "d84515190f34835809a6098db104fcaecbcd31fdcabd476048af7566e2654a91"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.resource.gui.PlayerTradeNativeInputReopenTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.resource.gui.PlayerTradeNativeInputReopenTest.xml",
+              "bytes": 21816,
+              "sha256": "e0857e9fa9465e95c4d18c842e381398e932f24d896dbdee92ac92a3357cf5a1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.LoanServiceValidationTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.LoanServiceValidationTest.xml",
+              "bytes": 22379,
+              "sha256": "ad45f2e81952facf2c61ad19fdd6b05cd4b7f457bcd7ed9bd0b43dff5e4307a8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.TreasuryDebitAuthorityTest",
+            "tests": 25,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.TreasuryDebitAuthorityTest.xml",
+              "bytes": 34306,
+              "sha256": "c977b2cc3905637671bc5dd945efea3c2b222013a482fce59e90813bc4bf97b6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.TreasuryDiagnosticsTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.TreasuryDiagnosticsTest.xml",
+              "bytes": 22601,
+              "sha256": "c6c760851575a2f89bd266ca285a6b087f32ef1c40f0bb0a25a9b663e817929b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.TreasuryModuleRefreshLifecycleTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.TreasuryModuleRefreshLifecycleTest.xml",
+              "bytes": 21787,
+              "sha256": "93a95c09304ef6ca52eaabf62e7419791fe1f7e20e6613115d0d96e70677acb6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.TreasuryNationBoundaryTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.TreasuryNationBoundaryTest.xml",
+              "bytes": 22257,
+              "sha256": "060dc8b1504ab31aaf2df473f5b9ce3fbde44a477fcf9c79576de6c207d64f06"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.TreasuryPlayerDepositRecoveryTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.TreasuryPlayerDepositRecoveryTest.xml",
+              "bytes": 22673,
+              "sha256": "3d8c32599575f5ccad1c5b554f873bdc5fa4c95fa89eb4db09a81e0b092bdc6c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.TreasuryRequestAmountValidationTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.TreasuryRequestAmountValidationTest.xml",
+              "bytes": 22637,
+              "sha256": "ae438e7cdad35ab49b88a7a541cdcd3d20e83fe6b53e3a5a469e369bb5df2722"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.TreasuryRetirementTest",
+            "tests": 25,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.TreasuryRetirementTest.xml",
+              "bytes": 36461,
+              "sha256": "0edaaae0c0a302515f80e90cc015b76660836f4d284c58af325c19f15f4b0200"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.TreasuryStateCodecBoundaryTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.TreasuryStateCodecBoundaryTest.xml",
+              "bytes": 44493,
+              "sha256": "e4301267ac062feafccf046694afc3657157beac572c5daa0fce9bb6383425c5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.TreasuryTransactionPersistenceTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.TreasuryTransactionPersistenceTest.xml",
+              "bytes": 23621,
+              "sha256": "ad03886011d6eaca94abf846bbf37593f26f16c544396a45843ac5545855fe2d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.gui.TreasuryDebtSelectGuiContractTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.gui.TreasuryDebtSelectGuiContractTest.xml",
+              "bytes": 21807,
+              "sha256": "4bd4a16cd71f1acbfd0cef68c14409f618477780f4bd0e119b177d740c2bd677"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.gui.TreasuryMenuListenerContractTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.gui.TreasuryMenuListenerContractTest.xml",
+              "bytes": 21807,
+              "sha256": "c284fc627519a68efa4872516f6ea4026ce6cf999f650f9d543587a814cee380"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.gui.TreasuryMenuListenerInventoryDragTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.gui.TreasuryMenuListenerInventoryDragTest.xml",
+              "bytes": 21977,
+              "sha256": "ea31a574689098c6845826cee9c5ba820049449c3cf78b0ee843107f497fb16c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.gui.TreasuryMenuTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.gui.TreasuryMenuTest.xml",
+              "bytes": 21980,
+              "sha256": "b828154430a3e54b8af74a9aecaa1b679527099291c5c6c96837a29b9267c69a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.treasury.gui.TreasuryNativeInputContextTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.treasury.gui.TreasuryNativeInputContextTest.xml",
+              "bytes": 23262,
+              "sha256": "d2940b2eca6bc2eaf6edd77de36c14bc640f013a50861dcff03e29a2bbfba3f0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.nation.relation.AllianceOperationResultTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.nation.relation.AllianceOperationResultTest.xml",
+              "bytes": 24531,
+              "sha256": "6a4f11b0153f95a541c716a753fdd0fa681ac9d7c5005778b4ecbcd5ac7a6494"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.pet.PetListenerInventorySafetyTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.pet.PetListenerInventorySafetyTest.xml",
+              "bytes": 22330,
+              "sha256": "509783b4468ca7a03e140a2713740bd1287ffbe86107c4cd42bb8bd8036154a0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.security.AllianceWarCommandRoleMatrixTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.security.AllianceWarCommandRoleMatrixTest.xml",
+              "bytes": 24920,
+              "sha256": "039c29e3b15c81286e5d565d02ef122ddb1383ba87695d4daa91c76e618e787f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.security.CityCommandRoleMatrixTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.security.CityCommandRoleMatrixTest.xml",
+              "bytes": 23820,
+              "sha256": "b952f592ceb3a8d7c7f223c35cc6666ba4850ed4ce96b605ec4c739a389f106a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.security.WarehouseCommandRoleMatrixTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.security.WarehouseCommandRoleMatrixTest.xml",
+              "bytes": 24677,
+              "sha256": "4c190ceb31b7a76a00e5fdf86c28de5c6e394c8c577279f9008b740dab37776e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.security.ZoneCommandRoleMatrixTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.security.ZoneCommandRoleMatrixTest.xml",
+              "bytes": 21847,
+              "sha256": "704376e058f29873fcbc36c4d8e14bdc6b3044192e22573de546d87d58504ce6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.social.gui.ActivityRecommendationListenerBookInputTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.social.gui.ActivityRecommendationListenerBookInputTest.xml",
+              "bytes": 21975,
+              "sha256": "2d6e4f934e55bd302430d236dc9c51a3fca299e9c1ade59af6e531c15fe5814a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.social.gui.ActivityRecommendationListenerInventorySafetyTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.social.gui.ActivityRecommendationListenerInventorySafetyTest.xml",
+              "bytes": 22148,
+              "sha256": "026102739ee763133cc31fa6df35c825e616396b47f184ed32f65c0e3ee1f554"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.social.gui.SocialMenuListenerTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.social.gui.SocialMenuListenerTest.xml",
+              "bytes": 22480,
+              "sha256": "3db8c28ffb12847f194f397b24ca9bd6b60e222874aeb5f3ff25151957f6859d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.social.gui.SocialMenuSummaryContractTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.social.gui.SocialMenuSummaryContractTest.xml",
+              "bytes": 22590,
+              "sha256": "ce9fc353b8b8c1e2f66a11e0483d5238efa07238442d757cc7269925b4d1e113"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.storage.WarehouseGUIThreadingTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.storage.WarehouseGUIThreadingTest.xml",
+              "bytes": 21921,
+              "sha256": "fdc880ce85cde826de484c9c6bc55ce6ce343835dc4f9dd560e530a0b8878661"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.storage.WarehouseListenerGuiIsolationContractTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.storage.WarehouseListenerGuiIsolationContractTest.xml",
+              "bytes": 21799,
+              "sha256": "76d37dcec4a32017334d61b5b1cc12994fce3333610975739de2b0b3278e1198"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.storage.WarehouseListenerInventorySafetyTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.storage.WarehouseListenerInventorySafetyTest.xml",
+              "bytes": 22294,
+              "sha256": "2c7fc87287a970d6e488415125c1ebf9b37ea26aa5a3b0884c12e8d6a67c178f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.storage.WarehouseNativeInputReopenTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.storage.WarehouseNativeInputReopenTest.xml",
+              "bytes": 22301,
+              "sha256": "0ff7f5bf03aa4aa85f6bae7c6b3a13722f66e35e9d221f9b319d95801bcc5801"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.storage.WarehouseUpgradeRefundContractTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.storage.WarehouseUpgradeRefundContractTest.xml",
+              "bytes": 21769,
+              "sha256": "4ff5eb1645236da326764fe8bc9bbae090ebf678583db896c92b3c1eb9fb51e2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.storage.WarehouseUpgradeTaskLifecycleTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.storage.WarehouseUpgradeTaskLifecycleTest.xml",
+              "bytes": 22560,
+              "sha256": "b1226f84133603c7d41d5d9e0797ff206029971d8500a7d671ab05bcd066fbc0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneAreaTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneAreaTest.xml",
+              "bytes": 22415,
+              "sha256": "8fbc9f99aebd4f1ecd36aa969a317c2da41db5592cdd1c99cdac5c0e221df35a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneEffectTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneEffectTest.xml",
+              "bytes": 21586,
+              "sha256": "dabfebfd481dc4facb606a82c76eb8ddbe2c118ad8840f5650e63e3103782960"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneEffectTest$BasicProperties",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneEffectTest$BasicProperties.xml",
+              "bytes": 22066,
+              "sha256": "af756e15894ee39dbc7871d4a5e15f71d15e9f571f12d94a902e00a967666127"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneEffectTest$EffectTypeTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneEffectTest$EffectTypeTest.xml",
+              "bytes": 21843,
+              "sha256": "436d85e29aa3bbaeaec7b8360d7290482fd2ef2f11ed2a477c73e4fbcaeedb8e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneEffectTest$SpecificValues",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneEffectTest$SpecificValues.xml",
+              "bytes": 21830,
+              "sha256": "5862e55d1d60d7e8bca9dfe128d1cdbcfe80f4546cf0827d22f02410b45e1e8e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneFlagTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneFlagTest.xml",
+              "bytes": 22182,
+              "sha256": "6793a00cf267920213e287eeee649f1b211a81e35fc5a54e7b4fe2b46ed3d884"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneGuiInputContractTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneGuiInputContractTest.xml",
+              "bytes": 21896,
+              "sha256": "7abf857c4e0a83699ff37cab65e63916eb4484e05f35927c475f22d0f32c7dee"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneModelValidationTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneModelValidationTest.xml",
+              "bytes": 22118,
+              "sha256": "b06bf8021b802e86d00cfced1954d73a1d6a39c87e032624b57d28c503cd897a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneModuleOverlapSelectionTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneModuleOverlapSelectionTest.xml",
+              "bytes": 21764,
+              "sha256": "92dcd9aa91c2b952788d327cb6f9eed04eddb7f47381a679a60521d42e4bf877"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneStateCodecTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneStateCodecTest.xml",
+              "bytes": 21975,
+              "sha256": "a32419aa30641d3fab4710ce4537092929e6e93a171f085881f8a7c62e0a29f0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTest.xml",
+              "bytes": 21580,
+              "sha256": "b0d4a0d607c2220d5b3d19f5203bd19b57037e50dbd280286559eceba727331b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTest$Calculations",
+            "tests": 10,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTest$Calculations.xml",
+              "bytes": 22849,
+              "sha256": "1fdfbdfa38dc69abd4167064569e7a8bcb7e4c16ae03591ef1d359c9f0cffce6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTest$CoreAccessors",
+            "tests": 10,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTest$CoreAccessors.xml",
+              "bytes": 22638,
+              "sha256": "58e8e2e71a9a41038812abbce27fc255b21d3429c1c0d4828532c4458cdc9426"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTest$Effects",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTest$Effects.xml",
+              "bytes": 21998,
+              "sha256": "9cdcbc157f328f82954cc416ea43033a213b4f5f79c24d6d20d0e0004e7ed84c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTest$Equality",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTest$Equality.xml",
+              "bytes": 22010,
+              "sha256": "0b4760d38bbb6f0860c5545c02508cca1e83a0e540c0d78805a577489a8018b9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTest$Mutations",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTest$Mutations.xml",
+              "bytes": 22299,
+              "sha256": "1e60df0e51eb8784438aaae941db83583e32169abb8e6d9a1c18bda1e1c2e1e6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTest$Snapshot",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTest$Snapshot.xml",
+              "bytes": 21689,
+              "sha256": "21b889a75404afd5f5b9dcb2cc9c63ab8486eb6176b357a8a513b3aff6090d14"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTest$Upgrade",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTest$Upgrade.xml",
+              "bytes": 22004,
+              "sha256": "f0813e456453a9585cea3a2c911835b0a05cfd3c07a88f7e745696ad98540899"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTypeTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTypeTest.xml",
+              "bytes": 21584,
+              "sha256": "432d50fa8ad4af73f205da0434c5f9a52a33939bf15159af768156725df0b1d7"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTypeTest$BasicProperties",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTypeTest$BasicProperties.xml",
+              "bytes": 22196,
+              "sha256": "2791953f79cb39fbc17330ad16e02ad7a0c07c874f2d694aa768b64b82958322"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.ZoneTypeTest$Icon",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.ZoneTypeTest$Icon.xml",
+              "bytes": 21795,
+              "sha256": "2c783a2a97ee6094f24f87855ff9320400c6a629faefbf98c013b11203cf2c2b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.gui.ZoneGuiListenerInventorySafetyTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.gui.ZoneGuiListenerInventorySafetyTest.xml",
+              "bytes": 22238,
+              "sha256": "7b107d905a540d14b1d44a1d9b63a210ced6aac72a4ae2b1ecada60a0a77bbc4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.zone.gui.ZoneNativeInputContextTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.zone.gui.ZoneNativeInputContextTest.xml",
+              "bytes": 21767,
+              "sha256": "151031e85f687e246781ed41fd50f10adf4d40372cc9a143a7b2822d67896ab9"
+            }
+          }
+        ]
+      },
+      {
+        "label": "native-outbox-diplomacy-final-08",
+        "tests": 452,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-native-outbox-diplomacy-final-08.log",
+          "bytes": 111108,
+          "sha256": "d70ae08da5397cae495f08954d6bb394fb56ad35c0b3adafd322dae284406f23"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.api.PublicApiCompatibilityTest.xml",
+              "bytes": 21176,
+              "sha256": "c1f30e9d6e069c52a7538a5d0f1133f5af6078b1a2a18ce239d2d763e6b9c0cf"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.command.EventCommandHandlerTest",
+            "tests": 32,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.command.EventCommandHandlerTest.xml",
+              "bytes": 25226,
+              "sha256": "fa4e43f4e579ea6ae453da783713f1d10a586890bed601fd71fbbed79311f08b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.EventBridgeTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.EventBridgeTest.xml",
+              "bytes": 21039,
+              "sha256": "d322d57ae3441279cf15946c9da924150f46ed75cae5160d2b2069be76909014"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.EventBridgeTest$Clear",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.EventBridgeTest$Clear.xml",
+              "bytes": 21265,
+              "sha256": "98b817ee72c556b0739da0d4f9d2a5da22fc25559f69235502786022084c18df"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.EventBridgeTest$Query",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.EventBridgeTest$Query.xml",
+              "bytes": 21270,
+              "sha256": "453289563c7781602c6a9984b0c5d9ef5fee7a0db06f561b986a74b03d443359"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.EventBridgeTest$SubscribeAndPublish",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.EventBridgeTest$SubscribeAndPublish.xml",
+              "bytes": 21464,
+              "sha256": "83fcca399320817da2f130b317ac31ff81555df65061ff92e6c10ba6359dcea7"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.EventBridgeTest$Unsubscribe",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.EventBridgeTest$Unsubscribe.xml",
+              "bytes": 21177,
+              "sha256": "74b564f2bd62904c3a2a6431e5bb6825e1866cfec4ca9574d3caff3b2dd3ca4b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.EventMetricsTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.EventMetricsTest.xml",
+              "bytes": 21580,
+              "sha256": "c0eedfc6c1a708a7e8d2bb5eeaf3e6b656a70565375a5f89d706b797d6611e2f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.EventReplayRecordTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.EventReplayRecordTest.xml",
+              "bytes": 21397,
+              "sha256": "d1792300c0c525f653225bac67a328c306624ea1c930b4b62b57022d87e82cc1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.EventReplayTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.EventReplayTest.xml",
+              "bytes": 22078,
+              "sha256": "8fd3926a9663e26d57c6d7fd6386acf5cba7b042cb7e83f3e85fed9c694bbcc0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.bridge.EventBridgeTest",
+            "tests": 33,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.bridge.EventBridgeTest.xml",
+              "bytes": 35809,
+              "sha256": "920e997b6461932e597aad271d038de1e58c64a0043c5dc127474b0cbbe0128f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.chain.EventChainTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.chain.EventChainTest.xml",
+              "bytes": 22066,
+              "sha256": "6ad86d7e799953b6055c2a80437da2f55db133758272a0347785d5586f9db90f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.replay.EventReplayBugfixesTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.replay.EventReplayBugfixesTest.xml",
+              "bytes": 21812,
+              "sha256": "ee681fddc380e1b4a441a194b300a440cdbbdb8b94016967f541efde4de52e20"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.replay.EventReplayBuildersTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.replay.EventReplayBuildersTest.xml",
+              "bytes": 21668,
+              "sha256": "c9b0639d050376b8875bd0e95c2e7587ed47632b6ac2aaff90d26ec0a69044b4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.event.replay.EventReplayRecordsTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.event.replay.EventReplayRecordsTest.xml",
+              "bytes": 24295,
+              "sha256": "912c25c63302f3d91801b5e389392465e0610ec9641784a164a3ac03a24fd23c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventBridgeTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventBridgeTest.xml",
+              "bytes": 22412,
+              "sha256": "9bfa87c3afab519e38d37b9866616368e758a796024f497d5ab7f8ad2dcc849e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventDefinitionTest",
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventDefinitionTest.xml",
+              "bytes": 23064,
+              "sha256": "781ed49f528eb3ddb27f0baa7472e0e0e94388387ac011a8d0aecdece22646c1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventInstanceTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventInstanceTest.xml",
+              "bytes": 22489,
+              "sha256": "7875646cf74fe52315765ed06d7f6fcd847d0d9252fc6c11082a835bced35fed"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventManagerTest",
+            "tests": 32,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventManagerTest.xml",
+              "bytes": 24636,
+              "sha256": "b668f819427c5192bc54502ccbec76e295a8a52832fe635b9823b8078b141d84"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventStatusComprehensiveTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventStatusComprehensiveTest.xml",
+              "bytes": 21714,
+              "sha256": "8595b22658b0bab0bdc5d8dac8398657891ac2bab92e9b8bc82911119cac7bbf"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventStatusTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventStatusTest.xml",
+              "bytes": 21034,
+              "sha256": "4fc22b7a30fb6edb58a3a9df1746768de68fd230f726d9ab4071370cd117aa72"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventStatusTest$AllValues",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventStatusTest$AllValues.xml",
+              "bytes": 22719,
+              "sha256": "4927777f925465331ce878a3618418feb85fae660d0bf083b1321bd946725a74"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventStatusTest$IsActive",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventStatusTest$IsActive.xml",
+              "bytes": 21266,
+              "sha256": "18823d889b76bc30cfcd031004ab2c7e90c269dc020f0d2b39ef49d783e6769c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventStatusTest$IsRecoverable",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventStatusTest$IsRecoverable.xml",
+              "bytes": 21293,
+              "sha256": "aab26b99357de2cf7c68fb7a426530aad58fa6a7d77578442798c91f5dd1a2ed"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventStatusTest$IsTerminal",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventStatusTest$IsTerminal.xml",
+              "bytes": 21278,
+              "sha256": "a8c2c6e39cb2fb497a5a9ceb070184c5b0b1348019337727db2d768becb98d74"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventStatusTest$IsWaiting",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventStatusTest$IsWaiting.xml",
+              "bytes": 21271,
+              "sha256": "224e899cbc768bea1f0f9cf39e7a6c6fe3aa99c9d36d5fe8d5cb22b282c7a639"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventStatusTest$ValueOf",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventStatusTest$ValueOf.xml",
+              "bytes": 21265,
+              "sha256": "0a1c2404389632ee33415efee66adea8780a3a8bc0b10088247c8788b0c0f145"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventTypeComprehensiveTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventTypeComprehensiveTest.xml",
+              "bytes": 21592,
+              "sha256": "b17c53f29d77098d9dc35814b8ba182d2eca046a37b49cb83a049b379e82f271"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.event.EventTypeTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.event.EventTypeTest.xml",
+              "bytes": 21325,
+              "sha256": "8a1c45400c7043c6db3e30edacb0a46ede35e8d81f0f937fcacc4e1577ed7abb"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyAuthorityStorageTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyAuthorityStorageTest.xml",
+              "bytes": 24513,
+              "sha256": "f15795cecaf8670dfeda85334fbd3953ff852bd84581a92524920b463fde304f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyDerivedEventRecoveryTest",
+            "tests": 19,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyDerivedEventRecoveryTest.xml",
+              "bytes": 28281,
+              "sha256": "bf9ada609670f23163ed0bdfd3163234ef25172c058bd7d7ea355a0178419687"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyModuleLifecycleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyModuleLifecycleTest.xml",
+              "bytes": 21456,
+              "sha256": "b68bc8d2d1ea998e26ba521b732c02073e137d02eff503d65afcaee31db8cbb0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyNewNationProtectionTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyNewNationProtectionTest.xml",
+              "bytes": 21293,
+              "sha256": "df5804afb32af81bfd70881ec2be89560632589cb0b2f590516ad3aebd26aae3"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyPlayerJourneyRestartIntegrationTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyPlayerJourneyRestartIntegrationTest.xml",
+              "bytes": 21698,
+              "sha256": "6754226bd21b57b8c5f19a151cea72a0572981bf6c1727c89a72380ea309936a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyRelationCancellationContractTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyRelationCancellationContractTest.xml",
+              "bytes": 22421,
+              "sha256": "2c6cfe3b8d9c9ee91c4d05cdc772c9fbc5290e0d9d2d5a5560b77b39dcd9eb43"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyRelationTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyRelationTest.xml",
+              "bytes": 21578,
+              "sha256": "3ccb7b5a84dbd4d1f8a3a36ed811ed0d534419e10c20095f32c1222f5291d539"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyRetirementLifecycleTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyRetirementLifecycleTest.xml",
+              "bytes": 22100,
+              "sha256": "3713064b2c81c43ed22f4fe97b97d8df3d420fa8143c443f482f16777345efb1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyRetirementTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyRetirementTest.xml",
+              "bytes": 27668,
+              "sha256": "012028800ba5a48f6e565ad5fad772cd83f6b401b206b46a290ba3368a772de8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyServiceSplitContractTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyServiceSplitContractTest.xml",
+              "bytes": 21651,
+              "sha256": "52bbefc27a4e1eb356850888bfe5b81cd122601baa0dcc7718e5cc9c37207c29"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyStateCodecTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyStateCodecTest.xml",
+              "bytes": 43779,
+              "sha256": "cf9fab6b148a0c36c9d45d40b11d4944827b716e263dfd54838d80e5b9fcf29e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyStateConflictIntegrationTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyStateConflictIntegrationTest.xml",
+              "bytes": 23897,
+              "sha256": "734964c602378d8de537905691ebae62ef6b41aabd6ad05c4063f186c3eceae6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyTemporalStateCodecTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyTemporalStateCodecTest.xml",
+              "bytes": 32296,
+              "sha256": "2e5c79d95e1561c4c5d41f2d3d7f911002c3179e899e6fc783170b683c634050"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyTimingPolicyTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyTimingPolicyTest.xml",
+              "bytes": 21731,
+              "sha256": "244bd3ef4c33c4f7966bf18ba4c0cde9c61d37aece15525289eab57360d0868f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyWarCodecTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyWarCodecTest.xml",
+              "bytes": 43795,
+              "sha256": "c83aded746f50fefb25d76f5ed688e4b641ce9e98b15c7665b9b9241338ab22b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.DiplomacyWarRecordSynchronizationTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.DiplomacyWarRecordSynchronizationTest.xml",
+              "bytes": 21658,
+              "sha256": "457cc99dbc0cddc680f079c5ee7a472702280336dfbb8c70173697310fe7385f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorTest",
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorTest.xml",
+              "bytes": 28846,
+              "sha256": "0f1397579277346946bbb9be45e9f0b0fb92b36785119dd3d9a3b296fc54e82d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.gui.DiplomacyInventoryDragProtectionTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.gui.DiplomacyInventoryDragProtectionTest.xml",
+              "bytes": 21656,
+              "sha256": "1221e10c5650bd7ab7890776e55198cdb0778d60ec0f486695659b1007ad42fa"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.gui.DiplomacyNetworkListenerTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.gui.DiplomacyNetworkListenerTest.xml",
+              "bytes": 23172,
+              "sha256": "1f7de2dae125f88f5d8d852c282ebc22a1c7a5de8b2be2a5fb0b9e47e312b0d5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.gui.DiplomacyNetworkMenuTest",
+            "tests": 11,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.gui.DiplomacyNetworkMenuTest.xml",
+              "bytes": 22842,
+              "sha256": "78717dc53078949a9ea86862ac764e72bc2d8851afe5e5e6908a76830e985972"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.diplomacy.gui.DiplomacySubviewContractTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.diplomacy.gui.DiplomacySubviewContractTest.xml",
+              "bytes": 23766,
+              "sha256": "0e3ba49232477a2187aebb880db435dd6237329b535d7263aebbede07060e08e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.event.EventAllianceInboxTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.event.EventAllianceInboxTest.xml",
+              "bytes": 29880,
+              "sha256": "66e505d650134c72e5ecad62ba557906c9d9c8409277fd8372aaf16d5d8e2725"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.event.EventModuleLifecycleTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.event.EventModuleLifecycleTest.xml",
+              "bytes": 23336,
+              "sha256": "cb7fa00d3bcdf22a9aadb6f5afec1c64706840b9dd9443ad7318986a2c54f478"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.event.EventModuleListenerBusTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.event.EventModuleListenerBusTest.xml",
+              "bytes": 21442,
+              "sha256": "b774e190b587be4d8b187b903a6c742e384f3e0e8d3761ebfc9252b6d72614c6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.event.EventStateCodecTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.event.EventStateCodecTest.xml",
+              "bytes": 32815,
+              "sha256": "3dd1f4abeb0ec5399fa86fcb621639b3721619d7108450f5182d7a64025900de"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.security.DiplomacyCommandRoleMatrixTest",
+            "tests": 30,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.security.DiplomacyCommandRoleMatrixTest.xml",
+              "bytes": 26025,
+              "sha256": "9259baac713ffc79e896303c62ff95c9a22af6e68b7dbd00276cfcf37aa3fb23"
+            }
+          }
+        ]
+      }
+    ],
+    "compilation": {
+      "production": {
+        "unique_source_count": 39,
+        "unique_class_count": 66,
+        "all_changed_sources_compiled": true,
+        "fresh_class_bytes_equal_final_test_classpath": true,
+        "batches": [
+          {
+            "label": "outbox-main-04",
+            "source_count": 20,
+            "class_count": 27,
+            "arguments": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\outbox-main-04.args",
+              "bytes": 17376,
+              "sha256": "9ca936afb70014f6e75663f7f39bf8dd6c660d1e8f31c60b77a9731986ee4711"
+            },
+            "log": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\outbox-main-04.log",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "label": "native-input-main-04",
+            "source_count": 19,
+            "class_count": 39,
+            "arguments": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-input-main-04.args",
+              "bytes": 17193,
+              "sha256": "d7066e08e726e76250df82109962130f6972322adf1f344ec52fcb66ae32ab3c"
+            },
+            "log": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-input-main-04.log",
+              "bytes": 100,
+              "sha256": "b7aea83996aaf8484d147ac2fbe37cf2d8d31d73c799f2fabb72a2547735d167"
+            }
+          },
+          {
+            "label": "native-foundation-main-06",
+            "source_count": 1,
+            "class_count": 5,
+            "arguments": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-foundation-main-06.args",
+              "bytes": 14843,
+              "sha256": "601991f4f4f9df47f89cab3ce4f6a98457141f9aa0d6d850d0373aacbb255b8f"
+            },
+            "log": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-foundation-main-06.log",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "label": "native-treasury-main-07",
+            "source_count": 2,
+            "class_count": 8,
+            "arguments": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-treasury-main-07.args",
+              "bytes": 14990,
+              "sha256": "d00b8a0c2c6fc5f880f0cf33e6b7ab8d3f809ca48b4ec309d2a3769d201672e8"
+            },
+            "log": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-treasury-main-07.log",
+              "bytes": 100,
+              "sha256": "b7aea83996aaf8484d147ac2fbe37cf2d8d31d73c799f2fabb72a2547735d167"
+            }
+          }
+        ],
+        "sources": [
+          "src/main/java/dev/starcore/starcore/essentials/listener/EssentialsGuiListener.java",
+          "src/main/java/dev/starcore/starcore/foundation/gui/BookInputSupport.java",
+          "src/main/java/dev/starcore/starcore/foundation/gui/NativeTextInput.java",
+          "src/main/java/dev/starcore/starcore/foundation/gui/PaperTextDialog.java",
+          "src/main/java/dev/starcore/starcore/module/alliance/AllianceModule.java",
+          "src/main/java/dev/starcore/starcore/module/alliance/gui/AllianceGuiListener.java",
+          "src/main/java/dev/starcore/starcore/module/arbitration/ArbitrationModule.java",
+          "src/main/java/dev/starcore/starcore/module/arbitration/gui/ArbitrationGuiListener.java",
+          "src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthority.java",
+          "src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyDerivedEventService.java",
+          "src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyDerivedEventState.java",
+          "src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyModule.java",
+          "src/main/java/dev/starcore/starcore/module/diplomacy/event/AllianceBrokenEvent.java",
+          "src/main/java/dev/starcore/starcore/module/diplomacy/event/AllianceFormedEvent.java",
+          "src/main/java/dev/starcore/starcore/module/diplomacy/gui/DiplomacyNetworkListener.java",
+          "src/main/java/dev/starcore/starcore/module/event/DatabaseAwareEventStateStorage.java",
+          "src/main/java/dev/starcore/starcore/module/event/EventAuthorityState.java",
+          "src/main/java/dev/starcore/starcore/module/event/EventAuthorityStorage.java",
+          "src/main/java/dev/starcore/starcore/module/event/EventModule.java",
+          "src/main/java/dev/starcore/starcore/module/event/EventModuleListener.java",
+          "src/main/java/dev/starcore/starcore/module/event/EventService.java",
+          "src/main/java/dev/starcore/starcore/module/event/EventStateCodec.java",
+          "src/main/java/dev/starcore/starcore/module/event/EventStateStorage.java",
+          "src/main/java/dev/starcore/starcore/module/event/LedgerCategoryService.java",
+          "src/main/java/dev/starcore/starcore/module/event/NationEventLogGui.java",
+          "src/main/java/dev/starcore/starcore/module/event/NationEventLogGuiListener.java",
+          "src/main/java/dev/starcore/starcore/module/event/NationEventRecord.java",
+          "src/main/java/dev/starcore/starcore/module/event/PersistenceEventStateStorage.java",
+          "src/main/java/dev/starcore/starcore/module/event/SqlEventStateStorage.java",
+          "src/main/java/dev/starcore/starcore/module/resource/gui/PlayerTradeGui.java",
+          "src/main/java/dev/starcore/starcore/module/resource/gui/PlayerTradeGuiListener.java",
+          "src/main/java/dev/starcore/starcore/module/treasury/TreasuryModule.java",
+          "src/main/java/dev/starcore/starcore/module/treasury/gui/TreasuryMenuListener.java",
+          "src/main/java/dev/starcore/starcore/pet/PetListener.java",
+          "src/main/java/dev/starcore/starcore/social/gui/ActivityRecommendationListener.java",
+          "src/main/java/dev/starcore/starcore/storage/WarehouseGUI.java",
+          "src/main/java/dev/starcore/starcore/storage/WarehouseListener.java",
+          "src/main/java/dev/starcore/starcore/zone/ZoneModule.java",
+          "src/main/java/dev/starcore/starcore/zone/gui/ZoneGuiListener.java"
+        ],
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/essentials/listener/EssentialsGuiListener$1.class",
+            "sha256": "a751fd92a327893192e0bdb3414bc870fec000e269e469509a8a2afee5df6567"
+          },
+          {
+            "path": "dev/starcore/starcore/essentials/listener/EssentialsGuiListener.class",
+            "sha256": "d3f6eabeeaec7d66c2b0bbf422ee1edd699a3f732d44b05d972a363e1550b319"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/BookInputSupport.class",
+            "sha256": "a85f7ee00f982f3b60acd563776dcf863d4acec61a926205ef3da8b5ee06380b"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/NativeTextInput$Dispatcher.class",
+            "sha256": "22a0d4ee380ee4e8148b67b4848753c313b7d6d8c220d0375335a6a47bccb925"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/NativeTextInput$Prompt.class",
+            "sha256": "c9dd330ef523a81b868bc7789068daed8f4bcad7c890e135aebcfed69095fa0e"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/NativeTextInput$Session.class",
+            "sha256": "a9e2967f0798541777cfbbe6f6b1561b0e5b2d23cb899c0266edc4518067372d"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/NativeTextInput$View.class",
+            "sha256": "c46c33aefea7803eac7c1d1092a31c5ceeedd09de5bbc4df496fa4b5f0a893ba"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/NativeTextInput.class",
+            "sha256": "14c228a7f39352c0f0df26b4120c3ac76524ac6beefed7b87ec88ef6d877e2c3"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/PaperTextDialog.class",
+            "sha256": "a3011cae40966784f7017c0c0987fea0d3ec5c84412fb0889cc474a7995290c6"
+          },
+          {
+            "path": "dev/starcore/starcore/module/alliance/AllianceModule.class",
+            "sha256": "04ccfb2d1cb8eb18353c594f76d04eb5ce667604115ad088442237501e9f1d9b"
+          },
+          {
+            "path": "dev/starcore/starcore/module/alliance/gui/AllianceGuiListener$MenuState.class",
+            "sha256": "87621fc2e97c12a937392a9003e681484b76344ba37256609dd3b57deef4b982"
+          },
+          {
+            "path": "dev/starcore/starcore/module/alliance/gui/AllianceGuiListener.class",
+            "sha256": "7b1ca72e3bb3c8989d5b34ab657fdcc33d16a8655588228372f4488e73914626"
+          },
+          {
+            "path": "dev/starcore/starcore/module/arbitration/ArbitrationModule.class",
+            "sha256": "86cb73fbb59fef80a13593ab8f50e2e18cf942beefd28ddb080d99fa0b8bdb4f"
+          },
+          {
+            "path": "dev/starcore/starcore/module/arbitration/gui/ArbitrationGuiListener.class",
+            "sha256": "2e67cfcff00145d853714b7cdd6e24dc1a4e5b10f387ccda19cb0ba39654237d"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyAuthority$Family.class",
+            "sha256": "7a14e88c371e47d7d9442c0ebcbb470a5f69dc2b7e6d2a4fcbf62c038143fc4a"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyAuthority.class",
+            "sha256": "60d14127b301ba89eb042306945d9d2271451ca135be2dfad70e928f130c46ad"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyDerivedEventService.class",
+            "sha256": "4708006ce1fcd41715b289b83120504cdbb4bdb16698f3718c07cd6b514669d8"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyDerivedEventState$Entry.class",
+            "sha256": "f19018a90f34f686bbe2591d88307d4b0ce961cac7659b47bac1ba797cf080e3"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyDerivedEventState.class",
+            "sha256": "b5fb01f8ed54563d85a5d2a34be2e386af99a6e7d58b72d2e2c7c2e2228fcaf7"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyModule.class",
+            "sha256": "858e2e29e7edf70c3ac039f4542d017af4f8d76877f2ce1356833da702a541cc"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/event/AllianceBrokenEvent$AllianceBreakReason.class",
+            "sha256": "5ad14d3d7c84f5fae4e0d2b1e9ea7c74cda001fc242805f0f17a3f880a174c7d"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/event/AllianceBrokenEvent.class",
+            "sha256": "71aa8a4ea7af77a1fe364f673f6f3c7e3522000cdce8cbc8b5d63dba85b03d1e"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/event/AllianceFormedEvent.class",
+            "sha256": "a188fef69687616986b9f72b133cafb29c53ab2e588291c0095b67197b5f6be6"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/gui/DiplomacyNetworkListener.class",
+            "sha256": "abd2d873044a2e436268064d6539c83d16ccb973f499c442d12722191c5f210d"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/DatabaseAwareEventStateStorage.class",
+            "sha256": "d66f187b43472b63392d0881a0b96bef224200fbc41d585aebfa00a2b39ee14b"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventAuthorityState$AllianceReceipt.class",
+            "sha256": "8603c062d5e6b1e45fd7de32da3f85afd2c30a8f3b58018c0cb4bafca9ec3a3e"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventAuthorityState.class",
+            "sha256": "dc383243a84ec7d28c7932c77a6c89cc1471176c0a96a85d12c988304b82a5f1"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventAuthorityStorage$1.class",
+            "sha256": "b4414bd29fa6beb1abf8c9c23107ca39ce69a52ceb15ad7972026679db2f933a"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventAuthorityStorage.class",
+            "sha256": "ff73c7fc19b125557f441e0235b3cfec1b29d5eb6999ccb0c1270c8b9a0185bb"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventModule$1.class",
+            "sha256": "6b467ed2de58a5347b35aa7a2cbfbfd753c698590d96ea560a4347d4f1536f7f"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventModule.class",
+            "sha256": "4ab8bf05a7a9d4722cf81fc716cafa8a26ba996c0dbf54a201d5396af2a48d0b"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventModuleListener$NationIdProvider.class",
+            "sha256": "2f5fc3f21bbc70bc6452d196ea1f8e2a4e9b201eb960732f8f5d942d09dc2220"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventModuleListener.class",
+            "sha256": "ba45d41be6ec0a2dc1fd86c2af99e794a4331f7908dd18256fbb3427c7d26399"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventService.class",
+            "sha256": "08c6feddea0b320deb4ee54c4ac31e48f4db296438a743a852b54d4656ddcfaa"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventStateCodec.class",
+            "sha256": "844147d679c290d5fb40e0f6ea80804c91ffbb0e5e74c2887916ee62180e3dba"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventStateStorage.class",
+            "sha256": "2e0f7c38ff40a92b21cae6dfbfb652cf63a6763acc90bce4eb23a06e75b6e9aa"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/LedgerCategoryService.class",
+            "sha256": "a43523aa104baf704ab932a0d42b17d22f754953d157b84f74b3ca7c51def7c7"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/NationEventLogGui.class",
+            "sha256": "8c10f8d7d0aaa739917b7c91aa4a0adacb22a5f46dd3750dc4c026cd74efe937"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/NationEventLogGuiListener.class",
+            "sha256": "ad4b55308ab2bc4fb109d7d5daa47966843c692395de3a2e8ca54b67de9b505a"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/NationEventRecord.class",
+            "sha256": "23bb032104f0671f816b25a43074bc45e930ebed7be4b58949868e4f9aad124d"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/PersistenceEventStateStorage.class",
+            "sha256": "5dbcd5ff829375455b551df41d8fac1d0fb0b4a873207e7e4bb501114a258558"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/SqlEventStateStorage.class",
+            "sha256": "7b7a7d615e7dcd1d9d7e80861a45f8686dfd35c6f32c71cefab0e5bc4f1b3f03"
+          },
+          {
+            "path": "dev/starcore/starcore/module/resource/gui/PlayerTradeGui$InputStep.class",
+            "sha256": "f8a52f56e8c99ef81019b657f2913221053782cc6b8fe4c4ef347d5bf6433a8f"
+          },
+          {
+            "path": "dev/starcore/starcore/module/resource/gui/PlayerTradeGui$TradeState.class",
+            "sha256": "747ee48ef0bce6095289808cf8b4ab8cea3f3f3ef1c4e09bcb6bd6490ac064cb"
+          },
+          {
+            "path": "dev/starcore/starcore/module/resource/gui/PlayerTradeGui.class",
+            "sha256": "e7123c59489917e5b409c2e9203f68e9804206966a7fddd6181068d4105234c7"
+          },
+          {
+            "path": "dev/starcore/starcore/module/resource/gui/PlayerTradeGuiListener.class",
+            "sha256": "a686d91224ec3854818a46a511ed5c0b10861c0c91d8a5380f8f44ac40dc267d"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/TreasuryModule$PlayerDepositResult.class",
+            "sha256": "c5361fec77da9257e69cf51a46607dcd674440b353ee736182ac0cb377b1f7aa"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/TreasuryModule$PlayerDepositStatus.class",
+            "sha256": "66ad6cc511a7fb74de14d885ff4df1ffffea1b10792f9f910d4038953d5bf492"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/TreasuryModule$TaxSettlement.class",
+            "sha256": "c3bf92e7912e8eaba3d7a868787d012ce41e13d3f72af3dcb64f98bf8d638518"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/TreasuryModule.class",
+            "sha256": "d39cea896172ff3c6b8f5a2e6a6241036edbd4a7bb46e55e0efc6f7ea16e25ce"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/gui/TreasuryMenuListener$1.class",
+            "sha256": "e5d372796603124eddf008b3c05e10455f7b242bf539ae8dcb012051404c42ef"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/gui/TreasuryMenuListener$ConfirmationContext.class",
+            "sha256": "165fda0f5849233bc99d124b8ea917c66742db6bb3edf8b04104110d811ebea8"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/gui/TreasuryMenuListener$MenuState.class",
+            "sha256": "285a42fdfb0a773a65eb3e853685803757a71e692d66c01ddca237a3e97147ae"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/gui/TreasuryMenuListener.class",
+            "sha256": "8a1c17fdcf28c6bb12d6fbb883ae4f31dc7219c9357d152a9da9e77ae02d4f22"
+          },
+          {
+            "path": "dev/starcore/starcore/pet/PetListener$1.class",
+            "sha256": "80a55d67a5978ce26d0d689055b321eaa2bdc5024c5b4f7366ce678cf387c441"
+          },
+          {
+            "path": "dev/starcore/starcore/pet/PetListener.class",
+            "sha256": "61d45699ab1d6a1af592d4466f3d735ac578b9749d7dd1388c80957e3b8c142a"
+          },
+          {
+            "path": "dev/starcore/starcore/social/gui/ActivityRecommendationListener$1.class",
+            "sha256": "47e121f5a65fc34dbd1538db50cb74919681971544c514e4ce00ef5229e0b262"
+          },
+          {
+            "path": "dev/starcore/starcore/social/gui/ActivityRecommendationListener.class",
+            "sha256": "ba991e8f0137cf3d14bd9af295e6f1cd8cd7b5f8da92cde7b0e1ac77c80850c2"
+          },
+          {
+            "path": "dev/starcore/starcore/storage/WarehouseGUI$1.class",
+            "sha256": "ee398dc99bc409e5feb74428b0db1c3489b0c66a590437947dcc3bf6efa4d239"
+          },
+          {
+            "path": "dev/starcore/starcore/storage/WarehouseGUI$GUIMode.class",
+            "sha256": "a7fc6c61af9f8365a66370bb12c9516b1313b8aada0b0b44aee0b216657e85c1"
+          },
+          {
+            "path": "dev/starcore/starcore/storage/WarehouseGUI$PendingPermissionAdd.class",
+            "sha256": "c8824007846a7e3a8139ec399789583486f1f60ae7fa521cedae59b828b0c5c7"
+          },
+          {
+            "path": "dev/starcore/starcore/storage/WarehouseGUI.class",
+            "sha256": "86d6c5aa5150dd4a42f060b3ba943daa7319e197a5b434472db9c6afa189947b"
+          },
+          {
+            "path": "dev/starcore/starcore/storage/WarehouseListener.class",
+            "sha256": "f2bbd8e430c10b9ead4c9eaa7dc275a6ec5fc605192d6d7c0abc08b4d6734c6c"
+          },
+          {
+            "path": "dev/starcore/starcore/zone/ZoneModule$1.class",
+            "sha256": "8b90ce850deb3d230d1397df8784ae76f06294d3e46a77a9461fd86db1acfd4b"
+          },
+          {
+            "path": "dev/starcore/starcore/zone/ZoneModule.class",
+            "sha256": "6256a7b7d0e20f69dbe211f65ba25109a3e26b22786236cd1060171f50db8b1e"
+          },
+          {
+            "path": "dev/starcore/starcore/zone/gui/ZoneGuiListener.class",
+            "sha256": "6990fa0729bdf0eb40536ecc78faf106b09ad7dbbcc44f8b4cd8d2fc0fbb3102"
+          }
+        ]
+      },
+      "test": {
+        "unique_source_count": 24,
+        "unique_class_count": 34,
+        "all_changed_sources_compiled": true,
+        "fresh_class_bytes_equal_final_test_classpath": true,
+        "batches": [
+          {
+            "label": "outbox-test-04",
+            "source_count": 5,
+            "class_count": 9,
+            "arguments": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\outbox-test-04.args",
+              "bytes": 15455,
+              "sha256": "ebe51732d4faec80a68e1cd2320a5b67862aa215c7f36d778b8ecd751f9bed73"
+            },
+            "log": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\outbox-test-04.log",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "label": "outbox-lifecycle-test-06",
+            "source_count": 1,
+            "class_count": 2,
+            "arguments": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\outbox-lifecycle-test-06.args",
+              "bytes": 15055,
+              "sha256": "ba121af89f44ac0c558bfb6bee4c47b51069c95261489d13fe45053545b454a2"
+            },
+            "log": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\outbox-lifecycle-test-06.log",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "label": "native-input-test-05",
+            "source_count": 18,
+            "class_count": 23,
+            "arguments": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-input-test-05.args",
+              "bytes": 17640,
+              "sha256": "6e2751597b1b5588edb2614d8240eff047fe74e665fa223602a0fb24196133bc"
+            },
+            "log": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-input-test-05.log",
+              "bytes": 587,
+              "sha256": "2bc6c6f87616610b991691b55ccb39fc7c47a281dfc30356cfb34b5876fd6acc"
+            }
+          },
+          {
+            "label": "native-foundation-tests-06",
+            "source_count": 2,
+            "class_count": 5,
+            "arguments": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-foundation-tests-06.args",
+              "bytes": 15185,
+              "sha256": "b387ebf968697b523950c98f57df55db5e4f83c9cf1065e9fc6704a0c64efc0d"
+            },
+            "log": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-foundation-tests-06.log",
+              "bytes": 385,
+              "sha256": "f0c309083dc8697c5b425fe9280871a8649b625476a75eb0c7ebdc8c78ef7d9f"
+            }
+          },
+          {
+            "label": "native-treasury-tests-07",
+            "source_count": 1,
+            "class_count": 2,
+            "arguments": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-treasury-tests-07.args",
+              "bytes": 15056,
+              "sha256": "5f9dbe9c86f57e96a9a40691ef31760fb4809f215358d240706b8f957a80cd29"
+            },
+            "log": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-treasury-tests-07.log",
+              "bytes": 245,
+              "sha256": "7b3b9e7cc4bcee971dc65e320a40667a1d93b27484f00a9aa2c3f3cacd1a5fdd"
+            }
+          }
+        ],
+        "sources": [
+          "src/test/java/dev/starcore/starcore/essentials/listener/EssentialsGuiListenerInputContractTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/gui/BookInputSupportTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/gui/NativeTextInputRoutingTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/gui/NativeTextInputTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/gui/PaperTextDialogTest.java",
+          "src/test/java/dev/starcore/starcore/module/alliance/gui/AllianceNativeInputContextTest.java",
+          "src/test/java/dev/starcore/starcore/module/arbitration/gui/ArbitrationNativeInputContextTest.java",
+          "src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyDerivedEventRecoveryTest.java",
+          "src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRelationCancellationContractTest.java",
+          "src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementLifecycleTest.java",
+          "src/test/java/dev/starcore/starcore/module/diplomacy/gui/DiplomacyNetworkListenerTest.java",
+          "src/test/java/dev/starcore/starcore/module/event/EventAllianceInboxTest.java",
+          "src/test/java/dev/starcore/starcore/module/event/EventModuleLifecycleTest.java",
+          "src/test/java/dev/starcore/starcore/module/event/EventModuleListenerBusTest.java",
+          "src/test/java/dev/starcore/starcore/module/resource/gui/PlayerTradeNativeInputReopenTest.java",
+          "src/test/java/dev/starcore/starcore/module/treasury/gui/TreasuryMenuListenerContractTest.java",
+          "src/test/java/dev/starcore/starcore/module/treasury/gui/TreasuryNativeInputContextTest.java",
+          "src/test/java/dev/starcore/starcore/pet/PetListenerInventorySafetyTest.java",
+          "src/test/java/dev/starcore/starcore/social/gui/ActivityRecommendationListenerBookInputTest.java",
+          "src/test/java/dev/starcore/starcore/social/gui/SocialMenuSummaryContractTest.java",
+          "src/test/java/dev/starcore/starcore/storage/WarehouseListenerInventorySafetyTest.java",
+          "src/test/java/dev/starcore/starcore/storage/WarehouseNativeInputReopenTest.java",
+          "src/test/java/dev/starcore/starcore/zone/ZoneGuiInputContractTest.java",
+          "src/test/java/dev/starcore/starcore/zone/gui/ZoneNativeInputContextTest.java"
+        ],
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/essentials/listener/EssentialsGuiListenerInputContractTest.class",
+            "sha256": "923e8c1243fdad58456e7fb5c6a0fd09800e9cc6962bcc835fc9f9174d97055d"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/BookInputSupportTest.class",
+            "sha256": "bf6b7f6fcced5ae81d882c62728f8d69b1a99a058f773c74d3f2ce1e743de64b"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/NativeTextInputRoutingTest.class",
+            "sha256": "a69c875f1f9054b8e0653dde10511767a971251bd6c0ba99321ef683d5ea34f3"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/NativeTextInputTest$Fixture.class",
+            "sha256": "fe4a701eab343bbad5e00fffe3c5bbdaade00544de0ffbc293f65d2603f0f9fd"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/NativeTextInputTest$Form.class",
+            "sha256": "ddfe160ca5f22d9915e0278e3fc651679674d0a2f16fe5241bc959a156f06c49"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/NativeTextInputTest$Task.class",
+            "sha256": "f3820adc40a573ed82591b3395610c9f0c75ea27b48839514b2dc085bb8a6c63"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/NativeTextInputTest.class",
+            "sha256": "8379fc55edaa466bffa6ee3c4fc80df679e6768ac3799bee33fc4a91ff4a5752"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/gui/PaperTextDialogTest.class",
+            "sha256": "11c4fd327979d40f946073ea6354c87bdf817b6888c580e89ef5eaef5db3b33c"
+          },
+          {
+            "path": "dev/starcore/starcore/module/alliance/gui/AllianceNativeInputContextTest.class",
+            "sha256": "42c8a1172574638d0a1de821971eb4323b9d192cf2df9ab8d6bbed04ffb7e476"
+          },
+          {
+            "path": "dev/starcore/starcore/module/arbitration/gui/ArbitrationNativeInputContextTest.class",
+            "sha256": "33f3f14f0db12c924000626c5a192d4708296a7e3feb71659bcd00e27d8ef122"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyDerivedEventRecoveryTest.class",
+            "sha256": "9e000b23393512948b51b5b2f09eb12c4de8d1748ca8db952db9057dacf8d8d1"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyRelationCancellationContractTest$RecordingStateStorage.class",
+            "sha256": "da0b25c74b6be7c2d41812775a6a7b6a5dde2e61461aff63ffda0894371ae093"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyRelationCancellationContractTest.class",
+            "sha256": "f3aa6e19c24ad7cc1c3cd479538112afcff4d6cc569bf5590bbbdd4d21720605"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyRetirementLifecycleTest$Fixture.class",
+            "sha256": "c42ffabcbc6de202c5d5cd582c92812e1961682929a2e34a7f61dfa10688543d"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/DiplomacyRetirementLifecycleTest.class",
+            "sha256": "a0c515b3fe45bb214f6666081ab46212c5377c8a22f8ec44f48a011856c0bd8a"
+          },
+          {
+            "path": "dev/starcore/starcore/module/diplomacy/gui/DiplomacyNetworkListenerTest.class",
+            "sha256": "68bec5ae2fda2e3b217c930c5122d9f4768e34b7bb17ec75dab6d9f2f10070e9"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventAllianceInboxTest$FaultStorage.class",
+            "sha256": "2a41a1bbaa0c230f0a4eedfd79e686a2bbf0bcb7586410b524a7afbdec755077"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventAllianceInboxTest$Fixture.class",
+            "sha256": "0796dea73ac8a1ba5fbadea24c3bcf357de4019d0ab7910631c593925cd82e14"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventAllianceInboxTest.class",
+            "sha256": "c754a6c769dfe73a2c2c84c8c13c1871cf5ad15d4038074dba812617b510bd42"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventModuleLifecycleTest$Fixture.class",
+            "sha256": "21ea5bb0c80aab5642c70ffa3aa76286b6884ac7900f78f0c3dc1ee1d28d1d1b"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventModuleLifecycleTest.class",
+            "sha256": "8f62304903793f8e2c65036d09056e27ce7b0b15c125fbd202725d41a75e6dba"
+          },
+          {
+            "path": "dev/starcore/starcore/module/event/EventModuleListenerBusTest.class",
+            "sha256": "1943b9e87fc38df829355d6f5c578db68e2dcaa8acb01036145ac879e3a87687"
+          },
+          {
+            "path": "dev/starcore/starcore/module/resource/gui/PlayerTradeNativeInputReopenTest.class",
+            "sha256": "d9b56a5580c89e0de6354e2a6e0729b2331c974529ae1e8f4258760c1147d5a2"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/gui/TreasuryMenuListenerContractTest.class",
+            "sha256": "31dd4c28b5746e8eb94a280cf76c543fdb62cd9164acf17ed939a86df08a4883"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/gui/TreasuryNativeInputContextTest$RepaymentFixture.class",
+            "sha256": "00a1f9eecfe12e33606d6bfcaeb3d905232ec5aa2279f4dc3c9daae9c2c611f1"
+          },
+          {
+            "path": "dev/starcore/starcore/module/treasury/gui/TreasuryNativeInputContextTest.class",
+            "sha256": "a579b33d7ec7d762ea71360a50cdc17d1db327cbbb7e07b8a76661aeb57bc34a"
+          },
+          {
+            "path": "dev/starcore/starcore/pet/PetListenerInventorySafetyTest$Fixture.class",
+            "sha256": "b39da4c57b26b01399ba4fc2d5b60724c246fcb45152678fb6974ba15a9f6357"
+          },
+          {
+            "path": "dev/starcore/starcore/pet/PetListenerInventorySafetyTest.class",
+            "sha256": "603c4d44205ac0a2f80274b362e55b2e7c2251f2af1148152089acf9c43952dc"
+          },
+          {
+            "path": "dev/starcore/starcore/social/gui/ActivityRecommendationListenerBookInputTest.class",
+            "sha256": "0baff0dee2697f85c779a4fa640a8cdea6af80f80b6097143a2978242ff285df"
+          },
+          {
+            "path": "dev/starcore/starcore/social/gui/SocialMenuSummaryContractTest.class",
+            "sha256": "249b21979a8de5c74b304c8bbcc074936a5326205098c720b56a57b95a0ec9e9"
+          },
+          {
+            "path": "dev/starcore/starcore/storage/WarehouseListenerInventorySafetyTest.class",
+            "sha256": "cccc8ee1f8fbd463923188a7b150bc085c4fca6d8519a5e987b3239d579a2351"
+          },
+          {
+            "path": "dev/starcore/starcore/storage/WarehouseNativeInputReopenTest.class",
+            "sha256": "79b3cebf464078a45e890b8ac1219389f28905c5ec7952e602f314f13edf23e1"
+          },
+          {
+            "path": "dev/starcore/starcore/zone/ZoneGuiInputContractTest.class",
+            "sha256": "e20cd2b246a1b8433e4dcd1e322282d0b1f6cbde21e6710afe8c0dabadf36c1d"
+          },
+          {
+            "path": "dev/starcore/starcore/zone/gui/ZoneNativeInputContextTest.class",
+            "sha256": "8034108b111d9070a2f28ef5d2c97ccf877578d0a4fb4b72b92fa42d4884292e"
+          }
+        ]
+      }
+    },
+    "api": {
+      "baseline_update_used": false,
+      "included_in_final_total": true,
+      "source_baseline": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\docs\\api\\starcore-api-v1.txt",
+        "bytes": 339441,
+        "sha256": "d758cfabc32cc27b6fb18bd1be835131eb4bd1bd8b1a32e09099b20525b8d1df"
+      }
+    }
+  },
+  "replay": {
+    "directory": "C:\\tmp\\starsupply-native-outbox-replay-20261127",
+    "forward_check": true,
+    "reverse_check": true,
+    "diff_check": true,
+    "all_src_file_count": 3718,
+    "src_api_pom_aggregate_sha256": "497d0f8520cc89f4c4e3b8569e846f8620b8f50c47e61bae23c8fa8d20ad6b62",
+    "api_baseline_equal": true,
+    "pom_equal": true,
+    "all_source_bytes_equal_after_lf_normalization": true
+  },
+  "capture_evidence": {
+    "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\native-outbox-capture-01.json",
+    "bytes": 818088,
+    "sha256": "b94df41f1408ca7804da2f0f8e5ffcca554dcde274bca35c7ea2296e34bbb366"
+  },
+  "scope": {
+    "alliance_derived_effects_with_diplomacy_authority": true,
+    "stable_event_id_and_event_module_durable_inbox": true,
+    "event_log_clear_retains_receipt": true,
+    "bus_subscribers_exactly_once": false,
+    "native_input_migrated_internal_prepare_calls": 15,
+    "old_three_argument_prepare_throws": true,
+    "native_input_real_inventory_replacement": false,
+    "treasury_debt_original_nation_owner_and_permission_checked": true,
+    "treasury_module_listener_loan_lock_order_regression": true,
+    "warehouse_trade_routing_restored_after_reopen": true,
+    "all_modules_permission_thread_lifecycle_audited": false,
+    "new_release_jars_or_review_zip": false,
+    "full_clean_build": false,
+    "server_started": false
+  },
+  "runtime": {
+    "jdk": "21.0.13.1+2",
+    "maven": "3.9.16",
+    "serial_build_and_tests": true,
+    "javac_heap_mib": 160,
+    "surefire_in_process_heap_mib": 160,
+    "processors": 1,
+    "mockito_explicit_agent": true
+  },
+  "failed_attempts_excluded": [
+    "target-native-input-format-02.log: command quoting",
+    "target-outbox-format-03.log: PowerShell argument splitting",
+    "target-outbox-format-04.log: native memory reservation",
+    "target-outbox-tests-01.log: Mockito self attachment",
+    "target/native-input-test-04.log: JVM native allocation failure",
+    "target-outbox-regression-05.log: two missing scheduler test fixtures",
+    "target-native-input-tests-05.log: missing Bukkit event test fixture"
+  ],
+  "known_open": [
+    "Ordinary alliance producer intent and diplomacy receiver receipts, supersession-safe local projection; treaty political/territory/army receiver receipts.",
+    "Durable claim derived notifications; third-party event-bus subscribers may repeat even though event log inbox is durable.",
+    "Legacy receiptless evidence handling; treaty/reparation/loan and other payment cancellation or cross-authority recovery; accepted disband reservation cancellation.",
+    "Home/Pet/Social and other complete module permission/thread/lifecycle audits; legacy lost items are not automatically restored.",
+    "Navy real troop transport/ports; combat wounded creation/recovery return; effective doctrine bonuses and durable fees.",
+    "Budget cancellation/rollover, orphan exercise reward handling, archive/capacity/offline-world maintenance.",
+    "Full disband process termination; SQL multiprocess/latest MySQL; full clean Core build, new JARs/review ZIP and new artifact Supply regression.",
+    "Paper/Folia server/client visuals and survival-chain acceptance deferred at user request; no server startup or world/player changes."
+  ]
+}

@@ -2,6 +2,10 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
+## 2026-11-27 原生输入与外交派生事件源码检查点
+
+[本轮源码](upstream/development/NATIVE-INPUT-OUTBOX.md)迁移全部 15 个公共书本输入调用，采用玩家实体调度的原生 dialog，并补原归属/权限、GUI 回跳与部分模块停用；外交派生 outbox 和 EventModule inbox 已接通，ACK 不覆盖第三方 bus 副作用。冻结源码两批 1,162 项 / 197 套件通过，API 基线未变，累计补丁独立重放一致，见[机器证据](verification/workspace-native-input-outbox-development-20261127.json)。JAR、安装序列和 review ZIP 仍第二十份，未将本轮源码自动视为已部署或已实服验证。原生窗口客户端体验、完整 Folia/可选组合与六类生存链继续待验；全模块权限/线程/启停尚未完成。profile 和生产 Folia 声明未扩大，未启动服务器或修改世界、玩家存档。
+
 ## 2026-11-26 双边联盟与军事联盟持久退役检查点
 
 第二十份[双边联盟与军事联盟退役补丁](upstream/ALLIANCE-RETIREMENT.md)把关系、邀请、冷却与原编号永久回执同次保存，现有解散按原事务号恢复；普通修改和存储均拒绝退役国家迟到写入。文件/SQL 后端固定、严格校验、同步确认，启停与启用失败清理已接通。2,210 项 Core 定向回归（14 批、316 套件，其中新退役专项 27 项）及实际最终 Core 下 StarSupply 177 项全部通过，0 失败、错误或跳过。13 个生产源空目录编译，19 个 class 与成品一致；29 文件补丁重放后全部 3,653 个 src 文件及 API 基线一致，API 新增 18 条、删除 0 条。详见[证据](verification/workspace-alliance-retirement-20261126.json)。 国家解散共享协议、实际战争/赔款、多国联盟和普通结盟一致性仍未闭环，见[代码清单](CODE-CLOSURE.md)。本轮不扩大 profile，生产 Folia 声明关闭；未启动服务器或修改世界、玩家存档。
