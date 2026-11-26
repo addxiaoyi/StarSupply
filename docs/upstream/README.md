@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-27 最新源码入口为 [Army 战斗会话 A4](development/ARMY-BATTLE-SESSIONS.md)：schema3 双方完整快照冻结、原子开始 / 终态、取消不回滚、永久阵亡墓碑及严格同代效果证明已实现；付费与战斗联合预留未来 revision / 字节，真实文件 / SQLite 覆盖重启、丢响应和恰好容量的全部结果。998 项、90 个套件通过，9 个生产源与 4 个测试源空目录编译；284 文件累计补丁重放后 3,796 个 src、API、pom 一致，见[证据](../verification/workspace-army-battle-sessions-development-20261127.json)。**ArmyService / Commander 尚未激活，全部阶段未完成。** 继续核对战斗冻结与技能玩法，补技能 / 冷却、国家生命周期 / 解散、预算策略及全 writer 迁移，当前仅直接国库策略。累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代旧开发补丁，不能叠加；JAR、安装序列与 review ZIP 仍第二十份。未启动实服或修改世界、玩家存档。
+
+以下 A3 段落为此前检查点，已包含在 A4 累计补丁中。
+
 2026-11-27 最新源码入口为 [Army 付费操作恢复 A3](development/ARMY-PAID-RECOVERY.md)：schema2 原请求、容量/目标预留、持久取消意图与完整国库回执，同 authority 原子确认效果；未来字节/revision 余量在外部扣款前保留。880 项最终测试、87 个套件通过，9 个生产源和 3 个测试源空目录编译；278 文件累计补丁重放后 3,790 个 src、API 与 pom 一致，见[证据](../verification/workspace-army-paid-recovery-development-20261127.json)。**ArmyService/Commander 尚未激活，全部阶段未完成。** 国家生命周期/解散、预算策略、session/技能证明及全 writer 迁移继续为激活门槛，当前仅直接国库资金策略。累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代旧开发补丁，不叠加；JAR、安装序列与 review ZIP 仍第二十份。未启动实服或修改世界、玩家存档。
 
 以下 A2 段落为此前检查点，已包含在 A3 累计补丁中。

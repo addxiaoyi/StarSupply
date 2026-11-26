@@ -2,6 +2,10 @@
 
 更新日期：2026-11-27。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+最新源码检查点为 [Army 战斗会话 A4](upstream/development/ARMY-BATTLE-SESSIONS.md)：schema3 同 authority 保存原请求、双方完整快照围栏和永久终态；开始 / 完成均原子推进双方 token，取消只结束为 STATIONARY 并保持数值，阵亡必须永久保留精确墓碑。ACTIVE 明确冻结全部参与者字段，后勤、付费及普通维护不能穿透；同代付费 / 战斗证明必须与完整效果相等。混合 pending 操作联合预留未来 revision 与完整 envelope，真实文件 / SQLite 的恰好容量、重启及全部生死结果已覆盖。最终 998 项、90 个套件通过；9 个生产源和 4 个测试源空目录编译为 19、4 个 class。284 文件累计补丁独立重放后 3,796 个 src、API 与 pom 一致，见[证据](verification/workspace-army-battle-sessions-development-20261127.json)。**A4 尚未激活 ArmyService / Commander，全部阶段仍未完成。** 下一步以真实技能与战斗调用核对冻结策略，补技能效果 / 冷却、国家 closing / retired 与解散协调及预算策略，再统一迁移 writer、实现真实军限和军事 receiver。当前资金仍为直接国库；成品、安装与 review ZIP 仍第二十份。累计补丁只用于固定第二十份基点并替代旧开发补丁，不能叠加。未启动实服或修改世界、玩家存档。
+
+以下 A3 段落为此前检查点，已包含在 A4 累计补丁中，其后续计划以上段为准。
+
 最新源码检查点为 [Army 付费操作恢复 A3](upstream/development/ARMY-PAID-RECOVERY.md)：同 authority schema2 保存原请求、创建容量/补给目标预留、持久取消意图和完整国库永久回执；APPLIED 证明与精确军队效果原子提交。固定 proof 槽与未来 revision/字节预留在扣款前检查，补充 canonical 金额与极端 scale 拒绝。最终 880 项测试、87 个套件通过，0 失败/错误/跳过；9 个生产源和 3 个测试源空目录编译为 17、4 个 class。278 文件累计补丁独立重放后全部 3,790 个 src、API 与 pom 一致，见[机器证据](verification/workspace-army-paid-recovery-development-20261127.json)。**A3 尚未激活 ArmyService/Commander，全部阶段仍未完成。** 下一步完成战斗 session/技能冷却、国家 closing/retired 准入与解散协调及明确预算策略，再统一迁移全部 writer。当前资金策略为直接国库，不能冒充 Budget pool 消费。累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代全部旧开发补丁，不能叠加；JAR、安装序列与 review ZIP 仍第二十份。未启动实服或修改世界、玩家存档。
 
 以下 A2 段落为此前检查点，已包含在 A3 累计补丁中，其后续计划以上段为准。
