@@ -1,5 +1,9 @@
 # 代码闭环清单
 
+2026-11-27 最新开发检查点为 [Army 耐久权威基础层 A1](upstream/development/ARMY-AUTHORITY-FOUNDATION.md)。独立 immutable model、严格 codec/state、永久 token/tombstone/receipt、完整前像 file/持久文件 SQLite CAS 与显式整体 legacy importer 已实现；最终 604 项测试、79 个套件通过，改动源空目录编译与 264 文件累计补丁重放均通过，见[证据](verification/workspace-army-authority-foundation-development-20261127.json)。**这只关闭基础设施子项，尚未接入 ArmyService/Commander；运行时可变 getter、直接 writer、战斗/restore、付费创建与补给、真实军限和军事 receiver 仍为 P1。** 下一步须在同一检查点迁移全部 Army/Commander writer 和快照读取，保留原始迁移字节后再启动服务与任务。其后两套领土 authority、其他付款/玩法/模块审计和全量构建/验收继续开放，全部阶段尚未完成。累计开发补丁只用于第二十份基点，替代此前全部开发补丁，不叠加；JAR、成品安装与 review ZIP 仍第二十份，实服继续待验。
+
+下段为此前条约 v2 检查点状态，已包含在上述新累计补丁中。
+
 更新于 2026-11-27。发布成品仍为第二十份[双边联盟与军事联盟退役补丁](upstream/ALLIANCE-RETIREMENT.md)；最新源码为[和约 effect manifest v2](upstream/development/TREATY-EFFECT-MANIFEST.md)，尚未更新 JAR、安装序列或 review ZIP。**全部阶段尚未完成。** 完整原始 envelope、三层 hash、receiver 不可变 binding、原生 prepare/end 的 BOUND 证明及永久 release 全向量已接通；schema4 显式保留旧 v1。新 v2 仍只支持空/纯政治和单一 diplomacy receiver，文件与经实际元数据确认的 SQLite 具备 proof 持久化门禁和未来终态容量保护，其他 SQL 不接受新 v2。最终回归、改动源空目录编译和累计源码重放见[证据入口](verification/workspace-treaty-effect-manifest-development-20261127.json)。原编号取消、NEEDS_REVIEW、管理权限及 outbox/inbox 继续保留，第三方 bus 仍可重复。Army/领土 receiver、其他付款、全模块权限/线程/启停及玩法仍有代码缺口，Paper/Folia 实服待验。下方历史记录仅描述当时版本。
 
 此前[宣战费用恢复开发检查点](upstream/development/WAR-DECLARATION-RECOVERY.md)在文件锁/持久准入补丁之上接入国库原编号扣款、宣战恢复和管理员取消。当时最终六批累计 986 项、128 套件通过，0 失败、错误、跳过；73 个生产源生成 155 个 class、52 个测试源生成 92 个 class，126 文件累计补丁独立重放后全部 3,697 个 src 文件、API 基线与 pom.xml 一致，详见[历史证据](verification/workspace-war-declaration-recovery-development-20261126.json)。这些历史数量不累计为新代码通过数。完整解散进程强杀、SQL 多进程、最新 MySQL、全仓干净构建与新成品仍待验证；其他存储只有底层文件替换锁不等于业务多进程安全。

@@ -2,6 +2,10 @@
 
 更新日期：2026-11-27。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+最新源码检查点为 [Army 耐久权威基础层 A1](upstream/development/ARMY-AUTHORITY-FOUNDATION.md)：不可变模型、严格 commit/observation、永久 tombstone/receipt、完整前像 file/SQLite CAS、canonical codec 和整体成功的 exact-bytes legacy importer 已实现。SQLite 每连接验证唯一持久 main 文件并固定真实路径，拒绝内存/临时库和后端身份变化。最终 604 项测试、79 个套件通过，0 失败/错误/跳过；13 个生产源与 7 个测试源空目录编译为 26、9 个 class。264 文件累计补丁独立重放后全部 3,776 个 src、API 与 pom 一致，见[机器证据](verification/workspace-army-authority-foundation-development-20261127.json)。**A1 尚未激活 ArmyService/Commander，全部阶段仍未完成。** 下一步必须将所有直接 writer 与只读快照在同一检查点接线，再完成付费创建/补给、真实军限和军事 receiver。新累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代全部旧开发补丁，不能叠加；JAR、安装序列与 review ZIP 仍第二十份。实服按用户要求待验，未启动服务器或修改世界、玩家存档。
+
+下段为此前条约 v2 检查点记录，其实现已包含在上述 Army A1 累计补丁中。
+
 当前是可继续开发的阶段检查点，**全部阶段尚未完成**。最新[和约 effect manifest v2](upstream/development/TREATY-EFFECT-MANIFEST.md)在原编号恢复上分离完整 requestDigest、receiver localPlanHash 与 globalManifestHash，增加不可变 bind、原生 prepare/end 的 BOUND proof 验证和 release 完整终态向量。schema4 明确读取旧 schema1–3 为 v1，不升级旧 hash/receipt；新 v2 仅支持空/已知纯政治条款与单一 diplomacy receiver。文件和经连接元数据确认的 SQLite 支持新 proof；其他 SQL 后端失败关闭。未来终态容量及数值余量在提交前验证，source quota 保留至 source RELEASED。最终回归、改动源空目录编译及累计重放见[机器证据](verification/workspace-treaty-effect-manifest-development-20261127.json)。新累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代全部旧开发补丁，不能叠加；JAR、安装序列与 review ZIP 仍第二十份。管理命令 `/war treatyrecovery` 和 GUI 增加协议/三层 hash 展示，原取消、审查和权限约束保留。下一 P1 是 Army 独立耐久权威、真实增长限制与军事 receiver，其后分别接 foundation chunk 和旧 cuboid 领土；不能以现有可变 ArmyUnit/rollback 或替换旧割让 ID 冒充闭环。其余付款、模块权限/线程/启停和玩法按[代码清单](CODE-CLOSURE.md)推进。全仓干净构建、新成品与配套回归、SQL 多进程/MySQL 仍待完成，实服按用户要求待验，未启动服务器或修改世界、玩家存档。
 
 此前[战争—外交镜像](upstream/development/war-diplomacy-mirror-20261126.patch)和[宣战费用恢复](upstream/development/WAR-DECLARATION-RECOVERY.md)已包含在上述新累计补丁中。前者文件/SQLite 18 项镜像测试、后者 986 项累计回归及各自源码重放证据仅描述当时版本，不重复累计为本轮通过数。完整解散进程强杀、SQL 多进程/MySQL、全仓干净构建、配套新成品和剩余实现仍见[代码清单](CODE-CLOSURE.md)。

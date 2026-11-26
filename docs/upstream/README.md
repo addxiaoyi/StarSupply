@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-27 最新源码入口为 [Army 耐久权威基础层 A1](development/ARMY-AUTHORITY-FOUNDATION.md)：独立模型、严格 state/codec、永久 token/tombstone/receipt、file/持久文件 SQLite 完整前像 CAS 与显式整体 legacy importer。604 项最终测试、79 个套件通过，13 个生产源和 7 个测试源空目录编译；264 文件累计补丁正反向重放后 3,776 个 src、API 与 pom 一致，见[证据](../verification/workspace-army-authority-foundation-development-20261127.json)。**运行时 ArmyService/Commander 尚未激活，全部阶段未完成。** 后续先同时迁移所有直接 writer，再接付费操作、军限和军事 receiver；旧可变运行路径的缺口仍存在。累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代此前全部开发补丁，不叠加；JAR、成品安装序列与 review ZIP 仍第二十份。未启动实服或修改世界、玩家存档。
+
+下段为此前条约 v2 记录，已由上述新累计补丁包含。
+
 2026-11-27 最新源码入口为[和约 effect manifest v2](development/TREATY-EFFECT-MANIFEST.md)：完整原始 envelope、request/local/global 三层 hash、不可变 bind、原生 prepare/end 的 BOUND proof 验证与 release 全终态向量已接通。schema4 显式保留旧 v1；新 v2 仍只允许空/纯政治和单一 diplomacy receiver，文件及经实际连接元数据确认的 SQLite 具备 proof 门禁和未来终态容量保护，其他 SQL 失败关闭。管理命令与 GUI 展示协议和三层 hash，原编号取消、审查和权限保留。最终回归与累计重放见[证据入口](../verification/workspace-treaty-effect-manifest-development-20261127.json)。新累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代全部旧开发补丁，不能叠加，也尚未加入下方成品安装序列。**全部阶段尚未完成，JAR、安装序列与 review ZIP 仍第二十份。** 下一 P1 为 Army 耐久权威/真实军限及 receiver，其后分别接两套领土权威；赔款/贡纳/混合、其他付款和模块审计继续开发。生产 Folia 声明未扩大，实服待验，未启动服务器或修改世界、玩家存档。
 
 以下战争—外交镜像和费用恢复段为此前开发记录，已被上述新累计补丁覆盖。
