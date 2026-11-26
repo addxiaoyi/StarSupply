@@ -1,6 +1,6 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-2026-11-27 最新源码入口为 [Army 耐久权威基础层 A1](development/ARMY-AUTHORITY-FOUNDATION.md)：独立模型、严格 state/codec、永久 token/tombstone/receipt、file/持久文件 SQLite 完整前像 CAS 与显式整体 legacy importer。604 项最终测试、79 个套件通过，13 个生产源和 7 个测试源空目录编译；264 文件累计补丁正反向重放后 3,776 个 src、API 与 pom 一致，见[证据](../verification/workspace-army-authority-foundation-development-20261127.json)。**运行时 ArmyService/Commander 尚未激活，全部阶段未完成。** 后续先同时迁移所有直接 writer，再接付费操作、军限和军事 receiver；旧可变运行路径的缺口仍存在。累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代此前全部开发补丁，不叠加；JAR、成品安装序列与 review ZIP 仍第二十份。未启动实服或修改世界、玩家存档。
+2026-11-27 最新源码入口为 [Army 权威接线边界 A2](development/ARMY-AUTHORITY-BOUNDARY.md)：新增私有 owner、显式 readiness/永久关闭、完整确认后发布、原子多军队更新/退役、精确后勤重放、原始字节 bootstrap 和 detached runtime adapter；正常被动 `.bak` 仅保留并记录摘要。706 项最终测试、83 个套件通过，3 个生产源和 4 个测试源空目录编译；271 文件累计补丁正反向重放后 3,783 个 src、API 与 pom 一致，见[证据](../verification/workspace-army-authority-boundary-development-20261127.json)。**运行时 ArmyService/Commander 尚未激活，全部阶段未完成。** 下一步先以现有 `NationDebitService` 和版本化同 authority 的付费/session/技能冷却证明补齐恢复边界及国家生命周期/预算准入，再统一迁移 writer 与快照读取；真实军限和军事 receiver 仍待实现。累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代此前全部开发补丁，不叠加；JAR、成品安装序列与 review ZIP 仍第二十份。未启动实服或修改世界、玩家存档。
 
 下段为此前条约 v2 记录，已由上述新累计补丁包含。
 

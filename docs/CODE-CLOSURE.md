@@ -1,6 +1,6 @@
 # 代码闭环清单
 
-2026-11-27 最新开发检查点为 [Army 耐久权威基础层 A1](upstream/development/ARMY-AUTHORITY-FOUNDATION.md)。独立 immutable model、严格 codec/state、永久 token/tombstone/receipt、完整前像 file/持久文件 SQLite CAS 与显式整体 legacy importer 已实现；最终 604 项测试、79 个套件通过，改动源空目录编译与 264 文件累计补丁重放均通过，见[证据](verification/workspace-army-authority-foundation-development-20261127.json)。**这只关闭基础设施子项，尚未接入 ArmyService/Commander；运行时可变 getter、直接 writer、战斗/restore、付费创建与补给、真实军限和军事 receiver 仍为 P1。** 下一步须在同一检查点迁移全部 Army/Commander writer 和快照读取，保留原始迁移字节后再启动服务与任务。其后两套领土 authority、其他付款/玩法/模块审计和全量构建/验收继续开放，全部阶段尚未完成。累计开发补丁只用于第二十份基点，替代此前全部开发补丁，不叠加；JAR、成品安装与 review ZIP 仍第二十份，实服继续待验。
+2026-11-27 最新开发检查点为 [Army 权威接线边界 A2](upstream/development/ARMY-AUTHORITY-BOUNDARY.md)。A1 之上新增私有 owner、readiness/永久关闭、完整确认后发布、token 围栏的多军队更新与退役、精确后勤重放、原始字节 bootstrap 和 detached runtime adapter；正常被动 `.bak` 仅记录摘要并保留。最终 706 项测试、83 个套件通过，7 个改动源空目录编译及 271 文件累计补丁重放均通过，见[证据](verification/workspace-army-authority-boundary-development-20261127.json)。**A2 是未激活边界；ArmyService/Commander 的可变 getter、直接 writer、战斗/restore、付费创建与补给、真实军限和军事 receiver 仍为 P1。** 下一步先增加同 authority 的版本化付费/session/技能冷却证明，复用现有 `NationDebitService` 并明确国家生命周期准入及预算策略，再同一检查点迁移全部 writer 与快照读取。其后两套领土 authority、其他付款/玩法/模块审计和全量构建/验收继续开放，全部阶段尚未完成。累计开发补丁只用于第二十份基点，替代此前全部开发补丁，不叠加；JAR、成品安装与 review ZIP 仍第二十份，实服继续待验。
 
 下段为此前条约 v2 检查点状态，已包含在上述新累计补丁中。
 
@@ -14,7 +14,7 @@
 | --- | --- | --- |
 | **P2 圈地派生通知与旧账** | 新付款/领土原编号恢复已完成；资源区刷新、发展提示和季节事件仍在提交后尽力发送，缺耐久确认；补丁前无意图的半完成圈地不可自动核对 | 派生处理可重启投递并由接收方按原编号确认；旧无回执交易使用独立证据核对 |
 | **P1 国家解散与外部退役** | 共享目录、八类退役、查询/重试及持久战争/赔款准入已在开发代码接通；九类文件存储跨进程版本保护已通过真实 JVM 竞争测试。宣战费用新增原编号恢复与安全取消协议，986 项累计回归及独立重放已通过。旧独立日志阻止自动恢复；解散接受预留不支持取消 | 宣战费用按原编号恢复；旧日志按独立证据处理；解散预留撤销协议另行定义。继续完成完整解散进程中断、SQL 多进程与成品回归 |
-| **P1 宣战、结盟及和约跨权威一致性** | 宣战费用、战争镜像和普通联盟原号恢复已有开发检查点。空/纯政治和约新增完整 manifest、三层 hash、不可变 receiver binding 和 release 全向量；原 end/cancel 互斥、精确版本围栏及管理员恢复保留。实际生产仍只有 diplomacy receiver，非政治/混合失败关闭。旧 cuboid 与 foundation chunk 是独立权威，Army 活对象和 rollback 尚无跨实例 generation/tombstone。bus 订阅者仍可重复 | 下一步建设 Army 独立 file/SQLite CAS、incarnation/generation/删除墓碑、封闭九条 Commander 直接修改路径、真实总兵数上限与原子战斗，再接军事 receiver。领土两套权威分别实现，全部指定 receiver 终态通过后才放开混合支持。赔款/其他付款、旧证据、全仓干净构建及新成品仍待完成 |
+| **P1 宣战、结盟及和约跨权威一致性** | 宣战费用、战争镜像和普通联盟原号恢复已有开发检查点。空/纯政治和约已有完整 manifest、三层 hash、不可变 receiver binding 和 release 全向量；原 end/cancel 互斥、版本围栏和管理员恢复保留。实际生产仍只有 diplomacy receiver，非政治/混合失败关闭。Army 独立 file/SQLite CAS、token/tombstone 与未激活 owner 已完成，但旧运行时活对象/rollback 尚未迁移。旧 cuboid 与 foundation chunk 是独立权威；bus 订阅者仍可重复 | 先完成 Army 版本化付费/session/技能证明与生命周期/预算准入，再统一封闭全部直接 writer、实现真实总兵数上限与原子战斗并接军事 receiver。领土两套权威分别实现，全部指定 receiver 终态通过后才放开混合支持。赔款/其他付款、旧证据、全仓干净构建及新成品仍待完成 |
 | **P1 模块输入权限与启停 / P2 城市其他交互运维** | 城市及全部 15 个公共输入调用已改原生 callback，取消背包替换；国库债务原国家/身份/权限复验、Warehouse/Trade 回跳和部分模块停用已补专项。旧三参数 prepare 抛异常，外部调用者需迁移。Home/Pet/Social 等全链权限/线程/启停未完成；城市邀请、传送、其他 GUI 及公告内容版本仍有缺口。贷款等资金事务及待恢复转账仍需耐久恢复/安全取消 | 完成剩余模块会话/权限/线程、停用屏障与启用失败清理；城市内容版本绑定；原编号资金运维，历史物品/旧账按独立证据核对 |
 | **P2 创建与资金运维** | 新创建/城邦已按原编号恢复，支持查询/重试/取消；同一目录只允许一个待恢复创建、圈地或分裂，旧无回执日志仍需独立证据。普通 boolean 资金接口遇跨实例版本冲突可能拒绝并需调用方重试 | 定义并验证更多并发创建、旧账核对与业务重试；不把旧无回执未知提交自动转换成安全重放 |
 | **P2 海军真实运兵与港口** | 装卸只修改搭载数量，未转移/返还真实军队；港口自动补给未接线；历史引用世界不可用时拒绝加载 | 军队/舰队守恒且可恢复的转移，登陆/伤亡/缺失军队、真实港口条件及资金资源来源 |

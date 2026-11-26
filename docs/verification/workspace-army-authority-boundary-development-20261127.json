@@ -1,0 +1,1373 @@
+{
+  "checkpoint": "army-authority-boundary-development-20261127",
+  "date": "2026-11-27",
+  "timezone": "Asia/Shanghai",
+  "base": "9e380d62fd94cdc54f6f703ea09e14f575660f18",
+  "previous_checkpoint": "army-authority-foundation-development-20261127",
+  "patch": {
+    "path": "docs/upstream/development/army-authority-boundary-20261127.patch",
+    "bytes": 2811534,
+    "sha256": "f4f38d86fb4fe075a7f455437519c6dc34a2cff5ef73a25fd1564a0a87ce6ff7",
+    "file_diffs": 271
+  },
+  "source_changes_since_previous_checkpoint": [
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwner.java",
+      "bytes": 10322,
+      "sha256": "ed1c8c51bca815b9f779f675ff6e86a3282cc1708fdaf0469508f0456992e9fb",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/army/runtime/ArmySnapshotViews.java",
+      "bytes": 4343,
+      "sha256": "1f48a86f7fd2208aeb4cf1c3715d00a478e32b5e27296e89b8c7f544dcddd8b4",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/army/storage/authority/ArmyAuthorityBootstrap.java",
+      "bytes": 8771,
+      "sha256": "04c7c30c6bbfb73f004f412752be2aa341a88a6cfdf7b2ffa413423a9c90afa6",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwnerStorageTest.java",
+      "bytes": 12752,
+      "sha256": "17ae6a30d1549ecf9fa1bc696a3e3eced46deb9b77788af8ff8612ab2a885d53",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwnerTest.java",
+      "bytes": 25998,
+      "sha256": "94410c8b5fe84e09e57476f85cd0647014046cebbd100692967ca42a286da24b",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/army/runtime/ArmySnapshotViewsTest.java",
+      "bytes": 14361,
+      "sha256": "ff6cd927bed889684ce5d25bb71ec34cb7a1dc12d80114c4a43eed15f1c34946",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/army/storage/authority/ArmyAuthorityBootstrapTest.java",
+      "bytes": 22816,
+      "sha256": "7a4ae4e7c64b40fdc5c8c1849aa296c1001e035bec4b5f4a6dfa2a5b7af6a4f2",
+      "exists_in_previous_checkpoint": false
+    }
+  ],
+  "validation": {
+    "tests": 706,
+    "suites": 83,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "deduplicated_by_class_and_case_name": true,
+    "batch_totals_match_xml_and_logs": true,
+    "batches": [
+      {
+        "label": "army-a2-focused-02",
+        "tests": 183,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a2-focused-02.log",
+          "bytes": 3465,
+          "sha256": "64bade9819222bf49cadd24b55f8146e5066a05bf5113514855c396134f56536"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyAuthorityOwnerStorageTest",
+            "tests": 10,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.authority.ArmyAuthorityOwnerStorageTest.xml",
+              "bytes": 24210,
+              "sha256": "9d4af799c9bb75140e0d036da5126eeb56a1f50e879698c1aee5ea8e667baec8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyAuthorityOwnerTest",
+            "tests": 42,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.authority.ArmyAuthorityOwnerTest.xml",
+              "bytes": 29626,
+              "sha256": "44b69a8484fa428c05e42a68ba51cb581f29aeb6fd30a8b1cbab9b98bb54b848"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.authority.ArmyMigrationEvidenceTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.model.authority.ArmyMigrationEvidenceTest.xml",
+              "bytes": 22627,
+              "sha256": "1ba450940a9407d78d3256ff8660d29666cff093d003b8fe4cefefec16be75c4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.runtime.ArmySnapshotViewsTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.runtime.ArmySnapshotViewsTest.xml",
+              "bytes": 24667,
+              "sha256": "fc5a93ff73f4e226f0533877b9f96671c83dc4bc3dd79112ac5b84e759c747b4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityBootstrapTest",
+            "tests": 34,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityBootstrapTest.xml",
+              "bytes": 28919,
+              "sha256": "430d2959e94a0cd0609f6d2310a70340fc6317faf0b544e2198734442cbac106"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityCodecTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityCodecTest.xml",
+              "bytes": 24423,
+              "sha256": "9e5a853d03d2c45974af0a4a911f560fbab4f35783fddd3b22093fd1f6739bb2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityStateTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityStateTest.xml",
+              "bytes": 25173,
+              "sha256": "a25f1ab0f8e4b51bb042b4b0c321fe6a9cd7380a5c9989a40b2a8075d2fd9d69"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityStorageTest",
+            "tests": 32,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityStorageTest.xml",
+              "bytes": 28538,
+              "sha256": "694d7d03d08ddaf64bc7b7f0c24a1124944a98f1ecb835b08636c4bcbfc8fd14"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyLegacyImporterTest",
+            "tests": 19,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyLegacyImporterTest.xml",
+              "bytes": 25971,
+              "sha256": "21fd970e778ef74aee0cf094be4a4425f6932358f3bedc38abacdc70101491f4"
+            }
+          }
+        ]
+      },
+      {
+        "label": "army-a2-existing-army-01",
+        "tests": 462,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a2-existing-army-01.log",
+          "bytes": 334385,
+          "sha256": "c08bcd06ec3277e876ccc1e15852937cb7e930c259bac8476fef61108c10bca1"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyCreationOverflowGuardTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyCreationOverflowGuardTest.xml",
+              "bytes": 30570,
+              "sha256": "a924ee77ab179bbfbbba84a042a34bbe8e6ff3874afedbdff06d59c7653836ec"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyExtensionLifecycleTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyExtensionLifecycleTest.xml",
+              "bytes": 30863,
+              "sha256": "5f23f97bd9f03c32811b5546b3ec51b6a674d5849ae917388d18bba955df2ff4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyLogisticsSupplyTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyLogisticsSupplyTest.xml",
+              "bytes": 33439,
+              "sha256": "d0dff5789c652463cc66f785cb3a0cf7b59200c3772bdbe89473657c5c15a271"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyModuleLifecycleTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyModuleLifecycleTest.xml",
+              "bytes": 30037,
+              "sha256": "6eb1b12e456fb816512eda1d8ba5b0e1a6c1023c92f3fe2947f0558b1cb07e95"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyRemainingModuleLifecycleTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyRemainingModuleLifecycleTest.xml",
+              "bytes": 29735,
+              "sha256": "2beeab60c52c10f490bf341df75639b387282fe3e8919e0f8d23c07cf564baa7"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyServiceBudgetSpendingTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyServiceBudgetSpendingTest.xml",
+              "bytes": 36974,
+              "sha256": "934dbe91c9ab5454fa033c06813e5b8ccc222ca4dca7c0c7bcccfd5e8828dc56"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyServiceStatePersistenceTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyServiceStatePersistenceTest.xml",
+              "bytes": 35683,
+              "sha256": "2512f26b5b3573b9cb0957e51eb7cb9721d5eac690703550581bf8ea69d3bf32"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyTest.xml",
+              "bytes": 29223,
+              "sha256": "38fb9bf77abba698236d4dd8eaf23c24a1440e81e4619d114d206a440e090e4f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$CommanderLevelEnum",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyTest$CommanderLevelEnum.xml",
+              "bytes": 29721,
+              "sha256": "45d373161b116455434af1be8eb1b34bf436c0ede5f9dd2b4dfeaade61048033"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$CommanderSkillRecord",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyTest$CommanderSkillRecord.xml",
+              "bytes": 29595,
+              "sha256": "a22f4c5e6a3616cda3781a623a19b3668f118d8b5a8ecc87b7846581e3dcf0ae"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$DoctrineTypeEnum",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyTest$DoctrineTypeEnum.xml",
+              "bytes": 29588,
+              "sha256": "4ad6f02cc4329e4faa4de5bbeb7013bc04be4cdbeac4239ec76e90a047bb3505"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$OperationStatusEnum",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyTest$OperationStatusEnum.xml",
+              "bytes": 29362,
+              "sha256": "da617e62c44948a0867481e8ba2a19cf718b8edd57d160db46f8fa3ccd9f92c0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$OperationTypeEnum",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyTest$OperationTypeEnum.xml",
+              "bytes": 29356,
+              "sha256": "747dc799e9014092f0835928e73df40394f3c89047ec2708a4f373f4b8d3c32b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$SkillCategoryEnum",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyTest$SkillCategoryEnum.xml",
+              "bytes": 29358,
+              "sha256": "a097d382c6df77087599cedea4219b27bcb58b6467fb980bb81810d16a24fa23"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$SkillTypeEnum",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyTest$SkillTypeEnum.xml",
+              "bytes": 29348,
+              "sha256": "0193c2bb208553fd11135489a4e6c879c2ed7e9110b6aaf23c6e22c86023b0dd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.CommanderLevelTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.CommanderLevelTest.xml",
+              "bytes": 30223,
+              "sha256": "e332469bb0a5e068a8a48b0288a447bd70cf86e82d454f52e338fbc24d3220d7"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.CommanderServicePersistenceTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.CommanderServicePersistenceTest.xml",
+              "bytes": 54569,
+              "sha256": "70d50a55ae4f4486624f9481f1b3c1678fd846bf4933412101a549d024fa2715"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.CommanderSkillTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.CommanderSkillTest.xml",
+              "bytes": 30038,
+              "sha256": "e8aa7162529f8832d42c216fd2b8ce88604076f46d7ec436aa90db57b5bce189"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.FatigueTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.FatigueTest.xml",
+              "bytes": 29758,
+              "sha256": "a56041b43edb0bd75b0dd6209c357ddd5a3816f3b05d407a7b6ea66910574def"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.FatigueTunnelLifecycleTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.FatigueTunnelLifecycleTest.xml",
+              "bytes": 30022,
+              "sha256": "2da8ebdbd6b968d46102ed573084d545004e3b90c4adf3cdefcc40c3d8cf8b4b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.WarArmyIntegrationAuthorityTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.WarArmyIntegrationAuthorityTest.xml",
+              "bytes": 29430,
+              "sha256": "d0bbb32f123be5e6b2428ca204dce696ee10cfb5d8369854fb5bfea6dff2115a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.WarArmyIntegrationBattleCompensationTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.WarArmyIntegrationBattleCompensationTest.xml",
+              "bytes": 29808,
+              "sha256": "baf1c866762e54223bc8ae1bccd02649f6ce908b0d238a3e7d65e766fe144364"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.battle.ArmyUnitCombatHealthTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.battle.ArmyUnitCombatHealthTest.xml",
+              "bytes": 29748,
+              "sha256": "2644750e922d0e79af55338fa341f6353a6b6047ad6c77f1c7cc844273e4c2a7"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.battle.BattleTemporaryMoraleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.battle.BattleTemporaryMoraleTest.xml",
+              "bytes": 29622,
+              "sha256": "479571055e4a9bcec7cbb7ad6821ae8e76599d1e70f6d12a1701f6f92a128df9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.battle.TemporaryArmyMoraleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.battle.TemporaryArmyMoraleTest.xml",
+              "bytes": 29606,
+              "sha256": "f5215a869b6484ae38f65fc883c5f2367360f1913b939f57b41a511950ba6647"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.commander.CommanderListenerPersistenceTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.commander.CommanderListenerPersistenceTest.xml",
+              "bytes": 51653,
+              "sha256": "8750bf85d0da1f9667beb65338db1f648bdf2913678a4a4d3c25a0b231087066"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.commander.CommanderServiceAsyncDefaultContractTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.commander.CommanderServiceAsyncDefaultContractTest.xml",
+              "bytes": 29639,
+              "sha256": "22a3aac771e13f31f0878aa24a45ed47a7e664713d8b5a92646e656b4812c0cf"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.commander.command.CommanderCommandPersistenceErrorTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.commander.command.CommanderCommandPersistenceErrorTest.xml",
+              "bytes": 29650,
+              "sha256": "3c1db2f67a541faf2fab910fe926a8174cd4fe65529e0407b2472f8b47932b59"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.espionage.EspionagePersistenceRecoveryTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.espionage.EspionagePersistenceRecoveryTest.xml",
+              "bytes": 30267,
+              "sha256": "6fa55be842c6715ee366b0f9886dacf999f3e86fc8d6ebb68c19eef3f8f3f339"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.espionage.EspionageServiceBudgetSpendingTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.espionage.EspionageServiceBudgetSpendingTest.xml",
+              "bytes": 35586,
+              "sha256": "e9fc28360731c609ef34afa4470a8f88c65e83696e0ed97be4f79a3805568296"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.espionage.EspionageServiceInputValidationTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.espionage.EspionageServiceInputValidationTest.xml",
+              "bytes": 30498,
+              "sha256": "fc36ec7b16261bd2239118a77b52892b06e8a8eb0e44ceec1b030489b206e04d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.exercise.ExerciseCommandTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.exercise.ExerciseCommandTest.xml",
+              "bytes": 31652,
+              "sha256": "92e40ae60c494698c85814189bfeabfcf1945b7c2c2ba34e13566002c8c3c778"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.exercise.ExerciseListenerTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.exercise.ExerciseListenerTest.xml",
+              "bytes": 30189,
+              "sha256": "64d86592ddafc827de90c4859ccf14cebc0fd0cc4f12c3c04d4f79551d44a0f1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.exercise.ExerciseModuleLifecycleTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.exercise.ExerciseModuleLifecycleTest.xml",
+              "bytes": 30075,
+              "sha256": "2fb9e753976362ef6c99c5e8b37fe883254ffe260829e5c51f1786ddf5e07bb3"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.exercise.ExerciseRecoveryTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.exercise.ExerciseRecoveryTest.xml",
+              "bytes": 58658,
+              "sha256": "f62f6367b49d334a4262f0e8907f7614af17e963c27d35ef5aa34d3b8b77587f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.exercise.ExerciseStateCodecTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.exercise.ExerciseStateCodecTest.xml",
+              "bytes": 31829,
+              "sha256": "48f20ae9c77469f9ce104cae001e37281774540c1fbd6912911884d04fa12e96"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.fatigue.FatigueServicePersistenceTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.fatigue.FatigueServicePersistenceTest.xml",
+              "bytes": 31742,
+              "sha256": "b67f2f00d896f914335578ee4132a8156a440a7edbfe5b1c528b128c8546af8c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.fatigue.storage.FatigueStateCodecTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.fatigue.storage.FatigueStateCodecTest.xml",
+              "bytes": 29678,
+              "sha256": "9c33a12917a5f10ad538ae8d77e18428594bf61c7a84a634367fa76148d514b8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyCreationMenuRoutingTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.gui.ArmyCreationMenuRoutingTest.xml",
+              "bytes": 29747,
+              "sha256": "d12cd56c8bbe916ae79a272cc182ffc864be1ff3fabac0e8b0c3338acef7d852"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyManagementMenuMembershipRevalidationTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.gui.ArmyManagementMenuMembershipRevalidationTest.xml",
+              "bytes": 29434,
+              "sha256": "41c3a2d4c99dc90f58d4ac24c02dee242f5e964608215b3dab12791039a1c00c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyManagementMenuRoutingTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.gui.ArmyManagementMenuRoutingTest.xml",
+              "bytes": 29405,
+              "sha256": "8d146b9e1c21f6c793bf5525670e23cdb419ef2790b8b1dda34c419531958683"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyManagementMenuStaleArmyRevalidationTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.gui.ArmyManagementMenuStaleArmyRevalidationTest.xml",
+              "bytes": 29636,
+              "sha256": "a869100a01b934015564c71363b859187d06be48f12cb3272070d9f7ccaba358"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyManagementMenuTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.gui.ArmyManagementMenuTest.xml",
+              "bytes": 30430,
+              "sha256": "fa336df997b8b964f8a17c2ec542af20340d3a600f0a0e9bea456b1c5c140e6e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyMenuActionsCurrentArmyTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.gui.ArmyMenuActionsCurrentArmyTest.xml",
+              "bytes": 30116,
+              "sha256": "46f9f0b31d995abe73e2ac27c4b341380daa7c7e983db40337c2f46d9d845eaa"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyMenuChatInputThreadTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.gui.ArmyMenuChatInputThreadTest.xml",
+              "bytes": 29608,
+              "sha256": "ead988f1e722414a24850d1546fac563b5e29d35639dc7ce7eb31f8d49141bf2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyMenuListenerLifecycleTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.gui.ArmyMenuListenerLifecycleTest.xml",
+              "bytes": 29414,
+              "sha256": "740febe2702e1b31301b9d35b6206e6c6c3eacebcb96889c11fc5e2db46a6911"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmySelectorPermissionRevalidationTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.gui.ArmySelectorPermissionRevalidationTest.xml",
+              "bytes": 29778,
+              "sha256": "29a4075771ac863e74ffd95cbf53a37299cd0e02ad3a7f342e4e1bf41c11ae94"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.TargetSelectorMenuSnapshotTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.gui.TargetSelectorMenuSnapshotTest.xml",
+              "bytes": 29931,
+              "sha256": "8e1823cdc6ad06080c281cac781c36775c68beb2c5896ed064c9c16caefa5477"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.mercenary.MercenaryContractCodecTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.mercenary.MercenaryContractCodecTest.xml",
+              "bytes": 40525,
+              "sha256": "67bed8b0f581cc25adc5c48f868779fe0bf0512ba311742580c44c703f2796df"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.mercenary.MercenaryModuleLifecycleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.mercenary.MercenaryModuleLifecycleTest.xml",
+              "bytes": 30314,
+              "sha256": "4ab287d9708bd69080ac4b1067db98410851a62e85cad835b3f778c0cd70f9b9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.mercenary.MercenaryServiceBudgetSpendingTest",
+            "tests": 29,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.mercenary.MercenaryServiceBudgetSpendingTest.xml",
+              "bytes": 230449,
+              "sha256": "0db1f08034bc391c0606fd2632b7d34dee9cb84e5c4626c186e87b93e5bab619"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.mercenary.command.MercenaryCommandTest",
+            "tests": 51,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.mercenary.command.MercenaryCommandTest.xml",
+              "bytes": 38092,
+              "sha256": "7233de5c447df9864ac26d5a665753b698aa7fdd95d0ae1c35fea14a9bbb14ab"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.mercenary.command.MercenaryRenewalRequestJournalTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.mercenary.command.MercenaryRenewalRequestJournalTest.xml",
+              "bytes": 30331,
+              "sha256": "ff22f430cea55f002d45742f982a3c65deb23a1edce873c4c1db145f23cf9c38"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.ArmyUnitSupplyConsumptionTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.model.ArmyUnitSupplyConsumptionTest.xml",
+              "bytes": 29943,
+              "sha256": "0295cf217e954d74122385bf511b3eaeed2a3b8892a0f3cc05e9a5fecd2dd16e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.navy.NavyBattleListenerTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.navy.NavyBattleListenerTest.xml",
+              "bytes": 30053,
+              "sha256": "d76f0bb435325bf8ca932a89ff6bbefea0ca5d7e70686249a5b19adb549ea03c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.navy.NavyCommandTest",
+            "tests": 25,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.navy.NavyCommandTest.xml",
+              "bytes": 33090,
+              "sha256": "2ee4ff39ea6b0e892348e047ac37c1e97f0ef56a63c5147aa60f359f02374083"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.navy.NavyModelStorageTest",
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.navy.NavyModelStorageTest.xml",
+              "bytes": 32190,
+              "sha256": "5de8a0a0ec12b69ba596be71d2e4fad7301086c46674b8cf89e5986682b257f9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.navy.NavyModuleLifecycleTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.navy.NavyModuleLifecycleTest.xml",
+              "bytes": 30245,
+              "sha256": "83d3b8f6c82166e19445e5157b89732a9804b025f73e1c09fc4600563b7021de"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.navy.NavyServiceBudgetSpendingTest",
+            "tests": 32,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.navy.NavyServiceBudgetSpendingTest.xml",
+              "bytes": 45614,
+              "sha256": "86ddd1d0e4828d86d1d763bc9e59b1ec11250897dc460a3bcd9ccf78495511cd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.siege.SiegeCommandAuthorizationTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.siege.SiegeCommandAuthorizationTest.xml",
+              "bytes": 32170,
+              "sha256": "31f38695196fed5977562944ba5f9acc2de6474fbf724a0d2024b7046c672681"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.siege.SiegeDeploymentLifecycleTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.siege.SiegeDeploymentLifecycleTest.xml",
+              "bytes": 30608,
+              "sha256": "e7f65fcdf81a631ebabd86b40adb3c250ff1cca735f3a349c7d60808aae4e549"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.siege.SiegeModuleTreasuryLifecycleTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.siege.SiegeModuleTreasuryLifecycleTest.xml",
+              "bytes": 42358,
+              "sha256": "9547ae138f81c6f23110d212c724526f5142c4af7c16ff053d8fa8409a54809f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.siege.SiegeServiceBudgetSpendingTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.siege.SiegeServiceBudgetSpendingTest.xml",
+              "bytes": 31021,
+              "sha256": "a4176d12bbc8ab497e9e9ef7fbafda49d8db1cba3f1f28b7029527ce37127147"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.siege.listener.SiegeListenerNotificationTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.siege.listener.SiegeListenerNotificationTest.xml",
+              "bytes": 29456,
+              "sha256": "d5ad202ec031d4dbf4b57b16ea96d6c7a9a2776573e0e31403000b74d61bd9a5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.ArmyStateCodecTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.storage.ArmyStateCodecTest.xml",
+              "bytes": 29671,
+              "sha256": "627be3e0bf278c4c6dea5af7cf37a8beb98c1ef3a54889f9f2083c7cb09b88c3"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.tunnel.TunnelServiceBudgetSpendingTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.tunnel.TunnelServiceBudgetSpendingTest.xml",
+              "bytes": 30601,
+              "sha256": "6a25e500d97fdd5a23c3bc1ad7fadc664907602afa246da78563a314746cb2d9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.wounded.WoundedModuleLifecycleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.wounded.WoundedModuleLifecycleTest.xml",
+              "bytes": 29757,
+              "sha256": "f5b40af995ec74f8d0e5637a7d8ba8511e5ef50d9b101a1d2eddc03cb4db3dcd"
+            }
+          }
+        ]
+      },
+      {
+        "label": "army-a2-persistence-01",
+        "tests": 61,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a2-persistence-01.log",
+          "bytes": 19087,
+          "sha256": "8dc85e80bcabcebc32fcd69b7ed1a9b31d5cf376c6aed02822b7e3dd9d3c9d1f"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.api.PublicApiCompatibilityTest.xml",
+              "bytes": 21965,
+              "sha256": "02af6395e39f59787e057e4ab03612a4e936fc8bb067884c5ffdbe398a6037da"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AsyncPersistenceFailureTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.persistence.AsyncPersistenceFailureTest.xml",
+              "bytes": 23902,
+              "sha256": "47d2fd46672f25c9acfa7b05c892cc6ce6383288d6530a2f1d708133cd51c3b2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest.xml",
+              "bytes": 24972,
+              "sha256": "2ec342de838e7aa10e28189bafb6992c393f0fdcaec19b04c61cbdc2f7e5e306"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest.xml",
+              "bytes": 22663,
+              "sha256": "103d65cbfdbe92ff6ae8249f73b22f07799d43da7792206d2948b202a75e6a6c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.PersistenceServiceAtomicRecoveryTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.persistence.PersistenceServiceAtomicRecoveryTest.xml",
+              "bytes": 22212,
+              "sha256": "73716c80a8a0898aaa06da8521c2f3c3e338022fa32dd612e0cf37c18a63459a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.war.reparations.ReparationsAuthorityIntegrationTest",
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.war.reparations.ReparationsAuthorityIntegrationTest.xml",
+              "bytes": 41113,
+              "sha256": "58a8e90d5d37d262059f5f6a85b93ecc8921294bdb7c2cf069697ef7c2c933bf"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementFileCapacityTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.WarSettlementFileCapacityTest.xml",
+              "bytes": 23882,
+              "sha256": "7e45b6ced9c2f23da6cef6b9bf35d7a3eb3587dd99897b4a0d0fa851c92f8ded"
+            }
+          }
+        ]
+      }
+    ],
+    "compilation": {
+      "main": {
+        "label": "army-a2-main-01",
+        "kind": "main",
+        "baseline": "C:\\tmp\\starsupply-army-authority-replay-20261127-01",
+        "source_count": 3,
+        "class_count": 9,
+        "sources": [
+          "src/main/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwner.java",
+          "src/main/java/dev/starcore/starcore/module/army/runtime/ArmySnapshotViews.java",
+          "src/main/java/dev/starcore/starcore/module/army/storage/authority/ArmyAuthorityBootstrap.java"
+        ],
+        "source_sha256": {
+          "src/main/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwner.java": "ed1c8c51bca815b9f779f675ff6e86a3282cc1708fdaf0469508f0456992e9fb",
+          "src/main/java/dev/starcore/starcore/module/army/runtime/ArmySnapshotViews.java": "1f48a86f7fd2208aeb4cf1c3715d00a478e32b5e27296e89b8c7f544dcddd8b4",
+          "src/main/java/dev/starcore/starcore/module/army/storage/authority/ArmyAuthorityBootstrap.java": "04c7c30c6bbfb73f004f412752be2aa341a88a6cfdf7b2ffa413423a9c90afa6"
+        },
+        "arguments": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-main-01.args",
+          "bytes": 14686,
+          "sha256": "957c791687fc27e3768d673241406b6a3f45805f31dd5e28773125673ce0f6b2"
+        },
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-main-01.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fresh_class_bytes_equal_final_test_classpath": true,
+        "all_changed_sources_compiled": true,
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/module/army/authority/ArmyAuthorityOwner$Retirement.class",
+            "sha256": "ef21c481a910f75128053b99eb2d4ceb3d89f595632a60c96d806e36f52efc80"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/authority/ArmyAuthorityOwner.class",
+            "sha256": "b902ff93e108c58a300f5877cacbbb02f22b8e5b0efe9770b30891f2208599f6"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/runtime/ArmySnapshotViews$ArmyWorldUnavailableException.class",
+            "sha256": "03ac5f3a7c04f055dc826349535014019c98db25887d0c8625c907397cd66797"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/runtime/ArmySnapshotViews$LegacyWorldPolicy.class",
+            "sha256": "d361c5901b361f32c1f77b0c9c5a00833139264847d0e61155a8c4f99bd7876a"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/runtime/ArmySnapshotViews$WorldResolver.class",
+            "sha256": "175c4c05c414bc34b0ee9d9797070146d5569f29be9c29eb225eb246c8979711"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/runtime/ArmySnapshotViews.class",
+            "sha256": "91cdc85448767d915d40cc004becc9fee4b0143c56c6342a61a71590b3c6d5df"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/storage/authority/ArmyAuthorityBootstrap$BackupEvidence.class",
+            "sha256": "9ed3dd7eb3e2383184cb6c3e37b4ac8cd68de99b81003d123110eade2b59b052"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/storage/authority/ArmyAuthorityBootstrap$LegacySource.class",
+            "sha256": "bf189eb679a28676d141b71b8c1cf0134d693867e7b8eeb0f65fab8ad1bed3ae"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/storage/authority/ArmyAuthorityBootstrap.class",
+            "sha256": "0b9efee4a1c778d53f7a708eb1942516a65c5e2e7a1524782fdbb76bfb065ddd"
+          }
+        ]
+      },
+      "test": {
+        "label": "army-a2-test-02",
+        "kind": "test",
+        "baseline": "C:\\tmp\\starsupply-army-authority-replay-20261127-01",
+        "source_count": 4,
+        "class_count": 7,
+        "sources": [
+          "src/test/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwnerStorageTest.java",
+          "src/test/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwnerTest.java",
+          "src/test/java/dev/starcore/starcore/module/army/runtime/ArmySnapshotViewsTest.java",
+          "src/test/java/dev/starcore/starcore/module/army/storage/authority/ArmyAuthorityBootstrapTest.java"
+        ],
+        "source_sha256": {
+          "src/test/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwnerStorageTest.java": "17ae6a30d1549ecf9fa1bc696a3e3eced46deb9b77788af8ff8612ab2a885d53",
+          "src/test/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwnerTest.java": "94410c8b5fe84e09e57476f85cd0647014046cebbd100692967ca42a286da24b",
+          "src/test/java/dev/starcore/starcore/module/army/runtime/ArmySnapshotViewsTest.java": "ff6cd927bed889684ce5d25bb71ec34cb7a1dc12d80114c4a43eed15f1c34946",
+          "src/test/java/dev/starcore/starcore/module/army/storage/authority/ArmyAuthorityBootstrapTest.java": "7a4ae4e7c64b40fdc5c8c1849aa296c1001e035bec4b5f4a6dfa2a5b7af6a4f2"
+        },
+        "arguments": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-test-02.args",
+          "bytes": 14942,
+          "sha256": "a2c1736498c2e5cba093a250fea0d1274f0dc1503bff77fcb335ad02f7095374"
+        },
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-test-02.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fresh_class_bytes_equal_final_test_classpath": true,
+        "all_changed_sources_compiled": true,
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/module/army/authority/ArmyAuthorityOwnerStorageTest.class",
+            "sha256": "175b4a8a13c5a9fb09dcb158b3c60829016f2d10be76811f9bcb00a3dc6745ef"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/authority/ArmyAuthorityOwnerTest$TestStorage.class",
+            "sha256": "b088d88309c816cb4c0678f4336133c83212633f8d9c0e177378f48440b7f608"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/authority/ArmyAuthorityOwnerTest.class",
+            "sha256": "4d12106161287248434a4ad481e94e6325947517e28d6180bb541222cdac0184"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/runtime/ArmySnapshotViewsTest$1.class",
+            "sha256": "8506b7179d597292d35ce412381067c7cae95ddf01b3644aa86f9c7848b36a98"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/runtime/ArmySnapshotViewsTest$TrackingResolver.class",
+            "sha256": "605515a518696f29fdf1db4fb47483275d1ca7c828597474f9335138987f8bb2"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/runtime/ArmySnapshotViewsTest.class",
+            "sha256": "a18d473d6905ffc38b5225fd38442693528db6fcfc71d4dd440c22694a0db30a"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/storage/authority/ArmyAuthorityBootstrapTest.class",
+            "sha256": "61a044ad323c0cccb633ee213103372468eceb1fa899ebbc5d851e2d2957d668"
+          }
+        ]
+      }
+    },
+    "formatting": {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a2-format-02.log",
+      "bytes": 1250,
+      "sha256": "bb715773323ddc202439383956a6dd533a2caad92495e0d0ab94d5aeb771d063"
+    },
+    "api": {
+      "baseline_update_used": false,
+      "included_in_final_total": true,
+      "source_baseline": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\docs\\api\\starcore-api-v1.txt",
+        "bytes": 339441,
+        "sha256": "d758cfabc32cc27b6fb18bd1be835131eb4bd1bd8b1a32e09099b20525b8d1df"
+      }
+    }
+  },
+  "replay": {
+    "directory": "C:\\tmp\\starsupply-army-boundary-replay-20261127-01",
+    "forward_check": true,
+    "reverse_check": true,
+    "diff_check": true,
+    "all_src_file_count": 3783,
+    "src_api_pom_aggregate_sha256": "d176009e87a568dece10fa97a3f29bdcb99a307af0044351726e3fba5ccfc99f",
+    "all_source_bytes_equal_after_lf_normalization": true
+  },
+  "capture_evidence": {
+    "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-boundary-capture-01.json",
+    "bytes": 821317,
+    "sha256": "6b80082f62e92152bcd7bf5cb23470c06337beea686e57b2a65fdf1b526e7108"
+  },
+  "scope": {
+    "inactive_army_owner_and_runtime_boundary": true,
+    "explicit_readiness_and_permanent_closed_owner_fence": true,
+    "persist_before_publish_and_full_confirmation_equality": true,
+    "unknown_commit_closes_gate_until_explicit_validated_durable_refresh": true,
+    "token_fenced_multi_army_update_and_permanent_retirement": true,
+    "exact_receipt_replay_precedes_fresh_target_token_validation": true,
+    "exact_source_bootstrap_without_legacy_recovery_or_cleanup": true,
+    "passive_regular_backup_recorded_and_preserved_not_selected": true,
+    "active_recovery_artifacts_require_explicit_recovery": true,
+    "bukkit_edge_only_explicit_world_resolution_and_detached_views": true,
+    "storage_backends_tested": [
+      "file",
+      "verified persistent-file SQLite"
+    ],
+    "army_service_or_commander_runtime_activated": false,
+    "military_receiver_or_growth_limits_implemented": false,
+    "treasury_paid_creation_or_resupply_recovery_implemented": false,
+    "durable_battle_sessions_or_commander_cooldowns_implemented": false,
+    "file_multiprocess_probe_rerun_this_checkpoint": false,
+    "new_release_jars_or_review_zip": false,
+    "full_clean_build": false,
+    "server_started": false,
+    "world_or_player_saves_modified": false,
+    "all_stages_complete": false
+  },
+  "runtime": {
+    "jdk": "21.0.13.1+2",
+    "maven": "3.9.16",
+    "serial_build_and_tests": true,
+    "javac_heap_mib": 160,
+    "surefire_in_process_heap_mib": 160,
+    "processors": 1,
+    "mockito_explicit_agent": true
+  },
+  "excluded_failed_attempts": [
+    {
+      "label": "army-a2-focused-01",
+      "tests": 183,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "log": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a2-focused-01.log",
+        "bytes": 28501,
+        "sha256": "a9418ebabe1e4f1812d747bca1b83cc69c8366b2b65d49b902e50a7ab67e39b7"
+      },
+      "reports": [
+        {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-failed-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyAuthorityOwnerStorageTest.xml",
+          "bytes": 47579,
+          "sha256": "d23627b2643073b3466c9c0d9f2dd385497a6fc51165076435e36fb7db116082"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-failed-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyAuthorityOwnerTest.xml",
+          "bytes": 29626,
+          "sha256": "2b3c9df671ccffa01aee3f98919175762ac63458d4370eb28b2b9327e99f32d4"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-failed-01\\TEST-dev.starcore.starcore.module.army.model.authority.ArmyMigrationEvidenceTest.xml",
+          "bytes": 22627,
+          "sha256": "f19a2cb7ecfdd014b1b53dc9502d68f803287324049007df602a3fe18dcc6cd2"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-failed-01\\TEST-dev.starcore.starcore.module.army.runtime.ArmySnapshotViewsTest.xml",
+          "bytes": 24665,
+          "sha256": "3ab35fcab9968c6eb411c65068934419246d6d8a8e22d94b4d206f6af4e1c13a"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-failed-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityBootstrapTest.xml",
+          "bytes": 28918,
+          "sha256": "145cff48dbfa54e5a82bcf80277585ed24542196a3467f6f93ed25a12876d93f"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-failed-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityCodecTest.xml",
+          "bytes": 24426,
+          "sha256": "53898846667890253db85f7d5009295758ddafe461ebf2ce891dbf634d131932"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-failed-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityStateTest.xml",
+          "bytes": 25165,
+          "sha256": "a6e6a8276fedd52607200578a773f0e596ff6d5fb9bb979352d8e138b2378cfa"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-failed-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityStorageTest.xml",
+          "bytes": 28539,
+          "sha256": "7f0b36bd578da5bc5e618b368a914163be1bcf87b09d864fbbffcd2afe2fc2ab"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a2-failed-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyLegacyImporterTest.xml",
+          "bytes": 25971,
+          "sha256": "8310bac471186bc041fcf529192a29d312d933dc6b26b8ff96223f5cf67541ae"
+        }
+      ],
+      "cause": "New integration tests expected IllegalArgumentException for stale/retired tokens; owner contract uses IllegalStateException.",
+      "correction": "Three stale/retired-token assertions now expect IllegalStateException. Production behavior unchanged.",
+      "included_in_final_pass_total": false
+    }
+  ],
+  "known_open": [
+    "Versioned paid-operation, battle-session and skill-use proof ledgers plus receiver capabilities.",
+    "Activate ArmyService and every Commander direct writer together after all writer policies are enforced.",
+    "Army paid creation/resupply recovery, military growth limits and military treaty receiver.",
+    "Separate chunk and legacy cuboid territory authorities, mixed treaty effects and other receiver types.",
+    "Reparation/resource tribute/loan recovery and remaining module permission/thread/lifecycle audits.",
+    "Navy troop transport/ports, wounded return, doctrine effects, budget rollover/cancel and archival.",
+    "Full clean Core build, new release artifacts and final Core plus Supply regression.",
+    "SQL multiprocess/latest MySQL and user-deferred Paper/Folia server/client/survival acceptance."
+  ]
+}
