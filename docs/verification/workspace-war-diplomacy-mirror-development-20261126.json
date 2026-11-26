@@ -49,21 +49,34 @@
       "exists_in_base": false,
       "sha256": "31f279554d3a3c9e174c8970d725d7d17d365240049f6bebfe373e92b1ee4e23",
       "bytes": 9327
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/WarDeclarationModuleRecoveryTest.java",
+      "exists_in_base": true,
+      "sha256": "e065081b2a652bdf5ef9abc391c7076cbc2514340217fbc3f13c39b168eec446",
+      "bytes": 18991
     }
   ],
   "patch": {
     "path": "docs/upstream/development/war-diplomacy-mirror-20261126.patch",
-    "bytes": 39357,
-    "sha256": "8dcd97f89165e93b83c427231094d0b0199b57f3f873078fcf37098fc8492c0a"
+    "bytes": 42530,
+    "sha256": "8401f85e95f429cc45ad7b9d2a7c33410fd1131e0fde68f0221bbbfb83b9749d"
   },
   "validation": {
     "production_sources": 7,
     "javac_exit": 0,
-    "test_class": "dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorTest",
-    "tests": 18,
+    "test_classes": [
+      "dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorTest",
+      "dev.starcore.starcore.module.war.WarDeclarationModuleRecoveryTest"
+    ],
+    "tests": 42,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
+    "breakdown": {
+      "mirror_file_sqlite": 18,
+      "war_module_regression": 24
+    },
     "backends": [
       "file",
       "SQLite"

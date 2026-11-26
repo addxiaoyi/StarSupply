@@ -842,3 +842,60 @@
 +    }
 +  }
 +}
+--- a/src/test/java/dev/starcore/starcore/module/war/WarDeclarationModuleRecoveryTest.java
++++ b/src/test/java/dev/starcore/starcore/module/war/WarDeclarationModuleRecoveryTest.java
+@@ -13,6 +13,7 @@
+ import dev.starcore.starcore.module.diplomacy.DiplomacyRelationService;
+ import dev.starcore.starcore.module.diplomacy.DiplomacyService;
+ import dev.starcore.starcore.module.diplomacy.DiplomacyWarService;
++import dev.starcore.starcore.module.diplomacy.WarDiplomacyMirrorService;
+ import dev.starcore.starcore.module.nation.NationService;
+ import dev.starcore.starcore.module.nation.model.NationId;
+ import dev.starcore.starcore.module.treasury.*;
+@@ -32,6 +33,7 @@
+ class WarDeclarationModuleRecoveryTest {
+   @TempDir Path root;
+   private final List<Connection> warConnections = new ArrayList<>();
++  private WarDiplomacyMirrorService lastMirror;
+ 
+   DatabaseService database(boolean sql) throws Exception {
+     var database = mock(DatabaseService.class);
+@@ -65,6 +67,9 @@
+     h.set(module, "enabled", true);
+     h.set(module, "warServiceImpl", service);
+     h.set(module, "diplomacyService", diplomacy);
++    lastMirror = mock(WarDiplomacyMirrorService.class);
++    when(lastMirror.reconcile(any())).thenReturn(new WarDiplomacyMirrorService.SnapshotReceipt(0, "", true));
++    h.set(module, "diplomacyMirrorService", lastMirror);
+     h.set(module, "declarationDebitService", money);
+     h.set(module, "plugin", h.plugin());
+     return module;
+@@ -104,6 +109,10 @@
+       registry.register(DiplomacyWarService.class, diplomacy);
+       registry.register(DiplomacyRelationService.class, diplomacy);
+       registry.register(DiplomacyService.class, diplomacy);
++      var mirror = mock(WarDiplomacyMirrorService.class);
++      when(mirror.reconcile(any()))
++          .thenReturn(new WarDiplomacyMirrorService.SnapshotReceipt(0, "", true));
++      registry.register(WarDiplomacyMirrorService.class, mirror);
+       registry.register(NationService.class, mock(NationService.class));
+       registry.register(MessageService.class, mock(MessageService.class));
+       registry.register(TreasuryService.class, money);
+@@ -144,7 +153,7 @@
+         assertThat(recovery.pendingWarDeclarations()).isEmpty();
+         assertThat(restarted.getWarServiceImpl().activeWars()).hasSize(1);
+         assertThat(treasury.open().balance(a)).isEqualByComparingTo("75.00");
+-        verify(diplomacy).recordWarDeclaration(a, b, receipt.declaredAt());
++        verify(mirror, atLeastOnce()).reconcile(any());
+         assertThat(recovery.recoverWarDeclaration(request.operationId())).isEqualTo(receipt);
+         assertThat(treasury.open().balance(a)).isEqualByComparingTo("75.00");
+         assertThat(registry.find(BattlefieldService.class)).isPresent();
+@@ -341,7 +350,7 @@
+       assertThat(declared.status()).isEqualTo(WarDeclarationRecoveryService.Status.DECLARED);
+       assertThat(store.loadWar(request.operationId())).isNotNull();
+       assertThat(money.balance(a)).isEqualByComparingTo("75.00");
+-      verify(diplomacy).recordWarDeclaration(a, b, declared.declaredAt());
++      verify(lastMirror, atLeastOnce()).reconcile(any());
+       first.disable(null);
+     }
+   }
