@@ -1,6 +1,6 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-2026-11-27 最新源码入口为[原生输入与外交派生事件开发检查点](development/NATIVE-INPUT-OUTBOX.md)：全部 15 个公共输入调用改用原生 callback，补国库债务/权限、GUI 回跳和停用锁序；外交联盟派生 outbox 与关系同存，EventModule 日志永久 inbox 去重。两批 1,162 项 / 197 套件通过；39 个生产源 / 66 个 class、24 个测试源 / 34 个 class 与最终测试 classpath 一致，API 基线未变。179 文件累计补丁独立重放后全部 3,718 个 src 文件、API 和 pom.xml 一致，见[证据](../verification/workspace-native-input-outbox-development-20261127.json)。新补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代所有旧开发补丁；不要叠加，也尚未加入下方成品安装序列。JAR 与 review ZIP 仍第二十份。ACK 限事件日志，bus 可重复；旧三参数 prepare 抛异常，外部调用者需迁移；普通结盟/和约接收端、剩余权限/线程/启停和玩法仍未完成，生产 Folia 声明与实服待验边界不变。
+2026-11-27 最新源码入口为[普通双边联盟原编号恢复与投影围栏](development/ALLIANCE-OPERATION-RECOVERY.md)：FORM/BREAK 已接源持久意图、外交 receiver 同号永久 receipt、原号 retry/cancel、generation/owner 围栏、schema3 纳秒时间与耐久本地投影，旧无 owner 行隔离且 clear/retire 永久失效投影。管理命令 `/alliance recovery list [页码]` 及 `show|retry|cancel <完整UUID>` 使用 `starcore.alliance.admin` 权限，允许控制台执行。本轮最终三批 1,759 项、239 套件通过，API 基线未更新；13 个生产源／29 个 class、17 个测试源／32 个 class 与最终测试 classpath 一致，203 文件累计补丁重放后全部 3,730 个 src 文件、API 与 pom.xml 一致。见[证据入口](../verification/workspace-alliance-operation-recovery-development-20261127.json)；现有 compiler-excluded 旧 PeaceTreatyTest 编译不兼容，未执行且不计入通过数。新累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代所有旧开发补丁；不要叠加，也尚未加入下方成品安装序列。**全部阶段尚未完成，JAR、安装序列与 review ZIP 仍第二十份。** 此前原生输入、GUI/权限/部分启停保护和外交 outbox/EventModule inbox 已包含；ACK 限事件日志，bus 可重复，旧三参数 prepare 抛异常，外部调用者需迁移。和约政治/领土/军队接收端、其他付款、剩余权限/线程/启停和玩法仍未完成，生产 Folia 声明未扩大，实服待验，未启动服务器或修改世界、玩家存档。
 
 以下战争—外交镜像和费用恢复段为此前开发记录，已被上述新累计补丁覆盖。
 

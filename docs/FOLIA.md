@@ -2,9 +2,9 @@
 
 当前可运行、已验收的组合为 Java 21、Paper 1.21.11、固定 StarCore API，以及按需安装的森罗组件。StarSupply 不声明 `folia-supported`，不能将 Paper 验收表述为完整 Folia 验收。原开发目标中的 Folia 组合兼容仍未完成。
 
-## 2026-11-27 原生输入与外交派生事件源码检查点
+## 2026-11-27 普通双边联盟原编号恢复源码检查点
 
-[本轮源码](upstream/development/NATIVE-INPUT-OUTBOX.md)迁移全部 15 个公共书本输入调用，采用玩家实体调度的原生 dialog，并补原归属/权限、GUI 回跳与部分模块停用；外交派生 outbox 和 EventModule inbox 已接通，ACK 不覆盖第三方 bus 副作用。冻结源码两批 1,162 项 / 197 套件通过，API 基线未变，累计补丁独立重放一致，见[机器证据](verification/workspace-native-input-outbox-development-20261127.json)。JAR、安装序列和 review ZIP 仍第二十份，未将本轮源码自动视为已部署或已实服验证。原生窗口客户端体验、完整 Folia/可选组合与六类生存链继续待验；全模块权限/线程/启停尚未完成。profile 和生产 Folia 声明未扩大，未启动服务器或修改世界、玩家存档。
+[本轮源码](upstream/development/ALLIANCE-OPERATION-RECOVERY.md)已接通普通双边联盟 FORM/BREAK 源持久意图、外交 receiver 同号永久 receipt、原号 retry/cancel、generation/owner 围栏、schema3 纳秒时间和耐久本地投影；旧无 owner 行隔离，clear/retire 后 owner 永久失效。`/alliance recovery list [页码]` 与 `show|retry|cancel <完整UUID>` 使用 `starcore.alliance.admin` 权限，允许控制台执行。此前公共原生输入、GUI 回跳、部分权限/启停保护及外交 outbox/EventModule inbox 已包含，事件 ACK 不覆盖第三方 bus 副作用。本轮最终三批 1,759 项、239 套件通过，API 基线未更新；13 个生产源／29 个 class、17 个测试源／32 个 class 与最终测试 classpath 一致，203 文件累计补丁重放后全部 3,730 个 src 文件、API 与 pom.xml 一致。见[证据入口](verification/workspace-alliance-operation-recovery-development-20261127.json)；现有 compiler-excluded 旧 PeaceTreatyTest 编译不兼容，未执行且不计入通过数。**全部阶段尚未完成**；JAR、安装序列和 review ZIP 仍第二十份，未将本轮源码视为已部署或已实服验证。和约政治/领土/军队接收端、全模块权限/线程/启停及其他代码缺口继续见[清单](CODE-CLOSURE.md)；原生窗口客户端体验、完整 Folia/可选组合与六类生存链实服待验。profile 和生产 Folia 声明未扩大，未启动服务器或修改世界、玩家存档。
 
 ## 2026-11-26 双边联盟与军事联盟持久退役检查点
 
