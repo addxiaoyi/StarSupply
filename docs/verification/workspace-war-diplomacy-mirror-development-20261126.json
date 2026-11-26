@@ -81,6 +81,7 @@
       "file",
       "SQLite"
     ],
+    "formatted_with": "Spotless 3.6.0 using ratchet f769e62",
     "jvm": "JDK 21 low-memory javac + Maven Surefire, -Xmx128m"
   },
   "scope": {
