@@ -2,6 +2,10 @@
 
 更新日期：2026-11-27。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+最新源码检查点为 [Army 技能效果与冷却 A5](upstream/development/ARMY-SKILL-LEDGER.md)：schema4 在同一 CAS 中保存完整原请求、固定 v1 效果、永久施法证明和以完整玩家 UUID / 技能为键的冷却链；重放不重复施效或延长冷却。完整选择、精确纳秒截止、阵亡墓碑、跨账本同 token 快照一致性及旧 draft 保留已覆盖。最终 1,216 项、95 个套件通过；9 个生产源和 7 个测试源空目录编译为 17、8 个 class。292 文件累计补丁独立正反向重放后 3,804 个 src、API 与 pom 一致，见[证据](verification/workspace-army-skill-ledger-development-20261127.json)。**A5 尚未激活 ArmyService / Commander，全部阶段仍未完成。** 战斗干预与战术撤退、旧正常失败冷却策略、国家 closing / retired 与解散协调、预算策略仍是激活门槛，随后统一迁移全部 writer、实现真实军限与军事 receiver。当前仅直接国库策略；成品、安装与 review ZIP 仍第二十份。累计补丁只用于固定第二十份基点并替代旧开发补丁，不能叠加。未启动实服或修改世界、玩家存档。
+
+以下 A4 段落为此前检查点，已包含在 A5 累计补丁中，其后续计划以上段为准。
+
 最新源码检查点为 [Army 战斗会话 A4](upstream/development/ARMY-BATTLE-SESSIONS.md)：schema3 同 authority 保存原请求、双方完整快照围栏和永久终态；开始 / 完成均原子推进双方 token，取消只结束为 STATIONARY 并保持数值，阵亡必须永久保留精确墓碑。ACTIVE 明确冻结全部参与者字段，后勤、付费及普通维护不能穿透；同代付费 / 战斗证明必须与完整效果相等。混合 pending 操作联合预留未来 revision 与完整 envelope，真实文件 / SQLite 的恰好容量、重启及全部生死结果已覆盖。最终 998 项、90 个套件通过；9 个生产源和 4 个测试源空目录编译为 19、4 个 class。284 文件累计补丁独立重放后 3,796 个 src、API 与 pom 一致，见[证据](verification/workspace-army-battle-sessions-development-20261127.json)。**A4 尚未激活 ArmyService / Commander，全部阶段仍未完成。** 下一步以真实技能与战斗调用核对冻结策略，补技能效果 / 冷却、国家 closing / retired 与解散协调及预算策略，再统一迁移 writer、实现真实军限和军事 receiver。当前资金仍为直接国库；成品、安装与 review ZIP 仍第二十份。累计补丁只用于固定第二十份基点并替代旧开发补丁，不能叠加。未启动实服或修改世界、玩家存档。
 
 以下 A3 段落为此前检查点，已包含在 A4 累计补丁中，其后续计划以上段为准。
