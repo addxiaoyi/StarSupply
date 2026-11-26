@@ -2,7 +2,7 @@
 
 更新日期：2026-11-26。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
-当前是可继续开发的阶段检查点，**全部阶段尚未完成**。下表按需求分组汇报，验收口径以 [REQUIREMENTS](REQUIREMENTS.md)、[Paper 记录](PAPER-ACCEPTANCE.md) 和 [Folia 记录](FOLIA.md) 为准。不要把旧构建的运行记录套用于新构建，也不要把管理员准备库存的消费验收当成生存生产验收。
+当前是可继续开发的阶段检查点，**全部阶段尚未完成**。本轮新增[战争—外交镜像开发检查点](upstream/development/war-diplomacy-mirror-20261126.patch)：7 个生产源低内存编译通过，真实文件与 SQLite 后端共 18 项镜像恢复测试通过；完整源快照、归档战争、迟到事件补投和 owner 释放已接通。机器证据见 [war-diplomacy-mirror](verification/workspace-war-diplomacy-mirror-development-20261126.json)。外交派生事件仍缺持久 outbox，普通结盟/和约接收端仍未完成。下表按需求分组汇报，验收口径以 [REQUIREMENTS](REQUIREMENTS.md)、[Paper 记录](PAPER-ACCEPTANCE.md) 和 [Folia 记录](FOLIA.md) 为准。不要把旧构建的运行记录套用于新构建，也不要把管理员准备库存的消费验收当成生存生产验收。
 
 最新源码在[宣战费用恢复开发检查点](upstream/development/WAR-DECLARATION-RECOVERY.md)：包含此前战争/实际赔款恢复、共享解散、八类退役、持久准入与九类文件权威操作系统锁，并新增国库原编号扣款、宣战恢复和安全取消管理命令。最新定向 117 项、7 套件通过；最终六批累计 986 项、128 套件通过，包含最终 API 兼容套件一次，较早独立 API 检查 1 项不另累计。73 个生产源 / 155 个 class、52 个测试源 / 92 个 class 的空目录累计编译输出与最终测试 class 逐字节一致；126 文件补丁独立回放后全部 3,697 个 src 文件、API 基线及 pom.xml 一致，见[完整证据](verification/workspace-war-declaration-recovery-development-20261126.json)。累积补丁单独应用于第二十份基点 9e380d62fd94cdc54f6f703ea09e14f575660f18，替代全部旧开发补丁；下方成品 JAR、安装序列和 review ZIP 尚未更新。取消只封存未扣费原号；已扣费则完成原战争，不退款。空/负报价拒绝处理。外交接收端及事件耐久、普通结盟/和约效果、旧账及其他付款取消、输入和玩法仍需开发；完整解散进程强杀、SQL 多进程、MySQL、全仓干净构建和配套新成品待验。当前缺口以上述检查点及[代码清单](CODE-CLOSURE.md)为准，Paper/Folia 实服按用户要求保留待验。
 
