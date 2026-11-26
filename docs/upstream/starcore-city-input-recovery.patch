@@ -1,0 +1,2080 @@
+diff --git a/src/main/java/dev/starcore/starcore/module/city/CityModule.java b/src/main/java/dev/starcore/starcore/module/city/CityModule.java
+index d0bcacb..71c16cb 100644
+--- a/src/main/java/dev/starcore/starcore/module/city/CityModule.java
++++ b/src/main/java/dev/starcore/starcore/module/city/CityModule.java
+@@ -192,6 +192,9 @@ public final class CityModule implements StarCoreModule {
+ 
+   private void cleanup(StarCoreContext context, boolean save) {
+     Throwable failure = null;
++    CityMenuListener listener = cityMenuListener;
++    cityMenuListener = null;
++    if (listener != null) failure = attemptCleanup(failure, listener::shutdown);
+     var money = cityMoney;
+     cityMoney = null;
+     if (money != null) {
+@@ -213,10 +216,7 @@ public final class CityModule implements StarCoreModule {
+ 
+     failure = attemptCleanup(failure, this::clearCommandBindings);
+ 
+-    CityMenuListener listener = cityMenuListener;
+-    cityMenuListener = null;
+     if (listener != null) {
+-      failure = attemptCleanup(failure, listener::shutdown);
+       failure = attemptCleanup(failure, () -> org.bukkit.event.HandlerList.unregisterAll(listener));
+     }
+ 
+diff --git a/src/main/java/dev/starcore/starcore/module/city/gui/CityAnnouncementGui.java b/src/main/java/dev/starcore/starcore/module/city/gui/CityAnnouncementGui.java
+index 687babf..b3581d3 100644
+--- a/src/main/java/dev/starcore/starcore/module/city/gui/CityAnnouncementGui.java
++++ b/src/main/java/dev/starcore/starcore/module/city/gui/CityAnnouncementGui.java
+@@ -13,48 +13,83 @@ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.meta.ItemMeta;
+ 
+ final class CityAnnouncementGui implements InventoryHolder {
+-  enum Page { EDIT, CLEAR_CONFIRM }
++  enum Page {
++    EDIT,
++    CLEAR_CONFIRM
++  }
+ 
+   private final Inventory inventory;
+   private final Page page;
+   private final String draft;
++  private final java.util.UUID actorId, cityId;
+ 
+-  CityAnnouncementGui(City city, String draft) {
+-    this(city, draft, Page.EDIT);
++  CityAnnouncementGui(java.util.UUID actorId, City city, String draft) {
++    this(actorId, city, draft, Page.EDIT);
+   }
+ 
+-  private CityAnnouncementGui(City city, String draft, Page page) {
++  private CityAnnouncementGui(java.util.UUID actorId, City city, String draft, Page page) {
++    this.actorId = java.util.Objects.requireNonNull(actorId);
++    this.cityId = city.id();
+     this.page = page;
+     this.draft = draft;
+-    this.inventory = Bukkit.createInventory(this, 27, Component.text(
+-        page == Page.EDIT ? "STARCORE | City announcement" : "STARCORE | Clear announcement"));
++    this.inventory =
++        Bukkit.createInventory(
++            this,
++            27,
++            Component.text(
++                page == Page.EDIT
++                    ? "STARCORE | City announcement"
++                    : "STARCORE | Clear announcement"));
+     build(city);
+   }
+ 
+-  static CityAnnouncementGui clearConfirmation(City city, String draft) {
+-    return new CityAnnouncementGui(city, draft, Page.CLEAR_CONFIRM);
++  static CityAnnouncementGui clearConfirmation(java.util.UUID actorId, City city, String draft) {
++    return new CityAnnouncementGui(actorId, city, draft, Page.CLEAR_CONFIRM);
+   }
+ 
+   private void build(City city) {
+     if (page == Page.EDIT) {
+       String text = draft != null ? draft : city.announcement();
+-      inventory.setItem(4, item(Material.PAPER, draft == null ? "Current announcement" : "Draft preview",
+-          text == null || text.isBlank() ? "No announcement set." : text,
+-          draft == null ? "" : "Not saved yet."));
+-        inventory.setItem(11, item(Material.WRITABLE_BOOK, "Edit announcement",
+-          "Write in the book input.", "Maximum 100 characters."));
++      inventory.setItem(
++          4,
++          item(
++              Material.PAPER,
++              draft == null ? "Current announcement" : "Draft preview",
++              text == null || text.isBlank() ? "No announcement set." : text,
++              draft == null ? "" : "Not saved yet."));
++      inventory.setItem(
++          11,
++          item(
++              Material.WRITABLE_BOOK,
++              "Edit announcement",
++              "Edit in the text form.",
++              "Maximum 100 characters."));
+       if (draft != null) {
+-        inventory.setItem(13, item(Material.LIME_STAINED_GLASS_PANE, "Save draft",
+-            "Publish the previewed announcement."));
++        inventory.setItem(
++            13,
++            item(
++                Material.LIME_STAINED_GLASS_PANE,
++                "Save draft",
++                "Publish the previewed announcement."));
+       }
+-      inventory.setItem(15, item(Material.REDSTONE, "Clear announcement",
+-          text == null || text.isBlank() ? "Already empty." : "Open confirmation."));
++      inventory.setItem(
++          15,
++          item(
++              Material.REDSTONE,
++              "Clear announcement",
++              text == null || text.isBlank() ? "Already empty." : "Open confirmation."));
+     } else {
+-      inventory.setItem(4, item(Material.BARRIER, "Confirm clear",
+-          "This permanently removes the city announcement.",
+-          "The change is saved immediately."));
+-      inventory.setItem(11, item(Material.LIME_STAINED_GLASS_PANE, "Confirm", "Remove the announcement."));
+-      inventory.setItem(15, item(Material.RED_STAINED_GLASS_PANE, "Cancel", "Keep the announcement."));
++      inventory.setItem(
++          4,
++          item(
++              Material.BARRIER,
++              "Confirm clear",
++              "This permanently removes the city announcement.",
++              "The change is saved immediately."));
++      inventory.setItem(
++          11, item(Material.LIME_STAINED_GLASS_PANE, "Confirm", "Remove the announcement."));
++      inventory.setItem(
++          15, item(Material.RED_STAINED_GLASS_PANE, "Cancel", "Keep the announcement."));
+     }
+     inventory.setItem(18, ButtonFactory.createBackButton());
+     inventory.setItem(26, ButtonFactory.createCloseButton());
+@@ -65,16 +100,34 @@ final class CityAnnouncementGui implements InventoryHolder {
+     ItemMeta meta = stack.getItemMeta();
+     if (meta != null) {
+       meta.displayName(Component.text(name, NamedTextColor.WHITE));
+-      meta.lore(Arrays.stream(lore).filter(line -> !line.isEmpty())
+-          .map(line -> Component.text(line, NamedTextColor.GRAY)).toList());
++      meta.lore(
++          Arrays.stream(lore)
++              .filter(line -> !line.isEmpty())
++              .map(line -> Component.text(line, NamedTextColor.GRAY))
++              .toList());
+       stack.setItemMeta(meta);
+     }
+     return stack;
+   }
+ 
+-  Page page() { return page; }
+-  String draft() { return draft; }
++  java.util.UUID actorId() {
++    return actorId;
++  }
++
++  java.util.UUID cityId() {
++    return cityId;
++  }
++
++  Page page() {
++    return page;
++  }
++
++  String draft() {
++    return draft;
++  }
+ 
+   @Override
+-  public Inventory getInventory() { return inventory; }
++  public Inventory getInventory() {
++    return inventory;
++  }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/city/gui/CityCreateGui.java b/src/main/java/dev/starcore/starcore/module/city/gui/CityCreateGui.java
+index 40c7057..56e48ea 100644
+--- a/src/main/java/dev/starcore/starcore/module/city/gui/CityCreateGui.java
++++ b/src/main/java/dev/starcore/starcore/module/city/gui/CityCreateGui.java
+@@ -14,39 +14,74 @@ import org.bukkit.inventory.meta.ItemMeta;
+ final class CityCreateGui implements InventoryHolder {
+   private final Inventory inventory;
+   private final String draft;
++  private final java.util.UUID actorId;
++  private final dev.starcore.starcore.module.nation.model.NationId nationId;
+ 
+-  CityCreateGui(String draft) {
++  CityCreateGui(
++      java.util.UUID actorId,
++      dev.starcore.starcore.module.nation.model.NationId nationId,
++      String draft) {
++    this.actorId = java.util.Objects.requireNonNull(actorId);
++    this.nationId = java.util.Objects.requireNonNull(nationId);
+     this.draft = draft;
+-    this.inventory = Bukkit.createInventory(this, 27, Component.text(
+-        draft == null ? "STARCORE | Create city" : "STARCORE | Confirm city"));
++    this.inventory =
++        Bukkit.createInventory(
++            this,
++            27,
++            Component.text(draft == null ? "STARCORE | Create city" : "STARCORE | Confirm city"));
+     if (draft == null) {
+-      inventory.setItem(4, item(Material.BRICK, "Create a city",
+-          "A city will use your current location as spawn."));
+-      inventory.setItem(11, item(Material.NAME_TAG, "Enter city name",
+-          "Write the name in the book input.", "Maximum 32 characters."));
++      inventory.setItem(
++          4,
++          item(Material.BRICK, "Create a city", "A city will use your current location as spawn."));
++      inventory.setItem(
++          11,
++          item(
++              Material.NAME_TAG,
++              "Enter city name",
++              "Enter the name in the text form.",
++              "Maximum 32 characters."));
+     } else {
+-      inventory.setItem(4, item(Material.BRICK, "Confirm city name", draft,
+-          "The city will be created at your current location."));
++      inventory.setItem(
++          4,
++          item(
++              Material.BRICK,
++              "Confirm city name",
++              draft,
++              "The city will be created at your current location."));
+       inventory.setItem(11, item(Material.LIME_STAINED_GLASS_PANE, "Create", "Create this city."));
+-      inventory.setItem(15, item(Material.RED_STAINED_GLASS_PANE, "Edit", "Write another name in the book input."));
++      inventory.setItem(
++          15, item(Material.RED_STAINED_GLASS_PANE, "Edit", "Edit the name in the text form."));
+     }
+     inventory.setItem(18, ButtonFactory.createBackButton());
+     inventory.setItem(26, ButtonFactory.createCloseButton());
+   }
+ 
+-  String draft() { return draft; }
++  String draft() {
++    return draft;
++  }
++
++  java.util.UUID actorId() {
++    return actorId;
++  }
++
++  dev.starcore.starcore.module.nation.model.NationId nationId() {
++    return nationId;
++  }
+ 
+   private static ItemStack item(Material material, String name, String... lore) {
+     ItemStack stack = new ItemStack(material);
+     ItemMeta meta = stack.getItemMeta();
+     if (meta != null) {
+       meta.displayName(Component.text(name, NamedTextColor.WHITE));
+-      meta.lore(Arrays.stream(lore).map(line -> Component.text(line, NamedTextColor.GRAY)).toList());
++      meta.lore(
++          Arrays.stream(lore).map(line -> Component.text(line, NamedTextColor.GRAY)).toList());
+       stack.setItemMeta(meta);
+     }
+     return stack;
+   }
+ 
+   @Override
+-  public Inventory getInventory() { return inventory; }
++  public Inventory getInventory() {
++    return inventory;
++  }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/city/gui/CityMenuListener.java b/src/main/java/dev/starcore/starcore/module/city/gui/CityMenuListener.java
+index ec47387..aa8d685 100644
+--- a/src/main/java/dev/starcore/starcore/module/city/gui/CityMenuListener.java
++++ b/src/main/java/dev/starcore/starcore/module/city/gui/CityMenuListener.java
+@@ -1,13 +1,13 @@
+ package dev.starcore.starcore.module.city.gui;
+ 
+ import dev.starcore.starcore.foundation.economy.EconomyService;
+-import dev.starcore.starcore.foundation.gui.BookInputSupport;
+ import dev.starcore.starcore.module.city.CityMoneyInteraction;
+ import dev.starcore.starcore.module.city.CityMoneyService;
+ import dev.starcore.starcore.module.city.CityService;
+ import dev.starcore.starcore.module.city.model.City;
+ import dev.starcore.starcore.module.city.model.CityRank;
+ import dev.starcore.starcore.module.nation.NationService;
++import dev.starcore.starcore.module.nation.model.NationId;
+ import java.math.BigDecimal;
+ import java.util.Map;
+ import java.util.Optional;
+@@ -24,31 +24,24 @@ import org.bukkit.event.Listener;
+ import org.bukkit.event.inventory.InventoryClickEvent;
+ import org.bukkit.event.inventory.InventoryCloseEvent;
+ import org.bukkit.event.inventory.InventoryDragEvent;
+-import org.bukkit.event.player.AsyncPlayerChatEvent;
+-import org.bukkit.event.player.PlayerEditBookEvent;
+ import org.bukkit.event.player.PlayerQuitEvent;
+-import org.bukkit.inventory.ItemStack;
+-import org.bukkit.inventory.meta.BookMeta;
+ import org.bukkit.plugin.Plugin;
+ 
+ /** 城市 GUI 事件监听器 */
+ public final class CityMenuListener implements Listener {
+ 
+-  private record PendingAmount(
+-      CityAmountGui.Operation operation, UUID cityId, ItemStack previousHand) {}
++  private record NameDraft(NationId nationId, String text) {}
++
++  private record AnnouncementDraft(UUID cityId, String text) {}
+ 
+   private final CityService cityService;
+   private final NationService nationService;
+   private final EconomyService economyService;
+   private final Map<UUID, CityMenuGui> openMenus = new ConcurrentHashMap<>();
+   private final Map<UUID, CityDetailsGui> detailMenus = new ConcurrentHashMap<>();
+-  private final Map<UUID, Boolean> pendingAnnouncements = new ConcurrentHashMap<>();
+-  private final Map<UUID, Boolean> pendingAnnouncementBooks = new ConcurrentHashMap<>();
+-  private final Map<UUID, String> announcementDrafts = new ConcurrentHashMap<>();
+-  private final Map<UUID, PendingAmount> pendingAmounts = new ConcurrentHashMap<>();
+-  private final Map<UUID, Boolean> pendingCityNames = new ConcurrentHashMap<>();
+-  private final Map<UUID, Boolean> pendingCityNameBooks = new ConcurrentHashMap<>();
+-  private final Map<UUID, String> cityNameDrafts = new ConcurrentHashMap<>();
++  private final Map<UUID, AnnouncementDraft> announcementDrafts = new ConcurrentHashMap<>();
++  private final Map<UUID, NameDraft> cityNameDrafts = new ConcurrentHashMap<>();
++  private final CityTextInput textInput;
+   private final Plugin plugin;
+   private final CityMoneyService money;
+   private volatile boolean stopped;
+@@ -67,6 +60,17 @@ public final class CityMenuListener implements Listener {
+       EconomyService economyService,
+       Plugin plugin,
+       CityMoneyService money) {
++    this(cityService, nationService, economyService, plugin, money, new CityTextInput(plugin));
++  }
++
++  CityMenuListener(
++      CityService cityService,
++      NationService nationService,
++      EconomyService economyService,
++      Plugin plugin,
++      CityMoneyService money,
++      CityTextInput textInput) {
++    this.textInput = textInput;
+     this.money = money;
+     this.cityService = cityService;
+     this.nationService = nationService;
+@@ -77,6 +81,8 @@ public final class CityMenuListener implements Listener {
+ 
+   /** 打开城市菜单 */
+   public void openMenu(Player player) {
++    if (stopped) return;
++    textInput.cancel(player);
+     CityMenuGui gui = new CityMenuGui(player, cityService, nationService, economyService);
+     openMenus.put(player.getUniqueId(), gui);
+     player.openInventory(gui.getInventory());
+@@ -206,14 +212,21 @@ public final class CityMenuListener implements Listener {
+   }
+ 
+   private void openAnnouncementGui(Player player) {
+-    Optional<City> city = cityService.getPlayerCity(player.getUniqueId());
++    if (stopped) return;
++    textInput.cancel(player);
++    var city = cityService.getPlayerCity(player.getUniqueId());
+     if (city.isEmpty() || !city.get().isMayor(player.getUniqueId())) {
+-      player.sendMessage(
+-          Component.text("Only the mayor can edit the announcement.", NamedTextColor.RED));
++      player.sendMessage(Component.text("只有市长可以修改公告", NamedTextColor.RED));
+       return;
+     }
++    var draft = announcementDrafts.get(player.getUniqueId());
++    if (draft != null && !draft.cityId().equals(city.get().id())) {
++      announcementDrafts.remove(player.getUniqueId(), draft);
++      draft = null;
++    }
+     player.openInventory(
+-        new CityAnnouncementGui(city.get(), announcementDrafts.get(player.getUniqueId()))
++        new CityAnnouncementGui(
++                player.getUniqueId(), city.get(), draft == null ? null : draft.text())
+             .getInventory());
+   }
+ 
+@@ -229,13 +242,22 @@ public final class CityMenuListener implements Listener {
+   }
+ 
+   private void openCreateGui(Player player) {
+-    if (nationService.nationOf(player.getUniqueId()).isEmpty()) {
+-      player.sendMessage(
+-          Component.text("Join a nation before creating a city.", NamedTextColor.RED));
++    if (stopped) return;
++    textInput.cancel(player);
++    var nation = nationService.nationOf(player.getUniqueId());
++    if (nation.isEmpty() || !player.getUniqueId().equals(nation.get().founderId())) {
++      player.sendMessage(Component.text("只有国家创建者可以创建城市", NamedTextColor.RED));
+       return;
+     }
++    var draft = cityNameDrafts.get(player.getUniqueId());
++    if (draft != null && !draft.nationId().equals(nation.get().id())) {
++      cityNameDrafts.remove(player.getUniqueId(), draft);
++      draft = null;
++    }
+     player.openInventory(
+-        new CityCreateGui(cityNameDrafts.get(player.getUniqueId())).getInventory());
++        new CityCreateGui(
++                player.getUniqueId(), nation.get().id(), draft == null ? null : draft.text())
++            .getInventory());
+   }
+ 
+   private void handleJoinClick(Player player, CityJoinGui gui, int slot) {
+@@ -305,6 +327,7 @@ public final class CityMenuListener implements Listener {
+   }
+ 
+   private void handleCreateClick(Player player, CityCreateGui gui, int slot) {
++    if (!player.getUniqueId().equals(gui.actorId())) return;
+     if (slot == 18) {
+       openMenu(player);
+       return;
+@@ -313,38 +336,33 @@ public final class CityMenuListener implements Listener {
+       player.closeInventory();
+       return;
+     }
+-    if (slot == 15 && gui.draft() != null) {
+-      pendingCityNameBooks.put(player.getUniqueId(), true);
+-      player.closeInventory();
+-      BookInputSupport.prepare(player, "City name", "");
++    var nation = nationService.nationOf(player.getUniqueId());
++    if (nation.isEmpty()
++        || !nation.get().id().equals(gui.nationId())
++        || !player.getUniqueId().equals(nation.get().founderId())) {
++      player.sendMessage(Component.text("国家归属或创建权限已变化，请重新打开菜单", NamedTextColor.RED));
+       return;
+     }
+-    if (slot != 11) return;
+-    if (gui.draft() == null) {
+-      pendingCityNameBooks.put(player.getUniqueId(), true);
+-      player.closeInventory();
+-      BookInputSupport.prepare(player, "City name", "");
++    if (slot == 15 && gui.draft() != null || slot == 11 && gui.draft() == null) {
++      openNameInput(player, gui.nationId());
+       return;
+     }
+-    Optional<dev.starcore.starcore.module.nation.model.Nation> nation =
+-        nationService.nationOf(player.getUniqueId());
+-    if (nation.isEmpty()) {
+-      player.sendMessage(
+-          Component.text("Join a nation before creating a city.", NamedTextColor.RED));
+-      openMenu(player);
++    if (slot != 11) return;
++    var draft = cityNameDrafts.get(player.getUniqueId());
++    if (draft == null
++        || !draft.nationId().equals(gui.nationId())
++        || !draft.text().equals(gui.draft())) {
++      player.sendMessage(Component.text("名称草稿已失效，请重新输入", NamedTextColor.RED));
+       return;
+     }
+-    CityService.CreateCityResult created =
++    var created =
+         cityService.createCity(
+-            nation.get().id(), gui.draft(), player.getUniqueId(), player.getLocation());
+-    if (created.success()) {
+-      cityNameDrafts.remove(player.getUniqueId());
+-      player.sendMessage(
+-          Component.text("City created: " + created.city().name(), NamedTextColor.GREEN));
+-    } else {
+-      player.sendMessage(
+-          Component.text("City creation failed: " + created.message(), NamedTextColor.RED));
+-    }
++            gui.nationId(), gui.draft(), player.getUniqueId(), player.getLocation());
++    if (created.success()) cityNameDrafts.remove(player.getUniqueId(), draft);
++    player.sendMessage(
++        Component.text(
++            created.success() ? "城市已创建: " + created.city().name() : "创建失败: " + created.message(),
++            created.success() ? NamedTextColor.GREEN : NamedTextColor.RED));
+     openMenu(player);
+   }
+ 
+@@ -388,6 +406,7 @@ public final class CityMenuListener implements Listener {
+   }
+ 
+   private void handleAnnouncementClick(Player player, CityAnnouncementGui gui, int slot) {
++    if (!player.getUniqueId().equals(gui.actorId())) return;
+     if (slot == 18) {
+       openMenu(player);
+       return;
+@@ -397,19 +416,26 @@ public final class CityMenuListener implements Listener {
+       return;
+     }
+     Optional<City> city = cityService.getPlayerCity(player.getUniqueId());
+-    if (city.isEmpty() || !city.get().isMayor(player.getUniqueId())) {
++    if (city.isEmpty()
++        || !city.get().id().equals(gui.cityId())
++        || !city.get().isMayor(player.getUniqueId())) {
+       player.closeInventory();
+       player.sendMessage(
+           Component.text("Only the mayor can edit the announcement.", NamedTextColor.RED));
+       return;
+     }
+     if (gui.page() == CityAnnouncementGui.Page.EDIT && slot == 11) {
+-      pendingAnnouncementBooks.put(player.getUniqueId(), true);
+-      player.closeInventory();
+-      BookInputSupport.prepare(player, "City announcement", "");
++      openAnnouncementInput(player, city.get().id());
+       return;
+     }
+     if (gui.page() == CityAnnouncementGui.Page.EDIT && slot == 13 && gui.draft() != null) {
++      var draft = announcementDrafts.get(player.getUniqueId());
++      if (draft == null
++          || !draft.cityId().equals(gui.cityId())
++          || !draft.text().equals(gui.draft())) {
++        player.sendMessage(Component.text("公告草稿已失效，请重新输入", NamedTextColor.RED));
++        return;
++      }
+       boolean saved =
+           cityService.setAnnouncement(city.get().id(), player.getUniqueId(), gui.draft());
+       if (saved) {
+@@ -429,7 +455,8 @@ public final class CityMenuListener implements Listener {
+         return;
+       }
+       player.openInventory(
+-          CityAnnouncementGui.clearConfirmation(city.get(), gui.draft()).getInventory());
++          CityAnnouncementGui.clearConfirmation(player.getUniqueId(), city.get(), gui.draft())
++              .getInventory());
+       return;
+     }
+     if (gui.page() == CityAnnouncementGui.Page.CLEAR_CONFIRM && slot == 11) {
+@@ -443,7 +470,8 @@ public final class CityMenuListener implements Listener {
+       return;
+     }
+     if (gui.page() == CityAnnouncementGui.Page.CLEAR_CONFIRM && slot == 15) {
+-      player.openInventory(new CityAnnouncementGui(city.get(), gui.draft()).getInventory());
++      player.openInventory(
++          new CityAnnouncementGui(player.getUniqueId(), city.get(), gui.draft()).getInventory());
+     }
+   }
+ 
+@@ -526,17 +554,12 @@ public final class CityMenuListener implements Listener {
+ 
+   @EventHandler
+   public void onPlayerQuit(PlayerQuitEvent event) {
+-    openMenus.remove(event.getPlayer().getUniqueId());
+-    detailMenus.remove(event.getPlayer().getUniqueId());
+-    pendingAnnouncements.remove(event.getPlayer().getUniqueId());
+-    pendingAnnouncementBooks.remove(event.getPlayer().getUniqueId());
+-    BookInputSupport.clear(event.getPlayer());
+-    announcementDrafts.remove(event.getPlayer().getUniqueId());
+-    pendingAmounts.remove(event.getPlayer().getUniqueId());
+-    pendingCityNames.remove(event.getPlayer().getUniqueId());
+-    pendingCityNameBooks.remove(event.getPlayer().getUniqueId());
+-    BookInputSupport.clear(event.getPlayer());
+-    cityNameDrafts.remove(event.getPlayer().getUniqueId());
++    var player = event.getPlayer();
++    textInput.cancel(player);
++    openMenus.remove(player.getUniqueId());
++    detailMenus.remove(player.getUniqueId());
++    announcementDrafts.remove(player.getUniqueId());
++    cityNameDrafts.remove(player.getUniqueId());
+   }
+ 
+   /** 处理菜单动作 */
+@@ -694,23 +717,10 @@ public final class CityMenuListener implements Listener {
+         openAnnouncementGui(player);
+       }
+       case ANNOUNCEMENT -> {
+-        Optional<City> announcementCity = cityService.getPlayerCity(player.getUniqueId());
+-        if (announcementCity.isEmpty() || !announcementCity.get().isMayor(player.getUniqueId())) {
+-          player.sendMessage(
+-              Component.text("Only the mayor can edit the announcement.", NamedTextColor.RED));
+-          return;
+-        }
+-        pendingAnnouncements.put(player.getUniqueId(), true);
+-        player.closeInventory();
+-        player.sendMessage(Component.text("请在聊天栏输入公告内容，输入 cancel 取消。", NamedTextColor.YELLOW));
+-        Optional<City> city = cityService.getPlayerCity(player.getUniqueId());
+-        if (city.isEmpty() || !city.get().isMayor(player.getUniqueId())) {
+-          player.sendMessage(Component.text("只有市长可以修改公告", NamedTextColor.RED));
+-          return;
+-        }
+-        pendingAnnouncements.put(player.getUniqueId(), true);
+-        player.closeInventory();
+-        player.sendMessage(Component.text("请在聊天栏输入公告内容，输入 cancel 取消。", NamedTextColor.YELLOW));
++        var city = cityService.getPlayerCity(player.getUniqueId());
++        if (city.isPresent() && city.get().isMayor(player.getUniqueId()))
++          openAnnouncementInput(player, city.get().id());
++        else player.sendMessage(Component.text("只有市长可以修改公告", NamedTextColor.RED));
+       }
+       case TELEPORT -> {
+         Optional<City> cityOpt = cityService.getPlayerCity(player.getUniqueId());
+@@ -793,116 +803,99 @@ public final class CityMenuListener implements Listener {
+       return;
+     }
+ 
+-    ItemStack previousHand = player.getInventory().getItemInMainHand().clone();
+-    pendingAmounts.put(
+-        player.getUniqueId(), new PendingAmount(operation, city.get().id(), previousHand));
+-    player.closeInventory();
+-    ItemStack book = new ItemStack(org.bukkit.Material.WRITABLE_BOOK);
+-    BookMeta meta = (BookMeta) book.getItemMeta();
+-    meta.setTitle("City amount");
+-    meta.setAuthor("StarCore");
+-    meta.addPage("");
+-    book.setItemMeta(meta);
+-    player.getInventory().setItemInMainHand(book);
+-    player.sendActionBar(Component.text("右键打开输入书本，填写金额后签名确认。", NamedTextColor.YELLOW));
+-  }
+-
+-  @EventHandler
+-  public void onAnnouncementBookEdit(PlayerEditBookEvent event) {
+-    UUID playerId = event.getPlayer().getUniqueId();
+-    if (!Boolean.TRUE.equals(pendingAnnouncementBooks.remove(playerId))) {
+-      return;
+-    }
+-    event.setCancelled(true);
+-    BookInputSupport.restore(event.getPlayer());
+-    String text = String.join("\n", event.getNewBookMeta().getPages()).trim();
+-    Bukkit.getScheduler()
+-        .runTask(
+-            plugin,
+-            () -> {
+-              if (text.isBlank() || text.length() > 100) {
+-                event
+-                    .getPlayer()
+-                    .sendMessage(
+-                        Component.text(
+-                            "Announcement must contain 1-100 characters.", NamedTextColor.RED));
+-                openAnnouncementGui(event.getPlayer());
+-                return;
+-              }
+-              stageAnnouncement(event.getPlayer(), text);
+-              openAnnouncementGui(event.getPlayer());
+-            });
+-  }
+-
+-  @EventHandler
+-  public void onCityNameBookEdit(PlayerEditBookEvent event) {
+-    UUID playerId = event.getPlayer().getUniqueId();
+-    if (!Boolean.TRUE.equals(pendingCityNameBooks.remove(playerId))) return;
+-    event.setCancelled(true);
+-    BookInputSupport.restore(event.getPlayer());
+-    String text = String.join("\n", event.getNewBookMeta().getPages()).trim();
+-    Bukkit.getScheduler()
+-        .runTask(
+-            plugin,
+-            () -> {
+-              if (text.isBlank() || text.length() > 32) {
+-                event
+-                    .getPlayer()
+-                    .sendMessage(
+-                        Component.text(
+-                            "City name must contain 1-32 characters.", NamedTextColor.RED));
+-                openCreateGui(event.getPlayer());
+-                return;
+-              }
+-              cityNameDrafts.put(playerId, text);
+-              openCreateGui(event.getPlayer());
+-            });
+-  }
+-
+-  @EventHandler
+-  public void onAmountBookEdit(PlayerEditBookEvent event) {
+-    UUID playerId = event.getPlayer().getUniqueId();
+-    PendingAmount pending = pendingAmounts.remove(playerId);
+-    if (pending == null) {
+-      return;
+-    }
+-    CityAmountGui.Operation operation = pending.operation();
+-    event.setCancelled(true);
+-    event.getPlayer().getInventory().setItemInMainHand(pending.previousHand());
+-    if (stopped
+-        || cityService
+-            .getPlayerCity(playerId)
+-            .filter(city -> city.id().equals(pending.cityId()))
+-            .isEmpty()) {
+-      event.getPlayer().sendMessage(Component.text("城市归属已变化，请重新打开转账页面", NamedTextColor.RED));
+-      return;
+-    }
+-    String raw = String.join("\n", event.getNewBookMeta().getPages()).trim();
+-    BigDecimal amount = CityAmountParser.parse(raw).orElse(null);
+-    if (amount == null) {
+-      event
+-          .getPlayer()
+-          .sendMessage(
+-              Component.text(
+-                  "Enter a positive amount with at most 2 decimal places.", NamedTextColor.RED));
+-      dev.starcore.starcore.core.scheduler.CompatScheduler.entity(
+-          plugin,
+-          event.getPlayer(),
+-          () -> {
+-            if (!stopped) openAmountInput(event.getPlayer(), operation);
++    UUID originalCity = city.get().id();
++    openText(
++        player,
++        new CityTextInput.Prompt(
++            operation == CityAmountGui.Operation.DEPOSIT ? "存入城市" : "从城市取款", "金额", "", 64, false),
++        (actor, text) -> {
++          if (!sameCity(actor, originalCity, operation == CityAmountGui.Operation.WITHDRAW)
++              || !actor.hasPermission("starcore.city.money")) return;
++          var amount = CityAmountParser.parse(text);
++          if (amount.isEmpty()) {
++            actor.sendMessage(Component.text("请输入最多两位小数的正数金额", NamedTextColor.RED));
++            openAmountInput(actor, operation);
++            return;
++          }
++          openAmountMenu(actor, operation, amount.get());
++        },
++        this::openMenu);
++  }
++
++  private boolean sameCity(Player player, UUID cityId, boolean mayor) {
++    if (stopped) return false;
++    var city = cityService.getPlayerCity(player.getUniqueId());
++    if (city.isPresent()
++        && city.get().id().equals(cityId)
++        && (!mayor || city.get().isMayor(player.getUniqueId()))) return true;
++    player.sendMessage(Component.text("城市归属或权限已变化，请重新打开菜单", NamedTextColor.RED));
++    return false;
++  }
++
++  private void openText(
++      Player player,
++      CityTextInput.Prompt prompt,
++      java.util.function.BiConsumer<Player, String> submit,
++      java.util.function.Consumer<Player> cancel) {
++    if (stopped) return;
++    try {
++      textInput.open(
++          player,
++          prompt,
++          (actor, text) -> {
++            if (!stopped) submit.accept(actor, text);
++          },
++          actor -> {
++            if (!stopped) cancel.accept(actor);
+           });
+-      return;
+-    }
+-    dev.starcore.starcore.core.scheduler.CompatScheduler.entity(
+-        plugin,
+-        event.getPlayer(),
+-        () -> {
+-          if (!stopped
+-              && cityService
+-                  .getPlayerCity(playerId)
+-                  .filter(city -> city.id().equals(pending.cityId()))
+-                  .isPresent()) openAmountMenu(event.getPlayer(), operation, amount);
+-        });
++    } catch (RuntimeException | LinkageError unavailable) {
++      player.sendMessage(Component.text("无法打开输入窗口，请稍后重试或使用城市命令", NamedTextColor.RED));
++    }
++  }
++
++  private void openNameInput(Player player, NationId nationId) {
++    var draft = cityNameDrafts.get(player.getUniqueId());
++    String initial = draft != null && draft.nationId().equals(nationId) ? draft.text() : "";
++    openText(
++        player,
++        new CityTextInput.Prompt("创建城市", "城市名称", initial, 32, false),
++        (actor, text) -> {
++          var nation = nationService.nationOf(actor.getUniqueId());
++          if (nation.isEmpty()
++              || !nation.get().id().equals(nationId)
++              || !actor.getUniqueId().equals(nation.get().founderId())) {
++            actor.sendMessage(Component.text("国家归属或创建权限已变化", NamedTextColor.RED));
++            return;
++          }
++          if (text.isBlank() || text.contains("\n") || text.contains("\r")) {
++            actor.sendMessage(Component.text("请输入 1–32 字的单行城市名称", NamedTextColor.RED));
++            openNameInput(actor, nationId);
++            return;
++          }
++          cityNameDrafts.put(actor.getUniqueId(), new NameDraft(nationId, text));
++          openCreateGui(actor);
++        },
++        this::openCreateGui);
++  }
++
++  private void openAnnouncementInput(Player player, UUID cityId) {
++    if (!sameCity(player, cityId, true)) return;
++    var draft = announcementDrafts.get(player.getUniqueId());
++    String initial = draft != null && draft.cityId().equals(cityId) ? draft.text() : "";
++    openText(
++        player,
++        new CityTextInput.Prompt("城市公告", "公告内容", initial, 100, true),
++        (actor, text) -> {
++          if (!sameCity(actor, cityId, true)) return;
++          if (text.isBlank()) {
++            actor.sendMessage(Component.text("公告不能为空", NamedTextColor.RED));
++            openAnnouncementInput(actor, cityId);
++            return;
++          }
++          announcementDrafts.put(actor.getUniqueId(), new AnnouncementDraft(cityId, text));
++          openAnnouncementGui(actor);
++        },
++        this::openAnnouncementGui);
+   }
+ 
+   private void openAmountMenu(Player player, CityAmountGui.Operation operation, BigDecimal amount) {
+@@ -955,8 +948,11 @@ public final class CityMenuListener implements Listener {
+ 
+   public void shutdown() {
+     stopped = true;
++    textInput.close();
+     openMenus.clear();
+     detailMenus.clear();
++    announcementDrafts.clear();
++    cityNameDrafts.clear();
+   }
+ 
+   private void openManagement(Player player, CityDetailsGui.Operation operation) {
+@@ -1009,87 +1005,4 @@ public final class CityMenuListener implements Listener {
+             success ? NamedTextColor.GREEN : NamedTextColor.RED));
+     openMenu(player);
+   }
+-
+-  private boolean stageAnnouncement(Player player, String text) {
+-    announcementDrafts.put(player.getUniqueId(), text);
+-    player.sendMessage(
+-        Component.text(
+-            "Draft ready. Review it in the announcement menu before saving.",
+-            NamedTextColor.YELLOW));
+-    return true;
+-  }
+-
+-  @EventHandler
+-  public void onAnnouncementChat(AsyncPlayerChatEvent event) {
+-    UUID playerId = event.getPlayer().getUniqueId();
+-    if (Boolean.TRUE.equals(pendingCityNames.remove(playerId))) {
+-      event.setCancelled(true);
+-      String text = event.getMessage().trim();
+-      Bukkit.getScheduler()
+-          .runTask(
+-              plugin,
+-              () -> {
+-                if (text.equalsIgnoreCase("cancel")) {
+-                  openCreateGui(event.getPlayer());
+-                  return;
+-                }
+-                if (text.isBlank() || text.length() > 32) {
+-                  event
+-                      .getPlayer()
+-                      .sendMessage(
+-                          Component.text(
+-                              "City name must contain 1-32 characters.", NamedTextColor.RED));
+-                  openCreateGui(event.getPlayer());
+-                  return;
+-                }
+-                cityNameDrafts.put(playerId, text);
+-                event
+-                    .getPlayer()
+-                    .sendMessage(
+-                        Component.text(
+-                            "Review the city name before creating.", NamedTextColor.YELLOW));
+-                openCreateGui(event.getPlayer());
+-              });
+-      return;
+-    }
+-    if (!Boolean.TRUE.equals(pendingAnnouncements.remove(playerId))) return;
+-    event.setCancelled(true);
+-    String text = event.getMessage().trim();
+-    Bukkit.getScheduler()
+-        .runTask(
+-            plugin,
+-            () -> {
+-              if (text.equalsIgnoreCase("cancel")) {
+-                openAnnouncementGui(event.getPlayer());
+-                return;
+-              }
+-              if (text.isBlank()) {
+-                event
+-                    .getPlayer()
+-                    .sendMessage(
+-                        Component.text("Announcement cannot be empty.", NamedTextColor.RED));
+-                openAnnouncementGui(event.getPlayer());
+-                return;
+-              }
+-              if (text.length() > 100) {
+-                event.getPlayer().sendMessage(Component.text("公告不能超过 100 个字符", NamedTextColor.RED));
+-                openAnnouncementGui(event.getPlayer());
+-                return;
+-              }
+-              if (stageAnnouncement(event.getPlayer(), text)) {
+-                openAnnouncementGui(event.getPlayer());
+-                return;
+-              }
+-              Optional<City> city = cityService.getPlayerCity(playerId);
+-              boolean saved =
+-                  city.isPresent() && cityService.setAnnouncement(city.get().id(), playerId, text);
+-              event
+-                  .getPlayer()
+-                  .sendMessage(
+-                      Component.text(
+-                          saved ? "公告已更新" : "公告更新失败",
+-                          saved ? NamedTextColor.GREEN : NamedTextColor.RED));
+-              openMenu(event.getPlayer());
+-            });
+-  }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/city/gui/CityTextInput.java b/src/main/java/dev/starcore/starcore/module/city/gui/CityTextInput.java
+new file mode 100644
+index 0000000..292c388
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/gui/CityTextInput.java
+@@ -0,0 +1,166 @@
++package dev.starcore.starcore.module.city.gui;
++
++import dev.starcore.starcore.core.scheduler.CompatScheduler;
++import java.lang.ref.WeakReference;
++import java.time.Duration;
++import java.util.*;
++import java.util.concurrent.ConcurrentHashMap;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.function.*;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.format.NamedTextColor;
++import org.bukkit.entity.Player;
++import org.bukkit.plugin.Plugin;
++
++/** Ephemeral input only: no inventory replacement, escrow, or persisted player item snapshot. */
++final class CityTextInput implements AutoCloseable {
++  static final Duration LIFETIME = Duration.ofMinutes(5);
++
++  record Prompt(String title, String label, String initial, int maxLength, boolean multiline) {
++    Prompt {
++      Objects.requireNonNull(title);
++      Objects.requireNonNull(label);
++      Objects.requireNonNull(initial);
++      if (maxLength < 1 || initial.length() > maxLength)
++        throw new IllegalArgumentException("Invalid city input");
++    }
++  }
++
++  interface View {
++    void show(
++        Player player, Prompt prompt, BiConsumer<Player, String> submit, Consumer<Player> cancel);
++  }
++
++  interface Dispatcher {
++    void execute(Player player, Runnable action, Runnable retired);
++  }
++
++  private static final class Session {
++    final UUID account;
++    final WeakReference<Player> player;
++    final long started;
++    final AtomicBoolean submitted = new AtomicBoolean();
++
++    Session(Player player, long started) {
++      this.account = player.getUniqueId();
++      this.player = new WeakReference<>(player);
++      this.started = started;
++    }
++  }
++
++  private final View view;
++  private final Dispatcher dispatcher;
++  private final LongSupplier clock;
++  private final Map<UUID, Session> sessions = new ConcurrentHashMap<>();
++  private final Object publication = new Object();
++  private volatile boolean stopped;
++
++  CityTextInput(Plugin plugin) {
++    this(
++        new PaperCityTextDialog(),
++        (player, action, retired) -> CompatScheduler.entity(plugin, player, action, retired),
++        System::nanoTime);
++  }
++
++  CityTextInput(View view, Dispatcher dispatcher, LongSupplier clock) {
++    this.view = Objects.requireNonNull(view);
++    this.dispatcher = Objects.requireNonNull(dispatcher);
++    this.clock = Objects.requireNonNull(clock);
++  }
++
++  void open(
++      Player player, Prompt prompt, BiConsumer<Player, String> submit, Consumer<Player> cancel) {
++    final Session session;
++    synchronized (publication) {
++      if (stopped) throw new IllegalStateException("City input service stopped");
++      sessions.entrySet().removeIf(e -> expired(e.getValue()) || e.getValue().player.get() == null);
++      session = new Session(player, clock.getAsLong());
++      sessions.put(session.account, session);
++    }
++    try {
++      dispatcher.execute(
++          player,
++          () -> {
++            synchronized (publication) {
++              if (!current(session, player) || !player.isOnline()) {
++                sessions.remove(session.account, session);
++                return;
++              }
++              try {
++                view.show(
++                    player,
++                    prompt,
++                    (actor, text) ->
++                        dispatch(
++                            session,
++                            actor,
++                            () -> {
++                              if (text == null || text.length() > prompt.maxLength()) {
++                                actor.sendMessage(
++                                    Component.text("输入内容超出长度限制，请重新输入", NamedTextColor.RED));
++                                cancel.accept(actor);
++                                return;
++                              }
++                              submit.accept(actor, text.trim());
++                            }),
++                    actor -> dispatch(session, actor, () -> cancel.accept(actor)));
++              } catch (RuntimeException | LinkageError failure) {
++                sessions.remove(session.account, session);
++                player.sendMessage(Component.text("无法打开输入窗口，请稍后重试或使用城市命令", NamedTextColor.RED));
++                throw failure;
++              }
++            }
++          },
++          () -> sessions.remove(session.account, session));
++    } catch (RuntimeException failure) {
++      sessions.remove(session.account, session);
++      throw failure;
++    }
++  }
++
++  private boolean expired(Session session) {
++    return clock.getAsLong() - session.started >= LIFETIME.toNanos();
++  }
++
++  private boolean current(Session session, Player actor) {
++    return !stopped
++        && session.player.get() == actor
++        && sessions.get(session.account) == session
++        && !expired(session);
++  }
++
++  private void dispatch(Session session, Player actor, Runnable action) {
++    if (!current(session, actor) || !session.submitted.compareAndSet(false, true)) return;
++    try {
++      dispatcher.execute(
++          actor,
++          () -> {
++            if (!current(session, actor)) {
++              sessions.remove(session.account, session);
++              return;
++            }
++            if (!actor.isOnline()) {
++              sessions.remove(session.account, session);
++              return;
++            }
++            if (sessions.remove(session.account, session) && !stopped) action.run();
++          },
++          () -> sessions.remove(session.account, session));
++    } catch (RuntimeException failure) {
++      sessions.remove(session.account, session);
++      throw failure;
++    }
++  }
++
++  void cancel(Player player) {
++    sessions.computeIfPresent(
++        player.getUniqueId(), (id, session) -> session.player.get() == player ? null : session);
++  }
++
++  public void close() {
++    synchronized (publication) {
++      stopped = true;
++      sessions.clear();
++    }
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/city/gui/PaperCityTextDialog.java b/src/main/java/dev/starcore/starcore/module/city/gui/PaperCityTextDialog.java
+new file mode 100644
+index 0000000..0cf1e5b
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/city/gui/PaperCityTextDialog.java
+@@ -0,0 +1,73 @@
++package dev.starcore.starcore.module.city.gui;
++
++import io.papermc.paper.dialog.Dialog;
++import io.papermc.paper.registry.data.dialog.*;
++import io.papermc.paper.registry.data.dialog.action.DialogAction;
++import io.papermc.paper.registry.data.dialog.input.*;
++import io.papermc.paper.registry.data.dialog.type.DialogType;
++import java.util.List;
++import java.util.function.*;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.event.ClickCallback;
++import org.bukkit.entity.Player;
++
++/** Native 1.21.11 text form. Values are callback data, never command templates or real items. */
++final class PaperCityTextDialog implements CityTextInput.View {
++  public void show(
++      Player player,
++      CityTextInput.Prompt prompt,
++      BiConsumer<Player, String> submit,
++      Consumer<Player> cancel) {
++    var dialog = Dialog.create(factory -> configure(factory.empty(), prompt, submit, cancel));
++    player.closeInventory();
++    player.showDialog(dialog);
++  }
++
++  static void configure(
++      DialogRegistryEntry.Builder builder,
++      CityTextInput.Prompt prompt,
++      BiConsumer<Player, String> submit,
++      Consumer<Player> cancel) {
++    var input =
++        DialogInput.text("value", Component.text(prompt.label()))
++            .initial(prompt.initial())
++            .maxLength(prompt.maxLength())
++            .width(300);
++    if (prompt.multiline()) input.multiline(TextDialogInput.MultilineOptions.create(5, 100));
++    // Ownership and one-shot consumption belong to CityTextInput; foreign audiences cannot consume
++    // it.
++    var options =
++        ClickCallback.Options.builder()
++            .uses(ClickCallback.UNLIMITED_USES)
++            .lifetime(CityTextInput.LIFETIME)
++            .build();
++    var confirm =
++        ActionButton.builder(Component.text("预览"))
++            .action(
++                DialogAction.customClick(
++                    (response, audience) -> {
++                      if (audience instanceof Player actor)
++                        submit.accept(actor, response.getText("value"));
++                    },
++                    options))
++            .build();
++    var back =
++        ActionButton.builder(Component.text("取消"))
++            .action(
++                DialogAction.customClick(
++                    (response, audience) -> {
++                      if (audience instanceof Player actor) cancel.accept(actor);
++                    },
++                    options))
++            .build();
++    builder
++        .base(
++            DialogBase.builder(Component.text(prompt.title()))
++                .canCloseWithEscape(true)
++                .pause(false)
++                .afterAction(DialogBase.DialogAfterAction.CLOSE)
++                .inputs(List.of(input.build()))
++                .build())
++        .type(DialogType.confirmation(confirm, back));
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/city/gui/CityAmountInputTest.java b/src/test/java/dev/starcore/starcore/module/city/gui/CityAmountInputTest.java
+new file mode 100644
+index 0000000..e140060
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/city/gui/CityAmountInputTest.java
+@@ -0,0 +1,116 @@
++package dev.starcore.starcore.module.city.gui;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.extension.ExtensionRegistry;
++import dev.starcore.starcore.module.city.*;
++import java.lang.reflect.Method;
++import java.math.BigDecimal;
++import java.nio.file.Path;
++import java.util.*;
++import java.util.logging.Logger;
++import org.bukkit.entity.Player;
++import org.junit.jupiter.api.*;
++import org.junit.jupiter.api.io.TempDir;
++
++class CityAmountInputTest {
++  @TempDir Path directory;
++
++  @BeforeEach
++  void extensions() {
++    ExtensionRegistry.init(Logger.getAnonymousLogger());
++    ExtensionRegistry.getInstance().clear();
++  }
++
++  static void open(CityMenuListener listener, Player player, CityAmountGui.Operation operation)
++      throws Exception {
++    Method method =
++        CityMenuListener.class.getDeclaredMethod(
++            "openAmountInput", Player.class, CityAmountGui.Operation.class);
++    method.setAccessible(true);
++    method.invoke(listener, player, operation);
++  }
++
++  @Test
++  void realFundsMoveOnlyAfterExactInputAndBoundConfirmation() throws Exception {
++    try (var f = new CityMoneyTestFixture(directory, false)) {
++      var player = CityTextInputTest.player(f.mayor);
++      when(player.hasPermission("starcore.city.money")).thenReturn(true);
++      var forms = new ArrayList<CityTextInputTest.Form>();
++      var tasks = new ArrayDeque<Runnable>();
++      var inputs =
++          new CityTextInput(
++              (owner, prompt, submit, cancel) ->
++                  forms.add(new CityTextInputTest.Form(owner, prompt, submit, cancel)),
++              (owner, task, retired) -> tasks.add(task),
++              System::nanoTime);
++      var money = f.money();
++      var listener = new CityMenuListener(f.service, mock(), f.economy, mock(), money, inputs);
++      var requests = new ArrayList<CityMoneyService.Request>();
++      try (var menus =
++          mockConstruction(
++              CityAmountGui.class,
++              (gui, ctx) -> {
++                var request = (CityMoneyService.Request) ctx.arguments().get(4);
++                requests.add(request);
++                when(gui.request()).thenReturn(request);
++              })) {
++        open(listener, player, CityAmountGui.Operation.DEPOSIT);
++        assertThat(forms).isEmpty();
++        tasks.remove().run();
++        forms.getLast().submit().accept(player, "12.34");
++        assertThat(requests).isEmpty();
++        tasks.remove().run();
++        assertThat(requests).hasSize(1);
++        assertThat(requests.getFirst().amount()).isEqualByComparingTo("12.34");
++        assertThat(money.operation(requests.getFirst().operationId())).isEmpty();
++        assertThat(f.economy.balance(f.mayor)).isEqualByComparingTo("100");
++        var event = new CityMoneyInventoryTest().click(player, menus.constructed().getFirst(), 11);
++        listener.onInventoryClick(event);
++        listener.onInventoryClick(event);
++        assertThat(f.economy.balance(f.mayor)).isEqualByComparingTo("87.66");
++        assertThat(f.cityBalance()).isEqualByComparingTo("112.34");
++        verify(player, never()).getInventory();
++      }
++    }
++  }
++
++  @Test
++  void invalidAmountReopensInputAndRevokedPermissionStopsConfirmation() throws Exception {
++    var f = new CityInputTestFixture();
++    when(f.economy.getBalance(f.player.getUniqueId())).thenReturn(new BigDecimal("100"));
++    open(f.listener, f.player, CityAmountGui.Operation.DEPOSIT);
++    f.drain();
++    f.submit("0.001");
++    assertThat(f.forms).hasSize(2);
++    when(f.player.hasPermission("starcore.city.money")).thenReturn(false);
++    try (var menus = mockConstruction(CityAmountGui.class)) {
++      f.submit("10");
++      assertThat(menus.constructed()).isEmpty();
++    }
++    verify(f.money, never()).transfer(any());
++    verify(f.player, never()).getInventory();
++  }
++
++  @Test
++  void oldAmountInputCannotFollowMembershipOrMayorChange() throws Exception {
++    for (boolean move : List.of(false, true)) {
++      var f = new CityInputTestFixture();
++      open(f.listener, f.player, CityAmountGui.Operation.WITHDRAW);
++      f.drain();
++      if (move) when(f.cities.getPlayerCity(f.player.getUniqueId())).thenReturn(Optional.empty());
++      else {
++        var successor = UUID.randomUUID();
++        f.city.addResident(successor);
++        f.city.transferMayor(successor);
++      }
++      try (var menus = mockConstruction(CityAmountGui.class)) {
++        f.submit("10");
++        assertThat(menus.constructed()).isEmpty();
++      }
++      verify(f.money, never()).transfer(any());
++      verify(f.player, never()).getInventory();
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/city/gui/CityAnnouncementBookInputContractTest.java b/src/test/java/dev/starcore/starcore/module/city/gui/CityAnnouncementBookInputContractTest.java
+index 1d1a27c..ed997c2 100644
+--- a/src/test/java/dev/starcore/starcore/module/city/gui/CityAnnouncementBookInputContractTest.java
++++ b/src/test/java/dev/starcore/starcore/module/city/gui/CityAnnouncementBookInputContractTest.java
+@@ -1,26 +1,119 @@
+ package dev.starcore.starcore.module.city.gui;
+ 
+-import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
+ 
+-import java.nio.file.Files;
+-import java.nio.file.Path;
++import dev.starcore.starcore.module.city.model.City;
++import java.util.*;
+ import org.junit.jupiter.api.Test;
+ 
+ class CityAnnouncementBookInputContractTest {
+   @Test
+-  void announcementEditingUsesBookInputAndKeepsTheDraftPreviewFlow() throws Exception {
+-    String listener =
+-        Files.readString(
+-            Path.of("src/main/java/dev/starcore/starcore/module/city/gui/CityMenuListener.java"));
+-    String gui =
+-        Files.readString(
+-            Path.of("src/main/java/dev/starcore/starcore/module/city/gui/CityAnnouncementGui.java"));
+-
+-    assertThat(listener)
+-        .contains("pendingAnnouncementBooks")
+-        .contains("BookInputSupport.prepare(player, \"City announcement\", \"\")")
+-        .contains("onAnnouncementBookEdit")
+-        .contains("stageAnnouncement(event.getPlayer(), text)");
+-    assertThat(gui).contains("Write in the book input.");
++  void inputOnlyStagesMultilineDraftAndExplicitSavePublishesOnce() {
++    var f = new CityInputTestFixture();
++    when(f.cities.setAnnouncement(f.city.id(), f.player.getUniqueId(), "第一行\n第二行"))
++        .thenReturn(true);
++    var previews = new ArrayList<List<?>>();
++    try (var construction =
++        mockConstruction(CityAnnouncementGui.class, (gui, ctx) -> previews.add(ctx.arguments()))) {
++      f.click(f.announcementGui(null), 11);
++      assertThat(f.forms.getLast().prompt().multiline()).isTrue();
++      assertThat(f.forms.getLast().prompt().maxLength()).isEqualTo(100);
++      f.submit("第一行\n第二行");
++      verify(f.cities, never()).setAnnouncement(any(), any(), any());
++      assertThat(previews.getFirst())
++          .isEqualTo(List.of(f.player.getUniqueId(), f.city, "第一行\n第二行"));
++      var confirm = f.announcementGui("第一行\n第二行");
++      f.click(confirm, 13);
++      f.click(confirm, 13);
++      verify(f.cities, times(1)).setAnnouncement(f.city.id(), f.player.getUniqueId(), "第一行\n第二行");
++      verify(f.player, never()).getInventory();
++    }
++  }
++
++  @Test
++  void failedSaveKeepsOriginalDraftForExplicitRetry() {
++    var f = new CityInputTestFixture();
++    when(f.cities.setAnnouncement(f.city.id(), f.player.getUniqueId(), "draft"))
++        .thenReturn(false, true);
++    try (var construction = mockConstruction(CityAnnouncementGui.class)) {
++      f.click(f.announcementGui(null), 11);
++      f.submit("draft");
++      var confirm = f.announcementGui("draft");
++      f.click(confirm, 13);
++      f.click(confirm, 13);
++      f.click(confirm, 13);
++      verify(f.cities, times(2)).setAnnouncement(f.city.id(), f.player.getUniqueId(), "draft");
++    }
++  }
++
++  @Test
++  void changedCityOrMayorDuringInputCannotPublishOrStageForAnotherCity() {
++    for (boolean changedCity : List.of(false, true)) {
++      var f = new CityInputTestFixture();
++      f.click(f.announcementGui(null), 11);
++      if (changedCity) {
++        var other = City.create(f.city.nationId(), "other", f.player.getUniqueId(), null);
++        when(f.cities.getPlayerCity(f.player.getUniqueId())).thenReturn(Optional.of(other));
++      } else {
++        var successor = UUID.randomUUID();
++        f.city.addResident(successor);
++        f.city.transferMayor(successor);
++      }
++      try (var preview = mockConstruction(CityAnnouncementGui.class)) {
++        f.submit("stale");
++        assertThat(preview.constructed()).isEmpty();
++      }
++      verify(f.cities, never()).setAnnouncement(any(), any(), any());
++      verify(f.player, never()).getInventory();
++    }
++  }
++
++  @Test
++  void previewedDraftAndClearConfirmationRemainBoundToOriginalCity() {
++    var f = new CityInputTestFixture();
++    try (var preview = mockConstruction(CityAnnouncementGui.class)) {
++      f.click(f.announcementGui(null), 11);
++      f.submit("original");
++      var confirm = f.announcementGui("original");
++      var clear = f.announcementGui(null);
++      when(clear.page()).thenReturn(CityAnnouncementGui.Page.CLEAR_CONFIRM);
++      var other = City.create(f.city.nationId(), "other", f.player.getUniqueId(), null);
++      other.setAnnouncement("keep");
++      when(f.cities.getPlayerCity(f.player.getUniqueId())).thenReturn(Optional.of(other));
++      f.click(confirm, 13);
++      f.click(clear, 11);
++      verify(f.cities, never()).setAnnouncement(any(), any(), any());
++    }
++  }
++
++  @Test
++  void supersededDraftCannotBePublishedAndForeignPlayerCannotConfirm() {
++    var f = new CityInputTestFixture();
++    try (var preview = mockConstruction(CityAnnouncementGui.class)) {
++      f.click(f.announcementGui(null), 11);
++      f.submit("old");
++      var old = f.announcementGui("old");
++      f.click(old, 11);
++      f.submit("new");
++      f.click(old, 13);
++      f.click(CityTextInputTest.player(UUID.randomUUID()), f.announcementGui("new"), 13);
++      verify(f.cities, never()).setAnnouncement(any(), any(), any());
++    }
++  }
++
++  @Test
++  void cancelAndInvalidTextDoNotChangeAnnouncementOrInventory() {
++    var f = new CityInputTestFixture();
++    f.click(f.announcementGui(null), 11);
++    f.submit("  ");
++    assertThat(f.forms).hasSize(2);
++    try (var preview = mockConstruction(CityAnnouncementGui.class)) {
++      f.forms.getLast().cancel().accept(f.player);
++      f.drain();
++      assertThat(preview.constructed()).hasSize(1);
++    }
++    verify(f.cities, never()).setAnnouncement(any(), any(), any());
++    verify(f.player, never()).getInventory();
+   }
+ }
+diff --git a/src/test/java/dev/starcore/starcore/module/city/gui/CityInputTestFixture.java b/src/test/java/dev/starcore/starcore/module/city/gui/CityInputTestFixture.java
+new file mode 100644
+index 0000000..3b21b08
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/city/gui/CityInputTestFixture.java
+@@ -0,0 +1,92 @@
++package dev.starcore.starcore.module.city.gui;
++
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.foundation.economy.EconomyService;
++import dev.starcore.starcore.module.city.*;
++import dev.starcore.starcore.module.city.model.City;
++import dev.starcore.starcore.module.nation.NationService;
++import dev.starcore.starcore.module.nation.model.*;
++import java.util.*;
++import org.bukkit.entity.Player;
++import org.bukkit.event.inventory.InventoryClickEvent;
++import org.bukkit.inventory.*;
++import org.bukkit.plugin.Plugin;
++
++final class CityInputTestFixture {
++  final UUID actorId = UUID.randomUUID();
++  final Player player = CityTextInputTest.player(actorId);
++  final CityService cities = mock(CityService.class);
++  final NationService nations = mock(NationService.class);
++  final CityMoneyService money = mock(CityMoneyService.class);
++  final EconomyService economy = mock(EconomyService.class);
++  final Plugin plugin = mock(Plugin.class);
++  final Nation nation = mock(Nation.class);
++  final City city = City.create(NationId.random(), "original", player.getUniqueId(), null);
++  final List<CityTextInputTest.Form> forms = new ArrayList<>();
++  final Deque<CityTextInputTest.Task> tasks = new ArrayDeque<>();
++  final CityTextInput inputs =
++      new CityTextInput(
++          (owner, prompt, submit, cancel) ->
++              forms.add(new CityTextInputTest.Form(owner, prompt, submit, cancel)),
++          (owner, action, retired) -> tasks.add(new CityTextInputTest.Task(action, retired)),
++          System::nanoTime);
++  final CityMenuListener listener =
++      new CityMenuListener(cities, nations, economy, plugin, money, inputs);
++
++  CityInputTestFixture() {
++    when(nation.id()).thenReturn(city.nationId());
++    when(nation.founderId()).thenReturn(actorId);
++    when(nations.nationOf(player.getUniqueId())).thenReturn(Optional.of(nation));
++    when(cities.getPlayerCity(player.getUniqueId())).thenReturn(Optional.of(city));
++    when(player.hasPermission("starcore.city.money")).thenReturn(true);
++    city.setTreasury(100);
++  }
++
++  void click(InventoryHolder holder, int slot) {
++    click(player, holder, slot);
++  }
++
++  void click(Player actor, InventoryHolder holder, int slot) {
++    var inventory = mock(Inventory.class);
++    when(inventory.getHolder()).thenReturn(holder);
++    var view = mock(InventoryView.class);
++    when(view.getTopInventory()).thenReturn(inventory);
++    var event = mock(InventoryClickEvent.class);
++    when(event.getWhoClicked()).thenReturn(actor);
++    when(event.getView()).thenReturn(view);
++    when(event.getInventory()).thenReturn(inventory);
++    when(event.getClickedInventory()).thenReturn(inventory);
++    when(event.getRawSlot()).thenReturn(slot);
++    int before = tasks.size();
++    listener.onInventoryClick(event);
++    if (tasks.size() > before) tasks.removeLast().run().run();
++  }
++
++  CityCreateGui nameGui(String text) {
++    var nationId = nation.id();
++    var gui = mock(CityCreateGui.class);
++    when(gui.actorId()).thenReturn(actorId);
++    when(gui.nationId()).thenReturn(nationId);
++    when(gui.draft()).thenReturn(text);
++    return gui;
++  }
++
++  CityAnnouncementGui announcementGui(String text) {
++    var gui = mock(CityAnnouncementGui.class);
++    when(gui.actorId()).thenReturn(actorId);
++    when(gui.cityId()).thenReturn(city.id());
++    when(gui.page()).thenReturn(CityAnnouncementGui.Page.EDIT);
++    when(gui.draft()).thenReturn(text);
++    return gui;
++  }
++
++  void submit(String text) {
++    forms.getLast().submit().accept(player, text);
++    drain();
++  }
++
++  void drain() {
++    while (!tasks.isEmpty()) tasks.remove().run().run();
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/city/gui/CityNameBookInputContractTest.java b/src/test/java/dev/starcore/starcore/module/city/gui/CityNameBookInputContractTest.java
+index 1b66410..fe260d5 100644
+--- a/src/test/java/dev/starcore/starcore/module/city/gui/CityNameBookInputContractTest.java
++++ b/src/test/java/dev/starcore/starcore/module/city/gui/CityNameBookInputContractTest.java
+@@ -1,26 +1,123 @@
+ package dev.starcore.starcore.module.city.gui;
+ 
+-import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
+ 
+-import java.nio.file.Files;
+-import java.nio.file.Path;
++import dev.starcore.starcore.module.city.CityService;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.util.*;
++import org.bukkit.event.player.PlayerQuitEvent;
++import org.bukkit.inventory.Inventory;
+ import org.junit.jupiter.api.Test;
+ 
+ class CityNameBookInputContractTest {
+   @Test
+-  void cityCreationUsesBookInputAndReturnsToDraftConfirmation() throws Exception {
+-    String listener =
+-        Files.readString(
+-            Path.of("src/main/java/dev/starcore/starcore/module/city/gui/CityMenuListener.java"));
+-    String gui =
+-        Files.readString(
+-            Path.of("src/main/java/dev/starcore/starcore/module/city/gui/CityCreateGui.java"));
+-
+-    assertThat(listener)
+-        .contains("pendingCityNameBooks")
+-        .contains("BookInputSupport.prepare(player, \"City name\", \"\")")
+-        .contains("onCityNameBookEdit")
+-        .contains("cityNameDrafts.put(playerId, text)");
+-    assertThat(gui).contains("Write the name in the book input.");
++  void nativeInputPreviewsNameWithoutCreatingCityOrReplacingItems() {
++    var f = new CityInputTestFixture();
++    var previews = new ArrayList<List<?>>();
++    try (var construction =
++        mockConstruction(
++            CityCreateGui.class,
++            (gui, ctx) -> {
++              previews.add(ctx.arguments());
++              when(gui.getInventory()).thenReturn(mock(Inventory.class));
++            })) {
++      f.click(f.nameGui(null), 11);
++      assertThat(f.forms).hasSize(1);
++      assertThat(f.forms.getLast().prompt().maxLength()).isEqualTo(32);
++      f.submit("  城市名  ");
++      assertThat(previews).hasSize(1);
++      assertThat(previews.getFirst())
++          .isEqualTo(List.of(f.player.getUniqueId(), f.nation.id(), "城市名"));
++      verify(f.cities, never()).createCity(any(), any(), any(), any());
++      verify(f.player, never()).getInventory();
++    }
++  }
++
++  @Test
++  void confirmedCurrentDraftCreatesOnceAndDuplicateConfirmationIsRejected() {
++    var f = new CityInputTestFixture();
++    var nationId = f.nation.id();
++    when(f.cities.createCity(eq(nationId), eq("new city"), eq(f.actorId), any()))
++        .thenReturn(CityService.CreateCityResult.success(f.city));
++    try (var preview = mockConstruction(CityCreateGui.class);
++        var menu = mockConstruction(CityMenuGui.class)) {
++      f.click(f.nameGui(null), 11);
++      f.submit("new city");
++      var confirmation = f.nameGui("new city");
++      f.click(confirmation, 11);
++      f.click(confirmation, 11);
++      verify(f.cities, times(1)).createCity(eq(nationId), eq("new city"), eq(f.actorId), any());
++      verify(f.player, never()).getInventory();
++    }
++  }
++
++  @Test
++  void nationOrFounderChangeWhileInputPendingRejectsDraft() {
++    for (boolean founderChanged : List.of(false, true)) {
++      var f = new CityInputTestFixture();
++      f.click(f.nameGui(null), 11);
++      if (founderChanged) when(f.nation.founderId()).thenReturn(UUID.randomUUID());
++      else when(f.nation.id()).thenReturn(NationId.random());
++      try (var preview = mockConstruction(CityCreateGui.class)) {
++        f.submit("stale");
++        assertThat(preview.constructed()).isEmpty();
++      }
++      verify(f.cities, never()).createCity(any(), any(), any(), any());
++      verify(f.player, never()).getInventory();
++    }
++  }
++
++  @Test
++  void nationChangeAfterPreviewAndForeignConfirmationCannotCreate() {
++    var f = new CityInputTestFixture();
++    try (var preview = mockConstruction(CityCreateGui.class)) {
++      f.click(f.nameGui(null), 11);
++      f.submit("draft");
++      var old = f.nameGui("draft");
++      f.click(CityTextInputTest.player(UUID.randomUUID()), old, 11);
++      when(f.nation.id()).thenReturn(NationId.random());
++      f.click(old, 11);
++      verify(f.cities, never()).createCity(any(), any(), any(), any());
++    }
++  }
++
++  @Test
++  void blankOrMultilineNameReturnsToInputWithoutMutation() {
++    var f = new CityInputTestFixture();
++    f.click(f.nameGui(null), 11);
++    f.submit("  ");
++    assertThat(f.forms).hasSize(2);
++    f.submit("two\nlines");
++    assertThat(f.forms).hasSize(3);
++    verify(f.cities, never()).createCity(any(), any(), any(), any());
++    verify(f.player, never()).getInventory();
++  }
++
++  @Test
++  void quitOrDisableDropsQueuedPreviewAndReopenedMenuCancelsOldInput() {
++    var f = new CityInputTestFixture();
++    f.click(f.nameGui(null), 11);
++    var old = f.forms.getLast();
++    old.submit().accept(f.player, "late");
++    var quit = mock(PlayerQuitEvent.class);
++    when(quit.getPlayer()).thenReturn(f.player);
++    f.listener.onPlayerQuit(quit);
++    f.drain();
++    try (var preview = mockConstruction(CityCreateGui.class);
++        var menu = mockConstruction(CityMenuGui.class)) {
++      f.click(f.nameGui(null), 11);
++      var reopened = f.forms.getLast();
++      f.listener.openMenu(f.player);
++      reopened.submit().accept(f.player, "stale");
++      f.drain();
++      f.click(f.nameGui(null), 11);
++      f.forms.getLast().submit().accept(f.player, "stopped");
++      f.listener.shutdown();
++      f.drain();
++      assertThat(preview.constructed()).isEmpty();
++    }
++    verify(f.cities, never()).createCity(any(), any(), any(), any());
++    verify(f.player, never()).getInventory();
+   }
+ }
+diff --git a/src/test/java/dev/starcore/starcore/module/city/gui/CityTextInputTest.java b/src/test/java/dev/starcore/starcore/module/city/gui/CityTextInputTest.java
+new file mode 100644
+index 0000000..7166324
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/city/gui/CityTextInputTest.java
+@@ -0,0 +1,290 @@
++package dev.starcore.starcore.module.city.gui;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.*;
++import java.util.function.*;
++import org.bukkit.entity.Player;
++import org.junit.jupiter.api.Test;
++
++class CityTextInputTest {
++  record Form(
++      Player owner,
++      CityTextInput.Prompt prompt,
++      BiConsumer<Player, String> submit,
++      Consumer<Player> cancel) {}
++
++  record Task(Runnable run, Runnable retired) {}
++
++  static class Fixture {
++    final List<Form> forms = new ArrayList<>();
++    final Deque<Task> tasks = new ArrayDeque<>();
++    final List<String> results = new ArrayList<>();
++    final AtomicLong clock = new AtomicLong();
++    final Player player = player(UUID.randomUUID());
++    final CityTextInput input =
++        new CityTextInput(
++            (owner, prompt, submit, cancel) -> forms.add(new Form(owner, prompt, submit, cancel)),
++            (owner, action, retired) -> tasks.add(new Task(action, retired)),
++            clock::get);
++
++    void queueOpen() {
++      input.open(
++          player,
++          new CityTextInput.Prompt("title", "label", "", 100, true),
++          (actor, text) -> results.add(text),
++          actor -> results.add("cancel"));
++    }
++
++    Form open() {
++      queueOpen();
++      tasks.removeLast().run().run();
++      return forms.getLast();
++    }
++
++    void drain() {
++      while (!tasks.isEmpty()) tasks.remove().run().run();
++    }
++  }
++
++  static Player player(UUID id) {
++    var player = mock(Player.class);
++    when(player.getUniqueId()).thenReturn(id);
++    when(player.isOnline()).thenReturn(true);
++    return player;
++  }
++
++  @Test
++  void callbackOnlyRunsOnScheduledOwnerAndConsumesAtMostOneResponse() {
++    var f = new Fixture();
++    var form = f.open();
++    form.submit().accept(f.player, "  exact text  ");
++    form.submit().accept(f.player, "duplicate");
++    form.cancel().accept(f.player);
++    assertThat(f.results).isEmpty();
++    assertThat(f.tasks).hasSize(1);
++    f.drain();
++    assertThat(f.results).containsExactly("exact text");
++    verify(f.player, never()).getInventory();
++  }
++
++  @Test
++  void queuedDialogDoesNotOpenAfterQuitStopExpiryRetirementOrSupersession() {
++    for (String reason : List.of("quit", "stop", "expiry", "retirement", "offline", "superseded")) {
++      var f = new Fixture();
++      f.queueOpen();
++      assertThat(f.forms).isEmpty();
++      switch (reason) {
++        case "quit" -> f.input.cancel(f.player);
++        case "stop" -> f.input.close();
++        case "expiry" -> f.clock.set(CityTextInput.LIFETIME.toNanos());
++        case "retirement" -> f.tasks.getFirst().retired().run();
++        case "offline" -> when(f.player.isOnline()).thenReturn(false);
++        case "superseded" -> f.queueOpen();
++      }
++      f.tasks.removeFirst().run().run();
++      assertThat(f.forms).as(reason).isEmpty();
++      if (reason.equals("superseded")) {
++        f.drain();
++        assertThat(f.forms).hasSize(1);
++        f.forms.getFirst().submit().accept(f.player, "new");
++        f.drain();
++        assertThat(f.results).containsExactly("new");
++      }
++      verify(f.player, never()).getInventory();
++    }
++  }
++
++  @Test
++  void foreignAndReconnectedPlayerCannotConsumeOriginalSession() {
++    var f = new Fixture();
++    var form = f.open();
++    var foreign = player(UUID.randomUUID());
++    var reconnect = player(f.player.getUniqueId());
++    form.submit().accept(foreign, "foreign");
++    form.submit().accept(reconnect, "new connection");
++    form.cancel().accept(reconnect);
++    f.drain();
++    assertThat(f.results).isEmpty();
++    form.submit().accept(f.player, "owner");
++    f.drain();
++    assertThat(f.results).containsExactly("owner");
++  }
++
++  @Test
++  void supersededQueuedResponseCannotModifyNewDraft() {
++    var f = new Fixture();
++    var old = f.open();
++    old.submit().accept(f.player, "old");
++    var current = f.open();
++    f.drain();
++    assertThat(f.results).isEmpty();
++    old.cancel().accept(f.player);
++    current.submit().accept(f.player, "new");
++    f.drain();
++    assertThat(f.results).containsExactly("new");
++  }
++
++  @Test
++  void disconnectAndStopInvalidateAlreadyQueuedCallbacks() {
++    var f = new Fixture();
++    var disconnected = f.open();
++    disconnected.submit().accept(f.player, "discard");
++    f.input.cancel(f.player);
++    f.drain();
++    assertThat(f.results).isEmpty();
++    var stopped = f.open();
++    stopped.submit().accept(f.player, "discard again");
++    f.input.close();
++    f.drain();
++    assertThat(f.results).isEmpty();
++    assertThatThrownBy(f::open).isInstanceOf(IllegalStateException.class);
++    verify(f.player, never()).getInventory();
++  }
++
++  @Test
++  void expiryAndRetirementInvalidateResponsesWithoutAccessingInventory() {
++    var f = new Fixture();
++    var expired = f.open();
++    f.clock.set(CityTextInput.LIFETIME.toNanos());
++    expired.submit().accept(f.player, "late");
++    assertThat(f.tasks).isEmpty();
++    var queued = f.open();
++    queued.submit().accept(f.player, "retired");
++    f.tasks.remove().retired().run();
++    queued.submit().accept(f.player, "again");
++    assertThat(f.tasks).isEmpty();
++    var noLongerOnline = f.open();
++    noLongerOnline.submit().accept(f.player, "offline");
++    when(f.player.isOnline()).thenReturn(false);
++    f.drain();
++    assertThat(f.results).isEmpty();
++    verify(f.player, never()).getInventory();
++  }
++
++  @Test
++  void expiryIsRecheckedAfterOwnerSchedulingDelay() {
++    var f = new Fixture();
++    f.open().submit().accept(f.player, "queued");
++    f.clock.set(CityTextInput.LIFETIME.toNanos());
++    f.drain();
++    assertThat(f.results).isEmpty();
++  }
++
++  @Test
++  void cancelAndOversizedOrMissingPayloadNeverSubmitContent() {
++    var f = new Fixture();
++    f.open().cancel().accept(f.player);
++    f.drain();
++    f.open().submit().accept(f.player, "x".repeat(101));
++    f.drain();
++    f.open().submit().accept(f.player, null);
++    f.drain();
++    assertThat(f.results).containsExactly("cancel", "cancel", "cancel");
++    verify(f.player, never()).getInventory();
++  }
++
++  @Test
++  void failedDialogPublicationDiscardsCapturedCallbacksAndAllowsNewAttempt() {
++    var forms = new ArrayList<Form>();
++    var results = new ArrayList<String>();
++    var fail = new AtomicBoolean(true);
++    var player = player(UUID.randomUUID());
++    var input =
++        new CityTextInput(
++            (owner, prompt, submit, cancel) -> {
++              forms.add(new Form(owner, prompt, submit, cancel));
++              if (fail.getAndSet(false)) throw new IllegalStateException("show failed");
++            },
++            (owner, action, retired) -> action.run(),
++            System::nanoTime);
++    Runnable open =
++        () ->
++            input.open(
++                player,
++                new CityTextInput.Prompt("a", "b", "", 10, false),
++                (actor, text) -> results.add(text),
++                actor -> {});
++    assertThatThrownBy(open::run).isInstanceOf(IllegalStateException.class);
++    forms.getFirst().submit().accept(player, "stale");
++    assertThat(results).isEmpty();
++    open.run();
++    forms.getLast().submit().accept(player, "valid");
++    assertThat(results).containsExactly("valid");
++    verify(player, never()).getInventory();
++  }
++
++  @Test
++  void schedulerRejectionCannotLeaveLiveSubmission() {
++    var forms = new ArrayList<Form>();
++    var player = player(UUID.randomUUID());
++    var fail = new AtomicBoolean(true);
++    var results = new ArrayList<String>();
++    var input =
++        new CityTextInput(
++            (owner, prompt, submit, cancel) -> forms.add(new Form(owner, prompt, submit, cancel)),
++            (owner, action, retired) -> {
++              if (forms.size() == 1 && fail.getAndSet(false))
++                throw new IllegalStateException("scheduler unavailable");
++              action.run();
++            },
++            System::nanoTime);
++    Runnable open =
++        () ->
++            input.open(
++                player,
++                new CityTextInput.Prompt("a", "b", "", 10, false),
++                (actor, text) -> results.add(text),
++                actor -> {});
++    open.run();
++    assertThatThrownBy(() -> forms.getFirst().submit().accept(player, "first"))
++        .isInstanceOf(IllegalStateException.class);
++    forms.getFirst().submit().accept(player, "stale");
++    open.run();
++    forms.getLast().submit().accept(player, "second");
++    assertThat(results).containsExactly("second");
++  }
++
++  @Test
++  void shutdownWaitsForOngoingDialogPublicationAndRejectsItsResponse() throws Exception {
++    var entered = new CountDownLatch(1);
++    var release = new CountDownLatch(1);
++    var results = new ArrayList<String>();
++    var forms = new ArrayList<Form>();
++    var player = player(UUID.randomUUID());
++    var input =
++        new CityTextInput(
++            (owner, prompt, submit, cancel) -> {
++              forms.add(new Form(owner, prompt, submit, cancel));
++              entered.countDown();
++              try {
++                if (!release.await(5, TimeUnit.SECONDS)) throw new IllegalStateException("timeout");
++              } catch (InterruptedException e) {
++                throw new IllegalStateException(e);
++              }
++            },
++            (owner, action, retired) -> action.run(),
++            System::nanoTime);
++    try (var executor = Executors.newFixedThreadPool(2)) {
++      var opened =
++          executor.submit(
++              () ->
++                  input.open(
++                      player,
++                      new CityTextInput.Prompt("a", "b", "", 10, false),
++                      (actor, text) -> results.add(text),
++                      actor -> {}));
++      assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
++      var closing = executor.submit(input::close);
++      release.countDown();
++      opened.get(5, TimeUnit.SECONDS);
++      closing.get(5, TimeUnit.SECONDS);
++    }
++    forms.getFirst().submit().accept(player, "after stop");
++    assertThat(results).isEmpty();
++    verify(player, never()).getInventory();
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/city/gui/PaperCityTextDialogTest.java b/src/test/java/dev/starcore/starcore/module/city/gui/PaperCityTextDialogTest.java
+new file mode 100644
+index 0000000..d7fea44
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/city/gui/PaperCityTextDialogTest.java
+@@ -0,0 +1,130 @@
++package dev.starcore.starcore.module.city.gui;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.scheduler.CompatScheduler;
++import io.papermc.paper.dialog.DialogResponseView;
++import io.papermc.paper.registry.data.dialog.*;
++import io.papermc.paper.registry.data.dialog.action.*;
++import io.papermc.paper.registry.data.dialog.input.*;
++import io.papermc.paper.registry.data.dialog.type.ConfirmationType;
++import java.util.*;
++import java.util.function.*;
++import net.kyori.adventure.audience.Audience;
++import net.kyori.adventure.text.event.ClickCallback;
++import org.bukkit.entity.Player;
++import org.bukkit.plugin.Plugin;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++import org.mockito.ArgumentCaptor;
++
++class PaperCityTextDialogTest {
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void nativeFormCarriesTextLimitPreviewCancelAndBoundedCallbackLifetime(boolean multiline) {
++    var provider = mock(DialogInstancesProvider.class);
++    var builder = mock(DialogRegistryEntry.Builder.class, RETURNS_SELF);
++    var baseBuilder = mock(DialogBase.Builder.class, RETURNS_SELF);
++    var base = mock(DialogBase.class);
++    when(baseBuilder.build()).thenReturn(base);
++    var inputBuilder = mock(TextDialogInput.Builder.class, RETURNS_SELF);
++    var input = mock(TextDialogInput.class);
++    when(inputBuilder.build()).thenReturn(input);
++    var buttonBuilder = mock(ActionButton.Builder.class, RETURNS_SELF);
++    when(buttonBuilder.build()).thenReturn(mock(ActionButton.class));
++    when(provider.textBuilder(eq("value"), any())).thenReturn(inputBuilder);
++    when(provider.dialogBaseBuilder(any())).thenReturn(baseBuilder);
++    when(provider.actionButtonBuilder(any())).thenReturn(buttonBuilder);
++    when(provider.register(any(), any())).thenReturn(mock(DialogAction.CustomClickAction.class));
++    when(provider.confirmation(any(), any())).thenReturn(mock(ConfirmationType.class));
++    var multilineOptions = mock(TextDialogInput.MultilineOptions.class);
++    when(provider.multilineOptions(5, 100)).thenReturn(multilineOptions);
++    var text = new ArrayList<String>();
++    var canceled = new ArrayList<Player>();
++    var player = CityTextInputTest.player(UUID.randomUUID());
++    try (var statics = mockStatic(DialogInstancesProvider.class)) {
++      statics.when(DialogInstancesProvider::instance).thenReturn(provider);
++      PaperCityTextDialog.configure(
++          builder,
++          new CityTextInput.Prompt("城市输入", "内容", "initial", 100, multiline),
++          (actor, value) -> text.add(value),
++          canceled::add);
++      verify(inputBuilder).initial("initial");
++      verify(inputBuilder).maxLength(100);
++      verify(baseBuilder).inputs(List.of(input));
++      verify(baseBuilder).afterAction(DialogBase.DialogAfterAction.CLOSE);
++      verify(builder).base(base);
++      if (multiline) verify(inputBuilder).multiline(multilineOptions);
++      else verify(inputBuilder, never()).multiline(any());
++      var callbacks = ArgumentCaptor.forClass(DialogActionCallback.class);
++      var options = ArgumentCaptor.forClass(ClickCallback.Options.class);
++      verify(provider, times(2)).register(callbacks.capture(), options.capture());
++      assertThat(options.getAllValues())
++          .allSatisfy(
++              o -> {
++                assertThat(o.lifetime()).isEqualTo(CityTextInput.LIFETIME);
++                assertThat(o.uses()).isEqualTo(ClickCallback.UNLIMITED_USES);
++              });
++      var response = mock(DialogResponseView.class);
++      when(response.getText("value")).thenReturn("literal /command\n文字");
++      callbacks.getAllValues().get(0).accept(response, mock(Audience.class));
++      assertThat(text).isEmpty();
++      callbacks.getAllValues().get(0).accept(response, player);
++      callbacks.getAllValues().get(1).accept(response, player);
++      assertThat(text).containsExactly("literal /command\n文字");
++      assertThat(canceled).containsExactly(player);
++      verify(provider, never()).commandTemplate(anyString());
++      verify(player, never()).getInventory();
++    }
++  }
++
++  @Test
++  void productionInputConstructorSchedulesCallbackOnOriginalPlayerAndHandlesRetirement() {
++    var plugin = mock(Plugin.class);
++    var player = CityTextInputTest.player(UUID.randomUUID());
++    var result = new ArrayList<String>();
++    var forms = new ArrayList<CityTextInputTest.Form>();
++    try (var dialogs =
++            mockConstruction(
++                PaperCityTextDialog.class,
++                (view, context) ->
++                    doAnswer(
++                            call -> {
++                              forms.add(
++                                  new CityTextInputTest.Form(
++                                      call.getArgument(0),
++                                      call.getArgument(1),
++                                      call.getArgument(2),
++                                      call.getArgument(3)));
++                              return null;
++                            })
++                        .when(view)
++                        .show(any(), any(), any(), any()));
++        var scheduler = mockStatic(CompatScheduler.class)) {
++      var input = new CityTextInput(plugin);
++      input.open(
++          player,
++          new CityTextInput.Prompt("a", "b", "", 10, false),
++          (actor, text) -> result.add(text),
++          actor -> {});
++      assertThat(forms).isEmpty();
++      var show = ArgumentCaptor.forClass(Runnable.class);
++      scheduler.verify(
++          () -> CompatScheduler.entity(eq(plugin), same(player), show.capture(), any()));
++      show.getValue().run();
++      scheduler.clearInvocations();
++      forms.getFirst().submit().accept(player, "value");
++      var run = ArgumentCaptor.forClass(Runnable.class);
++      var retired = ArgumentCaptor.forClass(Runnable.class);
++      scheduler.verify(
++          () -> CompatScheduler.entity(eq(plugin), same(player), run.capture(), retired.capture()));
++      assertThat(result).isEmpty();
++      retired.getValue().run();
++      run.getValue().run();
++      assertThat(result).isEmpty();
++      verify(player, never()).getInventory();
++    }
++  }
++}
