@@ -1,0 +1,2350 @@
+diff --git a/docs/api/starcore-api-v1.txt b/docs/api/starcore-api-v1.txt
+index 5429daf..badbcb5 100644
+--- a/docs/api/starcore-api-v1.txt
++++ b/docs/api/starcore-api-v1.txt
+@@ -271,6 +271,7 @@ METHOD dev.starcore.starcore.api.StarCoreApi#cityRetirement typeParameters=<> pa
+ METHOD dev.starcore.starcore.api.StarCoreApi#claimToolService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.nation.claimtool.ClaimToolService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#diplomacyAllianceService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.diplomacy.DiplomacyAllianceService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#diplomacyRelationService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.diplomacy.DiplomacyRelationService> modifiers=public default=true
++METHOD dev.starcore.starcore.api.StarCoreApi#diplomacyRetirementService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#diplomacyService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.diplomacy.DiplomacyService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#diplomacyWarService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.module.diplomacy.DiplomacyWarService> modifiers=public default=true
+ METHOD dev.starcore.starcore.api.StarCoreApi#epochService typeParameters=<> parameters=() returns=java.util.Optional<dev.starcore.starcore.foundation.epoch.EpochService> modifiers=public default=true
+@@ -512,6 +513,14 @@ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRelationSnapshot#relation
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRelationSnapshot#source typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationId modifiers=public
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRelationSnapshot#target typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationId modifiers=public
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRelationSnapshot#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
++METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService#diplomacyRetirementReceipt typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=java.util.Optional<dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt> modifiers=public,abstract
++METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService#retireDiplomacy typeParameters=<> parameters=(java.util.UUID,dev.starcore.starcore.module.nation.model.NationId) returns=dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt modifiers=public,abstract
++METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt#clearedEntries typeParameters=<> parameters=() returns=int modifiers=public
++METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt#equals typeParameters=<> parameters=(java.lang.Object) returns=boolean modifiers=public,final
++METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt#hashCode typeParameters=<> parameters=() returns=int modifiers=public,final
++METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt#nationId typeParameters=<> parameters=() returns=dev.starcore.starcore.module.nation.model.NationId modifiers=public
++METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt#operationId typeParameters=<> parameters=() returns=java.util.UUID modifiers=public
++METHOD dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt#toString typeParameters=<> parameters=() returns=java.lang.String modifiers=public,final
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyService#acceptAllianceInvite typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId,dev.starcore.starcore.module.nation.model.NationId) returns=dev.starcore.starcore.module.diplomacy.DiplomacyService$AllianceResult modifiers=public,abstract
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyService#activeWarsOf typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId) returns=java.util.Collection<dev.starcore.starcore.module.diplomacy.WarRecord> modifiers=public,abstract
+ METHOD dev.starcore.starcore.module.diplomacy.DiplomacyService#cancelAllianceInvite typeParameters=<> parameters=(dev.starcore.starcore.module.nation.model.NationId,dev.starcore.starcore.module.nation.model.NationId) returns=void modifiers=public,abstract
+@@ -1486,6 +1495,9 @@ RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyAllianceResult#
+ RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyRelationSnapshot#relation type=dev.starcore.starcore.module.diplomacy.DiplomacyRelation
+ RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyRelationSnapshot#source type=dev.starcore.starcore.module.nation.model.NationId
+ RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyRelationSnapshot#target type=dev.starcore.starcore.module.nation.model.NationId
++RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt#clearedEntries type=int
++RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt#nationId type=dev.starcore.starcore.module.nation.model.NationId
++RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt#operationId type=java.util.UUID
+ RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyService$AllianceInviteResult#message type=java.lang.String
+ RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyService$AllianceInviteResult#success type=boolean
+ RECORD_COMPONENT dev.starcore.starcore.module.diplomacy.DiplomacyService$AllianceResult#message type=java.lang.String
+@@ -1788,6 +1800,8 @@ TYPE dev.starcore.starcore.module.diplomacy.DiplomacyAllianceService kind=interf
+ TYPE dev.starcore.starcore.module.diplomacy.DiplomacyRelation kind=enum modifiers=public,final typeParameters=<> extends=java.lang.Enum<dev.starcore.starcore.module.diplomacy.DiplomacyRelation>
+ TYPE dev.starcore.starcore.module.diplomacy.DiplomacyRelationService kind=interface modifiers=public,abstract typeParameters=<>
+ TYPE dev.starcore.starcore.module.diplomacy.DiplomacyRelationSnapshot kind=record modifiers=public,final typeParameters=<> extends=java.lang.Record
++TYPE dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService kind=interface modifiers=public,abstract typeParameters=<>
++TYPE dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService$RetirementReceipt kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.diplomacy.DiplomacyService kind=interface modifiers=public,abstract typeParameters=<> interfaces=dev.starcore.starcore.module.diplomacy.DiplomacyRelationService,dev.starcore.starcore.module.diplomacy.DiplomacyWarService
+ TYPE dev.starcore.starcore.module.diplomacy.DiplomacyService$AllianceInviteResult kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
+ TYPE dev.starcore.starcore.module.diplomacy.DiplomacyService$AllianceResult kind=record modifiers=public,static,final typeParameters=<> extends=java.lang.Record
+diff --git a/src/main/java/dev/starcore/starcore/api/StarCoreApi.java b/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
+index 5ff0e2b..f97dd97 100644
+--- a/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
++++ b/src/main/java/dev/starcore/starcore/api/StarCoreApi.java
+@@ -108,6 +108,11 @@ public interface StarCoreApi {
+     return service(DiplomacyRelationService.class);
+   }
+ 
++  default Optional<dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService>
++      diplomacyRetirementService() {
++    return service(dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService.class);
++  }
++
+   /** Returns the narrow diplomacy war contract for war-only integrations. */
+   default Optional<DiplomacyWarService> diplomacyWarService() {
+     return service(DiplomacyWarService.class);
+diff --git a/src/main/java/dev/starcore/starcore/module/diplomacy/DatabaseAwareDiplomacyStateStorage.java b/src/main/java/dev/starcore/starcore/module/diplomacy/DatabaseAwareDiplomacyStateStorage.java
+index 6c463fa..7ded320 100644
+--- a/src/main/java/dev/starcore/starcore/module/diplomacy/DatabaseAwareDiplomacyStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/DatabaseAwareDiplomacyStateStorage.java
+@@ -10,7 +10,7 @@ final class DatabaseAwareDiplomacyStateStorage implements DiplomacyStateStorage
+   private final DatabaseService databaseService;
+   private final DiplomacyStateStorage fileStorage;
+   private final DiplomacyStateStorage sqlStorage;
+-  private volatile boolean sqlPreferred;
++  private final boolean sqlPreferred;
+ 
+   DatabaseAwareDiplomacyStateStorage(
+       String namespace,
+@@ -43,8 +43,7 @@ final class DatabaseAwareDiplomacyStateStorage implements DiplomacyStateStorage
+   }
+ 
+   private DiplomacyStateStorage activeStorage() {
+-    if (sqlPreferred || databaseService.isRunning()) {
+-      sqlPreferred = true;
++    if (sqlPreferred) {
+       return sqlStorage;
+     }
+     return fileStorage;
+diff --git a/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthority.java b/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthority.java
+new file mode 100644
+index 0000000..5eb61b3
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthority.java
+@@ -0,0 +1,246 @@
++package dev.starcore.starcore.module.diplomacy;
++
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.nio.charset.StandardCharsets;
++import java.security.MessageDigest;
++import java.util.*;
++
++/** Complete persisted state, including legacy interaction families and permanent receipts. */
++final class DiplomacyAuthority {
++  static final String VERSION = "diplomacyAuthority.version";
++  static final String HASH = "diplomacyAuthority.sha256";
++  static final String RETIRED = "diplomacyRetired.";
++
++  record Family(String count, String prefix, List<String> endpoints, List<String> fields) {}
++
++  static final List<Family> FAMILIES =
++      List.of(
++          new Family(
++              "count", "relation.", List.of("left", "right"), List.of("left", "right", "relation")),
++          new Family(
++              "warCount",
++              "war.",
++              List.of("declarer", "target"),
++              List.of("declarer", "target", "declaredAt")),
++          new Family(
++              "relation-time.count",
++              "relation-time.",
++              List.of("left", "right"),
++              List.of("left", "right", "at")),
++          new Family(
++              "alliance-invite.count",
++              "alliance-invite.",
++              List.of("inviter", "invited"),
++              List.of("inviter", "invited", "at")),
++          new Family(
++              "timestampCount",
++              "timestamp.",
++              List.of("left", "right"),
++              List.of("left", "right", "changedAt")),
++          new Family(
++              "inviteCount",
++              "invite.",
++              List.of("inviter", "invited"),
++              List.of("inviter", "invited", "createdAt")),
++          new Family(
++              "warEndRequestCount",
++              "warEndRequest.",
++              List.of("left", "right"),
++              List.of("left", "right", "requester")));
++
++  private DiplomacyAuthority() {}
++
++  static Properties copy(Properties value) {
++    var result = new Properties();
++    result.putAll(Objects.requireNonNull(value));
++    return result;
++  }
++
++  static String checksum(Properties value) {
++    try {
++      var digest = MessageDigest.getInstance("SHA-256");
++      for (String key : new TreeSet<>(value.stringPropertyNames())) {
++        if (key.equals(HASH)) continue;
++        for (String part : List.of(key, value.getProperty(key))) {
++          byte[] bytes = part.getBytes(StandardCharsets.UTF_8);
++          digest.update(java.nio.ByteBuffer.allocate(4).putInt(bytes.length).array());
++          digest.update(bytes);
++        }
++      }
++      return HexFormat.of().formatHex(digest.digest());
++    } catch (java.security.NoSuchAlgorithmException failure) {
++      throw new IllegalStateException(failure);
++    }
++  }
++
++  static Properties seal(Properties value) {
++    var result = copy(value);
++    result.setProperty(VERSION, "1");
++    result.setProperty(HASH, checksum(result));
++    validate(result);
++    return result;
++  }
++
++  static void validate(Properties value) {
++    if (value.size() != value.stringPropertyNames().size())
++      throw new IllegalArgumentException("Non-text diplomacy property");
++    boolean envelope =
++        value.containsKey(VERSION)
++            || value.containsKey(HASH)
++            || value.stringPropertyNames().stream().anyMatch(k -> k.startsWith(RETIRED));
++    if (envelope
++        && (!"1".equals(value.getProperty(VERSION))
++            || !checksum(value).equals(value.getProperty(HASH))))
++      throw new IllegalArgumentException("Diplomacy authority checksum/version mismatch");
++    var retired = receipts(value);
++    for (var family : FAMILIES) {
++      var entries = entries(value, family);
++      var pairs = new HashSet<List<String>>();
++      for (var entry : entries) {
++        var ids =
++            family.endpoints().stream()
++                .map(f -> NationId.of(UUID.fromString(required(entry, f))))
++                .toList();
++        if (ids.get(0).equals(ids.get(1)) || ids.stream().anyMatch(retired::containsKey))
++          throw new IllegalArgumentException("Retired or invalid diplomacy endpoint");
++        List<String> pair = ids.stream().map(NationId::toString).toList();
++        if (!family.prefix().contains("invite")) pair = pair.stream().sorted().toList();
++        if (!pairs.add(pair)) throw new IllegalArgumentException("Duplicate diplomacy entry");
++        for (String field : family.fields()) required(entry, field);
++        if (family.prefix().equals("relation."))
++          DiplomacyRelation.valueOf(entry.getProperty("relation"));
++        if (entry.containsKey("declaredAt"))
++          java.time.Instant.ofEpochMilli(Long.parseLong(entry.getProperty("declaredAt")));
++        for (String field : List.of("at", "changedAt", "createdAt"))
++          if (entry.containsKey(field)) java.time.Instant.parse(entry.getProperty(field));
++        for (String field : List.of("attacker", "requester"))
++          if (entry.containsKey(field)
++              && !ids.contains(NationId.of(UUID.fromString(entry.getProperty(field)))))
++            throw new IllegalArgumentException("Diplomacy participant is not an endpoint");
++      }
++    }
++  }
++
++  private static String required(Properties entry, String field) {
++    return Objects.requireNonNull(entry.getProperty(field), "Missing diplomacy field " + field);
++  }
++
++  private static List<Properties> entries(Properties value, Family family) {
++    int count = Integer.parseInt(value.getProperty(family.count(), "0"));
++    if (count < 0 || count > 1_000_000)
++      throw new IllegalArgumentException("Invalid diplomacy count");
++    var entries = new ArrayList<Properties>(count);
++    for (int i = 0; i < count; i++) entries.add(new Properties());
++    for (String key : value.stringPropertyNames())
++      if (key.startsWith(family.prefix()) && !key.equals(family.count())) {
++        String suffix = key.substring(family.prefix().length());
++        int dot = suffix.indexOf('.');
++        if (dot < 1) throw new IllegalArgumentException("Invalid diplomacy entry key");
++        int index = Integer.parseInt(suffix.substring(0, dot));
++        if (index < 0
++            || index >= count
++            || !Integer.toString(index).equals(suffix.substring(0, dot)))
++          throw new IllegalArgumentException("Diplomacy entry outside declared count");
++        entries.get(index).setProperty(suffix.substring(dot + 1), value.getProperty(key));
++      }
++    return entries;
++  }
++
++  static Map<NationId, DiplomacyRetirementService.RetirementReceipt> receipts(Properties value) {
++    var result = new HashMap<NationId, DiplomacyRetirementService.RetirementReceipt>();
++    for (String key : value.stringPropertyNames())
++      if (key.startsWith(RETIRED)) {
++        String suffix = key.substring(RETIRED.length());
++        var nation = NationId.of(UUID.fromString(suffix));
++        if (!nation.toString().equals(suffix))
++          throw new IllegalArgumentException("Invalid retirement nation");
++        String[] fields = value.getProperty(key).split(":", -1);
++        if (fields.length != 2) throw new IllegalArgumentException("Invalid retirement receipt");
++        var receipt =
++            new DiplomacyRetirementService.RetirementReceipt(
++                UUID.fromString(fields[0]), nation, Integer.parseInt(fields[1]));
++        if (!encode(receipt).equals(value.getProperty(key)))
++          throw new IllegalArgumentException("Invalid retirement receipt encoding");
++        result.put(nation, receipt);
++      }
++    return Map.copyOf(result);
++  }
++
++  private static String encode(DiplomacyRetirementService.RetirementReceipt r) {
++    return r.operationId() + ":" + r.clearedEntries();
++  }
++
++  static Properties merge(Properties previous, Properties update) {
++    validate(previous);
++    var result = copy(previous);
++    for (var family : FAMILIES)
++      if (update.containsKey(family.count())) removeFamily(result, family);
++    result.putAll(update);
++    result = seal(result);
++    transition(previous, result);
++    return result;
++  }
++
++  private static void removeFamily(Properties value, Family family) {
++    value.remove(family.count());
++    value.keySet().removeIf(k -> k instanceof String s && s.startsWith(family.prefix()));
++  }
++
++  static void transition(Properties previous, Properties next) {
++    validate(previous);
++    validate(next);
++    var after = receipts(next);
++    receipts(previous)
++        .forEach(
++            (nation, receipt) -> {
++              if (!receipt.equals(after.get(nation)))
++                throw new IllegalArgumentException("Diplomacy retirement receipts are immutable");
++            });
++    if (previous.containsKey(VERSION) && !next.containsKey(VERSION))
++      throw new IllegalArgumentException("Diplomacy authority downgrade");
++  }
++
++  static Properties clear(Properties previous, NationId nation) {
++    validate(previous);
++    var result = copy(previous);
++    for (var family : FAMILIES) {
++      var entries = entries(previous, family);
++      if (!previous.containsKey(family.count())) continue;
++      var keep =
++          entries.stream()
++              .filter(
++                  e ->
++                      family.endpoints().stream()
++                          .noneMatch(
++                              f -> nation.equals(NationId.of(UUID.fromString(e.getProperty(f))))))
++              .toList();
++      removeFamily(result, family);
++      result.setProperty(family.count(), Integer.toString(keep.size()));
++      for (int i = 0; i < keep.size(); i++)
++        for (String field : keep.get(i).stringPropertyNames())
++          result.setProperty(family.prefix() + i + "." + field, keep.get(i).getProperty(field));
++    }
++    return seal(result);
++  }
++
++  static Properties retire(Properties previous, UUID operation, NationId nation) {
++    Objects.requireNonNull(operation);
++    Objects.requireNonNull(nation);
++    validate(previous);
++    var existing = receipts(previous).get(nation);
++    if (existing != null) {
++      if (!existing.operationId().equals(operation))
++        throw new IllegalArgumentException("Conflicting diplomacy retirement operation");
++      return copy(previous);
++    }
++    var result = clear(previous, nation);
++    int removed = 0;
++    for (var family : FAMILIES)
++      removed +=
++          Integer.parseInt(previous.getProperty(family.count(), "0"))
++              - Integer.parseInt(result.getProperty(family.count(), "0"));
++    var receipt = new DiplomacyRetirementService.RetirementReceipt(operation, nation, removed);
++    result.setProperty(RETIRED + nation, encode(receipt));
++    return seal(result);
++  }
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyModule.java b/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyModule.java
+index 5c23bb8..783439b 100644
+--- a/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyModule.java
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyModule.java
+@@ -30,7 +30,10 @@ import org.bukkit.event.HandlerList;
+ import org.bukkit.plugin.java.JavaPlugin;
+ 
+ public final class DiplomacyModule
+-    implements StarCoreModule, DiplomacyService, DiplomacyAllianceService {
++    implements StarCoreModule,
++        DiplomacyService,
++        DiplomacyAllianceService,
++        DiplomacyRetirementService {
+   private static final ModuleMetadata METADATA =
+       new ModuleMetadata(
+           "diplomacy",
+@@ -40,6 +43,7 @@ public final class DiplomacyModule
+           List.of(
+               DiplomacyService.class,
+               DiplomacyRelationService.class,
++              DiplomacyRetirementService.class,
+               DiplomacyWarService.class,
+               DiplomacyAllianceService.class,
+               DiplomacyTimingPolicy.class),
+@@ -56,6 +60,12 @@ public final class DiplomacyModule
+   private final Map<AllianceInvitationKey, Instant> allianceInvitations = new ConcurrentHashMap<>();
+   private final Object statePersistenceLock = new Object();
+ 
++  private final java.util.concurrent.atomic.AtomicBoolean mutating =
++      new java.util.concurrent.atomic.AtomicBoolean();
++  private volatile boolean stopped, authorityUnavailable;
++  private Properties authority;
++  private Map<NationId, RetirementReceipt> retirements = Map.of();
++
+   private NationService nationService;
+   private DiplomacyStateStorage stateStorage;
+   private StarCoreEventBus eventBus;
+@@ -67,6 +77,7 @@ public final class DiplomacyModule
+   private JavaPlugin plugin;
+   private DiplomacyMenu diplomacyMenu;
+   private DiplomacyMenuListener diplomacyMenuListener;
++  private NationDiplomacyCommand boundCommand;
+ 
+   @Override
+   public ModuleMetadata metadata() {
+@@ -75,58 +86,72 @@ public final class DiplomacyModule
+ 
+   @Override
+   public void enable(StarCoreContext context) {
+-    this.context = context;
+-    this.plugin = context.plugin();
+-    context.persistenceService().ensureNamespace(metadata().id());
+-    this.nationService = context.serviceRegistry().require(NationService.class);
+-    this.newNationProtectionDuration =
+-        Duration.ofDays(
+-            Math.max(
+-                0L,
+-                context
+-                    .plugin()
+-                    .getConfig()
+-                    .getLong("playability.new-nation-protection-days", 7L)));
+-    this.stateStorage =
+-        new DatabaseAwareDiplomacyStateStorage(
+-            metadata().id(),
+-            context.databaseService(),
+-            context.persistenceService(),
+-            context.plugin().getLogger());
+-    this.eventBus = context.eventBus();
+-
+-    // 宣战收费与完整战争创建由 WarModule 统一编排。
+-
+-    // 初始化关系管理器并设置同步
+-    this.relationManager = new NationRelationManager();
+-    this.relationManager.setDiplomacyService((DiplomacyRelationService) this);
+-    this.relationManager.setEventBus(eventBus);
+-
+-    // 从配置读取冷却时间和费用配置
+-    loadCooldownConfig(context);
+-    loadState();
+-
+-    // 注册外交服务到 ServiceRegistry（供其他模块和 API 使用）
+-    context.serviceRegistry().register(DiplomacyService.class, this);
+-    context.serviceRegistry().register(DiplomacyRelationService.class, this);
+-    context.serviceRegistry().register(DiplomacyWarService.class, this);
+-    context.serviceRegistry().register(DiplomacyAllianceService.class, this);
+-    context.serviceRegistry().register(DiplomacyTimingPolicy.class, timingPolicy);
+-
+-    // 注册外交菜单监听器
+-    diplomacyMenu =
+-        new DiplomacyMenu(this, nationService, context.serviceRegistry(), context.plugin());
+-    context.serviceRegistry().register(DiplomacyMenu.class, diplomacyMenu);
+-
+-    diplomacyMenuListener = new DiplomacyMenuListener(diplomacyMenu);
+-    context
+-        .plugin()
+-        .getServer()
+-        .getPluginManager()
+-        .registerEvents(diplomacyMenuListener, context.plugin());
+-
+-    // 注册外交命令
+-    registerCommands(context, diplomacyMenu);
++    if (mutating.get())
++      throw new IllegalStateException("Diplomacy previous operation still running");
++    stopped = false;
++    authorityUnavailable = false;
++    try {
++      this.context = context;
++      this.plugin = context.plugin();
++      context.persistenceService().ensureNamespace(metadata().id());
++      this.nationService = context.serviceRegistry().require(NationService.class);
++      this.newNationProtectionDuration =
++          Duration.ofDays(
++              Math.max(
++                  0L,
++                  context
++                      .plugin()
++                      .getConfig()
++                      .getLong("playability.new-nation-protection-days", 7L)));
++      this.stateStorage =
++          new DatabaseAwareDiplomacyStateStorage(
++              metadata().id(),
++              context.databaseService(),
++              context.persistenceService(),
++              context.plugin().getLogger());
++      this.eventBus = context.eventBus();
++
++      // 宣战收费与完整战争创建由 WarModule 统一编排。
++
++      // 初始化关系管理器并设置同步
++      this.relationManager = new NationRelationManager();
++      this.relationManager.setDiplomacyService((DiplomacyRelationService) this);
++      this.relationManager.setEventBus(eventBus);
++
++      // 从配置读取冷却时间和费用配置
++      loadCooldownConfig(context);
++      loadState();
++
++      // 注册外交服务到 ServiceRegistry（供其他模块和 API 使用）
++      context.serviceRegistry().register(DiplomacyService.class, this);
++      context.serviceRegistry().register(DiplomacyRelationService.class, this);
++      context.serviceRegistry().register(DiplomacyRetirementService.class, this);
++      context.serviceRegistry().register(DiplomacyWarService.class, this);
++      context.serviceRegistry().register(DiplomacyAllianceService.class, this);
++      context.serviceRegistry().register(DiplomacyTimingPolicy.class, timingPolicy);
++
++      // 注册外交菜单监听器
++      diplomacyMenu =
++          new DiplomacyMenu(this, nationService, context.serviceRegistry(), context.plugin());
++      context.serviceRegistry().register(DiplomacyMenu.class, diplomacyMenu);
++
++      diplomacyMenuListener = new DiplomacyMenuListener(diplomacyMenu);
++      context
++          .plugin()
++          .getServer()
++          .getPluginManager()
++          .registerEvents(diplomacyMenuListener, context.plugin());
++
++      // 注册外交命令
++      registerCommands(context, diplomacyMenu);
++    } catch (RuntimeException | Error failure) {
++      try {
++        cleanup(context, false);
++      } catch (RuntimeException | Error cleanup) {
++        failure.addSuppressed(cleanup);
++      }
++      throw failure;
++    }
+   }
+ 
+   /** 注册外交命令 */
+@@ -147,6 +172,7 @@ public final class DiplomacyModule
+               this,
+               context.serviceRegistry().require(DiplomacyAllianceService.class),
+               diplomacyMenu);
++      boundCommand = diplomacyCommand;
+       command.setExecutor(diplomacyCommand);
+       command.setTabCompleter(diplomacyCommand);
+       plugin.getLogger().info("Diplomacy command registered.");
+@@ -162,24 +188,75 @@ public final class DiplomacyModule
+ 
+   @Override
+   public void disable(StarCoreContext context) {
++    cleanup(context, true);
++  }
++
++  private void cleanup(StarCoreContext context, boolean save) {
++    boolean wasStopped = stopped;
++    stopped = true;
++    boolean admitted = mutating.compareAndSet(false, true);
++    Throwable failure = null;
++    if (save && !wasStopped && admitted && !authorityUnavailable)
++      failure = cleanupStep(failure, this::flushState);
++    var listener = diplomacyMenuListener;
++    diplomacyMenuListener = null;
++    var menu = diplomacyMenu;
++    diplomacyMenu = null;
++    var command = boundCommand;
++    boundCommand = null;
++    if (listener != null) failure = cleanupStep(failure, () -> HandlerList.unregisterAll(listener));
++    if (menu != null) {
++      failure = cleanupStep(failure, menu::shutdown);
++      failure =
++          cleanupStep(
++              failure, () -> context.serviceRegistry().unregister(DiplomacyMenu.class, menu));
++    }
++    if (command != null && plugin != null)
++      failure =
++          cleanupStep(
++              failure,
++              () -> {
++                var binding = plugin.getCommand("diplomacy");
++                if (binding != null) {
++                  if (binding.getExecutor() == command) binding.setExecutor(null);
++                  if (binding.getTabCompleter() == command) binding.setTabCompleter(null);
++                }
++              });
++    failure =
++        cleanupStep(
++            failure, () -> context.serviceRegistry().unregister(DiplomacyWarService.class, this));
++    failure =
++        cleanupStep(
++            failure,
++            () -> context.serviceRegistry().unregister(DiplomacyRelationService.class, this));
++    failure =
++        cleanupStep(
++            failure,
++            () -> context.serviceRegistry().unregister(DiplomacyRetirementService.class, this));
++    failure =
++        cleanupStep(
++            failure,
++            () -> context.serviceRegistry().unregister(DiplomacyAllianceService.class, this));
++    failure =
++        cleanupStep(
++            failure, () -> context.serviceRegistry().unregister(DiplomacyService.class, this));
++    failure =
++        cleanupStep(
++            failure,
++            () -> context.serviceRegistry().unregister(DiplomacyTimingPolicy.class, timingPolicy));
++    if (admitted) mutating.set(false);
++    if (failure instanceof RuntimeException runtime) throw runtime;
++    if (failure instanceof Error error) throw error;
++  }
++
++  private static Throwable cleanupStep(Throwable first, Runnable action) {
+     try {
+-      flushState();
+-    } finally {
+-      if (diplomacyMenuListener != null) {
+-        HandlerList.unregisterAll(diplomacyMenuListener);
+-        diplomacyMenuListener = null;
+-      }
+-      if (diplomacyMenu != null) {
+-        diplomacyMenu.shutdown();
+-        diplomacyMenu = null;
+-      }
+-      context.serviceRegistry().unregister(DiplomacyMenu.class);
+-      context.serviceRegistry().unregister(DiplomacyWarService.class);
+-      context.serviceRegistry().unregister(DiplomacyRelationService.class);
+-      context.serviceRegistry().unregister(DiplomacyAllianceService.class);
+-      context.serviceRegistry().unregister(DiplomacyService.class);
+-      context.serviceRegistry().unregister(DiplomacyTimingPolicy.class);
++      action.run();
++    } catch (RuntimeException | Error failure) {
++      if (first == null) return failure;
++      if (first != failure) first.addSuppressed(failure);
+     }
++    return first;
+   }
+ 
+   @Override
+@@ -192,6 +269,15 @@ public final class DiplomacyModule
+ 
+   @Override
+   public DiplomacyRelation setRelation(NationId left, NationId right, DiplomacyRelation relation) {
++    return mutate(
++        () -> {
++          requireActive(left, right);
++          return setRelationInternal(left, right, relation);
++        });
++  }
++
++  private DiplomacyRelation setRelationInternal(
++      NationId left, NationId right, DiplomacyRelation relation) {
+     Objects.requireNonNull(left, "left");
+     Objects.requireNonNull(right, "right");
+     Objects.requireNonNull(relation, "relation");
+@@ -393,42 +479,36 @@ public final class DiplomacyModule
+ 
+   @Override
+   public void clearNationRelations(NationId nationId) {
+-    if (nationId == null) {
+-      return;
+-    }
++    if (nationId == null) return;
++    mutate(
++        () -> {
++          requireStorage();
++          var candidate = DiplomacyAuthority.clear(authority, nationId);
++          commitAuthority(candidate);
++          applyAuthority(candidate);
++          return null;
++        });
++  }
+ 
+-    synchronized (statePersistenceLock) {
+-      if (stateStorage == null) {
+-        throw new IllegalStateException("Diplomacy state storage is required for nation cleanup");
+-      }
+-      Map<DiplomacyPairKey, DiplomacyRelation> relationsBefore = Map.copyOf(relations);
+-      Map<DiplomacyPairKey, WarRecord> warRecordsBefore = Map.copyOf(warRecords);
+-      Map<DiplomacyPairKey, Instant> timestampsBefore = Map.copyOf(relationChangeTimestamps);
+-      Map<AllianceInvitationKey, Instant> invitationsBefore = Map.copyOf(allianceInvitations);
+-      try {
+-        relations.keySet().removeIf(key -> key.contains(nationId));
+-        warRecords.keySet().removeIf(key -> key.contains(nationId));
+-        relationChangeTimestamps.keySet().removeIf(key -> key.contains(nationId));
+-        allianceInvitations
+-            .keySet()
+-            .removeIf(key -> key.inviter().equals(nationId) || key.invited().equals(nationId));
+-        stateStorage.save(stateProperties());
+-      } catch (RuntimeException exception) {
+-        relations.clear();
+-        relations.putAll(relationsBefore);
+-        warRecords.clear();
+-        warRecords.putAll(warRecordsBefore);
+-        relationChangeTimestamps.clear();
+-        relationChangeTimestamps.putAll(timestampsBefore);
+-        allianceInvitations.clear();
+-        allianceInvitations.putAll(invitationsBefore);
+-        if (exception instanceof DiplomacyStateConflictException conflict) {
+-          refreshStateAfterConflict(conflict);
+-          throw conflict;
+-        }
+-        throw exception;
+-      }
+-    }
++  @Override
++  public RetirementReceipt retireDiplomacy(UUID operationId, NationId nationId) {
++    return mutate(
++        () -> {
++          requireStorage();
++          var candidate = DiplomacyAuthority.retire(authority, operationId, nationId);
++          if (!candidate.equals(authority)) commitAuthority(candidate);
++          applyAuthority(candidate);
++          return retirements.get(nationId);
++        });
++  }
++
++  @Override
++  public Optional<RetirementReceipt> diplomacyRetirementReceipt(NationId nationId) {
++    return mutate(
++        () -> {
++          requireStorage();
++          return Optional.ofNullable(retirements.get(Objects.requireNonNull(nationId)));
++        });
+   }
+ 
+   @Override
+@@ -460,6 +540,15 @@ public final class DiplomacyModule
+ 
+   @Override
+   public WarRecord recordWarDeclaration(NationId declarer, NationId target, Instant declaredAt) {
++    return mutate(
++        () -> {
++          requireActive(declarer, target);
++          return recordWarDeclarationInternal(declarer, target, declaredAt);
++        });
++  }
++
++  private WarRecord recordWarDeclarationInternal(
++      NationId declarer, NationId target, Instant declaredAt) {
+     Objects.requireNonNull(declarer, "declarer");
+     Objects.requireNonNull(target, "target");
+     Objects.requireNonNull(declaredAt, "declaredAt");
+@@ -502,6 +591,11 @@ public final class DiplomacyModule
+ 
+   @Override
+   public WarRecord declareWar(NationId declarer, NationId target) {
++    mutate(
++        () -> {
++          requireActive(declarer, target);
++          return null;
++        });
+     if (declarer.equals(target)) {
+       throw new IllegalArgumentException("Cannot declare war on yourself");
+     }
+@@ -549,6 +643,11 @@ public final class DiplomacyModule
+ 
+   @Override
+   public boolean endWar(NationId left, NationId right) {
++    mutate(
++        () -> {
++          requireActive(left, right);
++          return null;
++        });
+     if (left.equals(right)) {
+       return false;
+     }
+@@ -568,6 +667,14 @@ public final class DiplomacyModule
+ 
+   @Override
+   public DiplomacyAllianceInviteResult sendInvite(NationId inviter, NationId invited) {
++    return mutate(
++        () -> {
++          requireActive(inviter, invited);
++          return sendInviteInternal(inviter, invited);
++        });
++  }
++
++  private DiplomacyAllianceInviteResult sendInviteInternal(NationId inviter, NationId invited) {
+     // 防御性空值检查
+     if (inviter == null || invited == null) {
+       return new DiplomacyAllianceInviteResult(false, "inviter and invited must not be null");
+@@ -621,6 +728,14 @@ public final class DiplomacyModule
+ 
+   @Override
+   public DiplomacyAllianceResult acceptInvite(NationId acceptor, NationId inviter) {
++    return mutate(
++        () -> {
++          requireActive(acceptor, inviter);
++          return acceptInviteInternal(acceptor, inviter);
++        });
++  }
++
++  private DiplomacyAllianceResult acceptInviteInternal(NationId acceptor, NationId inviter) {
+     if (acceptor.equals(inviter)) {
+       return new DiplomacyAllianceResult(false, "无效的操作");
+     }
+@@ -682,6 +797,14 @@ public final class DiplomacyModule
+ 
+   @Override
+   public void rejectInvite(NationId rejector, NationId inviter) {
++    mutate(
++        () -> {
++          rejectInviteInternal(rejector, inviter);
++          return null;
++        });
++  }
++
++  private void rejectInviteInternal(NationId rejector, NationId inviter) {
+     // 防御性空值检查
+     if (rejector == null || inviter == null) {
+       return;
+@@ -701,6 +824,14 @@ public final class DiplomacyModule
+ 
+   @Override
+   public void cancelInvite(NationId canceller, NationId invited) {
++    mutate(
++        () -> {
++          cancelInviteInternal(canceller, invited);
++          return null;
++        });
++  }
++
++  private void cancelInviteInternal(NationId canceller, NationId invited) {
+     // 防御性空值检查
+     if (canceller == null || invited == null) {
+       return;
+@@ -742,6 +873,13 @@ public final class DiplomacyModule
+ 
+   @Override
+   public boolean hasPendingInvite(NationId nationId, NationId fromInviter) {
++    return mutate(
++        () -> {
++          return hasPendingInviteInternal(nationId, fromInviter);
++        });
++  }
++
++  private boolean hasPendingInviteInternal(NationId nationId, NationId fromInviter) {
+     purgeExpiredInvites();
+     if (fromInviter != null) {
+       AllianceInvitationKey key = new AllianceInvitationKey(fromInviter, nationId);
+@@ -752,6 +890,13 @@ public final class DiplomacyModule
+ 
+   @Override
+   public List<NationId> getPendingInvites(NationId nationId) {
++    return mutate(
++        () -> {
++          return getPendingInvitesInternal(nationId);
++        });
++  }
++
++  private List<NationId> getPendingInvitesInternal(NationId nationId) {
+     purgeExpiredInvites();
+     return allianceInvitations.keySet().stream()
+         .filter(key -> key.invited().equals(nationId))
+@@ -771,7 +916,7 @@ public final class DiplomacyModule
+     }
+ 
+     // 设置联盟关系
+-    setRelation(nation1, nation2, DiplomacyRelation.ALLIED);
++    setRelationInternal(nation1, nation2, DiplomacyRelation.ALLIED);
+ 
+     // setRelation 已统一发布关系变更与 AllianceFormedEvent。
+     return new AllianceResult(true, "联盟建立成功");
+@@ -826,7 +971,8 @@ public final class DiplomacyModule
+       }
+       // Every live diplomacy mutation is a caller-visible state transition. A rejected async
+       // write used to leave the command successful while the local snapshot was never durable.
+-      stateStorage.save(stateProperties());
++      if (stopped) throw new IllegalStateException("Diplomacy service stopped");
++      commitAuthority(stateProperties());
+     }
+   }
+ 
+@@ -835,7 +981,8 @@ public final class DiplomacyModule
+       if (stateStorage == null) {
+         return;
+       }
+-      stateStorage.save(stateProperties());
++      checkAuthority();
++      commitAuthority(stateProperties());
+     }
+   }
+ 
+@@ -864,22 +1011,97 @@ public final class DiplomacyModule
+   }
+ 
+   private Properties stateProperties() {
+-    return DiplomacyCombinedStateCodec.toProperties(
+-        relations, warRecords, relationChangeTimestamps, allianceInvitations);
++    var update =
++        DiplomacyCombinedStateCodec.toProperties(
++            relations, warRecords, relationChangeTimestamps, allianceInvitations);
++    return DiplomacyAuthority.merge(authority == null ? new Properties() : authority, update);
+   }
+ 
+   private void loadState() {
+-    Properties properties = stateStorage == null ? new Properties() : stateStorage.load();
++    applyAuthority(stateStorage == null ? new Properties() : stateStorage.load());
++  }
++
++  private void applyAuthority(Properties properties) {
++    DiplomacyAuthority.validate(properties);
++    if (authority != null) DiplomacyAuthority.transition(authority, properties);
++    var newRelations = DiplomacyStateCodec.fromProperties(properties);
++    var newWars = DiplomacyWarCodec.fromProperties(properties);
++    var newTimes = DiplomacyTemporalStateCodec.relationChangesFromProperties(properties);
++    var newInvites = DiplomacyTemporalStateCodec.invitationsFromProperties(properties);
++    retirements = DiplomacyAuthority.receipts(properties);
++    authority = DiplomacyAuthority.copy(properties);
+     relations.clear();
+-    relations.putAll(DiplomacyStateCodec.fromProperties(properties));
++    relations.putAll(newRelations);
+     warRecords.clear();
+-    warRecords.putAll(DiplomacyWarCodec.fromProperties(properties));
++    warRecords.putAll(newWars);
+     relationChangeTimestamps.clear();
+-    relationChangeTimestamps.putAll(
+-        DiplomacyTemporalStateCodec.relationChangesFromProperties(properties));
++    relationChangeTimestamps.putAll(newTimes);
+     allianceInvitations.clear();
+-    allianceInvitations.putAll(DiplomacyTemporalStateCodec.invitationsFromProperties(properties));
+-    allianceInvitations.entrySet().removeIf(entry -> isInviteExpired(entry.getValue()));
++    allianceInvitations.putAll(newInvites);
++    authorityUnavailable = false;
++  }
++
++  private void requireStorage() {
++    if (stateStorage == null)
++      throw new IllegalStateException("Diplomacy state storage is required for nation cleanup");
++    if (authority == null) loadState();
++  }
++
++  private void requireActive(NationId... nations) {
++    for (var nation : nations)
++      if (nation != null && retirements.containsKey(nation))
++        throw new IllegalStateException("Nation diplomacy is permanently retired: " + nation);
++  }
++
++  private void checkAuthority() {
++    if (stateStorage == null || authority == null) return;
++    var actual = stateStorage.load();
++    DiplomacyAuthority.validate(actual);
++    if (!actual.equals(authority)) {
++      applyAuthority(actual);
++      throw new DiplomacyStateConflictException(
++          new IllegalStateException("Diplomacy changed before mutation"));
++    }
++  }
++
++  private <T> T mutate(java.util.function.Supplier<T> action) {
++    if (stopped || authorityUnavailable || !mutating.compareAndSet(false, true))
++      throw new IllegalStateException("Diplomacy authority unavailable, stopped or busy");
++    try {
++      if (stopped) throw new IllegalStateException("Diplomacy service stopped");
++      checkAuthority();
++      return action.get();
++    } catch (RuntimeException failure) {
++      if (stateStorage != null)
++        try {
++          loadState();
++        } catch (RuntimeException read) {
++          authorityUnavailable = true;
++          failure.addSuppressed(read);
++        }
++      throw failure;
++    } finally {
++      mutating.set(false);
++    }
++  }
++
++  private void commitAuthority(Properties candidate) {
++    try {
++      stateStorage.save(candidate);
++    } catch (RuntimeException failure) {
++      try {
++        var actual = stateStorage.load();
++        DiplomacyAuthority.validate(actual);
++        if (actual.equals(candidate)) {
++          authority = DiplomacyAuthority.copy(actual);
++          return;
++        }
++      } catch (RuntimeException read) {
++        failure.addSuppressed(read);
++      }
++      throw failure;
++    }
++    authority = DiplomacyAuthority.copy(candidate);
+   }
+ 
+   /** 获取国家活跃战争数量 */
+diff --git a/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementService.java b/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementService.java
+new file mode 100644
+index 0000000..03ef8ab
+--- /dev/null
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementService.java
+@@ -0,0 +1,22 @@
++package dev.starcore.starcore.module.diplomacy;
++
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.util.Objects;
++import java.util.Optional;
++import java.util.UUID;
++
++/** Permanent closure of the diplomacy authority. Persist disband intent before calling. */
++public interface DiplomacyRetirementService {
++  record RetirementReceipt(UUID operationId, NationId nationId, int clearedEntries) {
++    public RetirementReceipt {
++      Objects.requireNonNull(operationId);
++      Objects.requireNonNull(nationId);
++      if (clearedEntries < 0 || clearedEntries > 7_000_000)
++        throw new IllegalArgumentException("Invalid diplomacy retirement entry count");
++    }
++  }
++
++  RetirementReceipt retireDiplomacy(UUID operationId, NationId nationId);
++
++  Optional<RetirementReceipt> diplomacyRetirementReceipt(NationId nationId);
++}
+diff --git a/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyStateConflictException.java b/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyStateConflictException.java
+index 8751a85..3a5ee9e 100644
+--- a/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyStateConflictException.java
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/DiplomacyStateConflictException.java
+@@ -2,6 +2,10 @@ package dev.starcore.starcore.module.diplomacy;
+ 
+ /** Raised when a diplomacy snapshot changed after the caller loaded it. */
+ public final class DiplomacyStateConflictException extends IllegalStateException {
++  public DiplomacyStateConflictException(Throwable cause) {
++    super("code=DIPLOMACY_STATE_CONFLICT authority changed", cause);
++  }
++
+   public DiplomacyStateConflictException(long expectedRevision, long actualRevision) {
+     super(
+         "code=DIPLOMACY_STATE_CONFLICT expectedRevision="
+diff --git a/src/main/java/dev/starcore/starcore/module/diplomacy/MergingDiplomacyStateStorage.java b/src/main/java/dev/starcore/starcore/module/diplomacy/MergingDiplomacyStateStorage.java
+index 8d54a26..76f13a3 100644
+--- a/src/main/java/dev/starcore/starcore/module/diplomacy/MergingDiplomacyStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/MergingDiplomacyStateStorage.java
+@@ -3,90 +3,31 @@ package dev.starcore.starcore.module.diplomacy;
+ import java.util.Objects;
+ import java.util.Properties;
+ 
++/** Partial-family updates retain the other families and immutable retirement history. */
+ final class MergingDiplomacyStateStorage implements DiplomacyStateStorage {
+-  private static final String RELATION_COUNT = "count";
+-  private static final String RELATION_PREFIX = "relation.";
+-  private static final String WAR_COUNT = "warCount";
+-  private static final String WAR_PREFIX = "war.";
+-  private static final String INTERACTION_VERSION = "interactionVersion";
+-  private static final String TIMESTAMP_COUNT = "timestampCount";
+-  private static final String TIMESTAMP_PREFIX = "timestamp.";
+-  private static final String INVITE_COUNT = "inviteCount";
+-  private static final String INVITE_PREFIX = "invite.";
+-  private static final String WAR_END_REQUEST_COUNT = "warEndRequestCount";
+-  private static final String WAR_END_REQUEST_PREFIX = "warEndRequest.";
+-
+   private final DiplomacyStateStorage delegate;
+-  private final Object stateLock = new Object();
+   private Properties currentState;
+ 
+   MergingDiplomacyStateStorage(DiplomacyStateStorage delegate) {
+-    this.delegate = Objects.requireNonNull(delegate, "delegate");
+-  }
+-
+-  @Override
+-  public Properties load() {
+-    synchronized (stateLock) {
+-      currentState = copy(delegate.load());
+-      return copy(currentState);
+-    }
+-  }
+-
+-  @Override
+-  public void save(Properties properties) {
+-    synchronized (stateLock) {
+-      Properties merged = merge(properties);
+-      delegate.save(merged);
+-      currentState = copy(merged);
+-    }
+-  }
+-
+-  @Override
+-  public void saveAsync(Properties properties) {
+-    synchronized (stateLock) {
+-      Properties previous = currentState == null ? null : copy(currentState);
+-      Properties merged = merge(properties);
+-      currentState = copy(merged);
+-      try {
+-        delegate.saveAsync(merged);
+-      } catch (RuntimeException exception) {
+-        currentState = previous;
+-        throw exception;
+-      }
+-    }
+-  }
+-
+-  private Properties merge(Properties update) {
+-    Objects.requireNonNull(update, "update");
+-    Properties merged = currentState == null ? copy(delegate.load()) : copy(currentState);
+-    if (update.containsKey(RELATION_COUNT)) {
+-      removeFamily(merged, RELATION_COUNT, RELATION_PREFIX);
+-    }
+-    if (update.containsKey(WAR_COUNT)) {
+-      removeFamily(merged, WAR_COUNT, WAR_PREFIX);
+-    }
+-    if (update.containsKey(INTERACTION_VERSION)) {
+-      removeInteractionFamily(merged);
+-    }
+-    merged.putAll(update);
+-    return merged;
++    this.delegate = Objects.requireNonNull(delegate);
+   }
+ 
+-  private static void removeFamily(Properties properties, String countKey, String prefix) {
+-    properties.remove(countKey);
+-    properties.keySet().removeIf(key -> key instanceof String text && text.startsWith(prefix));
++  public synchronized Properties load() {
++    var loaded = delegate.load();
++    DiplomacyAuthority.validate(loaded);
++    if (currentState != null) DiplomacyAuthority.transition(currentState, loaded);
++    currentState = DiplomacyAuthority.copy(loaded);
++    return DiplomacyAuthority.copy(loaded);
+   }
+ 
+-  private static void removeInteractionFamily(Properties properties) {
+-    properties.remove(INTERACTION_VERSION);
+-    removeFamily(properties, TIMESTAMP_COUNT, TIMESTAMP_PREFIX);
+-    removeFamily(properties, INVITE_COUNT, INVITE_PREFIX);
+-    removeFamily(properties, WAR_END_REQUEST_COUNT, WAR_END_REQUEST_PREFIX);
++  public synchronized void save(Properties update) {
++    if (currentState == null) load();
++    var merged = DiplomacyAuthority.merge(currentState, update);
++    delegate.save(merged);
++    currentState = merged;
+   }
+ 
+-  private static Properties copy(Properties source) {
+-    Properties copy = new Properties();
+-    copy.putAll(source);
+-    return copy;
++  public void saveAsync(Properties update) {
++    save(update);
+   }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/diplomacy/PersistenceDiplomacyStateStorage.java b/src/main/java/dev/starcore/starcore/module/diplomacy/PersistenceDiplomacyStateStorage.java
+index 85b75cf..cedfab9 100644
+--- a/src/main/java/dev/starcore/starcore/module/diplomacy/PersistenceDiplomacyStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/PersistenceDiplomacyStateStorage.java
+@@ -1,33 +1,145 @@
+ package dev.starcore.starcore.module.diplomacy;
+ 
++import dev.starcore.starcore.core.persistence.AtomicFilePersistence;
+ import dev.starcore.starcore.core.persistence.PersistenceService;
+-
+-import java.util.Objects;
++import java.io.*;
++import java.nio.file.*;
++import java.util.*;
+ import java.util.Properties;
+ 
+ final class PersistenceDiplomacyStateStorage implements DiplomacyStateStorage {
+-    private static final String FILE_NAME = "relations.properties";
++  private static final String FILE_NAME = "relations.properties";
++
++  private static final Object[] GUARDS = new Object[64];
++
++  static {
++    Arrays.setAll(GUARDS, ignored -> new Object());
++  }
+ 
+-    private final String namespace;
+-    private final PersistenceService persistenceService;
++  private Path path;
++  private final String namespace;
++  private final PersistenceService persistenceService;
++  private byte[] expected;
++  private boolean loaded, failed;
+ 
+-    PersistenceDiplomacyStateStorage(String namespace, PersistenceService persistenceService) {
+-        this.namespace = Objects.requireNonNull(namespace, "namespace");
+-        this.persistenceService = Objects.requireNonNull(persistenceService, "persistenceService");
++  PersistenceDiplomacyStateStorage(String namespace, PersistenceService persistenceService) {
++    this.namespace = Objects.requireNonNull(namespace);
++    this.persistenceService = Objects.requireNonNull(persistenceService);
++  }
++
++  private void resolvePath() {
++    if (path != null) return;
++    try {
++      path =
++          Objects.requireNonNull(persistenceService)
++              .namespacePath(namespace)
++              .resolve(FILE_NAME)
++              .toAbsolutePath()
++              .normalize();
++    } catch (IOException failure) {
++      throw new IllegalStateException("Diplomacy storage unavailable", failure);
+     }
++  }
+ 
+-    @Override
+-    public Properties load() {
+-        return persistenceService.loadProperties(namespace, FILE_NAME);
++  @Override
++  public synchronized Properties load() {
++    resolvePath();
++    try {
++      byte[] data = read();
++      if (data == null
++          && (expected != null
++              || Files.exists(AtomicFilePersistence.backup(path))
++              || Files.exists(AtomicFilePersistence.temp(path))))
++        throw new IOException("Missing diplomacy authority; explicit recovery required");
++      Properties value = decode(data);
++      DiplomacyAuthority.transition(decode(expected), value);
++      expected = data;
++      loaded = true;
++      failed = false;
++      return value;
++    } catch (IOException | RuntimeException failure) {
++      failed = true;
++      throw new IllegalStateException("Diplomacy authority requires reconciliation", failure);
+     }
++  }
+ 
+-    @Override
+-    public void save(Properties properties) {
+-        persistenceService.saveProperties(namespace, FILE_NAME, properties);
++  @Override
++  public synchronized void save(Properties properties) {
++    resolvePath();
++    synchronized (GUARDS[Math.floorMod(path.hashCode(), GUARDS.length)]) {
++      if (!loaded) load();
++      requireLoaded();
++      DiplomacyAuthority.validate(properties);
++      var canonical = DiplomacyAuthority.seal(properties);
++      try {
++        byte[] current = read();
++        if (!Arrays.equals(expected, current))
++          throw new DiplomacyStateConflictException(new IOException("Diplomacy file changed"));
++        DiplomacyAuthority.transition(decode(current), canonical);
++        var buffer = new ByteArrayOutputStream();
++        canonical.store(buffer, "STARCORE diplomacy state");
++        byte[] candidate = buffer.toByteArray();
++        if (candidate.length > 64 * 1024 * 1024)
++          throw new IOException("Diplomacy snapshot too large");
++        try {
++          AtomicFilePersistence.replace(path, temp -> Files.write(temp, candidate));
++          if (!Arrays.equals(read(), candidate))
++            throw new IOException("Diplomacy snapshot not published");
++        } catch (IOException | RuntimeException failure) {
++          byte[] actual;
++          try {
++            actual = read();
++          } catch (IOException unreadable) {
++            failed = true;
++            failure.addSuppressed(unreadable);
++            throw new IllegalStateException("Diplomacy authority requires reconciliation", failure);
++          }
++          if (Arrays.equals(actual, candidate)) {
++            expected = candidate;
++            return;
++          }
++          if (!Arrays.equals(actual, expected)) {
++            failed = true;
++            throw new IllegalStateException("Diplomacy authority requires reconciliation", failure);
++          }
++          throw failure;
++        }
++        expected = candidate;
++      } catch (IOException failure) {
++        throw new IllegalStateException("Diplomacy file save failed", failure);
++      }
+     }
++  }
++
++  private void requireLoaded() {
++    if (!loaded || failed) throw new IllegalStateException("Diplomacy storage unavailable");
++  }
+ 
+-    @Override
+-    public void saveAsync(Properties properties) {
+-        persistenceService.savePropertiesAsync(namespace, FILE_NAME, properties);
++  private byte[] read() throws IOException {
++    if (!Files.exists(path)) return null;
++    if (!Files.isRegularFile(path) || Files.size(path) > 64 * 1024 * 1024)
++      throw new IOException("Invalid diplomacy authority file");
++    try (var input = Files.newInputStream(path)) {
++      byte[] bytes = input.readNBytes(64 * 1024 * 1024 + 1);
++      if (bytes.length > 64 * 1024 * 1024) throw new IOException("Diplomacy file too large");
++      return bytes;
+     }
++  }
++
++  private Properties decode(byte[] bytes) throws IOException {
++    Properties value =
++        new Properties() {
++          @Override
++          public synchronized Object put(Object key, Object text) {
++            if (containsKey(key))
++              throw new IllegalArgumentException("Duplicate diplomacy property");
++            return super.put(key, text);
++          }
++        };
++    if (bytes == null) return value;
++    value.load(new ByteArrayInputStream(bytes));
++    if (value.isEmpty()) throw new IOException("Empty diplomacy authority");
++    DiplomacyAuthority.validate(value);
++    return value;
++  }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/diplomacy/SqlDiplomacyStateStorage.java b/src/main/java/dev/starcore/starcore/module/diplomacy/SqlDiplomacyStateStorage.java
+index 1c23df9..8d790ba 100644
+--- a/src/main/java/dev/starcore/starcore/module/diplomacy/SqlDiplomacyStateStorage.java
++++ b/src/main/java/dev/starcore/starcore/module/diplomacy/SqlDiplomacyStateStorage.java
+@@ -12,7 +12,6 @@ import java.util.Optional;
+ import java.util.Properties;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.function.Supplier;
+-import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import javax.sql.DataSource;
+ 
+@@ -28,6 +27,8 @@ final class SqlDiplomacyStateStorage implements DiplomacyStateStorage {
+   private final Object saveLock = new Object();
+   private CompletableFuture<Void> pendingOperation = CompletableFuture.completedFuture(null);
+   private long expectedRevision;
++  private Properties observed;
++  private boolean failed;
+ 
+   SqlDiplomacyStateStorage(
+       String namespace,
+@@ -36,7 +37,7 @@ final class SqlDiplomacyStateStorage implements DiplomacyStateStorage {
+       Logger logger) {
+     this(
+         databaseService::dataSource,
+-        () -> persistenceService.loadProperties(namespace, FILE_NAME),
++        () -> new PersistenceDiplomacyStateStorage(namespace, persistenceService).load(),
+         logger);
+   }
+ 
+@@ -51,7 +52,7 @@ final class SqlDiplomacyStateStorage implements DiplomacyStateStorage {
+   }
+ 
+   @Override
+-  public Properties load() {
++  public synchronized Properties load() {
+     CompletableFuture<Properties> operation;
+     synchronized (saveLock) {
+       operation =
+@@ -74,29 +75,46 @@ final class SqlDiplomacyStateStorage implements DiplomacyStateStorage {
+       ensureTable(connection);
+       ensureRevisionRow(connection);
+       Properties properties = loadFromDatabase(connection);
++      if (properties.isEmpty() && (expectedRevision > 0 || observed != null && !observed.isEmpty()))
++        throw new IllegalStateException("Missing diplomacy SQL authority");
++      DiplomacyAuthority.validate(properties);
++      if (observed != null) DiplomacyAuthority.transition(observed, properties);
+       if (!properties.isEmpty()) {
++        observed = DiplomacyAuthority.copy(properties);
++        failed = false;
+         return properties;
+       }
+       Properties legacy = copy(legacyPropertiesSupplier.get());
++      DiplomacyAuthority.validate(legacy);
+       if (legacy.isEmpty()) {
++        observed = new Properties();
++        failed = false;
+         return legacy;
+       }
++      legacy = DiplomacyAuthority.seal(legacy);
+       writeSnapshot(connection, legacy);
++      observed = copy(legacy);
++      failed = false;
+       logger.info("Imported legacy STARCORE diplomacy state into SQL storage.");
+       return legacy;
+     } catch (DiplomacyStateConflictException conflict) {
+       throw conflict;
+     } catch (Exception exception) {
++      failed = true;
+       throw new IllegalStateException("Unable to load SQL diplomacy state", exception);
+     }
+   }
+ 
+   @Override
+-  public void save(Properties properties) {
+-    Properties snapshot = copy(properties);
++  public synchronized void save(Properties properties) {
++    if (observed == null) load();
++    if (failed)
++      throw new IllegalStateException("Diplomacy SQL authority unavailable; reload required");
++    Properties snapshot = DiplomacyAuthority.seal(properties);
+     CompletableFuture<Void> operation = enqueue(() -> writeSnapshot(snapshot));
+     try {
+       operation.join();
++      observed = copy(snapshot);
+     } catch (java.util.concurrent.CompletionException failure) {
+       Throwable cause = failure.getCause();
+       if (cause instanceof RuntimeException runtimeFailure) {
+@@ -108,23 +126,7 @@ final class SqlDiplomacyStateStorage implements DiplomacyStateStorage {
+ 
+   @Override
+   public void saveAsync(Properties properties) {
+-    Properties snapshot = copy(properties);
+-    CompletableFuture<Void> operation = enqueue(() -> writeSnapshot(snapshot));
+-    operation.whenComplete(
+-        (ignored, failure) -> {
+-          if (failure != null) {
+-            Throwable cause =
+-                failure instanceof java.util.concurrent.CompletionException completion
+-                        && completion.getCause() != null
+-                    ? completion.getCause()
+-                    : failure;
+-            if (cause instanceof DiplomacyStateConflictException) {
+-              logger.log(Level.WARNING, cause.getMessage());
+-            } else {
+-              logger.log(Level.SEVERE, "Unable to save queued SQL diplomacy state", failure);
+-            }
+-          }
+-        });
++    save(properties);
+   }
+ 
+   /** Queue every SQL operation behind the previous one so revision state is single-threaded. */
+@@ -228,6 +230,8 @@ final class SqlDiplomacyStateStorage implements DiplomacyStateStorage {
+       if (currentRevision != expectedRevision) {
+         throw new DiplomacyStateConflictException(expectedRevision, currentRevision);
+       }
++      Properties current = loadFromDatabase(connection);
++      DiplomacyAuthority.transition(current, properties);
+       long nextRevision = Math.addExact(currentRevision, 1L);
+       try (PreparedStatement update =
+           connection.prepareStatement(
+@@ -288,6 +292,13 @@ final class SqlDiplomacyStateStorage implements DiplomacyStateStorage {
+     if (revisionExists(connection)) {
+       return;
+     }
++    if (observed != null && !observed.isEmpty())
++      throw new SQLException("Missing diplomacy revision authority");
++    try (var query = connection.createStatement();
++        var rows = query.executeQuery("SELECT COUNT(*) FROM " + TABLE_NAME)) {
++      if (rows.next() && rows.getLong(1) > 0)
++        throw new SQLException("Diplomacy state missing revision");
++    }
+     try (PreparedStatement insert =
+         connection.prepareStatement(
+             "INSERT INTO " + TABLE_NAME + " (property_key, property_value) VALUES (?, ?)")) {
+@@ -340,58 +351,7 @@ final class SqlDiplomacyStateStorage implements DiplomacyStateStorage {
+     return properties;
+   }
+ 
+-  /** 测试专用构造函数 */
+   SqlDiplomacyStateStorage(DataSource dataSource, Properties legacyProperties, Logger logger) {
+-    this(
+-        "test",
+-        new TestDatabaseServiceWrapper(dataSource),
+-        new TestPersistenceServiceWrapper(legacyProperties),
+-        logger);
+-  }
+-
+-  /** 测试用 DatabaseService 包装器 */
+-  private static class TestDatabaseServiceWrapper extends DatabaseService {
+-    private final DataSource dataSource;
+-
+-    TestDatabaseServiceWrapper(DataSource dataSource) {
+-      super(null, null);
+-      this.dataSource = dataSource;
+-    }
+-
+-    @Override
+-    public synchronized java.util.Optional<DataSource> dataSource() {
+-      return java.util.Optional.of(dataSource);
+-    }
+-
+-    @Override
+-    public synchronized boolean isRunning() {
+-      return true;
+-    }
+-  }
+-
+-  /** 测试用 PersistenceService 包装器 */
+-  private static class TestPersistenceServiceWrapper extends PersistenceService {
+-    private final Properties properties;
+-
+-    TestPersistenceServiceWrapper(Properties properties) {
+-      super(null, null);
+-      this.properties = properties;
+-    }
+-
+-    @Override
+-    public Properties loadProperties(String namespace, String fileName) {
+-      return properties;
+-    }
+-
+-    @Override
+-    public void saveProperties(String namespace, String fileName, Properties properties) {
+-      // 测试环境：不做实际保存
+-    }
+-
+-    @Override
+-    public CompletableFuture<Void> savePropertiesAsync(
+-        String namespace, String fileName, Properties properties) {
+-      return CompletableFuture.completedFuture(null);
+-    }
++    this(() -> Optional.of(dataSource), () -> copy(legacyProperties), logger);
+   }
+ }
+diff --git a/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java b/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java
+index b273751..5cdf463 100644
+--- a/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java
++++ b/src/main/java/dev/starcore/starcore/module/nation/NationDisbandRecovery.java
+@@ -275,7 +275,13 @@ final class NationDisbandRecovery {
+     }
+ 
+     for (NationId nationId : transaction.nationIds()) {
+-      diplomacyService.clearNationRelations(nationId);
++      if (diplomacyService
++          instanceof dev.starcore.starcore.module.diplomacy.DiplomacyRetirementService retirement) {
++        var receipt = retirement.retireDiplomacy(transaction.transactionId(), nationId);
++        if (!receipt.operationId().equals(transaction.transactionId())
++            || !receipt.nationId().equals(nationId))
++          throw new IllegalStateException("Conflicting diplomacy retirement receipt");
++      } else diplomacyService.clearNationRelations(nationId);
+       allianceService.clearNationRelations(nationId);
+       militaryAllianceService.clearNationRelations(nationId);
+       warService.clearNationWarState(nationId);
+diff --git a/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthorityStorageTest.java b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthorityStorageTest.java
+new file mode 100644
+index 0000000..b4600c8
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyAuthorityStorageTest.java
+@@ -0,0 +1,175 @@
++package dev.starcore.starcore.module.diplomacy;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.database.DatabaseService;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.nio.file.*;
++import java.util.*;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.logging.Logger;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++
++class DiplomacyAuthorityStorageTest {
++  @TempDir Path root;
++
++  @Test
++  void fileMissingCorruptOrDuplicateAuthorityNeverUsesBackup() throws Exception {
++    try (var f = new DiplomacyRetirementTestFixture(root, false)) {
++      var nation = NationId.random();
++      f.open().retireDiplomacy(UUID.randomUUID(), nation);
++      var path = root.resolve("diplomacy/relations.properties");
++      var valid = Files.readAllBytes(path);
++      Files.write(path, new byte[0]);
++      assertThatThrownBy(() -> f.storage().load()).isInstanceOf(IllegalStateException.class);
++      Files.write(path, valid);
++      var established = f.storage();
++      established.load();
++      var missing = root.resolve("diplomacy/moved.properties");
++      Files.move(path, missing);
++      assertThatThrownBy(established::load).isInstanceOf(IllegalStateException.class);
++      Files.copy(missing, path.resolveSibling("relations.properties.bak"));
++      assertThatThrownBy(() -> f.storage().load()).isInstanceOf(IllegalStateException.class);
++      Files.write(path, valid);
++      Files.writeString(
++          path,
++          "\n" + DiplomacyAuthority.RETIRED + nation + "=" + UUID.randomUUID() + ":0\n",
++          StandardOpenOption.APPEND);
++      assertThatThrownBy(() -> f.storage().load()).isInstanceOf(IllegalStateException.class);
++      Files.write(path, valid);
++      assertThat(f.open().diplomacyRetirementReceipt(nation)).isPresent();
++    }
++  }
++
++  @Test
++  void sqliteMigrationPreservesReceiptAndPreventsFallback() throws Exception {
++    try (var f = new DiplomacyRetirementTestFixture(root, true)) {
++      var nation = NationId.random();
++      var file = new PersistenceDiplomacyStateStorage("diplomacy", f.persistence);
++      var module = f.open(new MergingDiplomacyStateStorage(file));
++      var receipt = module.retireDiplomacy(UUID.randomUUID(), nation);
++      var online = new AtomicBoolean(true);
++      var store =
++          new SqlDiplomacyStateStorage(
++              () -> online.get() ? Optional.of(f.database) : Optional.empty(),
++              () -> new PersistenceDiplomacyStateStorage("diplomacy", f.persistence).load(),
++              Logger.getAnonymousLogger());
++      assertThat(DiplomacyAuthority.receipts(store.load())).containsEntry(nation, receipt);
++      online.set(false);
++      assertThatThrownBy(store::load).isInstanceOf(IllegalStateException.class);
++      online.set(true);
++      assertThat(DiplomacyAuthority.receipts(store.load())).containsEntry(nation, receipt);
++      try (var c = f.database.getConnection();
++          var s = c.createStatement()) {
++        s.executeUpdate(
++            "DELETE FROM starcore_diplomacy_state WHERE property_key <> '__starcore_revision__'");
++      }
++      assertThatThrownBy(store::load).isInstanceOf(IllegalStateException.class);
++      assertThatThrownBy(() -> f.storage().load()).isInstanceOf(IllegalStateException.class);
++    }
++  }
++
++  @Test
++  void sqliteFailureRollsBackRetirementAndRetryUsesOriginalNumber() throws Exception {
++    try (var f = new DiplomacyRetirementTestFixture(root, true)) {
++      var module = f.open();
++      var nation = NationId.random();
++      var other = NationId.random();
++      module.setRelation(nation, other, DiplomacyRelation.ALLIED);
++      var operation = UUID.randomUUID();
++      try (var c = f.database.getConnection();
++          var s = c.createStatement()) {
++        s.execute(
++            "CREATE TRIGGER reject_retirement BEFORE INSERT ON starcore_diplomacy_state WHEN"
++                + " NEW.property_key LIKE 'diplomacyRetired.%' BEGIN SELECT RAISE(ABORT, 'injected"
++                + " retirement write failure'); END");
++      }
++      assertThatThrownBy(() -> module.retireDiplomacy(operation, nation))
++          .isInstanceOf(IllegalStateException.class);
++      assertThat(f.open().relationsOf(nation)).hasSize(1);
++      assertThat(f.open().diplomacyRetirementReceipt(nation)).isEmpty();
++      try (var c = f.database.getConnection();
++          var s = c.createStatement()) {
++        s.execute("DROP TRIGGER reject_retirement");
++      }
++      var receipt = module.retireDiplomacy(operation, nation);
++      assertThat(receipt.clearedEntries()).isEqualTo(2);
++      assertThat(f.open().retireDiplomacy(operation, nation)).isEqualTo(receipt);
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void damagedChecksumAndTruncatedRowsRejectLoading(boolean sql) throws Exception {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var nation = NationId.random();
++      f.open().retireDiplomacy(UUID.randomUUID(), nation);
++      if (sql) {
++        try (var c = f.database.getConnection();
++            var s = c.createStatement()) {
++          s.executeUpdate(
++              "UPDATE starcore_diplomacy_state SET property_value='bad' WHERE"
++                  + " property_key='diplomacyAuthority.sha256'");
++        }
++      } else {
++        var p = root.resolve("diplomacy/relations.properties");
++        String text = Files.readString(p, java.nio.charset.StandardCharsets.ISO_8859_1);
++        Files.writeString(
++            p,
++            text.replaceFirst(
++                "diplomacyAuthority.sha256=[^\\r\\n]*", "diplomacyAuthority.sha256=bad"),
++            java.nio.charset.StandardCharsets.ISO_8859_1);
++      }
++      assertThatThrownBy(() -> f.storage().load()).isInstanceOf(IllegalStateException.class);
++    }
++  }
++
++  @Test
++  void truncatedUnknownAndInvalidEndpointFamiliesAreRejected() {
++    var a = NationId.random();
++    var b = NationId.random();
++    var valid =
++        DiplomacyStateCodec.toProperties(
++            Map.of(DiplomacyPairKey.of(a, b), DiplomacyRelation.ALLIED));
++    for (String key : List.of("relation.0.left", "relation.0.right", "relation.0.relation")) {
++      var bad = DiplomacyAuthority.copy(valid);
++      bad.remove(key);
++      assertThatThrownBy(() -> DiplomacyAuthority.seal(bad)).isInstanceOf(RuntimeException.class);
++    }
++    var bad = DiplomacyAuthority.copy(valid);
++    bad.setProperty("relation.1.left", a.toString());
++    assertThatThrownBy(() -> DiplomacyAuthority.seal(bad))
++        .isInstanceOf(IllegalArgumentException.class);
++    var receipt = new DiplomacyRetirementService.RetirementReceipt(UUID.randomUUID(), a, 0);
++    assertThatThrownBy(
++            () -> new DiplomacyRetirementService.RetirementReceipt(receipt.operationId(), a, -1))
++        .isInstanceOf(IllegalArgumentException.class);
++  }
++
++  @Test
++  void backendDoesNotSwitchAfterFileAuthorityWasChosen() {
++    try (var f = new DiplomacyRetirementTestFixture(root, true)) {
++      var database = mock(DatabaseService.class);
++      when(database.isRunning()).thenReturn(false);
++      when(database.dataSource()).thenReturn(Optional.of(f.database));
++      var store =
++          new DatabaseAwareDiplomacyStateStorage(
++              "diplomacy", database, f.persistence, Logger.getAnonymousLogger());
++      var module = f.open(store);
++      var nation = NationId.random();
++      var operation = UUID.randomUUID();
++      var receipt = module.retireDiplomacy(operation, nation);
++      when(database.isRunning()).thenReturn(true);
++      assertThat(module.retireDiplomacy(operation, nation)).isEqualTo(receipt);
++      assertThat(
++              DiplomacyAuthority.receipts(
++                  new PersistenceDiplomacyStateStorage("diplomacy", f.persistence).load()))
++          .containsEntry(nation, receipt);
++      assertThat(f.storage().load()).isEmpty();
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyModuleLifecycleTest.java b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyModuleLifecycleTest.java
+index 7ee8e20..104ecd3 100644
+--- a/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyModuleLifecycleTest.java
++++ b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyModuleLifecycleTest.java
+@@ -99,7 +99,8 @@ class DiplomacyModuleLifecycleTest {
+     registry.register(DiplomacyRelationService.class, module);
+     registry.register(DiplomacyWarService.class, module);
+     registry.register(DiplomacyAllianceService.class, module);
+-    registry.register(DiplomacyTimingPolicy.class, mock(DiplomacyTimingPolicy.class));
++    registry.register(
++        DiplomacyTimingPolicy.class, (DiplomacyTimingPolicy) field(module, "timingPolicy"));
+ 
+     setField(module, "diplomacyMenu", menu);
+     setField(module, "diplomacyMenuListener", menuListener);
+diff --git a/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyPlayerJourneyRestartIntegrationTest.java b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyPlayerJourneyRestartIntegrationTest.java
+index 275d363..0ffa635 100644
+--- a/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyPlayerJourneyRestartIntegrationTest.java
++++ b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyPlayerJourneyRestartIntegrationTest.java
+@@ -152,31 +152,10 @@ class DiplomacyPlayerJourneyRestartIntegrationTest {
+     invoke(module, "loadState");
+     module.setAllianceCooldown(allianceCooldown);
+     if (wireWarRecord && wars instanceof FakeWarService) {
+-      Field warRecordsField = DiplomacyModule.class.getDeclaredField("warRecords");
+-      warRecordsField.setAccessible(true);
+-      Field relationsField = DiplomacyModule.class.getDeclaredField("relations");
+-      relationsField.setAccessible(true);
+-      Field timestampsField = DiplomacyModule.class.getDeclaredField("relationChangeTimestamps");
+-      timestampsField.setAccessible(true);
+-      @SuppressWarnings("unchecked")
+-      java.util.Map<DiplomacyPairKey, WarRecord> warRecords =
+-          (java.util.Map<DiplomacyPairKey, WarRecord>) warRecordsField.get(module);
+-      @SuppressWarnings("unchecked")
+-      java.util.Map<DiplomacyPairKey, DiplomacyRelation> relations =
+-          (java.util.Map<DiplomacyPairKey, DiplomacyRelation>) relationsField.get(module);
+-      @SuppressWarnings("unchecked")
+-      java.util.Map<DiplomacyPairKey, Instant> timestamps =
+-          (java.util.Map<DiplomacyPairKey, Instant>) timestampsField.get(module);
+-      ((FakeWarService) wars).setWarEndedCallback(warRecords::remove);
+       ((FakeWarService) wars)
+-          .setRecordWarDeclarationCallback(
+-              (aggressor, defender, declaredAt) -> {
+-                DiplomacyPairKey key = DiplomacyPairKey.of(aggressor, defender);
+-                WarRecord record = new WarRecord(aggressor, defender, declaredAt);
+-                warRecords.put(key, record);
+-                relations.put(key, DiplomacyRelation.WAR);
+-                timestamps.put(key, declaredAt);
+-              });
++          .setWarEndedCallback(
++              pair -> module.setRelation(pair.left(), pair.right(), DiplomacyRelation.NEUTRAL));
++      ((FakeWarService) wars).setRecordWarDeclarationCallback(module::recordWarDeclaration);
+     }
+     return module;
+   }
+@@ -259,10 +238,9 @@ class DiplomacyPlayerJourneyRestartIntegrationTest {
+       }
+       peaceRequests.add(left);
+       if (peaceRequests.contains(active.left()) && peaceRequests.contains(active.right())) {
+-        if (warEndedCallback != null) {
+-          warEndedCallback.accept(DiplomacyPairKey.of(active.left(), active.right()));
+-        }
++        var pair = DiplomacyPairKey.of(active.left(), active.right());
+         active = null;
++        if (warEndedCallback != null) warEndedCallback.accept(pair);
+       }
+       return true;
+     }
+diff --git a/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementLifecycleTest.java b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementLifecycleTest.java
+new file mode 100644
+index 0000000..13f4fc1
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementLifecycleTest.java
+@@ -0,0 +1,119 @@
++package dev.starcore.starcore.module.diplomacy;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.StarCoreContext;
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import dev.starcore.starcore.core.service.ServiceRegistry;
++import dev.starcore.starcore.module.diplomacy.gui.DiplomacyMenu;
++import dev.starcore.starcore.module.nation.NationService;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.util.*;
++import java.util.concurrent.CompletableFuture;
++import java.util.logging.Logger;
++import org.bukkit.Server;
++import org.bukkit.configuration.file.YamlConfiguration;
++import org.bukkit.event.HandlerList;
++import org.bukkit.plugin.PluginManager;
++import org.bukkit.plugin.java.JavaPlugin;
++import org.junit.jupiter.api.Test;
++
++class DiplomacyRetirementLifecycleTest {
++  record Fixture(
++      DiplomacyModule module,
++      StarCoreContext context,
++      ServiceRegistry registry,
++      PluginManager manager) {}
++
++  Fixture fixture() {
++    var module = new DiplomacyModule();
++    var context = mock(StarCoreContext.class);
++    var registry = new ServiceRegistry();
++    registry.register(NationService.class, mock(NationService.class));
++    var plugin = mock(JavaPlugin.class);
++    var server = mock(Server.class);
++    var manager = mock(PluginManager.class);
++    var persistence = mock(PersistenceService.class);
++    when(context.plugin()).thenReturn(plugin);
++    when(context.serviceRegistry()).thenReturn(registry);
++    when(context.persistenceService()).thenReturn(persistence);
++    when(plugin.getServer()).thenReturn(server);
++    when(server.getPluginManager()).thenReturn(manager);
++    when(plugin.getConfig()).thenReturn(new YamlConfiguration());
++    when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    when(persistence.ensureNamespace(anyString()))
++        .thenReturn(CompletableFuture.completedFuture(null));
++    return new Fixture(module, context, registry, manager);
++  }
++
++  @Test
++  void startupLoadsRetirementAndRegistersServiceThenStopsOldReferences() {
++    var f = fixture();
++    var nation = NationId.random();
++    var op = UUID.randomUUID();
++    var state = DiplomacyAuthority.retire(new Properties(), op, nation);
++    try (var storage =
++            mockConstruction(
++                DatabaseAwareDiplomacyStateStorage.class,
++                (mock, c) -> when(mock.load()).thenReturn(state));
++        var menus = mockConstruction(DiplomacyMenu.class);
++        var handlers = mockStatic(HandlerList.class)) {
++      f.module.enable(f.context);
++      assertThat(f.registry.require(DiplomacyRetirementService.class)).isSameAs(f.module);
++      assertThat(f.module.diplomacyRetirementReceipt(nation).orElseThrow().operationId())
++          .isEqualTo(op);
++      assertThatThrownBy(() -> f.module.sendInvite(nation, NationId.random()))
++          .hasMessageContaining("retired");
++      f.module.disable(f.context);
++      assertThat(f.registry.snapshot()).containsOnlyKeys(NationService.class);
++      verify(menus.constructed().getFirst()).shutdown();
++      assertThatThrownBy(() -> f.module.retireDiplomacy(op, nation))
++          .hasMessageContaining("stopped");
++    }
++  }
++
++  @Test
++  void partialEnableFailureUnregistersAndDoesNotFlushUncommittedState() {
++    var f = fixture();
++    doThrow(new IllegalStateException("listener registration failed"))
++        .when(f.manager)
++        .registerEvents(any(), any());
++    try (var storage =
++            mockConstruction(
++                DatabaseAwareDiplomacyStateStorage.class,
++                (mock, c) -> when(mock.load()).thenReturn(new Properties()));
++        var menus = mockConstruction(DiplomacyMenu.class);
++        var handlers = mockStatic(HandlerList.class)) {
++      assertThatThrownBy(() -> f.module.enable(f.context))
++          .hasMessage("listener registration failed");
++      assertThat(f.registry.snapshot()).containsOnlyKeys(NationService.class);
++      verify(storage.constructed().getFirst(), never()).save(any());
++      verify(menus.constructed().getFirst()).shutdown();
++      assertThatThrownBy(() -> f.module.sendInvite(NationId.random(), NationId.random()))
++          .hasMessageContaining("stopped");
++    }
++  }
++
++  @Test
++  void menuShutdownFailureStillUnregistersModuleAndPreservesReplacementService() {
++    var f = fixture();
++    try (var storage =
++            mockConstruction(
++                DatabaseAwareDiplomacyStateStorage.class,
++                (mock, c) -> when(mock.load()).thenReturn(new Properties()));
++        var menus = mockConstruction(DiplomacyMenu.class);
++        var handlers = mockStatic(HandlerList.class)) {
++      f.module.enable(f.context);
++      var replacement = mock(DiplomacyRetirementService.class);
++      f.registry.register(DiplomacyRetirementService.class, replacement);
++      doThrow(new IllegalStateException("menu cleanup failed"))
++          .when(menus.constructed().getFirst())
++          .shutdown();
++      assertThatThrownBy(() -> f.module.disable(f.context)).hasMessage("menu cleanup failed");
++      assertThat(f.registry.snapshot())
++          .containsOnlyKeys(NationService.class, DiplomacyRetirementService.class);
++      assertThat(f.registry.require(DiplomacyRetirementService.class)).isSameAs(replacement);
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementTest.java b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementTest.java
+new file mode 100644
+index 0000000..cdac5b3
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementTest.java
+@@ -0,0 +1,326 @@
++package dev.starcore.starcore.module.diplomacy;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.core.StarCoreContext;
++import dev.starcore.starcore.core.event.StarCoreEventBus;
++import dev.starcore.starcore.core.service.ServiceRegistry;
++import dev.starcore.starcore.module.nation.model.NationId;
++import java.nio.file.*;
++import java.time.Instant;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.*;
++import org.bukkit.event.HandlerList;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++
++class DiplomacyRetirementTest {
++  @TempDir Path root;
++  final NationId retired = NationId.random(), other = NationId.random(), kept = NationId.random();
++  final UUID operation = UUID.randomUUID();
++
++  Properties seed() {
++    var now = Instant.now();
++    var value =
++        DiplomacyCombinedStateCodec.toProperties(
++            Map.of(
++                DiplomacyPairKey.of(retired, other),
++                DiplomacyRelation.ALLIED,
++                DiplomacyPairKey.of(other, kept),
++                DiplomacyRelation.FRIENDLY),
++            Map.of(
++                DiplomacyPairKey.of(retired, other),
++                new WarRecord(retired, other, now),
++                DiplomacyPairKey.of(other, kept),
++                new WarRecord(other, kept, now)),
++            Map.of(DiplomacyPairKey.of(retired, other), now, DiplomacyPairKey.of(other, kept), now),
++            Map.of(
++                new AllianceInvitationKey(retired, other),
++                now,
++                new AllianceInvitationKey(other, kept),
++                now));
++    value.putAll(
++        DiplomacyInteractionCodec.toProperties(
++            Map.of(DiplomacyPairKey.of(retired, other), now, DiplomacyPairKey.of(other, kept), now),
++            Map.of(
++                new AllianceInviteKey(other, retired),
++                now,
++                new AllianceInviteKey(other, kept),
++                now),
++            Map.of(
++                DiplomacyPairKey.of(retired, other),
++                retired,
++                DiplomacyPairKey.of(other, kept),
++                other)));
++    value.setProperty("unrelated.metadata", "keep me");
++    return value;
++  }
++
++  void seed(DiplomacyRetirementTestFixture f) {
++    var s = f.storage();
++    s.load();
++    s.save(seed());
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void retirementSurvivesRestartPreservesOtherStateAndReturnsOriginalResult(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      seed(f);
++      var module = f.open();
++      var receipt = module.retireDiplomacy(operation, retired);
++      assertThat(receipt.clearedEntries()).isEqualTo(7);
++      assertThat(module.relationsOf(retired)).isEmpty();
++      assertThat(module.activeWarsOf(retired)).isEmpty();
++      var restart = f.open();
++      assertThat(restart.retireDiplomacy(operation, retired)).isEqualTo(receipt);
++      assertThat(restart.diplomacyRetirementReceipt(retired)).contains(receipt);
++      assertThatThrownBy(() -> restart.retireDiplomacy(UUID.randomUUID(), retired))
++          .isInstanceOf(IllegalArgumentException.class);
++      restart.setRelation(other, kept, DiplomacyRelation.FRIENDLY);
++      var persisted = f.storage().load();
++      assertThat(persisted).containsEntry("unrelated.metadata", "keep me");
++      assertThat(DiplomacyInteractionCodec.fromProperties(persisted).invitations())
++          .containsOnlyKeys(new AllianceInviteKey(other, kept));
++      assertThat(DiplomacyInteractionCodec.fromProperties(persisted).warEndRequests())
++          .containsOnlyKeys(DiplomacyPairKey.of(other, kept));
++      assertThat(f.open().retireDiplomacy(operation, retired)).isEqualTo(receipt);
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void staleWriterCannotResurrectAfterRefreshOrOrdinarySave(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      seed(f);
++      var winner = f.open();
++      var stale = f.open();
++      winner.retireDiplomacy(operation, retired);
++      assertThatThrownBy(() -> stale.setRelation(retired, other, DiplomacyRelation.FRIENDLY))
++          .isInstanceOf(DiplomacyStateConflictException.class);
++      assertThat(stale.relationsOf(retired)).isEmpty();
++      for (Runnable action :
++          List.<Runnable>of(
++              () -> stale.setRelation(retired, other, DiplomacyRelation.FRIENDLY),
++              () -> stale.sendInvite(retired, other),
++              () -> stale.acceptInvite(retired, other),
++              () -> stale.recordWarDeclaration(other, retired, Instant.now()),
++              () -> stale.declareWar(retired, other)))
++        assertThatThrownBy(action::run)
++            .isInstanceOf(IllegalStateException.class)
++            .hasMessageContaining("retired");
++      stale.setRelation(other, kept, DiplomacyRelation.FRIENDLY);
++      assertThat(f.open().diplomacyRetirementReceipt(retired)).isPresent();
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void storageRejectsReceiptDeletionChangeAndResurrectionEvenAfterFreshLoad(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      seed(f);
++      f.open().retireDiplomacy(operation, retired);
++      var store = f.storage();
++      var saved = store.load();
++      var removed = DiplomacyAuthority.copy(saved);
++      removed.remove(DiplomacyAuthority.RETIRED + retired);
++      assertThatThrownBy(() -> store.save(DiplomacyAuthority.seal(removed)))
++          .isInstanceOf(RuntimeException.class);
++      store.load();
++      var changed = DiplomacyAuthority.copy(saved);
++      changed.setProperty(DiplomacyAuthority.RETIRED + retired, UUID.randomUUID() + ":7");
++      assertThatThrownBy(() -> store.save(DiplomacyAuthority.seal(changed)))
++          .isInstanceOf(RuntimeException.class);
++      store.load();
++      var resurrected = seed();
++      saved.stringPropertyNames().stream()
++          .filter(k -> k.startsWith(DiplomacyAuthority.RETIRED))
++          .forEach(k -> resurrected.setProperty(k, saved.getProperty(k)));
++      assertThatThrownBy(() -> store.save(resurrected)).isInstanceOf(RuntimeException.class);
++      assertThat(f.open().diplomacyRetirementReceipt(retired).orElseThrow().operationId())
++          .isEqualTo(operation);
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void shrinkingTemporalFamiliesDoesNotLeaveOldEntriesAndLegacyClearDoesNotRetire(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var module = f.open();
++      module.sendInvite(retired, other);
++      module.sendInvite(retired, kept);
++      module.cancelInvite(retired, other);
++      assertThat(f.storage().load())
++          .containsEntry("alliance-invite.count", "1")
++          .doesNotContainKey("alliance-invite.1.inviter");
++      module.clearNationRelations(retired);
++      assertThat(f.open().getPendingInvites(kept)).isEmpty();
++      assertThat(module.diplomacyRetirementReceipt(retired)).isEmpty();
++      assertThat(module.sendInvite(retired, other).success()).isTrue();
++    }
++  }
++
++  static final class FaultStorage implements DiplomacyStateStorage {
++    final DiplomacyStateStorage delegate;
++    String mode = "";
++    boolean unreadable;
++    Runnable during = () -> {};
++
++    FaultStorage(DiplomacyStateStorage delegate) {
++      this.delegate = delegate;
++    }
++
++    public Properties load() {
++      if (unreadable) throw new IllegalStateException("read unavailable");
++      return delegate.load();
++    }
++
++    public void save(Properties value) {
++      during.run();
++      if (mode.equals("before")) throw new IllegalStateException("before commit");
++      delegate.save(value);
++      if (mode.equals("unknown")) unreadable = true;
++      if (mode.equals("after") || mode.equals("unknown"))
++        throw new IllegalStateException("lost response");
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void interruptedRetirementRetainsOriginalNumberAndNeverRepeatsCleanup(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      seed(f);
++      var faults = new FaultStorage(new MergingDiplomacyStateStorage(f.storage()));
++      var module = f.open(faults);
++      faults.mode = "before";
++      assertThatThrownBy(() -> module.retireDiplomacy(operation, retired))
++          .hasMessage("before commit");
++      assertThat(module.relationsOf(retired)).hasSize(1);
++      faults.mode = "after";
++      var receipt = module.retireDiplomacy(operation, retired);
++      assertThat(receipt.clearedEntries()).isEqualTo(7);
++      faults.mode = "";
++      assertThat(module.retireDiplomacy(operation, retired)).isEqualTo(receipt);
++      assertThat(f.open().retireDiplomacy(operation, retired)).isEqualTo(receipt);
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void unknownCommitAndReadbackFailureRequireReloadWithOriginalRequest(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      seed(f);
++      var faults = new FaultStorage(new MergingDiplomacyStateStorage(f.storage()));
++      var module = f.open(faults);
++      faults.mode = "unknown";
++      assertThatThrownBy(() -> module.retireDiplomacy(operation, retired))
++          .hasMessage("lost response");
++      faults.mode = "";
++      faults.unreadable = false;
++      assertThatThrownBy(() -> module.setRelation(other, kept, DiplomacyRelation.FRIENDLY))
++          .hasMessageContaining("unavailable");
++      assertThat(f.open().retireDiplomacy(operation, retired).clearedEntries()).isEqualTo(7);
++    }
++  }
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void independentInstancesCompetingForSameRetirementPreserveSingleReceipt(boolean sql)
++      throws Exception {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql);
++        var pool = Executors.newFixedThreadPool(2)) {
++      seed(f);
++      var barrier = new CyclicBarrier(2);
++      var a = new FaultStorage(new MergingDiplomacyStateStorage(f.storage()));
++      var b = new FaultStorage(new MergingDiplomacyStateStorage(f.storage()));
++      Runnable wait =
++          () -> {
++            try {
++              barrier.await(5, TimeUnit.SECONDS);
++            } catch (Exception e) {
++              throw new IllegalStateException(e);
++            }
++          };
++      var first = f.open(a);
++      var second = f.open(b);
++      a.during = wait;
++      b.during = wait;
++      var one = pool.submit(() -> attempt(first));
++      var two = pool.submit(() -> attempt(second));
++      assertThat(List.of(one.get(10, TimeUnit.SECONDS), two.get(10, TimeUnit.SECONDS)))
++          .contains(true);
++      a.during = () -> {};
++      b.during = () -> {};
++      assertThat(first.retireDiplomacy(operation, retired))
++          .isEqualTo(second.retireDiplomacy(operation, retired));
++      assertThat(f.open().retireDiplomacy(operation, retired).clearedEntries()).isEqualTo(7);
++    }
++  }
++
++  boolean attempt(DiplomacyModule module) {
++    try {
++      module.retireDiplomacy(operation, retired);
++      return true;
++    } catch (RuntimeException conflict) {
++      return false;
++    }
++  }
++
++  @Test
++  void callbackCannotReenterRetirementAndStoppedReferencesCannotMutate() throws Exception {
++    try (var f = new DiplomacyRetirementTestFixture(root, false)) {
++      var module = f.open();
++      var bus = mock(StarCoreEventBus.class);
++      DiplomacyRetirementTestFixture.field(module, "eventBus", bus);
++      var attempted = new AtomicInteger();
++      doAnswer(
++              call -> {
++                attempted.incrementAndGet();
++                assertThatThrownBy(() -> module.retireDiplomacy(operation, retired))
++                    .hasMessageContaining("busy");
++                return null;
++              })
++          .when(bus)
++          .publish(any());
++      module.setRelation(retired, other, DiplomacyRelation.ALLIED);
++      assertThat(attempted.get()).isPositive();
++      assertThat(module.diplomacyRetirementReceipt(retired)).isEmpty();
++      var context = mock(StarCoreContext.class);
++      when(context.serviceRegistry()).thenReturn(new ServiceRegistry());
++      try (var ignored = mockStatic(HandlerList.class)) {
++        module.disable(context);
++        module.disable(context);
++      }
++      assertThatThrownBy(() -> module.retireDiplomacy(operation, retired))
++          .hasMessageContaining("stopped");
++      assertThatThrownBy(() -> module.sendInvite(retired, kept)).hasMessageContaining("stopped");
++    }
++  }
++
++  @Test
++  void stopDuringCallbackDoesNotFlushUncommittedRelationship() throws Exception {
++    try (var f = new DiplomacyRetirementTestFixture(root, false)) {
++      var module = f.open();
++      var context = mock(StarCoreContext.class);
++      when(context.serviceRegistry()).thenReturn(new ServiceRegistry());
++      var bus = mock(StarCoreEventBus.class);
++      DiplomacyRetirementTestFixture.field(module, "eventBus", bus);
++      doAnswer(
++              call -> {
++                module.disable(context);
++                return null;
++              })
++          .when(bus)
++          .publish(any());
++      try (var ignored = mockStatic(HandlerList.class)) {
++        assertThatThrownBy(() -> module.setRelation(retired, other, DiplomacyRelation.ALLIED))
++            .hasMessageContaining("stopped");
++      }
++      assertThat(f.open().relationsOf(retired)).isEmpty();
++    }
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementTestFixture.java b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementTestFixture.java
+new file mode 100644
+index 0000000..804a31b
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyRetirementTestFixture.java
+@@ -0,0 +1,67 @@
++package dev.starcore.starcore.module.diplomacy;
++
++import static org.mockito.Mockito.*;
++
++import com.zaxxer.hikari.HikariConfig;
++import com.zaxxer.hikari.HikariDataSource;
++import dev.starcore.starcore.core.persistence.PersistenceService;
++import java.nio.file.Path;
++import java.util.Properties;
++import java.util.logging.Logger;
++import org.bukkit.plugin.java.JavaPlugin;
++
++public final class DiplomacyRetirementTestFixture implements AutoCloseable {
++  final Path root;
++  final PersistenceService persistence;
++  final HikariDataSource database;
++
++  public DiplomacyRetirementTestFixture(Path root, boolean sql) {
++    this.root = root;
++    var plugin = mock(JavaPlugin.class);
++    when(plugin.getDataFolder()).thenReturn(root.toFile());
++    when(plugin.getLogger()).thenReturn(Logger.getAnonymousLogger());
++    persistence = new PersistenceService(plugin, null);
++    persistence.start();
++    if (sql) {
++      var config = new HikariConfig();
++      config.setJdbcUrl("jdbc:sqlite:" + root.resolve("diplomacy.db"));
++      config.setMaximumPoolSize(4);
++      database = new HikariDataSource(config);
++    } else database = null;
++  }
++
++  DiplomacyStateStorage storage() {
++    return database == null
++        ? new PersistenceDiplomacyStateStorage("diplomacy", persistence)
++        : new SqlDiplomacyStateStorage(database, new Properties(), Logger.getAnonymousLogger());
++  }
++
++  public DiplomacyModule open() {
++    return open(new MergingDiplomacyStateStorage(storage()));
++  }
++
++  DiplomacyModule open(DiplomacyStateStorage storage) {
++    try {
++      var result = new DiplomacyModule();
++      field(result, "stateStorage", storage);
++      var load = DiplomacyModule.class.getDeclaredMethod("loadState");
++      load.setAccessible(true);
++      load.invoke(result);
++      result.setAllianceCooldown(java.time.Duration.ZERO);
++      return result;
++    } catch (Exception e) {
++      throw new IllegalStateException(e);
++    }
++  }
++
++  static void field(Object object, String name, Object value) throws Exception {
++    var f = object.getClass().getDeclaredField(name);
++    f.setAccessible(true);
++    f.set(object, value);
++  }
++
++  public void close() {
++    if (database != null) database.close();
++    persistence.stop();
++  }
++}
+diff --git a/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyStateConflictIntegrationTest.java b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyStateConflictIntegrationTest.java
+index 8915892..9151c88 100644
+--- a/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyStateConflictIntegrationTest.java
++++ b/src/test/java/dev/starcore/starcore/module/diplomacy/DiplomacyStateConflictIntegrationTest.java
+@@ -69,7 +69,8 @@ class DiplomacyStateConflictIntegrationTest {
+       first.saveAsync(state("first"));
+       assertThat(first.load()).containsEntry("marker", "first");
+ 
+-      second.saveAsync(state("stale"));
++      assertThatThrownBy(() -> second.saveAsync(state("stale")))
++          .isInstanceOf(DiplomacyStateConflictException.class);
+       assertThat(second.load()).containsEntry("marker", "first");
+ 
+       second.save(state("second"));
+diff --git a/src/test/java/dev/starcore/starcore/module/nation/NationDisbandDiplomacyTest.java b/src/test/java/dev/starcore/starcore/module/nation/NationDisbandDiplomacyTest.java
+new file mode 100644
+index 0000000..c4b677f
+--- /dev/null
++++ b/src/test/java/dev/starcore/starcore/module/nation/NationDisbandDiplomacyTest.java
+@@ -0,0 +1,59 @@
++package dev.starcore.starcore.module.nation;
++
++import static org.assertj.core.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++import dev.starcore.starcore.foundation.territory.TerritoryService;
++import dev.starcore.starcore.module.city.CityService;
++import dev.starcore.starcore.module.diplomacy.*;
++import dev.starcore.starcore.module.diplomacy.alliance.AllianceService;
++import dev.starcore.starcore.module.diplomacy.military.MilitaryAllianceService;
++import dev.starcore.starcore.module.nation.model.NationId;
++import dev.starcore.starcore.module.war.WarService;
++import java.nio.file.Path;
++import java.util.*;
++import org.junit.jupiter.api.io.TempDir;
++import org.junit.jupiter.params.ParameterizedTest;
++import org.junit.jupiter.params.provider.ValueSource;
++
++class NationDisbandDiplomacyTest {
++  @TempDir Path root;
++
++  @ParameterizedTest
++  @ValueSource(booleans = {false, true})
++  void failureAfterDiplomacyRetirementResumesOriginalReceiptAndRejectsLateWrites(boolean sql) {
++    try (var f = new DiplomacyRetirementTestFixture(root, sql)) {
++      var nation = NationId.random();
++      var other = NationId.random();
++      var operation = UUID.randomUUID();
++      var diplomacy = f.open();
++      diplomacy.setRelation(nation, other, DiplomacyRelation.ALLIED);
++      var alliance = mock(AllianceService.class);
++      doThrow(new IllegalStateException("alliance unavailable"))
++          .doNothing()
++          .when(alliance)
++          .clearNationRelations(nation);
++      var land = mock(TerritoryService.class);
++      var military = mock(MilitaryAllianceService.class);
++      var war = mock(WarService.class);
++      var cities = mock(CityService.class);
++      var transaction =
++          new NationDisbandTransaction(
++              operation, List.of(nation), Map.of(), List.of(), List.of(), List.of());
++      assertThatThrownBy(
++              () ->
++                  NationDisbandRecovery.completeCommitted(
++                      transaction, land, diplomacy, null, alliance, military, war, cities))
++          .hasMessage("alliance unavailable");
++      var receipt = diplomacy.diplomacyRetirementReceipt(nation).orElseThrow();
++      assertThat(receipt.operationId()).isEqualTo(operation);
++      assertThat(receipt.clearedEntries()).isEqualTo(2);
++      assertThatThrownBy(() -> diplomacy.sendInvite(nation, other)).hasMessageContaining("retired");
++      var restart = f.open();
++      NationDisbandRecovery.completeCommitted(
++          transaction, land, restart, null, alliance, military, war, cities);
++      assertThat(restart.diplomacyRetirementReceipt(nation)).contains(receipt);
++      verify(war).clearNationWarState(nation);
++    }
++  }
++}

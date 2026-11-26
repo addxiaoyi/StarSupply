@@ -1,6 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-当前最新兼容包按顺序应用十八份补丁：在前十七份后追加[城市文本输入](CITY-INPUT-RECOVERY.md)（`starcore-city-input-recovery.patch`）。名称、公告和金额输入采用原生文本窗口，保留预览/确认并绑定连接和原归属，避免真实物品替换。1,938 项 Core 定向回归及实际成品下 177 项配套测试通过。共享解散、其他模块书本输入和剩余工作见[代码清单](../CODE-CLOSURE.md)。生产 Folia 声明关闭。
+当前最新兼容包按顺序应用十九份补丁：在前十八份后追加[外交持久退役](DIPLOMACY-RETIREMENT.md)（`starcore-diplomacy-retirement.patch`）。现有解散按原编号关闭外交关系权威，永久回执与全部关系子状态同次保存，拒绝旧实例迟到写入；文件/SQL 同步校验及完整数组更新已接通。2,075 项 Core 定向回归及实际成品下 177 项配套测试通过。共享解散、联盟/军事联盟/实际战争退役和其他范围见[代码清单](../CODE-CLOSURE.md)。生产 Folia 声明关闭。
+
+
+此前城市输入兼容包按顺序应用十八份补丁：在前十七份后追加[城市文本输入](CITY-INPUT-RECOVERY.md)（`starcore-city-input-recovery.patch`）。名称、公告和金额输入采用原生文本窗口，保留预览/确认并绑定连接和原归属，避免真实物品替换。1,938 项 Core 定向回归及实际成品下 177 项配套测试通过。共享解散、其他模块书本输入和剩余工作见[代码清单](../CODE-CLOSURE.md)。生产 Folia 声明关闭。
 
 
 此前城市资金兼容包按顺序应用十七份补丁：在前十六份后追加[城市资金恢复](CITY-MONEY-RECOVERY.md)（`starcore-city-money-recovery.patch`）。命令/GUI 真实转移玩家与城市资金，持久意图、同号回执、原编号恢复和精确余额已接通。1,911 项 Core 定向回归及实际成品下 177 项配套测试通过。共享解散和其余外部退役、城市临时物品/其他交互及其他未闭环项见[清单](../CODE-CLOSURE.md)。生产 Folia 声明关闭。
