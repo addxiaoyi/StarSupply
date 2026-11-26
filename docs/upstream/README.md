@@ -1,6 +1,6 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
-2026-11-27 最新源码入口为[空条款与纯政治和约原编号恢复](development/TREATY-OPERATION-RECOVERY.md)：源意图、固定计划、exact-war generation/fingerprint 准入、原生 end/cancel 永久互斥回执、外交 reserve/apply/cancel 和完整国家对围栏已接通；取消先保存意图，外交原号终态确认后才释放原生围栏。新增 `/war treatyrecovery list [页码]` 及 `show|retry|cancel <完整条约UUID>`，权限 `starcore.war.admin`，允许控制台执行。命令和 GUI 展示执行字段、审查及恢复状态；新非政治/混合条款失败关闭，旧不明执行不自动重放。最终验证与累计重放见[证据入口](../verification/workspace-treaty-operation-recovery-development-20261127.json)，旧 PeaceTreatyTest 已修复并纳入手工编译定向测试。新累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代所有旧开发补丁；不要叠加，也尚未加入下方成品安装序列。**全部阶段尚未完成，JAR、安装序列与 review ZIP 仍第二十份。** 此前普通联盟、原生输入和外交 outbox/EventModule inbox 已包含，bus 可重复。多接收端全局 manifest、领土/军队权威、其他付款、剩余权限/线程/启停和玩法继续开发，生产 Folia 声明未扩大，实服待验，未启动服务器或修改世界、玩家存档。
+2026-11-27 最新源码入口为[和约 effect manifest v2](development/TREATY-EFFECT-MANIFEST.md)：完整原始 envelope、request/local/global 三层 hash、不可变 bind、原生 prepare/end 的 BOUND proof 验证与 release 全终态向量已接通。schema4 显式保留旧 v1；新 v2 仍只允许空/纯政治和单一 diplomacy receiver，文件及经实际连接元数据确认的 SQLite 具备 proof 门禁和未来终态容量保护，其他 SQL 失败关闭。管理命令与 GUI 展示协议和三层 hash，原编号取消、审查和权限保留。最终回归与累计重放见[证据入口](../verification/workspace-treaty-effect-manifest-development-20261127.json)。新累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代全部旧开发补丁，不能叠加，也尚未加入下方成品安装序列。**全部阶段尚未完成，JAR、安装序列与 review ZIP 仍第二十份。** 下一 P1 为 Army 耐久权威/真实军限及 receiver，其后分别接两套领土权威；赔款/贡纳/混合、其他付款和模块审计继续开发。生产 Folia 声明未扩大，实服待验，未启动服务器或修改世界、玩家存档。
 
 以下战争—外交镜像和费用恢复段为此前开发记录，已被上述新累计补丁覆盖。
 
