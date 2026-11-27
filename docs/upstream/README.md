@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-27 最新开发检查点为 [Army 军事条约接收器 A11](development/ARMY-MILITARY-TREATY-RECEIVER.md)：完整原条款、冻结计划、不可变 binding 和外交来源证明持久保存；核对 War 原结束/取消与外交终态后原子提交军事效果。未绑定可永久 abandon，绑定后按来源完成；预留先校验计划哈希容量，schema9 / row13 保留旧格式读取。最终五批 1,514 项 / 115 个 suite 通过，见[证据](../verification/workspace-army-military-treaty-receiver-development-20261127.json)。**全部阶段尚未完成。** Army 使用真实文件/SQLite，War 与外交来源在专项测试中为接口替身；生产尚未注册军事 receiver，和约仍拒绝军事/混合条款。接下来完成真实联合接线与全向量释放。生产 Army 仍为文件后端，成品仍第二十份；全仓干净构建、新 JAR 和实服待验。 累计补丁仍仅应用于第二十份固定基点，替代旧开发补丁，不能叠加。
+
+以下 A10 及更早段落为历史检查点，已包含在 A11 累计补丁中。
+
 2026-11-27 最新开发检查点为 [Army 持久军限与裁军 A10](development/ARMY-MILITARY-RESTRICTIONS.md)：完整本国军队预留、确定性整军裁撤与永久结果同 authority 提交，多个生效限制取最严格值；所有 writer 校验现有兵力和建军预留，解除使用独立原号且不复活军队。待决国家暂停普通业务/维护，旧付款与战斗必须先结清；schema8 / row12 保留旧格式读取，未来决定/解除容量与代数先预留。最终五批 1,492 项 / 113 个 suite 通过，见[证据](../verification/workspace-army-military-restrictions-development-20261127.json)。**全部阶段尚未完成。** 本阶段为 Army 权威原语，军事 receiver 的完整条款、manifest binding、War 来源证明和全向量释放仍待接线；生产和约仍拒绝军事/混合条款。生产 Army 仍为文件后端，成品仍第二十份；全仓干净构建、新 JAR 和实服待验。 累计补丁仍仅应用于第二十份固定基点，替代旧开发补丁，不能叠加。
 
 以下 A9 及更早段落为历史检查点，已包含在 A10 累计补丁中。
