@@ -1,0 +1,813 @@
+{
+  "checkpoint": "army-military-treaty-production-development-20261127",
+  "date": "2026-11-27",
+  "timezone": "Asia/Shanghai",
+  "base": "9e380d62fd94cdc54f6f703ea09e14f575660f18",
+  "previous_checkpoint": "army-prebinding-cancellation-development-20261127",
+  "patch": {
+    "path": "docs/upstream/development/army-military-treaty-production-20261127.patch",
+    "bytes": 3955770,
+    "sha256": "724f7f76c3d6315d4d93d7a7eb139e3dcc6e842672315e7e3b466c10ce59a3dd",
+    "file_diffs": 348
+  },
+  "source_changes_since_previous_checkpoint": [
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/army/ArmyModule.java",
+      "bytes": 9942,
+      "sha256": "b0a7be35e7d4e67c8b4c0147a1b46cd8151e6acc0a2b594a8d9f3ea754fd692f",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/army/ArmyService.java",
+      "bytes": 39324,
+      "sha256": "ba5b3ea759edb3489d5aea5dc18952f64e3767756c4b6a0ef86747c84a2ae390",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/WarModule.java",
+      "bytes": 38967,
+      "sha256": "bab5e5659024b7ca887052f6cb417f96a5d770f4710634f572f3e1cf94654a08",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/command/WarCommand.java",
+      "bytes": 45093,
+      "sha256": "14d8b37c496be7c03cb4396a098f05273240466b9c13985b8a0b89e3e0931085",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyBatch.java",
+      "bytes": 15991,
+      "sha256": "aa947dba51cdb96968f6b7406ddb59bb58bd494682730d73a9b727c6fa0e2e34",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyMilitaryEvidence.java",
+      "bytes": 2065,
+      "sha256": "4e5dfd63cd677843e042bca5645c86b57c54d07e5fcbfc1ca83627b44d4db5b8",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyProtocolJson.java",
+      "bytes": 5197,
+      "sha256": "6c7460abaa09263b38966a8436c63e3a2701e985b14febfd0e9c418e1145f2d4",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyService.java",
+      "bytes": 66507,
+      "sha256": "5094a2f8ee34c0e908dbda92403f44461fadccdc09ce752ce8895b93d7b33136",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyStateCodec.java",
+      "bytes": 18823,
+      "sha256": "14c5d2ea0eb152a8820f1b83a9b013d500cf5d2b34880d47acb0600ad266d813",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarSettlementFileCapacity.java",
+      "bytes": 15669,
+      "sha256": "81fc12c5bde893c3e0cfe98cb710ffb7239a2fe48ab882cc3725c164e4585640",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/army/ArmyModuleLifecycleTest.java",
+      "bytes": 8717,
+      "sha256": "45b3edf45c3342fffb0188472fb98382123cbf1d0f11aab32c697b10aa3ab9fc",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/WarModuleAuthorityTest.java",
+      "bytes": 7959,
+      "sha256": "e1b475056071d6e78cb785d7a715ea605811f5ea7b583b0f03b86471d4191f16",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/command/WarCommandPeaceTreatyTest.java",
+      "bytes": 34464,
+      "sha256": "37340d30ebd2701a544087479b125e086d5d20c5df3ee75b427376949dcadc30",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/MilitaryTreatyProductionTest.java",
+      "bytes": 25801,
+      "sha256": "522f25a0e37009e02f9138a6d9f549bef9576a2a460bfae51cf950fc95e84e9a",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/PeaceTreatyServiceContractTest.java",
+      "bytes": 35945,
+      "sha256": "f90829baf4b689c160237d1f860e7c74bc46655e7ffa41172b14c07a037810ae",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/PeaceTreatyStateCodecTest.java",
+      "bytes": 25666,
+      "sha256": "7d47ee9a231c871365f0de0d2c41c0c0187e87ab791508d29cd3ebfe67c76ab2",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/WarSettlementFileCapacityTest.java",
+      "bytes": 37171,
+      "sha256": "abea414cf643fb206c0325e8f0f469a9b51db0715de1611d4bc5bed2e1eef932",
+      "exists_in_previous_checkpoint": true
+    }
+  ],
+  "validation": {
+    "tests": 426,
+    "suites": 21,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "deduplicated_by_class_and_case_name": true,
+    "batch_totals_match_xml_and_logs": true,
+    "batches": [
+      {
+        "label": "army-a14-state-lifecycle-02",
+        "tests": 135,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a14-state-lifecycle-02.log",
+          "bytes": 29328,
+          "sha256": "8be0860ba0ecf5d6ca718ab37c7d990d0d4c5931324ad758f5f78a005d61a14c"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.api.PublicApiCompatibilityTest.xml",
+              "bytes": 21556,
+              "sha256": "955651d303a3e4586d3ea56d1dd9434bb2215d7ba492135d08477a6c20dc2bcd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyModuleLifecycleTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyModuleLifecycleTest.xml",
+              "bytes": 22580,
+              "sha256": "d256033a7e63bdbaaa24580166b2f623681b4b858a78b54a1938561390958d8b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.war.WarModuleAuthorityTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.war.WarModuleAuthorityTest.xml",
+              "bytes": 25037,
+              "sha256": "26edfcc6486cb3bea475ddbbd71e6276c5141909d1dcc5f096ac7fa20695d897"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.war.WarModuleMirrorLifecycleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.war.WarModuleMirrorLifecycleTest.xml",
+              "bytes": 21777,
+              "sha256": "7821775535788aa8c5d7d44793b7b42bf336cc762554cd37891319f9a4292834"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.war.WarModuleRecoveryCleanupTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.war.WarModuleRecoveryCleanupTest.xml",
+              "bytes": 21738,
+              "sha256": "5906ea1de5a6586ca505672fe28fb04df91c78342b1aff25e476179d9cff6128"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.war.command.WarCommandPeaceTreatyTest",
+            "tests": 46,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.war.command.WarCommandPeaceTreatyTest.xml",
+              "bytes": 29175,
+              "sha256": "bff3023d721eb29823d5f50c69d850f552898aa9a4460e60b4a5707908384969"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyBatchTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.PeaceTreatyBatchTest.xml",
+              "bytes": 25156,
+              "sha256": "3f55d0818686fe21792c88adfb87892926458358b452a2e7a7c44636b0d20661"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyServiceContractTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.PeaceTreatyServiceContractTest.xml",
+              "bytes": 49666,
+              "sha256": "19427835611593af93a1b4acdad30dd92c82294ccca54a58459457b9485b8d4f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyStateCodecTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.PeaceTreatyStateCodecTest.xml",
+              "bytes": 23694,
+              "sha256": "c13e74146035255e29ba56ef0d01a825f77e824c347d9fcd560d711ed358ec7f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementFileCapacityTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.WarSettlementFileCapacityTest.xml",
+              "bytes": 23968,
+              "sha256": "32bb2865841a1df9ca0b18e13c669f707cb8266f235054479b92a75b27ed0a98"
+            }
+          }
+        ]
+      },
+      {
+        "label": "army-a14-production-02",
+        "tests": 64,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a14-production-02.log",
+          "bytes": 172738,
+          "sha256": "2d8bda3adaef7af95afa8a22444446d6b0f58d18f3b8ce8b939fe9e7798321a7"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.war.MilitaryTreatyProductionTest",
+            "tests": 64,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.MilitaryTreatyProductionTest.xml",
+              "bytes": 212659,
+              "sha256": "7a1acdc5d6763e9e6bc9e1cf734eea8fe10f683b6377a5fbf140f8975626ae2c"
+            }
+          }
+        ]
+      },
+      {
+        "label": "army-a14-authorities-01",
+        "tests": 134,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a14-authorities-01.log",
+          "bytes": 238573,
+          "sha256": "93b9af297bd6f84aa60d139e39a2bfc1ce714e233072efbc7636ce276b3886a3"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyMilitaryRuntimeTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.ArmyMilitaryRuntimeTest.xml",
+              "bytes": 25773,
+              "sha256": "ca984789638591958e7fb4b01b1068332c3bddf5eac44fa327e8b840e16127e4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyAbandonmentTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyAbandonmentTest.xml",
+              "bytes": 24909,
+              "sha256": "83c7f9822e3de15a8b743f2419d558848436f3088e3750312066c76d1388f861"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyServiceTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyServiceTest.xml",
+              "bytes": 26152,
+              "sha256": "e16e0d0df52a7d042e8829821a1461712ca6534df3be298bbecb12a6f26fd1b3"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyMilitaryTreatyStorageTest",
+            "tests": 10,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyMilitaryTreatyStorageTest.xml",
+              "bytes": 24349,
+              "sha256": "007d345f01607f600586adf88b6b82e908a854943996114249bbcfb1b1af18f9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.MilitaryTreatyAuthoritiesTest",
+            "tests": 27,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.MilitaryTreatyAuthoritiesTest.xml",
+              "bytes": 56409,
+              "sha256": "34ddd89c1d017ba7766b7ede22d3715bebe8f7b01869991999f7d90227dc5268"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.TreatyOperationEndToEndTest",
+            "tests": 62,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.TreatyOperationEndToEndTest.xml",
+              "bytes": 244300,
+              "sha256": "d363060b05478363425cc62a27bfa0862184f4486a8da0cd0dbc2f3262e60c82"
+            }
+          }
+        ]
+      },
+      {
+        "label": "army-a14-protocol-01",
+        "tests": 93,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a14-protocol-01.log",
+          "bytes": 16677,
+          "sha256": "f0a6fbc61fa409c17fc6407140b1241e14f74b3d10a3b90e6ed3c59b1c470050"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.module.war.command.WarCommandTreatyRecoveryTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.module.war.command.WarCommandTreatyRecoveryTest.xml",
+              "bytes": 24879,
+              "sha256": "3767778a3deb68c5521b39204b5abd6eb81a2d94a2e62cd8fbfe04b9d4b9f45b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementAdmissionTest",
+            "tests": 30,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.WarSettlementAdmissionTest.xml",
+              "bytes": 33286,
+              "sha256": "2f7f2a6e1a93eaf2f67767cd86fab96042a4acf4597cf3a874550a0952896aca"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementCancellationTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.WarSettlementCancellationTest.xml",
+              "bytes": 26741,
+              "sha256": "ef80b4e9044371fb29a2dbed552847da8769c900897ba7ba21a48cb557bf0093"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementManifestTest",
+            "tests": 29,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.war.WarSettlementManifestTest.xml",
+              "bytes": 35042,
+              "sha256": "756275901f29bde0e20a83d123e0054bd1132840bede51f99d634a853cda5ca4"
+            }
+          }
+        ]
+      }
+    ],
+    "compilation": {
+      "main": {
+        "label": "army-a14-main-03",
+        "kind": "main",
+        "baseline": "C:\\tmp\\starsupply-army-prebinding-cancellation-replay-20261127-01",
+        "source_count": 10,
+        "class_count": 31,
+        "sources": [
+          "src/main/java/dev/starcore/starcore/module/army/ArmyModule.java",
+          "src/main/java/dev/starcore/starcore/module/army/ArmyService.java",
+          "src/main/java/dev/starcore/starcore/module/war/command/WarCommand.java",
+          "src/main/java/dev/starcore/starcore/module/war/WarModule.java",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyBatch.java",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyMilitaryEvidence.java",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyProtocolJson.java",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyService.java",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyStateCodec.java",
+          "src/main/java/dev/starcore/starcore/war/WarSettlementFileCapacity.java"
+        ],
+        "source_sha256": {
+          "src/main/java/dev/starcore/starcore/module/army/ArmyModule.java": "b0a7be35e7d4e67c8b4c0147a1b46cd8151e6acc0a2b594a8d9f3ea754fd692f",
+          "src/main/java/dev/starcore/starcore/module/army/ArmyService.java": "ba5b3ea759edb3489d5aea5dc18952f64e3767756c4b6a0ef86747c84a2ae390",
+          "src/main/java/dev/starcore/starcore/module/war/command/WarCommand.java": "14d8b37c496be7c03cb4396a098f05273240466b9c13985b8a0b89e3e0931085",
+          "src/main/java/dev/starcore/starcore/module/war/WarModule.java": "bab5e5659024b7ca887052f6cb417f96a5d770f4710634f572f3e1cf94654a08",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyBatch.java": "aa947dba51cdb96968f6b7406ddb59bb58bd494682730d73a9b727c6fa0e2e34",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyMilitaryEvidence.java": "4e5dfd63cd677843e042bca5645c86b57c54d07e5fcbfc1ca83627b44d4db5b8",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyProtocolJson.java": "6c7460abaa09263b38966a8436c63e3a2701e985b14febfd0e9c418e1145f2d4",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyService.java": "5094a2f8ee34c0e908dbda92403f44461fadccdc09ce752ce8895b93d7b33136",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyStateCodec.java": "14c5d2ea0eb152a8820f1b83a9b013d500cf5d2b34880d47acb0600ad266d813",
+          "src/main/java/dev/starcore/starcore/war/WarSettlementFileCapacity.java": "81fc12c5bde893c3e0cfe98cb710ffb7239a2fe48ab882cc3725c164e4585640"
+        },
+        "arguments": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a14-main-03.args",
+          "bytes": 15569,
+          "sha256": "480cf5221153b94b8bc4dd7bbb26eb77cd7fe5a633ae9124e09157e9a037e607"
+        },
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a14-main-03.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fresh_class_bytes_equal_final_test_classpath": true,
+        "all_changed_sources_compiled": true,
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/module/army/ArmyModule.class",
+            "sha256": "0520c0a3c4bd670ad6828098b48dde543cce359bac4c499255b1540df3b3f0cd"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/ArmyService$1.class",
+            "sha256": "f23e0e1b573e41817d24007c04c0c72221030798571b586b3b51f34591cfc2d8"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/ArmyService$2.class",
+            "sha256": "8386eb65c59141ca9e7463400d4e5785f63db581b2f60ad205e3e25b807b9b53"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/ArmyService$ArmyConfig.class",
+            "sha256": "09c3847ebea3f394fc32e81ad28cc7d253ee80206f6dec7de3839d687b9e5fad"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/ArmyService.class",
+            "sha256": "48cee623a6c5e802627461cd727076ab4307427890a0e8f952e01b6324a2a21a"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/command/WarCommand.class",
+            "sha256": "0ff0411a79b2b7b32b137c578dc949661ac45d92c9524afd217859faa6b8b8da"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarModule.class",
+            "sha256": "f51b8ab5185005eac1dda7e4ca443cb8cd2a7b3be8b28ea9ced2b2c3ad84b112"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyBatch$Stage.class",
+            "sha256": "5ee8bbbdd31b1e08ef8f3e613107da055cf5bae8fda891d8c787e448f15de59c"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyBatch.class",
+            "sha256": "269097d6d7e320d850abfa96e6d07c1edc1303051b77689d73d7980f11625dbf"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyMilitaryEvidence$Plan.class",
+            "sha256": "2eaccac6221e041a2b6d507b0153c297db603703944be7b1367194114303b3be"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyMilitaryEvidence$Receipt.class",
+            "sha256": "a61d94b7d13ff4fde32b99d0eab33166e833d693798b489834f4a72de202e455"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyMilitaryEvidence.class",
+            "sha256": "b7f1e9a758e4c3773e9cb16f61b2ba2b3230a69cd05f14d12da68cd2ddc86973"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyProtocolJson.class",
+            "sha256": "3edfbb20217054effd971418e2b00ae2f2b1a741ab7891be62a47c6a0b6f8905"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$MilitaryRestriction.class",
+            "sha256": "be4d6b22f4eb4632ddc65619587dbdf780e1f0fd5b5644871bbae1f7bb39c02c"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$PeaceTreatyConfig.class",
+            "sha256": "c645367735feb1652c7a8dc6f14d01f0592eaae18bdc22f0e8037fb080a04954"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$PoliticalRestriction.class",
+            "sha256": "75a0319770831b06700d82f75fef062340520c6e611526cc413a623a73cbfbf5"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$ResourceTributeRecord.class",
+            "sha256": "890ff081b1a474791f2f3c71dbb9d568c86e749dc74118e51f7c741250381e47"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$TreatyOperation.class",
+            "sha256": "d2844648af9bfc0f8b9e758cb9244880158be5c9ebbc9816b88daa868d49016d"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService.class",
+            "sha256": "b39504b012ff0f0b0723006b9e4df0fa5b9563a4e5ce0e19d62411113aefed55"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$BatchDto.class",
+            "sha256": "0b12d3d2374d71a16f5c17387dee9c99f05ed7dd4cb4aad4c0d9c4b4f77195a9"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$Decoded.class",
+            "sha256": "32fa24e7248ae6cb19caf0253075a8e8991ab73c20d46bf146f8b5e6bda0f926"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$ExecutionDto.class",
+            "sha256": "61211f984089b86a02adc96ec6c67a44f608432f05c6a977ec9bb9e9206caf3a"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$PaymentDto.class",
+            "sha256": "90b0411400154c65e0a2546c9ff9824279206548280a4d40c4b398dcc49ab5cf"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$SnapshotDto.class",
+            "sha256": "41752e0d103f893e3ac65a43d09c8ed11863442b8450e4d15486711c76866d01"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$StepDto.class",
+            "sha256": "08f673420967da626fa33da1a5776ccee5f0fbffcd05c63c54f37de61193f226"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$TermDto.class",
+            "sha256": "fcdd0e22a2ae77e086dd440cc8dd97fbb546131eccfeb71ee6131da413f69c57"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$TreatyDto.class",
+            "sha256": "b8a1547e803dfa521a805d3cbdb3c674fc4e76209c7c7fbbd978097fc82a1888"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec.class",
+            "sha256": "29dd78b92349933917cef916cb16cc5977a16e6d1d4d9615fe01b541423cb82e"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarSettlementFileCapacity$Counter.class",
+            "sha256": "a14376750d0537ec75b43d152b94a7ee80c198407356ad07777a15fa25c46f6e"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarSettlementFileCapacity$SourceBudget.class",
+            "sha256": "7d7300d01d213c6d16b29f23a6dbdbb23b7f011dd203ab3e88968ce1dab5f520"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarSettlementFileCapacity.class",
+            "sha256": "a2a325bdd9d85b42683b640d77398b3242f6394907166bd72d04d77ea27bcfa9"
+          }
+        ]
+      },
+      "test": {
+        "label": "army-a14-test-05",
+        "kind": "test",
+        "baseline": "C:\\tmp\\starsupply-army-prebinding-cancellation-replay-20261127-01",
+        "source_count": 7,
+        "class_count": 13,
+        "sources": [
+          "src/test/java/dev/starcore/starcore/module/army/ArmyModuleLifecycleTest.java",
+          "src/test/java/dev/starcore/starcore/module/war/command/WarCommandPeaceTreatyTest.java",
+          "src/test/java/dev/starcore/starcore/module/war/WarModuleAuthorityTest.java",
+          "src/test/java/dev/starcore/starcore/war/MilitaryTreatyProductionTest.java",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyServiceContractTest.java",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyStateCodecTest.java",
+          "src/test/java/dev/starcore/starcore/war/WarSettlementFileCapacityTest.java"
+        ],
+        "source_sha256": {
+          "src/test/java/dev/starcore/starcore/module/army/ArmyModuleLifecycleTest.java": "45b3edf45c3342fffb0188472fb98382123cbf1d0f11aab32c697b10aa3ab9fc",
+          "src/test/java/dev/starcore/starcore/module/war/command/WarCommandPeaceTreatyTest.java": "37340d30ebd2701a544087479b125e086d5d20c5df3ee75b427376949dcadc30",
+          "src/test/java/dev/starcore/starcore/module/war/WarModuleAuthorityTest.java": "e1b475056071d6e78cb785d7a715ea605811f5ea7b583b0f03b86471d4191f16",
+          "src/test/java/dev/starcore/starcore/war/MilitaryTreatyProductionTest.java": "522f25a0e37009e02f9138a6d9f549bef9576a2a460bfae51cf950fc95e84e9a",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyServiceContractTest.java": "f90829baf4b689c160237d1f860e7c74bc46655e7ffa41172b14c07a037810ae",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyStateCodecTest.java": "7d47ee9a231c871365f0de0d2c41c0c0187e87ab791508d29cd3ebfe67c76ab2",
+          "src/test/java/dev/starcore/starcore/war/WarSettlementFileCapacityTest.java": "abea414cf643fb206c0325e8f0f469a9b51db0715de1611d4bc5bed2e1eef932"
+        },
+        "arguments": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a14-test-05.args",
+          "bytes": 15318,
+          "sha256": "a62b2c254fff9c88d77a93546298a38e2ec7c44fb6e673d298ca866dfc08d879"
+        },
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-a14-test-05.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fresh_class_bytes_equal_final_test_classpath": true,
+        "all_changed_sources_compiled": true,
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/module/army/ArmyModuleLifecycleTest.class",
+            "sha256": "3a4a7933f8cca3dab0ad8a1935b5f510ebc91d1878e579555d54ee63db0c44da"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/command/WarCommandPeaceTreatyTest.class",
+            "sha256": "7ab306a12498f8e6f266ca48d3eb2bda84a491d7adb2737e4cdb21191dccb8eb"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarModuleAuthorityTest.class",
+            "sha256": "dab3732550e08773fcfac05bf96f925cdbcc5c04ea454f483871b6d3c65f591e"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyProductionTest$1.class",
+            "sha256": "98fdd4cea3262a580adf404a50ed5177bc3f251fa1cc6d9309efbd728974d7a0"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyProductionTest$Boundary.class",
+            "sha256": "c8046aa5384d2499ae3335d26df71f1a26ee321c46b500c6b1b11197216602ff"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyProductionTest$Fixture$1.class",
+            "sha256": "4c8f5a6ecfec54eb6b7d36f40db9441a0fe532d6d05d6b592d7d3529ccd9bf79"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyProductionTest$Fixture.class",
+            "sha256": "e6267921cee9085ebf4de912d68755d6a08b405c1dbe3dc9b968a71608e8d01d"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyProductionTest.class",
+            "sha256": "9822a52e453be27cf582c111c1a9fae96bbb37c1f6a06a2eba5cd22eda6b71be"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyServiceContractTest$Protocol.class",
+            "sha256": "11464da051b3968bdc40b59e959daeb842f8157fff0556a484845e284a0bf0f5"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyServiceContractTest.class",
+            "sha256": "d426b0a7bd8351de78d3251fe833475e84145ae63710cf14d7fd30b8386a0cad"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodecTest$BatchFixture.class",
+            "sha256": "49f926d65d39222752df191886b47e808bef73ab8c3be2e8fb0efd1d88f0e0b3"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodecTest.class",
+            "sha256": "54e124912c208a7144c7c5663fc0bc8ee9315b578d233b83416297fd91c2dd41"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarSettlementFileCapacityTest.class",
+            "sha256": "7ff4709cee3d09f75cc44d494cbb96eeb374c7466e8f3fd6c1929a2dc77c5749"
+          }
+        ]
+      }
+    },
+    "formatting": {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a14-format-03.log",
+      "bytes": 1881,
+      "sha256": "d2c07040797fb0fd7de5b1c8f7f5784a41675d3ce52def3a19162a43d43af884"
+    },
+    "api": {
+      "baseline_update_used": false,
+      "included_in_final_total": true,
+      "source_baseline": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\docs\\api\\starcore-api-v1.txt",
+        "bytes": 339441,
+        "sha256": "d758cfabc32cc27b6fb18bd1be835131eb4bd1bd8b1a32e09099b20525b8d1df"
+      }
+    }
+  },
+  "replay": {
+    "method": "independent Git indexes, all replayed blobs verified; reverse replay equals base tree",
+    "directory": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-production-replay-01.index",
+    "forward_check": true,
+    "reverse_check": true,
+    "diff_check": true,
+    "forward_tree": "fd5276847b928c843ceb588cc529b9588b14b53f",
+    "reverse_tree": "fcc78ac4704a2432b2c24c305d504fa6d5077c8b",
+    "all_src_file_count": 3839,
+    "src_api_pom_aggregate_sha256": "fac641c3894f83f9fa0e920f801928c769a10d6709f5603bf3876dde9fac3b9e",
+    "all_source_bytes_equal_after_lf_normalization": true
+  },
+  "capture_evidence": {
+    "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\army-production-capture-01.json",
+    "bytes": 836816,
+    "sha256": "028a8cbedfbb69417324de78203903461159b8f798d8c87b86b081b85e06b148"
+  },
+  "scope": {
+    "production_political_military_and_mixed_acceptance_enabled": true,
+    "full_original_envelope_and_sparse_receiver_assignments_retained": true,
+    "military_source_stores_original_request_and_plan_hash_reference": true,
+    "complete_military_frozen_army_snapshots_remain_in_army_authority": true,
+    "source_binding_decision_commits_before_either_receiver_binding": true,
+    "partial_reservation_binding_and_cancellation_recover_original_operation": true,
+    "committed_war_end_wins_over_later_cancel_request": true,
+    "source_ack_requires_both_matching_terminal_receivers": true,
+    "source_release_compares_complete_original_effect_vector": true,
+    "schema_five_explicit_legacy_schema_one_through_four_read_compatibility": true,
+    "downgrade_foreign_identity_missing_plan_and_incomplete_receipt_rejected": true,
+    "source_capacity_tested_for_two_proofs_and_4096_pair_unbound_seal": true,
+    "military_receiver_registered_with_module_shutdown_and_failed_enable_cleanup": true,
+    "war_native_and_production_share_original_military_receiver": true,
+    "player_military_and_mixed_command_validation_permissions_help_and_completion": true,
+    "military_restriction_queries_use_authority_and_return_detached_views": true,
+    "sixteen_production_reply_boundaries_with_file_and_sqlite_restart": true,
+    "multi_instance_cancel_before_first_binding_reply_tested": true,
+    "source_shutdown_after_military_commit_recovery_tested": true,
+    "storage_backends_tested": [
+      "file",
+      "verified persistent-file SQLite"
+    ],
+    "production_army_backend_changed_from_file": false,
+    "territory_reparation_or_tribute_receivers_enabled": false,
+    "legacy_military_restriction_migration_or_permissioned_lifting_completed": false,
+    "new_release_jars_or_review_zip": false,
+    "full_clean_build": false,
+    "server_started": false,
+    "world_or_player_saves_modified": false,
+    "all_stages_complete": false
+  },
+  "runtime": {
+    "jdk": "21.0.13.1+2",
+    "maven": "3.9.16",
+    "serial_build_and_tests": true,
+    "javac_heap_mib": 96,
+    "surefire_in_process_heap_mib": 96,
+    "processors": 1,
+    "mockito_explicit_agent": true
+  },
+  "excluded_failed_attempts": [
+    {
+      "label": "army-a14-state-lifecycle-01",
+      "tests": 89,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0,
+      "log": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a14-state-lifecycle-01.log",
+        "bytes": 31178,
+        "sha256": "0528aa9c53de3a0c32f835d685803a8787c54339458a172a9c0014dcef9990b5"
+      },
+      "reason": "New test source helper assumed a v2 envelope for the existing v1 capacity fixture. Restored the v1 fixture branch; no production workaround.",
+      "included_in_final_pass_total": false
+    }
+  ],
+  "superseded_successful_attempts": [
+    {
+      "label": "army-a14-production-01",
+      "tests": 56,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-army-a14-production-01.log",
+        "bytes": 151251,
+        "sha256": "2b8a01792d3cec3186f3822f0275f696e8b495f38ade75dbe916fa368d6f16f2"
+      },
+      "reason": "Added production authority-backed restriction queries, cross-instance cancellation, shutdown, codec and unavailable receiver coverage before the final 64-case production run.",
+      "included_in_final_pass_total": false
+    }
+  ],
+  "known_open": [
+    "Legacy volatile military restriction reconciliation and permissioned source-proof-based lifting policy.",
+    "Separate foundation chunk and legacy cuboid territory authorities; cuboid mutable snapshots and backend fallback need durability repair before treaty activation.",
+    "Durable siege transfer and other treaty receiver types.",
+    "Reparation/resource tribute/loan recovery and remaining module permission/thread/lifecycle audits.",
+    "Navy troop transport/ports, wounded return, doctrine effects, budget rollover/cancel and archival.",
+    "Commander learned-level/XP persistence still uses its existing mutation queue.",
+    "Full clean Core build, new release artifacts and final Core plus Supply regression.",
+    "SQL multiprocess/latest MySQL and user-deferred Paper/Folia server/client/survival acceptance."
+  ]
+}

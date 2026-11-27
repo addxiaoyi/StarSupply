@@ -2,6 +2,10 @@
 
 更新日期：2026-11-27。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+2026-11-27 最新开发检查点为 [军事与混合和约生产接入 A14](upstream/development/ARMY-MILITARY-TREATY-PRODUCTION.md)：实际 PeaceTreatyService 与 Army/War 模块已支持空、纯政治、纯军事及政治＋军事和约；完整军事计划引用、共同 binding 决定和双接收器终态持久保存，取消竞争与丢回复沿原编号恢复，双端一致后才接受并释放。玩家命令已支持 military 条款，限制查询读取真实 Army 权威。最终四批 426 项 / 21 个 suite 通过；10 个生产源、7 个测试源空目录编译，348 文件累计补丁以独立 Git 索引正反实际应用，3,839 个 src、API 与 pom 全部一致，见[证据](verification/workspace-army-military-treaty-production-development-20261127.json)。**全部阶段尚未完成。** 接下来修复旧 cuboid 领土持久权威，再推进割让及其他 receiver；旧军限迁移和权限化解除仍待完成。成品仍第二十份，全仓干净构建、新 JAR 和实服待验。累计补丁仅用于第二十份固定基点并替代旧开发补丁，不能叠加。
+
+以下 A13 及更早段落为历史检查点，已包含在 A14 累计补丁中。
+
 2026-11-27 最新开发检查点为 [和约绑定前取消 A13](upstream/development/ARMY-PREBINDING-CANCELLATION.md)：Diplomacy/Army 可永久封存尚未预留或尚未绑定的原请求，迟到预留不能恢复效果，已绑定仍须原 War 来源证明；生产纯政治和约已接入取消意图、封存、ACK/释放和竞争绑定恢复。接收器与 War 源均保留未来终态容量。最终四批 373 项 / 20 个 suite 通过；10 个生产源、6 个测试源空目录编译，346 文件累计补丁独立正反重放后 3,837 个 src、API 与 pom 一致，见[证据](verification/workspace-army-prebinding-cancellation-development-20261127.json)。**全部阶段尚未完成。** 下一步持久化生产军事计划/终态向量、接通模块启停，再启用军事/混合条款。累计补丁仅用于第二十份固定基点并替代旧开发补丁；成品仍第二十份，全仓干净构建、新 JAR 和实服待验。
 
 以下 A12 及更早段落为历史检查点，已包含在 A13 累计补丁中。
