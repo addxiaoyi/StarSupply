@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-27 最新开发检查点为 [和约绑定前取消 A13](development/ARMY-PREBINDING-CANCELLATION.md)：Diplomacy/Army 可永久封存尚未预留或尚未绑定的原请求，迟到预留不能恢复效果，已绑定仍须原 War 来源证明；生产纯政治和约已接入取消意图、封存、ACK/释放和竞争绑定恢复。接收器与 War 源均保留未来终态容量。最终四批 373 项 / 20 个 suite 通过；10 个生产源、6 个测试源空目录编译，346 文件累计补丁独立正反重放后 3,837 个 src、API 与 pom 一致，见[证据](../verification/workspace-army-prebinding-cancellation-development-20261127.json)。**全部阶段尚未完成。** 下一步持久化生产军事计划/终态向量、接通模块启停，再启用军事/混合条款。累计补丁仅用于第二十份固定基点并替代旧开发补丁；成品仍第二十份，全仓干净构建、新 JAR 和实服待验。
+
+以下 A12 及更早段落为历史检查点，已包含在 A13 累计补丁中。
+
 2026-11-27 最新开发检查点为 [军事条约真实权威联合协议 A12](development/ARMY-MILITARY-TREATY-AUTHORITIES.md)：War/Diplomacy 原生协议支持政治＋军事 manifest，逐 receiver 检查能力与 BOUND 证明；复读完整向量后准入/结束，完整一致终态后释放。真实文件/SQLite 的三权威覆盖十处丢回复重启、仅军事缴械、外交否决/取消/取代与生命周期变化。最终六批 607 项 / 36 个 suite 通过，见[证据](../verification/workspace-army-military-treaty-authorities-development-20261127.json)。**全部阶段尚未完成。** 联合测试直接驱动原生步骤，生产批次编排及模块注册仍待接线，玩家接受入口仍拒绝军事/混合条款。接下来完成批次计划/终态、取消恢复与模块启停后启用军事条款。成品仍第二十份；全仓干净构建、新 JAR 和实服待验。 累计补丁仍仅应用于第二十份固定基点，替代旧开发补丁，不能叠加。
 
 以下 A11 及更早段落为历史检查点，已包含在 A12 累计补丁中。
