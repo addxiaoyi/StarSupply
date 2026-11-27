@@ -2,6 +2,10 @@
 
 更新日期：2026-11-27。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+2026-11-27 最新开发检查点为 [Army 国家总兵数配置 A9](upstream/development/ARMY-SOLDIER-CAPACITY.md)：创建和指挥官增援计算现有兵力与待完成建军预留，原操作上限纳入持久请求和存储复验；降低配置仍结清原付款，额度不足不扣款、不消费冷却。schema7 / row10、row11 保留旧行及摘要读取；列表显示现有/上限/预留人数，文件和 SQLite 的冲突、丢确认、战斗及退役边界已有验证。最终五批 1,466 项 / 110 个 suite 通过，见[证据](verification/workspace-army-soldier-capacity-development-20261127.json)。**全部阶段尚未完成。** 配置额度不等于永久军事条约限制；下一阶段为持久军限、裁军及军事 receiver。生产 Army 仍为文件后端，成品仍第二十份；全仓干净构建、新 JAR 和实服待验。
+
+以下 A8 及更早段落为历史检查点，已包含在 A9 累计补丁中。
+
 2026-11-27 最新开发检查点为 [Army 运行时切换 A8](upstream/development/ARMY-RUNTIME-ACTIVATION.md)：ArmyService / Commander、玩家命令和 GUI、战争集成与 Nation 解散已经接通持久权威；付款、技能/冷却、战斗与国家退役均使用原编号或同次提交，getter 返回脱离视图。资金策略固定直接国库，失败准入不消费冷却。启动恢复失败保留管理员命令并暂停普通业务，完整恢复后开放。最终六批 1,651 项 / 122 个 suite 全部通过，见[证据](verification/workspace-army-runtime-activation-development-20261127.json)。**源码运行时已激活，全部阶段尚未完成。** 下一阶段为真实总兵数增长限制与军事 receiver，随后继续领土、混合条约及其他模块。生产 Army 当前固定文件后端；SQLite 通过注入验证。成品仍为第二十份，尚未全仓干净构建或生成新 JAR；实服待验。
 
 以下 A7 及更早段落为历史检查点，已包含在 A8 累计补丁中；后续工作以上段及当前清单为准。
