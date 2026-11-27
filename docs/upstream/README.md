@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-27 最新开发检查点为 [军事条约真实权威联合协议 A12](development/ARMY-MILITARY-TREATY-AUTHORITIES.md)：War/Diplomacy 原生协议支持政治＋军事 manifest，逐 receiver 检查能力与 BOUND 证明；复读完整向量后准入/结束，完整一致终态后释放。真实文件/SQLite 的三权威覆盖十处丢回复重启、仅军事缴械、外交否决/取消/取代与生命周期变化。最终六批 607 项 / 36 个 suite 通过，见[证据](../verification/workspace-army-military-treaty-authorities-development-20261127.json)。**全部阶段尚未完成。** 联合测试直接驱动原生步骤，生产批次编排及模块注册仍待接线，玩家接受入口仍拒绝军事/混合条款。接下来完成批次计划/终态、取消恢复与模块启停后启用军事条款。成品仍第二十份；全仓干净构建、新 JAR 和实服待验。 累计补丁仍仅应用于第二十份固定基点，替代旧开发补丁，不能叠加。
+
+以下 A11 及更早段落为历史检查点，已包含在 A12 累计补丁中。
+
 2026-11-27 最新开发检查点为 [Army 军事条约接收器 A11](development/ARMY-MILITARY-TREATY-RECEIVER.md)：完整原条款、冻结计划、不可变 binding 和外交来源证明持久保存；核对 War 原结束/取消与外交终态后原子提交军事效果。未绑定可永久 abandon，绑定后按来源完成；预留先校验计划哈希容量，schema9 / row13 保留旧格式读取。最终五批 1,514 项 / 115 个 suite 通过，见[证据](../verification/workspace-army-military-treaty-receiver-development-20261127.json)。**全部阶段尚未完成。** Army 使用真实文件/SQLite，War 与外交来源在专项测试中为接口替身；生产尚未注册军事 receiver，和约仍拒绝军事/混合条款。接下来完成真实联合接线与全向量释放。生产 Army 仍为文件后端，成品仍第二十份；全仓干净构建、新 JAR 和实服待验。 累计补丁仍仅应用于第二十份固定基点，替代旧开发补丁，不能叠加。
 
 以下 A10 及更早段落为历史检查点，已包含在 A11 累计补丁中。
