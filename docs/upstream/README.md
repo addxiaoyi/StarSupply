@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-28 最新开发检查点为 [Cuboid 生产工厂与写入入口 T7](development/CUBOID-TERRITORY-PRODUCTION.md)：稳定 host 接入父子服务与绑定模板，显式 files/sqlite 配置、管理员控制台 status/recover、不可用状态和关闭流程已接通；命令/GUI 使用前快照提交并在最终确认时重新鉴权，临时授权绑定父领土 generation。最终两批 630 项 / 59 个 suite 通过，11 个生产源及全部 34 个领土测试源空目录编译；395 文件累计补丁独立索引正反应用后 3,872 个 src、API/pom 一致，见[证据](../verification/workspace-cuboid-territory-production-development-20261128.json)。**源码已接入生产工厂，但全部阶段尚未完成。** 下一步接实际 cuboid 游戏事件保护和区域显示一致读取；现有保护监听器是另一套 chunk 服务。两套领土 receiver、租赁资金和其他业务仍开放。成品仍第二十份，全仓干净构建、新 JAR 和实服待验。累计补丁替代全部旧开发补丁，不能叠加。
+
+以下 T6 及更早段落为历史检查点，已包含在 T7 累计补丁中。
+
 2026-11-27 最新开发检查点为 [Cuboid 固定来源与初始化绑定 T6](development/CUBOID-TERRITORY-INSTALLATION.md)：显式旧文件/SQLite来源与新文件/SQLite目标选择先保存，再绑定已确认权威 UUID；导入与提交共用已核实数据库身份的连接，禁止 SQL 空表/异常回退。文件目标可在旧库离线时恢复绑定，目标丢失/被替换不得重新导入。最终两批 615 项 / 57 个 suite 通过，3 个生产源及全部 32 个领土测试源空目录编译；386 文件累计补丁独立索引正反应用后 3,867 个 src、API/pom 一致，见[证据](../verification/workspace-cuboid-territory-installation-development-20261127.json)。**组件仍未接入生产工厂，全部阶段尚未完成。** 下一步统一命令/GUI writer、模板绑定、公开配置、恢复和启停；调用者须先停止旧 writer，租赁资金及领土 receiver 仍开放。成品仍第二十份，全仓干净构建、新 JAR 和实服待验。累计补丁替代旧开发补丁，不能叠加。
 
 以下 T5 及更早段落为历史检查点，已包含在 T6 累计补丁中。
