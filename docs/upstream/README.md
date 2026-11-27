@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-27 最新开发检查点为 [旧 cuboid SQL 导入与脱离视图 T2](development/CUBOID-TERRITORY-MIGRATION.md)：五张旧 SQLite 表在同一事务严格导入，原 schema/行与明确出生点世界对应关系保留摘要；旧 Territory/SubRegion 视图完整保留字段和创建时间，修改视图不改变权威，世界未加载不丢原坐标。最终两批 511 项 / 50 个 suite 通过，5 个生产源及全部 25 个领土测试源空目录编译；367 文件累计补丁独立索引正反应用，3,853 个 src、API/pom 一致，见[证据](../verification/workspace-cuboid-territory-migration-development-20261127.json)。**新领土权威和迁移工具仍未自动激活，全部阶段尚未完成。** 下一步原后端 bootstrap、文件恢复残留检查、恢复状态与全部 writer 迁移；旧服务覆盖/删除/回退问题仍待统一切换。成品仍第二十份，全仓干净构建、新 JAR 和实服待验。累计补丁只用于第二十份固定基点并替代旧开发补丁，不能叠加。
+
+以下 T1 及更早段落为历史检查点，已包含在 T2 累计补丁中。
+
 2026-11-27 最新开发检查点为 [旧 cuboid 领土权威 T1](development/CUBOID-TERRITORY-AUTHORITY.md)：新增不可变父子区域完整存档、永久删除记录、严格两文件导入及固定文件/SQLite CAS，保留出生点和原始证据；现有 NONE、子区域租客与传送权限绕过及预设空值已修复。最终两批 481 项 / 48 个 suite 通过，6 个生产源与全部 23 个领土测试源空目录编译，361 文件累计补丁独立索引正反应用后 3,849 个 src、API/pom 一致，见[证据](../verification/workspace-cuboid-territory-authority-development-20261127.json)。**新权威尚未激活，全部阶段尚未完成。** 下一步严格旧 SQL 导入、原后端 bootstrap、脱离视图和全部 writer 迁移；旧服务的覆盖/删除/回退问题仍待统一切换解决。A14 军事和约仍包含在累计补丁中。成品仍第二十份，全仓干净构建、新 JAR 和实服待验。累计补丁仅用于第二十份固定基点并替代旧开发补丁，不能叠加。
 
 以下 A14 及更早段落为历史检查点，已包含在 T1 累计补丁中。
