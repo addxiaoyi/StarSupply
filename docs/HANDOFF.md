@@ -2,6 +2,10 @@
 
 更新日期：2026-11-27。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+2026-11-27 最新开发检查点为 [Army 运行时切换 A8](upstream/development/ARMY-RUNTIME-ACTIVATION.md)：ArmyService / Commander、玩家命令和 GUI、战争集成与 Nation 解散已经接通持久权威；付款、技能/冷却、战斗与国家退役均使用原编号或同次提交，getter 返回脱离视图。资金策略固定直接国库，失败准入不消费冷却。启动恢复失败保留管理员命令并暂停普通业务，完整恢复后开放。最终六批 1,651 项 / 122 个 suite 全部通过，见[证据](verification/workspace-army-runtime-activation-development-20261127.json)。**源码运行时已激活，全部阶段尚未完成。** 下一阶段为真实总兵数增长限制与军事 receiver，随后继续领土、混合条约及其他模块。生产 Army 当前固定文件后端；SQLite 通过注入验证。成品仍为第二十份，尚未全仓干净构建或生成新 JAR；实服待验。
+
+以下 A7 及更早段落为历史检查点，已包含在 A8 累计补丁中；后续工作以上段及当前清单为准。
+
 最新源码检查点为 [Army 战斗技能干预 A7](upstream/development/ARMY-BATTLE-INTERVENTION.md)：技能、完整目标集合与所有命中战斗同一次 CAS 提交，支援与非致命冲锋保留未选中方；正常结算和取消使用最新快照。战术撤退及致命冲锋明确终止战斗，不重复加代，技能阵亡保持原号永久墓碑。schema6 / row9 保存完整干预前缀并保留旧格式；满额历史、16 种双战斗生存结果、关闭对手退出、未来容量及真实文件/SQLite 重启恢复已有回归。最终四批共 1,351 项通过，详见[证据](verification/workspace-army-battle-intervention-development-20261127.json)。**A7 尚未激活 ArmyService / Commander，全部阶段仍未完成。** 后续接 Nation 解散关闭/结清、旧失败冷却策略、真实准入和全部 writer，完成预算资金策略、军限与军事 receiver。累计补丁只用于固定第二十份基点并替代旧开发补丁；成品与实服边界不变。
 
 以下 A6 段落为此前检查点，已包含在 A7 累计补丁中，其后续计划以上段为准。

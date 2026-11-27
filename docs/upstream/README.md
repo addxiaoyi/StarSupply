@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-27 最新开发检查点为 [Army 运行时切换 A8](development/ARMY-RUNTIME-ACTIVATION.md)：ArmyService / Commander、玩家命令和 GUI、战争集成与 Nation 解散已经接通持久权威；付款、技能/冷却、战斗与国家退役均使用原编号或同次提交，getter 返回脱离视图。资金策略固定直接国库，失败准入不消费冷却。启动恢复失败保留管理员命令并暂停普通业务，完整恢复后开放。最终六批 1,651 项 / 122 个 suite 全部通过，见[证据](../verification/workspace-army-runtime-activation-development-20261127.json)。**源码运行时已激活，全部阶段尚未完成。** 下一阶段为真实总兵数增长限制与军事 receiver，随后继续领土、混合条约及其他模块。生产 Army 当前固定文件后端；SQLite 通过注入验证。成品仍为第二十份，尚未全仓干净构建或生成新 JAR；实服待验。 累计补丁基点为 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代此前开发补丁，不能叠加。
+
+以下 A7 及更早段落为历史检查点，已包含在 A8 累计补丁中；后续工作以上段及当前清单为准。
+
 2026-11-27 最新源码入口为 [Army 战斗技能干预 A7](development/ARMY-BATTLE-INTERVENTION.md)：技能、完整目标与全部命中战斗一次提交；支援、非致命冲锋继续战斗，撤退与致命冲锋明确结束，结算/取消以最新快照为准。schema6 / row9 保存完整历史，旧 row6 保持；未来终态容量、关闭对手退出及原号重放已有回归。最终四批 1,351 项通过，见[证据](../verification/workspace-army-battle-intervention-development-20261127.json)。**ArmyService / Commander 与 Nation 解散尚未接线，全部阶段未完成。** 继续真实准入、失败冷却策略、解散、全部 writer、预算、军限与 receiver。累计补丁仅应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代旧开发补丁；JAR、安装序列与 review ZIP 仍第二十份。未启动实服或修改世界、玩家存档。
 
 以下 A6 段落为此前检查点，已包含在 A7 累计补丁中。
