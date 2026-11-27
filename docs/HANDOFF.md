@@ -2,6 +2,10 @@
 
 更新日期：2026-11-27。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+2026-11-27 最新开发检查点为 [Cuboid 共享运行时与服务适配 T4](upstream/development/CUBOID-TERRITORY-RUNTIME.md)：共享完整快照实现父子区域一次提交、过期请求拒绝、成员/模板/继承/优先级持久操作；新父子服务全部公开旧 API 已适配，查询返回独立视图，save 不重建存档，clearAll 仅暂停访问。旧对象几何溢出同步修复。最终两批 578 项 / 54 个 suite 通过，9 个生产源及全部 29 个领土测试源空目录编译，378 文件累计补丁独立索引正反应用后 3,862 个 src、API/pom 一致，见[证据](verification/workspace-cuboid-territory-runtime-development-20261127.json)。**工厂尚未切换新服务，全部阶段尚未完成。** 命令/GUI/模板/租赁 writer、一致权限读取、原后端选择、恢复和启停继续接线；新运行时不自行授权玩家，兼容转移不等于和约回执。成品仍第二十份，全仓干净构建、新 JAR 和实服待验。累计补丁替代旧开发补丁，不能叠加。
+
+以下 T3 及更早段落为历史检查点，已包含在 T4 累计补丁中。
+
 2026-11-27 最新开发检查点为 [旧 cuboid 文件初始化与确认发布 T3](upstream/development/CUBOID-TERRITORY-BOOTSTRAP.md)：两份原文件加锁检查、活动恢复残留拒绝、被动备份摘要和明确缺失证据已接入首次初始化；新读写入口仅发布完整确认状态，失败后暂停至刷新成功，拒绝存储回调重入并永久关闭。最终两批 542 项 / 52 个 suite 通过，2 个生产源及全部 27 个领土测试源空目录编译；371 文件累计补丁独立索引正反应用后 3,857 个 src、API/pom 一致，见[证据](verification/workspace-cuboid-territory-bootstrap-development-20261127.json)。**新组件仍未注册到旧运行时，全部阶段尚未完成。** 下一步原后端选择、恢复状态、服务/命令/GUI/租赁/模板全部 writer 与启停统一迁移；旧覆盖/删除/回退问题仍待消除。成品仍第二十份，全仓干净构建、新 JAR 和实服待验。累计补丁只用于第二十份固定基点并替代旧开发补丁，不能叠加。
 
 以下 T2 及更早段落为历史检查点，已包含在 T3 累计补丁中。
