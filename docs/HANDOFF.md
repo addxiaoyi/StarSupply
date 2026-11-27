@@ -2,6 +2,10 @@
 
 更新日期：2026-11-28。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+2026-11-28 最新开发检查点为 [Cuboid 条约来源证明与绑定 T11](upstream/development/CUBOID-TERRITORY-TREATY.md)：保存完整原条款与不可变binding，复读War/外交原决定和服务身份后才同次提交来源证明与领土效果；未绑定取消封存原envelope，绑定前验证所有未来证明容量。最终三批747项/83个suite通过，7个生产源与45个测试源串行空目录编译；411文件累计补丁独立正反应用后3,883个src及API/pom一致，见[证据](verification/workspace-cuboid-territory-treaty-development-20261128.json)。**全部阶段尚未完成。** 新接收器尚未注册生产，专项War/外交来源为测试替身；下一步全局manifest、真实联合权威与生产编排。未构建新JAR或启动服务器。累计补丁替代旧补丁，不能叠加。
+
+以下 T10 及更早记录为历史检查点，已包含在 T11 累计补丁中。
+
 2026-11-28 最新开发检查点为 [Cuboid 批量转移与永久回执 T10](upstream/development/CUBOID-TERRITORY-TRANSFER.md)：原编号、冻结父子计划、整批所有权效果和永久终态同权威保存；预留冻结目标写入，提前取消永久封存，旧请求不复活再次转手/删除的领土；保留国家归属含义、全部未来决定和退役容量。最终三批734项/82个suite通过，8个生产源与44个测试源串行空目录编译；408文件累计补丁独立正反应用后3,880个src及API/pom一致，见[证据](verification/workspace-cuboid-territory-transfer-development-20261128.json)。**全部阶段尚未完成。** 本阶段是内部基础能力，条约/攻城来源证明与生产接收器尚未开放；继续绑定、全向量编排及foundation接收器。未构建新JAR或启动服务器。累计补丁替代全部旧补丁，不能叠加。
 
 以下 T9 及更早记录为历史检查点，已包含在 T10 累计补丁中。
