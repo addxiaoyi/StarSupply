@@ -2,6 +2,10 @@
 
 更新日期：2026-11-27。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+最新源码检查点为 [Army 战斗技能干预 A7](upstream/development/ARMY-BATTLE-INTERVENTION.md)：技能、完整目标集合与所有命中战斗同一次 CAS 提交，支援与非致命冲锋保留未选中方；正常结算和取消使用最新快照。战术撤退及致命冲锋明确终止战斗，不重复加代，技能阵亡保持原号永久墓碑。schema6 / row9 保存完整干预前缀并保留旧格式；满额历史、16 种双战斗生存结果、关闭对手退出、未来容量及真实文件/SQLite 重启恢复已有回归。最终四批共 1,351 项通过，详见[证据](verification/workspace-army-battle-intervention-development-20261127.json)。**A7 尚未激活 ArmyService / Commander，全部阶段仍未完成。** 后续接 Nation 解散关闭/结清、旧失败冷却策略、真实准入和全部 writer，完成预算资金策略、军限与军事 receiver。累计补丁只用于固定第二十份基点并替代旧开发补丁；成品与实服边界不变。
+
+以下 A6 段落为此前检查点，已包含在 A7 累计补丁中，其后续计划以上段为准。
+
 最新源码检查点为 [Army 国家关闭与退役 A6](upstream/development/ARMY-NATION-CLOSURE.md)：schema5 永久保存原操作编号的 CLOSING / RETIRED，关闭阻止新写入，先结清已接受的付费与战斗，再原子退役完整本国集合；保留全部历史证明及精确墓碑。观察跳步、历史时间边界、未来 token / revision 和保守字节预留已覆盖。最终 1,309 项、100 个套件通过；9 个生产源与 7 个测试源空目录编译为 17、7 个 class。299 文件累计补丁独立正反重放后 3,811 个 src、API、pom 一致，见[证据](verification/workspace-army-nation-closure-development-20261127.json)。**A6 尚未激活 ArmyService / Commander，也未接入 Nation 解散协调器，全部阶段仍未完成。** 下一步完成战斗技能干预与战术撤退、旧失败冷却策略、目录删除前的 Army 关闭屏障与 Treasury 退役前 drain，再统一迁移 writer、明确预算策略、实现真实军限和军事 receiver。当前仅直接国库策略；成品、安装与 review ZIP 仍第二十份。累计补丁只用于固定第二十份基点，替代全部旧开发补丁，不能叠加。未启动实服或修改世界、玩家存档。
 
 以下 A5 段落为此前检查点，已包含在 A6 累计补丁中，其后续计划以上段为准。
