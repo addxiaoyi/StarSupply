@@ -1,0 +1,1769 @@
+{
+  "checkpoint": "cuboid-territory-transfer-development-20261128",
+  "date": "2026-11-28",
+  "timezone": "Asia/Shanghai",
+  "base": "9e380d62fd94cdc54f6f703ea09e14f575660f18",
+  "previous_checkpoint": "cuboid-territory-indirect-development-20261128",
+  "patch": {
+    "path": "docs/upstream/development/cuboid-territory-transfer-20261128.patch",
+    "bytes": 4637786,
+    "sha256": "e4964b07956d249a35cedea82609df719c78e693313b6fa0a19dc36fa8f1d616",
+    "file_diffs": 408
+  },
+  "source_changes_since_previous_checkpoint": [
+    {
+      "path": "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryCodec.java",
+      "bytes": 15164,
+      "sha256": "92d0b47bcd1b67d00c18b71323213e979ed08d4dfd73d903a0e3f96fefd5e87c",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryLegacyImport.java",
+      "bytes": 10098,
+      "sha256": "b484de5f8e70917aa3aa55d669773da837560a1b5cdc028221fdd30ac984825b",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryOwner.java",
+      "bytes": 3238,
+      "sha256": "be071cf5952315105565096a2573ea6c1e1ad8e0c72252eb0141a39717a05299",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryRuntime.java",
+      "bytes": 22162,
+      "sha256": "2ba526c5847d16c57f1644263594f17cda6b5f3976c87e03c098c906858b459b",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryState.java",
+      "bytes": 13139,
+      "sha256": "a368df88c0bccbc10be56afac5b1877e1f89f9db5bc6d0bb415e8ac3e438b2cb",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryStorage.java",
+      "bytes": 10413,
+      "sha256": "b278e8ffe244c33bbf5fcb798efd7356492307f02cda438e0c1aaa69058287c5",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryTransfer.java",
+      "bytes": 10986,
+      "sha256": "b18909825d5b30c79b056eae750ec43dc8f8c4d48a47e267e9c791ab32352a8d",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryTransferCodec.java",
+      "bytes": 6560,
+      "sha256": "2274a55ad30881356750040676c605218dc6e0775d1aa9bf850b074245a6e0a9",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryTransferTest.java",
+      "bytes": 22164,
+      "sha256": "782b11ca477b41922524b95ff4b5cec3abfb8f7d73f3ef61c1d38d2c3e2262cd",
+      "exists_in_previous_checkpoint": false
+    }
+  ],
+  "validation": {
+    "tests": 734,
+    "suites": 82,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "deduplicated_by_class_and_case_name": true,
+    "batch_totals_match_xml_and_logs": true,
+    "batches": [
+      {
+        "label": "cuboid-t10-territory-01",
+        "tests": 652,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-cuboid-t10-territory-01.log",
+          "bytes": 62122,
+          "sha256": "5c73498cc2c1c61a1002a28423228fccb2ee654069ad65c425ba2e6ee75d733c"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.territory.CuboidGameplayTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidGameplayTest.xml",
+              "bytes": 28921,
+              "sha256": "80807897a217183908132df37e3ddce63fa973363d66fc10831ec7ddb93b3b62"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidIndirectProtectionTest",
+            "tests": 11,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidIndirectProtectionTest.xml",
+              "bytes": 27022,
+              "sha256": "cb75c3acb0c3a9f3b67b287f9506cef13d962cf6fb5efa328af5fcdb12d7144c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidPermissionSnapshotTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidPermissionSnapshotTest.xml",
+              "bytes": 26652,
+              "sha256": "d377df880248513cb1267c81d5d9792d6f7acbcf1ee9443151a03923e5b6ca2a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidRegionIntegrationTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidRegionIntegrationTest.xml",
+              "bytes": 25979,
+              "sha256": "5ccab0167f05d856985f13b457bb6a25a8de573f0d7489cbcec256ae69ebe8f2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTemplateAndLeaseBoundaryTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTemplateAndLeaseBoundaryTest.xml",
+              "bytes": 37269,
+              "sha256": "221ead46525b7230965b18d79729decd57cdb253264866d9720ad612b30712db"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryBootstrapTest",
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryBootstrapTest.xml",
+              "bytes": 28234,
+              "sha256": "3edc1801ac615021c0b6b8b0933c3976d12ea527f96c0047a29fd860df45742d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryCodecTest",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryCodecTest.xml",
+              "bytes": 27119,
+              "sha256": "fbabfe9339affbf66e70a0ff64b0390497151836b5ed3b0858794d4f8328229d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryHostTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryHostTest.xml",
+              "bytes": 34822,
+              "sha256": "137399353b35c54e43d1cec378539c734f0654115add61e6d0272aa194363f50"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryInstallationTest",
+            "tests": 19,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryInstallationTest.xml",
+              "bytes": 31630,
+              "sha256": "3fb2fd4d86d9596bcc04899897e4ff7878bafefe5173844cee94b29286ff6b3c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryLegacyImportTest",
+            "tests": 28,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryLegacyImportTest.xml",
+              "bytes": 29688,
+              "sha256": "7931b68592157db6222c7920768704d01dd3c2d753a3153938104be20fcd85ad"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryOwnerTest",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryOwnerTest.xml",
+              "bytes": 27264,
+              "sha256": "9fad72fda876b130049b11e5b452838d42a8dd24b374a2af1f9520d8d777bb01"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryRuntimeTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryRuntimeTest.xml",
+              "bytes": 29325,
+              "sha256": "aadbb455102e621815053815e797418836cefd0a06aa4ecc68a3a18f93dc7fd5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryServiceTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryServiceTest.xml",
+              "bytes": 27198,
+              "sha256": "c876f286066bd0e19dca1ea337223be9e2950bdd4244fd324fb82e952a52fa1d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritorySqlImportTest",
+            "tests": 25,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritorySqlImportTest.xml",
+              "bytes": 38509,
+              "sha256": "231a1b78d6cb8b4c94d36bf39c91eb33ae02d03e9f0744b3299ea52a7d3e026c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryStateTest",
+            "tests": 17,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryStateTest.xml",
+              "bytes": 27591,
+              "sha256": "0daad86c4dbdfcf07cecf30bdbca994a7f5fcddc325fd4d610f65a016be928d3"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryStorageTest",
+            "tests": 29,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryStorageTest.xml",
+              "bytes": 29909,
+              "sha256": "a240745c6bb6a9ad02c556df553340aae89f7a076e50b437d4ff2c67e0ed29e5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryTransferTest",
+            "tests": 17,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryTransferTest.xml",
+              "bytes": 28200,
+              "sha256": "0820bed6c06c0ce8d27a34b84812fd6d6d03dbb1fa95953f79d172750bac5682"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryViewsTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.CuboidTerritoryViewsTest.xml",
+              "bytes": 25896,
+              "sha256": "66fa8afb9c572644f6eed0bbabb057aa241c7164263785ed96ea0363cdadcb39"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.EnumTest",
+            "tests": 27,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.EnumTest.xml",
+              "bytes": 28147,
+              "sha256": "4b886758c0d9028b2d124e988c124e4aa5537147f383a4d080c0b2c5017f9ec2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.LeaseStatusTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.LeaseStatusTest.xml",
+              "bytes": 25768,
+              "sha256": "b06f587f47ceacbfb1cffcfa648fb275d3c24994fd79c3410592395fdf462e12"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest.xml",
+              "bytes": 25098,
+              "sha256": "247d9dd4775df3f64ad50b0598913526e52494ff4c09d7fb6635682ae7cd179b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest$ChunkCoordTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest$ChunkCoordTest.xml",
+              "bytes": 25494,
+              "sha256": "5642f5da2873c0bc0d44773b76993b7a7ff19549a7d01c80e75b8db557bc46b6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest$Connectivity",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest$Connectivity.xml",
+              "bytes": 25764,
+              "sha256": "f563503cba4997263242e5e0e64d6b5d47e5325703d64935853982b195b6f227"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest$Construction",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest$Construction.xml",
+              "bytes": 25485,
+              "sha256": "3cf9418d0fb72bc7cdfb587af04fdc58483fdd1e777f7fe79dc7593954211734"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest$Expansion",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest$Expansion.xml",
+              "bytes": 25482,
+              "sha256": "c0ac2cf088b296e120145a72757d227dcfcac22c534d239bd88ec9d170549f99"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest$MaintenanceAndLevel",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest$MaintenanceAndLevel.xml",
+              "bytes": 25517,
+              "sha256": "3f8490de15e123eecc14b5cd92ef8706ecd1ef7133a00471726858d050a7b086"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerBoundaryTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.PermissionCheckerBoundaryTest.xml",
+              "bytes": 28858,
+              "sha256": "2c727ed584dff4983998cd834ca1b903521f1f3f044b9541345e63be3e5fe8de"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest.xml",
+              "bytes": 25098,
+              "sha256": "a90a708315b9119ac206b5c0e4bc82d3e499a642996796291f26efbc99efc9e2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest$EffectiveLevelTests",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest$EffectiveLevelTests.xml",
+              "bytes": 25711,
+              "sha256": "5c2ed51117c188d00efb82a82d108a1ea7b621f8220527f3cd2e93c1eed967b7"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest$LeasePermissionTests",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest$LeasePermissionTests.xml",
+              "bytes": 25560,
+              "sha256": "03b3a45fc6d57d66ef4c231b6d6de8488921c31effbea7454b21d9b40225e484"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest$MainPermissionCheckTests",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest$MainPermissionCheckTests.xml",
+              "bytes": 26002,
+              "sha256": "58b4261c73808271e5cae57d734c72ce110d662256ba0adb4b2ad491f37b3652"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest$ManagementPermissionTests",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest$ManagementPermissionTests.xml",
+              "bytes": 25867,
+              "sha256": "c8d6bc5c0426dfa2e19678d40a26b25ed970bf6cc4cd889359b3ca3e5da30d43"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest$SpecialPermissionTests",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest$SpecialPermissionTests.xml",
+              "bytes": 25543,
+              "sha256": "392f54d3e9e89cce92b0856b877d4f20f85ea21bcadbb49d92da9cac93265569"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionLevelTest",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.PermissionLevelTest.xml",
+              "bytes": 26616,
+              "sha256": "b0dd161b3ebcf86e462c0d8d69bdb64e4a00345471420dddf01f2f863aea6b95"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionTemplateTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.PermissionTemplateTest.xml",
+              "bytes": 27834,
+              "sha256": "ad00c6357c2a18d88f77451981d96aace5c307f90d434397d364a3dc7f407088"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.RentPeriodTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.RentPeriodTest.xml",
+              "bytes": 25624,
+              "sha256": "606dcc7452f693ac7d21563a91597c931cc895e4a899f9b6354ce1f70dc06e3e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.SubRegionTest",
+            "tests": 27,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.SubRegionTest.xml",
+              "bytes": 28494,
+              "sha256": "4075b122e4f74857c5dad740a5d075dca4c5a207ba10adb7ecd0e0a61162688f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemplatePresetTest",
+            "tests": 45,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TemplatePresetTest.xml",
+              "bytes": 31459,
+              "sha256": "553476f90e7f537fd2dbcfe0db5ace6384771582063e1ef2f2911d81b86eecf3"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest.xml",
+              "bytes": 25107,
+              "sha256": "f9d54e13a16f4552ba5c5a1dcfa2887161c654c7bdc2fd9036e7a622e52d98bd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest$ExpiryTests",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest$ExpiryTests.xml",
+              "bytes": 26313,
+              "sha256": "8387100e1211e22d29356d3bef2fb8a40512e6f3495506f5731dd4fb9ee780a4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest$GrantRevokeTests",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest$GrantRevokeTests.xml",
+              "bytes": 29351,
+              "sha256": "20a3c7c9786d50f7ecfcfa5aaa3415928ac72251a36a052de9e777877e9294fa"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest$QueryTests",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest$QueryTests.xml",
+              "bytes": 29708,
+              "sha256": "d3d9942577915060eac6496a4a7854ae3052dbd33464e606faabd8f7b71e444c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest$StartStopTests",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest$StartStopTests.xml",
+              "bytes": 27023,
+              "sha256": "90f487923d94fb592e535a09874646217e27c691c8be44201a99377255b145e0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest$StatisticsTests",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest$StatisticsTests.xml",
+              "bytes": 28275,
+              "sha256": "3cf34129d1576191a799e2b611c0a8afdf9b43aae512f22612f8f22edbe3ad22"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryLeaseServiceSchedulingTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryLeaseServiceSchedulingTest.xml",
+              "bytes": 26267,
+              "sha256": "a161fc3c0b706b5e5fe502ebd3598806e54d486c826bdb584af865fb3ce7eac7"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryPermissionTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryPermissionTest.xml",
+              "bytes": 26234,
+              "sha256": "86e32a12d4a4d441a37837a3af9734573541c247438e9c4ba18274e731a165dd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritorySelectionServiceTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritorySelectionServiceTest.xml",
+              "bytes": 25422,
+              "sha256": "85c2fa4bc9d689c954b912ad2580d6be30ab2c6600514b3428fa23316bcc43af"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest.xml",
+              "bytes": 25097,
+              "sha256": "4a30b49a56e8478dcf93bf4e396aad96deb81fefb6affaa0fc8092f64224c521"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$CreateDeleteTests",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$CreateDeleteTests.xml",
+              "bytes": 28852,
+              "sha256": "6754cb024f6775a4d0685665f1ee9d2f274745f0d5f9994234dac66bcb35fef8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$LoadSaveTests",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$LoadSaveTests.xml",
+              "bytes": 26433,
+              "sha256": "b24e85a01e7ae2d25ad2830893dfa2e1448555f5204f05b46e63b81235e1b5a5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$LocationQueryTests",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$LocationQueryTests.xml",
+              "bytes": 26980,
+              "sha256": "19014199c6d7c54c26d84af5ecb32bec6230b5a4f414933c59374cf3af5ff710"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$OverlapTests",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$OverlapTests.xml",
+              "bytes": 26736,
+              "sha256": "a296943f91171917cca5324c379b511bbcf2f6e6fd18cdf009de205a4a29e9fa"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$QueryTests",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$QueryTests.xml",
+              "bytes": 28516,
+              "sha256": "001c287040bac9f8dd436a1f56c372beda1faf8e811eb81535d6410b4290e4a8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$StatisticsTests",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$StatisticsTests.xml",
+              "bytes": 28744,
+              "sha256": "a942d752723ef249844778282a89e82dfabfef2e16f3d0012eca8eab54dcc449"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryStorageLifecycleTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryStorageLifecycleTest.xml",
+              "bytes": 26020,
+              "sha256": "5d08f7fe78bbeeb8ed438b8ea6f4db257bc6dc1eb1e8862f6ce6c6d42633b2a9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryTest",
+            "tests": 34,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryTest.xml",
+              "bytes": 29248,
+              "sha256": "e94d7abe9c5f0d4d7009b5c3863042a7aa7d12784eafaf632298221ca28f3b90"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryTypeTest",
+            "tests": 46,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.TerritoryTypeTest.xml",
+              "bytes": 31335,
+              "sha256": "1a4da24b1640cb11a2db58a4f84a9d65fa5631da0e10d309b0756b869ba73fc5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.gui.TerritoryGuiActionsTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.territory.gui.TerritoryGuiActionsTest.xml",
+              "bytes": 29397,
+              "sha256": "609080383502711ea0ad2b7f78bc29b36ca66fc051749ac7a11f0f8d0bf2fb56"
+            }
+          }
+        ]
+      },
+      {
+        "label": "cuboid-t10-region-01",
+        "tests": 51,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-cuboid-t10-region-01.log",
+          "bytes": 17020,
+          "sha256": "2e0aa8f7c74d00799cc5405dc91c17f48cd10ce706e5ce9fb1fb46133358e765"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.region.RegionCommandTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionCommandTest.xml",
+              "bytes": 21479,
+              "sha256": "7e1c08e692e35aedd05aed1076bba712d32935be6e354e48f57fbb46659e5d87"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionCommandTest$CaseInsensitive",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionCommandTest$CaseInsensitive.xml",
+              "bytes": 21743,
+              "sha256": "df52d5d1bf9ffc82a468c1733c49180144c529f9deeafd3664d143042e46528d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionCommandTest$Help",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionCommandTest$Help.xml",
+              "bytes": 21711,
+              "sha256": "ad70a4fa624be450a9195fb73a47c31f0b6e37a1eae3010bd080f852a04fd41b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionCommandTest$InfoSubcommand",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionCommandTest$InfoSubcommand.xml",
+              "bytes": 22116,
+              "sha256": "cf237fcf0caddb2050a069ddecfb759127aa06ad461cb07d9af35caa66adde97"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionCommandTest$Reload",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionCommandTest$Reload.xml",
+              "bytes": 33640,
+              "sha256": "066f8cf7794ab5eb804b1eccfaad21d037bcae3fe0230b18312d77d82661f40c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionCommandTest$TabComplete",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionCommandTest$TabComplete.xml",
+              "bytes": 21981,
+              "sha256": "238881e6f36c9b3832869197f542df2d35285224a238d30e724b0131f358a2b8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionCommandTest$TestSubcommand",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionCommandTest$TestSubcommand.xml",
+              "bytes": 21881,
+              "sha256": "194ae051ea079827da5536ddcda7446c48433ae93587586a4d7ffbea4c816b55"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionCommandTest$Unknown",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionCommandTest$Unknown.xml",
+              "bytes": 21734,
+              "sha256": "f7d22374b947dc3c86695af2cda1087a5a5b43d0d18269b644cf480bb0376465"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionDetectionFoliaTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionDetectionFoliaTest.xml",
+              "bytes": 21660,
+              "sha256": "1151df35f6a88e5a50cf904bc7164b80101f3570c019c5726379df28f2d18ff2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionDisplayConfigTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionDisplayConfigTest.xml",
+              "bytes": 21485,
+              "sha256": "28b286853963a61925d1dc7f00bf4ccc2047b223f701907247a38136cabcdd9d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionDisplayConfigTest$Getters",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionDisplayConfigTest$Getters.xml",
+              "bytes": 22305,
+              "sha256": "b06859df05ba2163f280b4469497b76ea28e42dbd0a1d6fd239fb4c229593816"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionDisplayConfigTest$Independence",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionDisplayConfigTest$Independence.xml",
+              "bytes": 21752,
+              "sha256": "c7dc94a671299e82932eaaa993774430bba868bd67206b79f87b8644a4eb5d61"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionInfoTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionInfoTest.xml",
+              "bytes": 21476,
+              "sha256": "fd2ca242f1c163dec4239541a143ec72c1cefa2fd2131df08224adcaf0616dbc"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionInfoTest$AllRegionTypes",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionInfoTest$AllRegionTypes.xml",
+              "bytes": 21605,
+              "sha256": "e8a7f3900145bc5e42f97be283f39c44d14484d20739af347d66a6a6f2ba4529"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionInfoTest$Construction",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionInfoTest$Construction.xml",
+              "bytes": 22047,
+              "sha256": "20101f33dbe2dfcbe2af060c3ec43cae53ef6b241e21debebea84c64eca7f724"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionInfoTest$Immutability",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionInfoTest$Immutability.xml",
+              "bytes": 21728,
+              "sha256": "ea0a720d0aab0d70cc2a45118b8f4ded6e73db981c1424b9d7e3cec75d90d89a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionTitleServiceApiTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionTitleServiceApiTest.xml",
+              "bytes": 21487,
+              "sha256": "6edad30d29f60b0c698bd7ecc8cde2b7df29eaaea903b4aad2470a592f29289a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionTitleServiceApiTest$ConfigFields",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionTitleServiceApiTest$ConfigFields.xml",
+              "bytes": 21866,
+              "sha256": "b53ae9a4453c9dccd87751306974604e3150dd1d926adc2bb73ad09b3732a264"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.region.RegionTypeTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.region.RegionTypeTest.xml",
+              "bytes": 22433,
+              "sha256": "6c9486b49726c81358490ffb287cac2fedfe820997ada00e0a87b29fd50b39a4"
+            }
+          }
+        ]
+      },
+      {
+        "label": "cuboid-t10-persistence-01",
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-cuboid-t10-persistence-01.log",
+          "bytes": 4217,
+          "sha256": "a43996b82f2ee6cc538ab47f95a87e352fc074482f3047b8a6a37a22bb4e6130"
+        },
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.api.PublicApiCompatibilityTest.xml",
+              "bytes": 21692,
+              "sha256": "6d84be1e4a24e3b776647469c1205c855697e6731a8d9298049272fa2aca13ff"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AsyncPersistenceFailureTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.persistence.AsyncPersistenceFailureTest.xml",
+              "bytes": 23632,
+              "sha256": "9c171162a4ed15d474e8b326a1d6b57119d0ad48ad44a2dd4983154ed63b6ec5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest.xml",
+              "bytes": 24700,
+              "sha256": "387f5aedd99fdcd372845a589fed4472169b7735cf104d9a0283dd1ba6b4689a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest.xml",
+              "bytes": 22389,
+              "sha256": "a1e4a1ba68ac5f280deee8cfdc7a7821b5d0f00b5a372976280a90d7a8bfa838"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.PersistenceServiceAtomicRecoveryTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\surefire-reports\\TEST-dev.starcore.starcore.core.persistence.PersistenceServiceAtomicRecoveryTest.xml",
+              "bytes": 21938,
+              "sha256": "12fa5cd39775c1bc128af9196bf80bbd142017b3ab64d204bac27a780edf4bef"
+            }
+          }
+        ]
+      }
+    ],
+    "compilation": {
+      "main": {
+        "label": "cuboid-t10-main-02",
+        "kind": "main",
+        "baseline": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\cuboid-indirect-capture-01.json",
+        "source_count": 8,
+        "class_count": 25,
+        "sources": [
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryCodec.java",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryLegacyImport.java",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryOwner.java",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryRuntime.java",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryState.java",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryStorage.java",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryTransfer.java",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryTransferCodec.java"
+        ],
+        "source_sha256": {
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryCodec.java": "92d0b47bcd1b67d00c18b71323213e979ed08d4dfd73d903a0e3f96fefd5e87c",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryLegacyImport.java": "b484de5f8e70917aa3aa55d669773da837560a1b5cdc028221fdd30ac984825b",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryOwner.java": "be071cf5952315105565096a2573ea6c1e1ad8e0c72252eb0141a39717a05299",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryRuntime.java": "2ba526c5847d16c57f1644263594f17cda6b5f3976c87e03c098c906858b459b",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryState.java": "a368df88c0bccbc10be56afac5b1877e1f89f9db5bc6d0bb415e8ac3e438b2cb",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryStorage.java": "b278e8ffe244c33bbf5fcb798efd7356492307f02cda438e0c1aaa69058287c5",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryTransfer.java": "b18909825d5b30c79b056eae750ec43dc8f8c4d48a47e267e9c791ab32352a8d",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryTransferCodec.java": "2274a55ad30881356750040676c605218dc6e0775d1aa9bf850b074245a6e0a9"
+        },
+        "arguments": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\cuboid-t10-main-02.args",
+          "bytes": 15367,
+          "sha256": "e48867232f1d66dfd78290ceffd32e7321286d8a6d4e9616a3288c40e67cfe4b"
+        },
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\cuboid-t10-main-02.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "fresh_class_bytes_equal_final_test_classpath": true,
+        "all_changed_sources_compiled": true,
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryCodec$1.class",
+            "sha256": "34237d2efcb85cb5052a4509ed34189e41c65c8ecd12c5202eeea9594858a9bb"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryCodec$Reader.class",
+            "sha256": "bfabbfd19d8bf63e8703f56ebbb29016fe25671c96a1de0530ac60ef0798b410"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryCodec$Writer.class",
+            "sha256": "c2d554e2ad2604b61198c0016a392906f4564b0164c6a8770a1532a36c0baead"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryCodec.class",
+            "sha256": "1d1779257a506279b58e94b1ea300dd3536b3191180310b676282439b57bcacc"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryLegacyImport$Fields$1.class",
+            "sha256": "f0c9198d84dca8e0c9fee2e42788aee88746de4afc983ebb081e8464080540bc"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryLegacyImport$Fields.class",
+            "sha256": "717504fc8e766a1f0438d44226f7a733ac1b84d8f2b07fdeb4879f3b6e1bb81b"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryLegacyImport.class",
+            "sha256": "52b34cf7ab45d257246b854f66c0877b093a1166af642036f5ae5229d7838426"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryOwner.class",
+            "sha256": "c302158ef26822e9e3dbad8c2ef4c95a3a2c0dcbdb0d9eef0a35fab419de8c56"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryRuntime$Views.class",
+            "sha256": "0458d1ec9a21af4257c13c1d14b0420b7dd4d3a023ca8df245fac4c80b854f65"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryRuntime.class",
+            "sha256": "6379101d251c6a812e99343123596219cae672e9fd374c3b64960e5ba17e950f"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryState$Bounds.class",
+            "sha256": "48e4efdf0964ff2eb0122f01019632d65c42d7703dd22919f45d535f62cdbbce"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryState$Entity.class",
+            "sha256": "2b8069c8255fa00c4a0f7d9cef1801898dbc81ca60ec0bc5033a6ad906e8458b"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryState$Entry.class",
+            "sha256": "9066fc92309a36513bb2437282444b89965b258825dd96a07b15165e452c6f3e"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryState$Spawn.class",
+            "sha256": "d2c146fc0620841a7a293eae0333f0f6800ec2e33b349d213934e664a7279e45"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryState$SubRegionImage.class",
+            "sha256": "35ff23175b59db61003e5d58cb13f08e17c9a6a6d374593af667dbcd6b9223df"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryState$TerritoryImage.class",
+            "sha256": "b2bfa785f28380dee9bf5e998a11532a4f6521108213eaf35a1bd7be7d25ee8d"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryState.class",
+            "sha256": "1714ed31f1a89ff9f55b0fb9f556f020576184ce11bc7034dd431a303be84df6"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryStorage$1.class",
+            "sha256": "d31c3f7e691dcb094bbc8541aa24da73aaa44aa8250ce505ba9b7b5f7a2b260e"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryStorage$FixedSqlite.class",
+            "sha256": "72d871e62bcce6fc6a62764461a575b260a5c93986ab9d9f3dd4d51060efa4f8"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryStorage$SqliteBinding.class",
+            "sha256": "ddd6f3abe94bc2e2144984a39ed4724d035f1b8e38149dc25942abef27daad22"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryStorage.class",
+            "sha256": "26db1a025ad02fd647a56c7195277451151374b20a4efa889261b0b56568b8ac"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryTransfer$Request.class",
+            "sha256": "cccab27dfb61563dc496f7d90bd4c6266f0213c707a2676441180867441a2d08"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryTransfer$Status.class",
+            "sha256": "6939b443d9a605179cd74e273d41f9cfdafad73758e098ee8738bc41f7aa162e"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryTransfer.class",
+            "sha256": "e1ffa22ffa97c5bd701a38a259f8fc9e883b9400fffe3fee57f4590cb70e51b3"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryTransferCodec.class",
+            "sha256": "5e4901d19d7f779f9bab52ae6ae408c2328d49c33a5d20fbd3a960868bb0accd"
+          }
+        ]
+      },
+      "test": {
+        "label": "cuboid-t10-test-02",
+        "kind": "test",
+        "baseline": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\cuboid-indirect-capture-01.json",
+        "source_count": 44,
+        "class_count": 80,
+        "sources": [
+          "src/test/java/dev/starcore/starcore/region/RegionCommandTest.java",
+          "src/test/java/dev/starcore/starcore/region/RegionDetectionFoliaTest.java",
+          "src/test/java/dev/starcore/starcore/region/RegionDisplayConfigTest.java",
+          "src/test/java/dev/starcore/starcore/region/RegionInfoTest.java",
+          "src/test/java/dev/starcore/starcore/region/RegionTitleServiceApiTest.java",
+          "src/test/java/dev/starcore/starcore/region/RegionTypeTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidGameplayTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidIndirectProtectionTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidPermissionSnapshotTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidRegionIntegrationTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTemplateAndLeaseBoundaryTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryBootstrapTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryCodecTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryFixtures.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryHostTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryInstallationTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryLegacyImportTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryOwnerTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryRuntimeTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryServiceTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritorySqlImportTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryStateTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryStorageTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryTransferTest.java",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryViewsTest.java",
+          "src/test/java/dev/starcore/starcore/territory/EnumTest.java",
+          "src/test/java/dev/starcore/starcore/territory/LeaseStatusTest.java",
+          "src/test/java/dev/starcore/starcore/territory/MultiChunkTerritoryTest.java",
+          "src/test/java/dev/starcore/starcore/territory/PermissionCheckerBoundaryTest.java",
+          "src/test/java/dev/starcore/starcore/territory/PermissionCheckerTest.java",
+          "src/test/java/dev/starcore/starcore/territory/PermissionLevelTest.java",
+          "src/test/java/dev/starcore/starcore/territory/PermissionTemplateTest.java",
+          "src/test/java/dev/starcore/starcore/territory/RentPeriodTest.java",
+          "src/test/java/dev/starcore/starcore/territory/SubRegionTest.java",
+          "src/test/java/dev/starcore/starcore/territory/TemplatePresetTest.java",
+          "src/test/java/dev/starcore/starcore/territory/TemporaryPermissionServiceTest.java",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryLeaseServiceSchedulingTest.java",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryPermissionTest.java",
+          "src/test/java/dev/starcore/starcore/territory/TerritorySelectionServiceTest.java",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryServiceTest.java",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryStorageLifecycleTest.java",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryTest.java",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryTypeTest.java",
+          "src/test/java/dev/starcore/starcore/territory/gui/TerritoryGuiActionsTest.java"
+        ],
+        "source_sha256": {
+          "src/test/java/dev/starcore/starcore/region/RegionCommandTest.java": "b13a75e6a494befcdc07590805e1bd75afc90e6c51507e98787b78137f03544f",
+          "src/test/java/dev/starcore/starcore/region/RegionDetectionFoliaTest.java": "fa7da62c2d82837d2468c9a0c448f7939609bc7f982cd5ec902a1fe4d032f7db",
+          "src/test/java/dev/starcore/starcore/region/RegionDisplayConfigTest.java": "8e56089c11a37b82140bdef3715727d629392d23e5200a122f0bb0e12a62f8db",
+          "src/test/java/dev/starcore/starcore/region/RegionInfoTest.java": "594f688e6961b49a0832c7cd3811137959f68682add84882283c9dfcbfe37336",
+          "src/test/java/dev/starcore/starcore/region/RegionTitleServiceApiTest.java": "c8e5f609a4696539c05bb00b569890cc8e0487180f7079a498e9348dd69a2ecc",
+          "src/test/java/dev/starcore/starcore/region/RegionTypeTest.java": "079f2f1da7a7519234609e0348ee89fddfdccbb8452ad84dc3c13be27f9547b2",
+          "src/test/java/dev/starcore/starcore/territory/CuboidGameplayTest.java": "e767dee4926187d3a08026c0657d0d60e63a15cb702dca774ac559a53267898c",
+          "src/test/java/dev/starcore/starcore/territory/CuboidIndirectProtectionTest.java": "02b81795c8c17faa3f534e0863720a078416d6722563d64fcf5cd21861e6a337",
+          "src/test/java/dev/starcore/starcore/territory/CuboidPermissionSnapshotTest.java": "0d6a2e1216e3dc4a0d2c8db930eb64b5b9cacb1d01092ccb81b4850371b70a85",
+          "src/test/java/dev/starcore/starcore/territory/CuboidRegionIntegrationTest.java": "b7f4ec576dfe4bb9cd717226e503e31b0d5ba429cf6cee1ebf9eddfdda74d50f",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTemplateAndLeaseBoundaryTest.java": "a155f9cfc24485374c5937be652cfc7bd63bcba7fc873c0c97ff8962774a32e3",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryBootstrapTest.java": "e5cd90d64b36a7fcfc6abd3fc4b9703ae09ce83d93101577e0b201d0980609d3",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryCodecTest.java": "a28bbec06d4fa3bc87608ed7e5e621871f97e70e7782336b600121c976d77bd3",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryFixtures.java": "b39eaa2f8c75ade053677b75158bdaa8d1b0054a158446cfe4ffa9eaf68aa1af",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryHostTest.java": "f97c37c7c876c1f39f4cf568f48f97d14ad4a8ce41cd823b7c6935e052eb7916",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryInstallationTest.java": "e5f6e03d26ce6cc7c009ce5c77ac2ebe749318688fcab9fdac85dcbecb670bfc",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryLegacyImportTest.java": "c3757a84bee1ffa39c6d30ad39550b1d3f3ee60507f7deee4126cef759364498",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryOwnerTest.java": "0bb6d6c9cf4f47654454a5e314e19f688026a0d52657e103fa6ff51aeaef4f13",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryRuntimeTest.java": "9669dbfd78c548bc611eb8338439f649861398560371dffd21c4cc9b02526571",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryServiceTest.java": "a34100a5aa8e57063db4bc14a10fb382215e2f19d70ddef3ed1a4019ce196eee",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritorySqlImportTest.java": "ac238f9b2322061aa9e5ed0572b702104629d75e1164fbedab6ed79f68c7f98a",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryStateTest.java": "e6afc327bc80c36be5cddaa61a7534dc069abc795a1680ec34aaebded47a6bc6",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryStorageTest.java": "5e3540565d2d3ebcfee20420d22b092bd0d9ed2fd7a29fab9563f9bd09450bf5",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryTransferTest.java": "782b11ca477b41922524b95ff4b5cec3abfb8f7d73f3ef61c1d38d2c3e2262cd",
+          "src/test/java/dev/starcore/starcore/territory/CuboidTerritoryViewsTest.java": "79f5496e28e8c8ea24f1ca2b0be528ff89bf9b5f33d9a52aab430afaa590df21",
+          "src/test/java/dev/starcore/starcore/territory/EnumTest.java": "bd8076cd79d42fcb63a8970b5e2a9d364e5420b8ab2e7cc251b0c5a00157be6d",
+          "src/test/java/dev/starcore/starcore/territory/LeaseStatusTest.java": "8607928bb762c626a216172fb7ca8fef21d0b3cb6eec9a70aeda9fde47b6c11a",
+          "src/test/java/dev/starcore/starcore/territory/MultiChunkTerritoryTest.java": "032e90f69c8dcb87ab574377bcec9f260b874c38f76674c146421d563db749af",
+          "src/test/java/dev/starcore/starcore/territory/PermissionCheckerBoundaryTest.java": "7854170aa9942031e241d19066ed3d3c7820b298e184d601831c17299570ebb5",
+          "src/test/java/dev/starcore/starcore/territory/PermissionCheckerTest.java": "4fd72ed48de0540c2f458286124b0581f9bb6570b2d016804489eca57c26ab40",
+          "src/test/java/dev/starcore/starcore/territory/PermissionLevelTest.java": "4e326f88a0e3722000651a8f22056acbcc7aa5b476848d0343b9db2e4554302a",
+          "src/test/java/dev/starcore/starcore/territory/PermissionTemplateTest.java": "08917a3bb7c6695129bdfb6b2279249e58479cd66ce7134d00409f7c4bddb9ee",
+          "src/test/java/dev/starcore/starcore/territory/RentPeriodTest.java": "5757e389d10b11a60cae6f380b1ce6dc0da3b599a30508cfa66d69bd7bb8f28e",
+          "src/test/java/dev/starcore/starcore/territory/SubRegionTest.java": "101520dc009ef9d808e27ae3d8d2869b7a0b9953040a78eb633ca9048b8813d0",
+          "src/test/java/dev/starcore/starcore/territory/TemplatePresetTest.java": "f659b326d21a27f6686f5eb96f2cc92fb711758e8d43f2db9664f68e09e597c7",
+          "src/test/java/dev/starcore/starcore/territory/TemporaryPermissionServiceTest.java": "98e9f3a5dd98930453a0fd366129d57dc5caa941c947994440ea56b2f337c1fe",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryLeaseServiceSchedulingTest.java": "2072a5aa598449d9a103d1e340f0243fc2e734acc873990a0e00367505ec1c35",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryPermissionTest.java": "84f64d456e61885672a39b36d77efc334aeaec69fe71d6afdc6b7d06ca4f21ad",
+          "src/test/java/dev/starcore/starcore/territory/TerritorySelectionServiceTest.java": "b50f489909715e72891a4308ab862a033477dce2ea54063f950d1b0039bc33c4",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryServiceTest.java": "e3ab768ad0780a37f1faa6b8f43e5411af17ce1ef3eec508b19c273ac0b626fe",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryStorageLifecycleTest.java": "66ba6f5cc902fd4c2866780ea1a2f677da60248ad752ae6d82e04079f24a1df5",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryTest.java": "e5d15f71b01b1314897c12cbdec90d81444dc0d21f09ca95e7e28973a7d6dbc4",
+          "src/test/java/dev/starcore/starcore/territory/TerritoryTypeTest.java": "d184fee6f6cedeb5d19541ad72f0239304f2c611827bd5e39f61920b71f17e33",
+          "src/test/java/dev/starcore/starcore/territory/gui/TerritoryGuiActionsTest.java": "f5c786d518f0da88807c13dfabe62a0f76634f948b84224f6d91be01a637a1a3"
+        },
+        "arguments": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\cuboid-t10-test-02.args",
+          "bytes": 20557,
+          "sha256": "ab749c3cdf815bfa6377b2e3dfd9a33cfd9c57aba2bd94f61fd51d17e51beaea"
+        },
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\cuboid-t10-test-02.log",
+          "bytes": 221,
+          "sha256": "029da36c8c7f0a4933797cdbbb3eca45ce9c9e61df4bf0fce5baa8304afcf6e4"
+        },
+        "fresh_class_bytes_equal_final_test_classpath": true,
+        "all_changed_sources_compiled": true,
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/region/RegionCommandTest$CaseInsensitive.class",
+            "sha256": "f6d6f2831f1ed1b4d9eec5ceaf0adc30933efe1087311d05826a608f6e7f7ab8"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionCommandTest$Help.class",
+            "sha256": "a2927f8a901ef9bfb2fd0262e6dc29f074283f865ca02d3cad26fdbaa3c9c0ee"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionCommandTest$InfoSubcommand.class",
+            "sha256": "a7badf4bc3adf08a675e64a82b25242c597d25c107014469cec99f7c31a10d2d"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionCommandTest$Reload.class",
+            "sha256": "40a20c64dcf14ec0c9b3571fa9d14e056e3fd78f82c89b1644faf0f78679a200"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionCommandTest$TabComplete.class",
+            "sha256": "89368d5ba667f46484ef1b980ff9f85b8571b9b13bb9fb75e7b91e8d6a15b8be"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionCommandTest$TestSubcommand.class",
+            "sha256": "f8aec59eec8003a66cf534f9af855aa652b069fb2954a842f8941d3673e24624"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionCommandTest$Unknown.class",
+            "sha256": "cd862beb03fc23fb7b995f1a9c34eb05e31b25044eb4f5e0e2af8f2fc09e73d0"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionCommandTest.class",
+            "sha256": "738ba162890ac8137bd8b773f98f8903f61750f37a318c7fe4cc554f2af61de4"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionDetectionFoliaTest.class",
+            "sha256": "83f8e24750b917d0814d79c191ea1ad64ba31a0786a4fc8383cadc99d97f42f1"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionDisplayConfigTest$Getters.class",
+            "sha256": "4172b48667d7c411323bb1c7c207dc6046e642ec70b849b366536aa28a1b8dc2"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionDisplayConfigTest$Independence.class",
+            "sha256": "c0b00f6ad0cc2eeff761cd5997e4e338ffce0ecc9fd1cc7b44e3cb57f3266e84"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionDisplayConfigTest.class",
+            "sha256": "377d6daf77679c56e34a55c00e9e1ff3b1277d47b21ea1476979fd024390637f"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionInfoTest$AllRegionTypes.class",
+            "sha256": "01884fbb749a0f1d542712f2c5195aaa9d797212ac9357b1079683b28967e60b"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionInfoTest$Construction.class",
+            "sha256": "a3139f950a6139835e568f22f2c01f6ec56a0fc24edda6838d8be525fa6be42d"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionInfoTest$Immutability.class",
+            "sha256": "32213cfd82c0af57652f8a1dd7b4b6ceb194cf730e532b1dcaa2845041a8767a"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionInfoTest.class",
+            "sha256": "49a4b46a78c8540dc025a977bd9200d1891f1c9d1558114350d867a5b307c686"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionTitleServiceApiTest$ConfigFields.class",
+            "sha256": "3658e0e222114e8a083e7faa0a118474fa621633c2c1eb04edcbf8bc582f855c"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionTitleServiceApiTest.class",
+            "sha256": "0594029292f5b2cf5a7c823c55a453737cae63697ceca2ac9ec81b92fceacc55"
+          },
+          {
+            "path": "dev/starcore/starcore/region/RegionTypeTest.class",
+            "sha256": "145e78c27707600a575c99ce1e22fb8895c9204bb8bec987967ea4b78cb4e40b"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidGameplayTest.class",
+            "sha256": "b94b56283d0d6b07898f25a05a0afef5e393a4291ead7a6e426e4369b6708ec1"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidIndirectProtectionTest.class",
+            "sha256": "73816a237cb780b72eb63abd55a7ba759d301222e4f86ebab3a569ee574366a6"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidPermissionSnapshotTest.class",
+            "sha256": "5589891b0b8bf7db58baf714b9b09103255fbe70f86efc3e09f81dfa488c098b"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidRegionIntegrationTest.class",
+            "sha256": "621cbfc32b3be3760643de7a6684ab2d398ce6deadb12d19fee24c9cd93490bc"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTemplateAndLeaseBoundaryTest.class",
+            "sha256": "76601d5f2c8a581ad4a3c5e76236a0f97b6c9de7d387a0c348b64f5213064c83"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryBootstrapTest.class",
+            "sha256": "cd055ec0a1ce355a0787780cdc680a4eb650148de6db95e41cc7006a05fbc904"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryCodecTest.class",
+            "sha256": "0d9d27381d5341acfe5a18f1b89e72a267e739548c6fee0bec44a53c544410db"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryFixtures.class",
+            "sha256": "d1a8561652a605cfe3721055c7eaf8677334d0cb36f43e21b7520e20d4bd88b8"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryHostTest.class",
+            "sha256": "017aaad5e67a309c8583420e3157cd3c046028fcee80d9bd1aec722f4b7a114a"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryInstallationTest.class",
+            "sha256": "1739e46d48ac1896e90fa41c1cf8ec1dd9b89ee233aa67f419829f66871380a5"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryLegacyImportTest.class",
+            "sha256": "e94f153e2cd482eccc5584c0e107ac5adad5d41560351e0d0b4dfa1281f58ff1"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryOwnerTest.class",
+            "sha256": "62e3e6dcd091e7bdca739ebe6ce5422fb329d2d0655847c22aae26acc4bed068"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryRuntimeTest.class",
+            "sha256": "261741dba5a78eee9e5aaafc6d68f93bd41c49af3eac22a197cb9804dfa2d266"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryServiceTest$Services.class",
+            "sha256": "1b5691cb49ae6ac29ad7ea327d1ed13fcc6831b44ba93d30420c3e2d4267c9c1"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryServiceTest.class",
+            "sha256": "51ec669e0cdcb1ab618f86a1e7e6e52ef92ab6cbe663b07fa4f8d414b9ec75df"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritorySqlImportTest.class",
+            "sha256": "31890d3abf59645bb18f76cbcbebb4cd112ad30adf232626bbf37207943d36c3"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryStateTest.class",
+            "sha256": "def691164452e6235e5ea7c646429f5d3f4c5959fbbb908310177083f3fc2088"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryStorageTest$Fault.class",
+            "sha256": "908955b893a16b7d0a90c7976ebd9ab40d91ba70621bd9bfeeee7a27f0c18e71"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryStorageTest.class",
+            "sha256": "5d4a670ec8c64fb3b06d1db14937cb0f792352802acca1f73a85526a1cb12c45"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryTransferTest.class",
+            "sha256": "d9e87851f2f81f37346d469460b39f0399a0d76f6d6fccb4588512bea6da1842"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryViewsTest.class",
+            "sha256": "577987cd912a65db8a57ed133a6b5a0ac958419870cd841246595ba527a5704c"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/EnumTest.class",
+            "sha256": "cbd7554537f921ac664f60399070b1db3eeeb8da2053db49a94abaa1ce784496"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/gui/TerritoryGuiActionsTest.class",
+            "sha256": "3f7f35214458de3740b4d2851862dc07759214c1204a582250992873334f5d98"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/LeaseStatusTest.class",
+            "sha256": "5dd71981994e167a15a0c89cc1d142631d98a05c8de64c25c33a60c88ce5e369"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/MultiChunkTerritoryTest$ChunkCoordTest.class",
+            "sha256": "21cabb591b5eb93595542baf81835539c79b227371ecd05e1ce09d7032a1cadf"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/MultiChunkTerritoryTest$Connectivity.class",
+            "sha256": "a6e9f4e15ccc200b24a6e8bc07bbbcea644597a618384d568fd626adaf098728"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/MultiChunkTerritoryTest$Construction.class",
+            "sha256": "13a620cfee78e758ad91268211d1666c234983280fcc25bf0e479a0236725b02"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/MultiChunkTerritoryTest$Expansion.class",
+            "sha256": "4eb4a0c7d73199d80c8f8f418e67f39f4a4d2d3a7b95b40f2906b82cadc930cc"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/MultiChunkTerritoryTest$MaintenanceAndLevel.class",
+            "sha256": "a12f03d8e9b89241ca2139242441af6e123a3f817f116e4dd88bd32c411fc3de"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/MultiChunkTerritoryTest.class",
+            "sha256": "26c75f5e233d44363cfea305a20617cf9a52c4eba0dbb47c1598af557dc3ae86"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/PermissionCheckerBoundaryTest.class",
+            "sha256": "b812f862b857177b43a96d8ea1d39a94a3a599758209f6f466c5e4977985dc7f"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/PermissionCheckerTest$EffectiveLevelTests.class",
+            "sha256": "82503f45f37609d090dee905e5285b4fdac12b96c6d2cd874a01f7dd3b8c5699"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/PermissionCheckerTest$LeasePermissionTests.class",
+            "sha256": "ee336d9e6ebe8560643ff2ed6fc92c487906dcaf62677438f9641e2ba6e77728"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/PermissionCheckerTest$MainPermissionCheckTests.class",
+            "sha256": "6045b6b97842a1736e8faac33f9c7027cceaea9bdeeddf8a356cc979737a4c60"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/PermissionCheckerTest$ManagementPermissionTests.class",
+            "sha256": "645c5dc70e6eb23532f106be32ea41a471a45da879f01f4da971dd840202636f"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/PermissionCheckerTest$SpecialPermissionTests.class",
+            "sha256": "7650dc6176f14c6b2de1fe85c8a7ffa016bfeb28ad4db2e28176b928dc1087af"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/PermissionCheckerTest.class",
+            "sha256": "de33656acdb018e0539253fdbefd4929ba120218a0fe232ce9dcf738e69d9c6d"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/PermissionLevelTest.class",
+            "sha256": "cc9bbd4afad6a4686a932350dcfeaed8785ef16475521731d47d2e2fe33d3e50"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/PermissionTemplateTest.class",
+            "sha256": "5fa700ec643704738bad39cd5e1c1064e1a59e8ed311d46f92061732386279c4"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/RentPeriodTest.class",
+            "sha256": "187dabda2fd567015fb6c7eaa4bdf40d1b08869e82e999e06a501488a2785cd3"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/SubRegionTest.class",
+            "sha256": "71816dd95e1571ae18c243e9df073872849d22f3e831fbdb23d040b13c073cbb"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TemplatePresetTest.class",
+            "sha256": "ff0bba4cb6fc7bc74e57baf7637c543f16fbaa5b5e25cf1b4798eda6af95f84a"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TemporaryPermissionServiceTest$ExpiryTests.class",
+            "sha256": "a7273a133a921aff4bfe4798f63568f94e7505cc287fed6b7f592f5f86032ea5"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TemporaryPermissionServiceTest$GrantRevokeTests.class",
+            "sha256": "068ad967fcb3045556fb3491c4f246290e50e85e89afb23da7d722a8abd15414"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TemporaryPermissionServiceTest$QueryTests.class",
+            "sha256": "f53fe8c3aa47d1a26b2de8e26e4e7e5e0fe63cc22070c0fc73add835075e12d3"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TemporaryPermissionServiceTest$StartStopTests.class",
+            "sha256": "ca0d61bff3455012fe070a5f2086fec3a8d5c951229dd34f46bd0e3454b89b05"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TemporaryPermissionServiceTest$StatisticsTests.class",
+            "sha256": "96762ca617731aa1ab98f53b00e37dbfca8f4ef053909e2a2b82cba9bb93257c"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TemporaryPermissionServiceTest.class",
+            "sha256": "2665a00f9fbedd3631e13da7d0643708c84f7804c4281fe29f1421e6894f761c"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryLeaseServiceSchedulingTest.class",
+            "sha256": "64cebcd4f30f52d651bc33e9b3c1728b7f95457f0e12e9f98508cd08fc535ba6"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryPermissionTest.class",
+            "sha256": "69a4c406c16077e0a398c08dff6179df3525a4d0eafc60eedc971dd9f6e7eb3e"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritorySelectionServiceTest.class",
+            "sha256": "ebecb41d651d988533ff93d0d75f28ddee4d43f367a9c44b31731d5e3bed3e34"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryServiceTest$CreateDeleteTests.class",
+            "sha256": "6c6b03a7ba4d1e1d3203999f8a9b1ff1a2364962a298e6ef908969958ad094a1"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryServiceTest$LoadSaveTests.class",
+            "sha256": "a93f8aa2685b290f83a78635d54772f4a6fcc11adebaa08f1da6e3a819b75093"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryServiceTest$LocationQueryTests.class",
+            "sha256": "16cd27252cda856632f8a0b844311f0cb1b3403fb6bc193e4ffc77f843ea0407"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryServiceTest$OverlapTests.class",
+            "sha256": "9ff4b145adaa30e97e2761815e58472886022d742d80e58642640d07fd16b617"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryServiceTest$QueryTests.class",
+            "sha256": "6abed23a83781384fb80753861e6aa554571e13e400c03521d5b2b71dcd0dacd"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryServiceTest$StatisticsTests.class",
+            "sha256": "a5cde307ab299981ede99b28e491064079efb69a47957327e0c49258ce849da8"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryServiceTest.class",
+            "sha256": "36c486cef010de864fc76cc266dcf80ce210af23424a520f4f167ff876b0e054"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryStorageLifecycleTest.class",
+            "sha256": "151be77557946df0e8700fedaad58166c81d223a9667ab2881812e04a7a711a4"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryTest.class",
+            "sha256": "fc0de8589944e5e2ce35da32a42862706988be2877e30cfa61b14fccc54fe6b9"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/TerritoryTypeTest.class",
+            "sha256": "c0306607da2cce8b7f8696704d2f35edf5102632e0b52821609df133ee936ad4"
+          }
+        ]
+      }
+    },
+    "formatting": {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-cuboid-t10-format-02.log",
+      "bytes": 1236,
+      "sha256": "b22e23bdc35a07989754b544b6948a2aa66f36b87f3536eba0d5398cd52875cf"
+    },
+    "api": {
+      "baseline_update_used": false,
+      "included_in_final_total": true,
+      "source_baseline": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\docs\\api\\starcore-api-v1.txt",
+        "bytes": 339441,
+        "sha256": "d758cfabc32cc27b6fb18bd1be835131eb4bd1bd8b1a32e09099b20525b8d1df"
+      }
+    }
+  },
+  "replay": {
+    "method": "independent Git indexes, all replayed blobs verified; reverse replay equals base tree",
+    "directory": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\cuboid-transfer-replay-01.index",
+    "forward_check": true,
+    "reverse_check": true,
+    "diff_check": true,
+    "forward_tree": "cf57560a67f8b619a355788dd940c4c88cf047cb",
+    "reverse_tree": "fcc78ac4704a2432b2c24c305d504fa6d5077c8b",
+    "all_src_file_count": 3880,
+    "src_api_pom_aggregate_sha256": "1423abb9296aa7fb322cfc7e03ecdbea9dd6ca0b5681a95e428aabc1d22f7f3e",
+    "all_source_bytes_equal_after_lf_normalization": true
+  },
+  "capture_evidence": {
+    "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\cuboid-transfer-capture-01.json",
+    "bytes": 843661,
+    "sha256": "3fb803f390d380db30029be828e8334c528b630bb7bc0946e04795c842607369"
+  },
+  "scope": {
+    "cuboid_original_ids_and_owner_fields_preserved": true,
+    "nation_affiliation_not_reinterpreted_as_ownership": true,
+    "exact_parent_child_plan_and_request_permanently_retained": true,
+    "batch_ownership_effect_and_receipt_in_same_authority_commit": true,
+    "pending_targets_and_all_children_block_ordinary_writes": true,
+    "pre_reservation_cancellation_permanently_seals_original_request": true,
+    "late_replay_returns_original_receipt_without_restoring_land": true,
+    "terminal_storage_bytes_and_all_pending_decision_revisions_reserved": true,
+    "schema_one_still_read_without_transfer_history": true,
+    "file_and_sqlite_restart_conflict_and_lost_response_tested": true,
+    "new_transfer_primitive_internal_only": true,
+    "treaty_and_siege_source_proof_receiver_enabled": false,
+    "foundation_chunk_cession_receiver_enabled": false,
+    "lease_money_protocol_durable": false,
+    "new_release_jars_or_review_zip": false,
+    "full_clean_build": false,
+    "server_started": false,
+    "world_or_player_saves_modified": false,
+    "all_stages_complete": false
+  },
+  "runtime": {
+    "jdk": "21.0.13.1+2",
+    "maven": "3.9.16",
+    "final_test_batches_serial": true,
+    "final_main_and_test_compilation_overlapped": false,
+    "javac_heap_mib": 96,
+    "surefire_in_process_heap_mib": 96,
+    "processors": 1,
+    "mockito_explicit_agent": true
+  },
+  "excluded_failed_attempts": [],
+  "superseded_successful_attempts": [
+    {
+      "label": "cuboid-t10-focused-01",
+      "tests": 16,
+      "log": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-cuboid-t10-focused-01.log",
+        "bytes": 1437,
+        "sha256": "2f5ac69785ea7e87aa0189d72cb30ab2575cdeae37ca267f2c646d94cc2f5c27"
+      },
+      "reason": "Initial transfer cases extended with per-pending-operation revision reservation; included once in final territory regression.",
+      "included_in_final_pass_total": false
+    }
+  ],
+  "known_open": [
+    "This is an internal cuboid ownership primitive, not an authorized treaty or siege receiver. No player settlement entry is enabled by this checkpoint.",
+    "Cuboid owner UUID and separate nation affiliation retain their existing meanings. No cuboid UUID is silently replaced with a foundation chunk identity.",
+    "Transfer preserves metadata, permissions, child images and existing delegated membership, except that target-owner membership is removed from the parent as in the compatibility transfer API.",
+    "Persistent original envelope, immutable binding, War/Diplomacy source proof, receiver lifecycle and whole-manifest production orchestration remain the next step.",
+    "Foundation chunk receiver, lease/reparation/tribute/loan money receipts, legacy military restriction migration and permissioned lifting remain open.",
+    "Navy transport/ports, wounded return, doctrine, budget rollover/cancel, other module authorization/thread/lifecycle paths and archival remain open.",
+    "Pending transfer history is permanent and bounded; automatic archival or expiry is not implemented.",
+    "Event final authorization is not atomic with later vanilla world mutation; SQL multiprocess cache consistency and live entity origin behavior remain unverified.",
+    "Full clean Core build, new artifacts, final Core plus Supply regression, SQL multiprocess/MySQL and user-deferred Paper/Folia acceptance remain open."
+  ]
+}
