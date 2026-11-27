@@ -1,5 +1,9 @@
 # 代码闭环清单
 
+2026-11-28 最新开发检查点为 [Cuboid 游戏事件保护与区域显示 T8](upstream/development/CUBOID-TERRITORY-GAMEPLAY.md)：生产注册坐标领土监听器，整次事件的全部位置使用同一父子快照；方块/容器/传送/实体交互/投射物/药水/爆炸等接入判权，漏斗/活塞/流体/火势跨域拒绝，Folia远程玩家不跨线程读取。区域显示使用一致父子结果，不可用不回退荒野；临时授权包含子区域generation与删除记录。最终三批706项/80个suite通过，10个生产源、42个领土/区域测试源空目录编译；404文件累计补丁独立索引正反应用后3,876个src、API/pom一致，见[证据](verification/workspace-cuboid-territory-gameplay-development-20261128.json)。**全部阶段尚未完成。** 尚需间接世界变化覆盖、领土业务receiver、资金回执和其他业务；未构建新JAR或启动实服。累计补丁替代全部旧开发补丁，不能叠加。
+
+以下 T7 及更早段落为历史检查点，已包含在 T8 累计补丁中。
+
 2026-11-28 最新开发检查点为 [Cuboid 生产工厂与写入入口 T7](upstream/development/CUBOID-TERRITORY-PRODUCTION.md)：稳定 host 接入父子服务与绑定模板，显式 files/sqlite 配置、管理员控制台 status/recover、不可用状态和关闭流程已接通；命令/GUI 使用前快照提交并在最终确认时重新鉴权，临时授权绑定父领土 generation。最终两批 630 项 / 59 个 suite 通过，11 个生产源及全部 34 个领土测试源空目录编译；395 文件累计补丁独立索引正反应用后 3,872 个 src、API/pom 一致，见[证据](verification/workspace-cuboid-territory-production-development-20261128.json)。**源码已接入生产工厂，但全部阶段尚未完成。** 下一步接实际 cuboid 游戏事件保护和区域显示一致读取；现有保护监听器是另一套 chunk 服务。两套领土 receiver、租赁资金和其他业务仍开放。成品仍第二十份，全仓干净构建、新 JAR 和实服待验。累计补丁替代全部旧开发补丁，不能叠加。
 
 以下 T6 及更早段落为历史检查点，已包含在 T7 累计补丁中。
