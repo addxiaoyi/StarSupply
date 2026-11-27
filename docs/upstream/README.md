@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-27 最新源码入口为 [Army 国家关闭与退役 A6](development/ARMY-NATION-CLOSURE.md)：schema5 永久保存原号关闭/退役，关闭阻止新写入，已接受付费与战斗先结清，再原子清退完整本国集合；历史证明、精确墓碑和未来容量保留。1,309 项、100 个套件通过，9 个生产源与 7 个测试源空目录编译；299 文件累计补丁重放后 3,811 个 src、API、pom 一致，见[证据](../verification/workspace-army-nation-closure-development-20261127.json)。**ArmyService / Commander 与 Nation 解散尚未接线，全部阶段未完成。** 战斗技能/撤退、旧失败冷却、目录删除前 Army 屏障、Treasury 退役前 drain、预算及全 writer 迁移继续开发。累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代旧开发补丁，不能叠加；JAR、安装序列与 review ZIP 仍第二十份。未启动实服或修改世界、玩家存档。
+
+以下 A5 段落为此前检查点，已包含在 A6 累计补丁中。
+
 2026-11-27 最新源码入口为 [Army 技能效果与冷却 A5](development/ARMY-SKILL-LEDGER.md)：schema4 在一次 CAS 中确认固定 v1 效果、完整原请求、永久施法证明与完整玩家 UUID / 技能冷却链；完整选择、精确重放、纳秒截止、阵亡墓碑及跨账本同 token 快照一致性已覆盖。1,216 项、95 个套件通过，9 个生产源与 7 个测试源空目录编译；292 文件累计补丁重放后 3,804 个 src、API、pom 一致，见[证据](../verification/workspace-army-skill-ledger-development-20261127.json)。**ArmyService / Commander 尚未激活，全部阶段未完成。** 战斗干预/战术撤退、旧失败冷却策略、国家生命周期/解散、预算策略和全 writer 迁移仍待完成，当前仅直接国库策略。累计补丁只应用于第二十份基点 `9e380d62fd94cdc54f6f703ea09e14f575660f18`，替代旧开发补丁，不能叠加；JAR、安装序列与 review ZIP 仍第二十份。未启动实服或修改世界、玩家存档。
 
 以下 A4 段落为此前检查点，已包含在 A5 累计补丁中。

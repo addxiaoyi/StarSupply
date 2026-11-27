@@ -2,6 +2,10 @@
 
 更新日期：2026-11-27。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+最新源码检查点为 [Army 国家关闭与退役 A6](upstream/development/ARMY-NATION-CLOSURE.md)：schema5 永久保存原操作编号的 CLOSING / RETIRED，关闭阻止新写入，先结清已接受的付费与战斗，再原子退役完整本国集合；保留全部历史证明及精确墓碑。观察跳步、历史时间边界、未来 token / revision 和保守字节预留已覆盖。最终 1,309 项、100 个套件通过；9 个生产源与 7 个测试源空目录编译为 17、7 个 class。299 文件累计补丁独立正反重放后 3,811 个 src、API、pom 一致，见[证据](verification/workspace-army-nation-closure-development-20261127.json)。**A6 尚未激活 ArmyService / Commander，也未接入 Nation 解散协调器，全部阶段仍未完成。** 下一步完成战斗技能干预与战术撤退、旧失败冷却策略、目录删除前的 Army 关闭屏障与 Treasury 退役前 drain，再统一迁移 writer、明确预算策略、实现真实军限和军事 receiver。当前仅直接国库策略；成品、安装与 review ZIP 仍第二十份。累计补丁只用于固定第二十份基点，替代全部旧开发补丁，不能叠加。未启动实服或修改世界、玩家存档。
+
+以下 A5 段落为此前检查点，已包含在 A6 累计补丁中，其后续计划以上段为准。
+
 最新源码检查点为 [Army 技能效果与冷却 A5](upstream/development/ARMY-SKILL-LEDGER.md)：schema4 在同一 CAS 中保存完整原请求、固定 v1 效果、永久施法证明和以完整玩家 UUID / 技能为键的冷却链；重放不重复施效或延长冷却。完整选择、精确纳秒截止、阵亡墓碑、跨账本同 token 快照一致性及旧 draft 保留已覆盖。最终 1,216 项、95 个套件通过；9 个生产源和 7 个测试源空目录编译为 17、8 个 class。292 文件累计补丁独立正反向重放后 3,804 个 src、API 与 pom 一致，见[证据](verification/workspace-army-skill-ledger-development-20261127.json)。**A5 尚未激活 ArmyService / Commander，全部阶段仍未完成。** 战斗干预与战术撤退、旧正常失败冷却策略、国家 closing / retired 与解散协调、预算策略仍是激活门槛，随后统一迁移全部 writer、实现真实军限与军事 receiver。当前仅直接国库策略；成品、安装与 review ZIP 仍第二十份。累计补丁只用于固定第二十份基点并替代旧开发补丁，不能叠加。未启动实服或修改世界、玩家存档。
 
 以下 A4 段落为此前检查点，已包含在 A5 累计补丁中，其后续计划以上段为准。
