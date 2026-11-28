@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-28 最新开发检查点为 [军事与 Cuboid 混合和约 T14](development/MIXED-TERRITORY-TREATY.md)：生产和约及玩家入口支持军事＋割让＋可选政治条款，三份原计划/统一binding/完整终态持久保存，部分提交与取消沿原编号恢复，三端一致后才接受并释放。Army未绑定阶段增加未来证明、裁军和解除容量预留。最终八批1448项/111个suite通过，11个生产源与73个测试源空目录编译；417文件累计补丁独立正反应用后3,889个src及API/pom一致，见[证据](../verification/workspace-mixed-territory-treaty-development-20261128.json)。**全部阶段尚未完成。** 接下来foundation割让、攻城receiver及其余资金/玩法/模块/归档；未构建新JAR或启动服务器。累计补丁替代旧补丁，不能叠加。
+
+以下 T13 及更早记录为历史检查点，已包含在 T14 累计补丁中。
+
 2026-11-28 最新开发检查点为 [Cuboid 领土割让生产接入 T13](development/CUBOID-TERRITORY-CESSION.md)：实际和约支持纯割让及割让＋政治，原计划引用、不可变binding和双终态持久保存，取消与丢回复沿原编号恢复，完整一致后接受并释放；host注册/关闭和原cuboid UUID命令已接通，保存绑定前校验未来证明容量。最终六组1305项/103个suite通过，11个生产源与66个测试源串行空目录编译；415文件累计补丁独立正反应用后3,887个src及API/pom一致，见[证据](../verification/workspace-cuboid-territory-cession-development-20261128.json)。**全部阶段尚未完成。** 接下来foundation割让、攻城接收器、军事＋领土混合及其余资金/玩法/模块/归档。未构建新JAR或启动服务器。累计补丁替代旧补丁，不能叠加。
 
 以下 T12 及更早记录为历史检查点，已包含在 T13 累计补丁中。
