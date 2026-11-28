@@ -1,5 +1,9 @@
 # 代码闭环清单
 
+2026-11-28 最新开发检查点为 [Cuboid 领土割让生产接入 T13](upstream/development/CUBOID-TERRITORY-CESSION.md)：实际和约支持纯割让及割让＋政治，原计划引用、不可变binding和双终态持久保存，取消与丢回复沿原编号恢复，完整一致后接受并释放；host注册/关闭和原cuboid UUID命令已接通，保存绑定前校验未来证明容量。最终六组1305项/103个suite通过，11个生产源与66个测试源串行空目录编译；415文件累计补丁独立正反应用后3,887个src及API/pom一致，见[证据](verification/workspace-cuboid-territory-cession-development-20261128.json)。**全部阶段尚未完成。** 接下来foundation割让、攻城接收器、军事＋领土混合及其余资金/玩法/模块/归档。未构建新JAR或启动服务器。累计补丁替代旧补丁，不能叠加。
+
+以下 T12 及更早记录为历史检查点，已包含在 T13 累计补丁中。
+
 2026-11-28 最新开发检查点为 [Cuboid 三方真实权威联合协议 T12](upstream/development/CUBOID-TERRITORY-AUTHORITIES.md)：全局manifest与War原生步骤支持割让＋政治双接收器，完整证明复读和身份检查后准入/结束，双方一致终态后释放。真实文件/SQLite三权威覆盖十处丢回复重启、否决/取消/取代及生命周期变化。最终四批1063项/93个suite通过，3个生产源与55个测试源串行空目录编译；412文件累计补丁独立正反应用后3,884个src及API/pom一致，见[证据](verification/workspace-cuboid-territory-authorities-development-20261128.json)。**全部阶段尚未完成。** 原生协议已验证，生产批次编排、host注册及玩家割让入口尚待接线。未构建新JAR或启动服务器。累计补丁替代旧补丁，不能叠加。
 
 以下 T11 及更早记录为历史检查点，已包含在 T12 累计补丁中。
