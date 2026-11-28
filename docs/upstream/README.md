@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-28 最新开发检查点为 [Foundation Chunk 生产和约 T17](development/FOUNDATION-CHUNK-PRODUCTION.md)：纯区块割让及区块＋政治已接通实际协调器、schema8持久批次、固定owner facade、模块注册和玩家命令；原计划/共同binding/完整终态持久保存，部分提交及取消沿原编号恢复。最终六批1036项/65个suite通过，11个生产源与40个测试源空目录编译；434文件累计补丁独立正反应用后3,901个src及API/pom一致，见[证据](../verification/workspace-foundation-chunk-production-development-20261128.json)。**全部阶段尚未完成。** 下一步军事/Cuboid/Foundation混合、攻城及其余资金/玩法/模块/归档。未构建新JAR或启动服务器；累计补丁替代旧补丁，不能叠加。
+
+以下 T16 及更早记录为历史检查点，已包含在 T17 累计补丁中。
+
 2026-11-28 最新开发检查点为 [Foundation Chunk 条约来源证明 T16](development/FOUNDATION-CHUNK-TREATY.md)：包内接收器保存完整原 envelope、不可变 binding 与来源终态，独立 chunk 条款保留原始世界/x/z及最低剩余量；War 准入、结束和 release 接入 foundation 证明检查。文件/SQL schema5 后继与未来容量验证已完成。最终七批1994项/146个suite通过，8个生产源与19个测试源空目录编译；429文件累计补丁独立正反应用后3,898个src及API/pom一致，见[证据](../verification/workspace-foundation-chunk-treaty-development-20261128.json)。**全部阶段尚未完成。** 下一步接通实际 Foundation 和约协调器、持久批次及模块/命令，再继续混合条款与其他阶段。未构建新JAR或启动服务器；累计补丁替代旧补丁，不能叠加。
 
 以下 T15 及更早记录为历史检查点，已包含在 T16 累计补丁中。
