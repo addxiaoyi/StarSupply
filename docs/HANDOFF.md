@@ -2,6 +2,10 @@
 
 更新日期：2026-11-28。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+2026-11-28 最新开发检查点为 [Foundation Chunk 条约来源证明 T16](upstream/development/FOUNDATION-CHUNK-TREATY.md)：包内接收器保存完整原 envelope、不可变 binding 与来源终态，独立 chunk 条款保留原始世界/x/z及最低剩余量；War 准入、结束和 release 接入 foundation 证明检查。文件/SQL schema5 后继与未来容量验证已完成。最终七批1994项/146个suite通过，8个生产源与19个测试源空目录编译；429文件累计补丁独立正反应用后3,898个src及API/pom一致，见[证据](verification/workspace-foundation-chunk-treaty-development-20261128.json)。**全部阶段尚未完成。** 下一步接通实际 Foundation 和约协调器、持久批次及模块/命令，再继续混合条款与其他阶段。未构建新JAR或启动服务器；累计补丁替代旧补丁，不能叠加。
+
+以下 T15 及更早记录为历史检查点，已包含在 T16 累计补丁中。
+
 2026-11-28 最新开发检查点为 [Foundation Chunk 原生预留 T15](upstream/development/FOUNDATION-CHUNK-RESERVATION.md)：内部原编号预留、稳定权威身份、坐标冻结、聚合最低保留量、两端退役阻塞及永久终态已实现；文件schema4与SQL同事务保存，并保留旧回执迁移和未来容量/版本空间。最终三批609项/63个suite通过，6个生产源与15个测试源空目录编译；424文件累计补丁独立正反应用后3,893个src及API/pom一致，见[证据](verification/workspace-foundation-chunk-reservation-development-20261128.json)。**全部阶段尚未完成。** 原生预留保持包内可见，下一步来源证明、实际foundation和约与攻城receiver，再继续资金/玩法/模块/归档。未构建新JAR或启动服务器；累计补丁替代旧补丁，不能叠加。
 
 以下 T14 及更早记录为历史检查点，已包含在 T15 累计补丁中。
