@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-29 最新开发检查点为 [Foundation 持久安装绑定 T19](development/FOUNDATION-CHUNK-INSTALLATION.md)：原目录/后端/实际数据库/权威UUID与最后确认版本摘要持久保存，生产host和公开持久化构造器接通；保留见证时拒绝旧库恢复、替换和同版改写，已绑定缺失不重建。最终六批945项/71个suite通过，8个生产源和22个测试源空目录编译；443文件累计补丁正反应用后3,908个src及API/pom一致，见[证据](../verification/workspace-foundation-chunk-installation-development-20261129.json)。底层提交至见证确认之间无write-ahead保证，同时恢复全部见证无法检测。**全部阶段尚未完成。** 下一步权限化军限解除、攻城及其余资金/玩法/模块/归档。未构建新JAR或启动服务器；累计补丁替代旧补丁，不能叠加。
+
+以下 T18 及更早记录为历史检查点，已包含在 T19 累计补丁中。
+
 2026-11-28 最新开发检查点为 [Foundation、Cuboid 与军事混合和约 T18](development/FOUNDATION-CHUNK-MIXED.md)：实际协调器和命令支持三类效果全部组合及可选政治，完整原计划/共同binding先持久化，所有终态一致后确认并释放；中央精确receiver/scope校验、schema9降级拒绝、四端取消恢复和未来证明容量已接通。最终十批1922项/133个suite通过，9个生产源和40个测试源空目录编译；435文件累计补丁独立正反应用后3,902个src及API/pom一致，见[证据](../verification/workspace-foundation-chunk-mixed-development-20261128.json)。**全部阶段尚未完成。** 下一步持久安装绑定、攻城及其余资金/玩法/模块/归档。未构建新JAR或启动服务器；累计补丁替代旧补丁，不能叠加。
 
 以下 T17 及更早记录为历史检查点，已包含在 T18 累计补丁中。
