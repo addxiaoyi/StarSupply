@@ -2,6 +2,10 @@
 
 更新日期：2026-11-28。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+2026-11-28 最新开发检查点为 [Cuboid 三方真实权威联合协议 T12](upstream/development/CUBOID-TERRITORY-AUTHORITIES.md)：全局manifest与War原生步骤支持割让＋政治双接收器，完整证明复读和身份检查后准入/结束，双方一致终态后释放。真实文件/SQLite三权威覆盖十处丢回复重启、否决/取消/取代及生命周期变化。最终四批1063项/93个suite通过，3个生产源与55个测试源串行空目录编译；412文件累计补丁独立正反应用后3,884个src及API/pom一致，见[证据](verification/workspace-cuboid-territory-authorities-development-20261128.json)。**全部阶段尚未完成。** 原生协议已验证，生产批次编排、host注册及玩家割让入口尚待接线。未构建新JAR或启动服务器。累计补丁替代旧补丁，不能叠加。
+
+以下 T11 及更早记录为历史检查点，已包含在 T12 累计补丁中。
+
 2026-11-28 最新开发检查点为 [Cuboid 条约来源证明与绑定 T11](upstream/development/CUBOID-TERRITORY-TREATY.md)：保存完整原条款与不可变binding，复读War/外交原决定和服务身份后才同次提交来源证明与领土效果；未绑定取消封存原envelope，绑定前验证所有未来证明容量。最终三批747项/83个suite通过，7个生产源与45个测试源串行空目录编译；411文件累计补丁独立正反应用后3,883个src及API/pom一致，见[证据](verification/workspace-cuboid-territory-treaty-development-20261128.json)。**全部阶段尚未完成。** 新接收器尚未注册生产，专项War/外交来源为测试替身；下一步全局manifest、真实联合权威与生产编排。未构建新JAR或启动服务器。累计补丁替代旧补丁，不能叠加。
 
 以下 T10 及更早记录为历史检查点，已包含在 T11 累计补丁中。
