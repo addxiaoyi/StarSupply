@@ -1,5 +1,9 @@
 # StarCore 攻城财政依赖与部署生命周期修复
 
+2026-11-28 最新开发检查点为 [Foundation Chunk 原生预留 T15](development/FOUNDATION-CHUNK-RESERVATION.md)：内部原编号预留、稳定权威身份、坐标冻结、聚合最低保留量、两端退役阻塞及永久终态已实现；文件schema4与SQL同事务保存，并保留旧回执迁移和未来容量/版本空间。最终三批609项/63个suite通过，6个生产源与15个测试源空目录编译；424文件累计补丁独立正反应用后3,893个src及API/pom一致，见[证据](../verification/workspace-foundation-chunk-reservation-development-20261128.json)。**全部阶段尚未完成。** 原生预留保持包内可见，下一步来源证明、实际foundation和约与攻城receiver，再继续资金/玩法/模块/归档。未构建新JAR或启动服务器；累计补丁替代旧补丁，不能叠加。
+
+以下 T14 及更早记录为历史检查点，已包含在 T15 累计补丁中。
+
 2026-11-28 最新开发检查点为 [军事与 Cuboid 混合和约 T14](development/MIXED-TERRITORY-TREATY.md)：生产和约及玩家入口支持军事＋割让＋可选政治条款，三份原计划/统一binding/完整终态持久保存，部分提交与取消沿原编号恢复，三端一致后才接受并释放。Army未绑定阶段增加未来证明、裁军和解除容量预留。最终八批1448项/111个suite通过，11个生产源与73个测试源空目录编译；417文件累计补丁独立正反应用后3,889个src及API/pom一致，见[证据](../verification/workspace-mixed-territory-treaty-development-20261128.json)。**全部阶段尚未完成。** 接下来foundation割让、攻城receiver及其余资金/玩法/模块/归档；未构建新JAR或启动服务器。累计补丁替代旧补丁，不能叠加。
 
 以下 T13 及更早记录为历史检查点，已包含在 T14 累计补丁中。
