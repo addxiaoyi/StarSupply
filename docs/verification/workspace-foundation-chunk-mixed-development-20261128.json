@@ -1,0 +1,2645 @@
+{
+  "checkpoint": "foundation-chunk-mixed-development-20261128",
+  "date": "2026-11-28",
+  "timezone": "Asia/Shanghai",
+  "evidence_finalized_at": "2026-11-29T00:10:21+08:00",
+  "base": "9e380d62fd94cdc54f6f703ea09e14f575660f18",
+  "previous_checkpoint": "foundation-chunk-production-development-20261128",
+  "patch": {
+    "path": "docs/upstream/development/foundation-chunk-mixed-20261128.patch",
+    "bytes": 5097114,
+    "sha256": "2fffadd98c92343522bc0c59616b4ebf5431c42640e95b9524c29db4c287b5d4",
+    "file_diffs": 435
+  },
+  "source_changes_since_previous_checkpoint": [
+    {
+      "path": "src/main/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryTreaty.java",
+      "bytes": 6836,
+      "sha256": "bc85fd8338bf86ff05911c6d66796bccbe2259a94e5a7863df5f2049cb2a7cec",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/army/model/authority/ArmyMilitaryTreaty.java",
+      "bytes": 7917,
+      "sha256": "0d79b38890e25097c49bd4eee44f65a031dd073861547fa215b24d74f725ad62",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/command/WarCommand.java",
+      "bytes": 49043,
+      "sha256": "4e6504bad69918022e2fe03b60a6e886c7c72dbeb8f19b632f1b73da331e505c",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryTreaty.java",
+      "bytes": 7269,
+      "sha256": "da55d8b8dbd3b664582c17944731d5183c6211a70ef718da681b90e17ee6e336",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/treaty/TreatyEffectManifest.java",
+      "bytes": 30631,
+      "sha256": "4d8ae05a91c8edd060db14e917f5c2ed59d0bf1a1f67a6b7f1992ca305a2334d",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyBatch.java",
+      "bytes": 31034,
+      "sha256": "38abe882283aa12bbacdf63762e19abebdfab97824c107837a8c7e817a204c03",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyProtocolJson.java",
+      "bytes": 8679,
+      "sha256": "b767fd45f27e95e84bbd4d0db511e6af3b3634cc2683955f31fb3fc360dd5e66",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyService.java",
+      "bytes": 94330,
+      "sha256": "47e019c6cf55b655f8d401b02994a0dbc27b02103cd399b76d8f4c31c58d7fac",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyStateCodec.java",
+      "bytes": 21314,
+      "sha256": "bf4b4180b286fbbed9897d0a66f4d3590b4ac8615f4bc05845af6d2a3fe58c7e",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTreatyTestFixture.java",
+      "bytes": 2803,
+      "sha256": "3102642da6e881411379515e7bd4249786aabad67864a28ae3560157c00c3c6a",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/command/WarCommandPeaceTreatyTest.java",
+      "bytes": 39769,
+      "sha256": "f7b3256d122efedafcb2c324cf50ab47d5f7269af25dbed8fa4cbd7215f5d983",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/treaty/TreatyEffectManifestTest.java",
+      "bytes": 54394,
+      "sha256": "3861a3dc4ee7a609ce11f2d8e7f0e456860c89455353d0c7f1523aabe27dcb2d",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/FoundationTreatyProductionTest.java",
+      "bytes": 39673,
+      "sha256": "8a868814ea276584283e2b6c4b522cd4609c9a429a5e2972b9a062c175530550",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/MixedFoundationTreatyProductionTest.java",
+      "bytes": 24097,
+      "sha256": "18c367cc7dcf3be5fbb91e83c93207597e26bf87a857464c9438c97c63c759cb",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/PeaceTreatyStateCodecTest.java",
+      "bytes": 26067,
+      "sha256": "b1a7e8ceb5380fd7976e7e28fdff6be0eef8894e008d6fe3a91c4d52f985c2d8",
+      "exists_in_previous_checkpoint": true
+    }
+  ],
+  "validation": {
+    "tests": 1922,
+    "suites": 133,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "deduplicated_by_class_and_case_name": true,
+    "batch_totals_match_xml_and_logs": true,
+    "batches": [
+      {
+        "label": "foundation-mixed-production-02",
+        "tests": 128,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.war.MixedFoundationTreatyProductionTest",
+            "tests": 128,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-production-02\\TEST-dev.starcore.starcore.war.MixedFoundationTreatyProductionTest.xml",
+              "bytes": 390194,
+              "sha256": "a8fa32fdae23aa2ca4e6c4e0c33bce18afc3f453199809aa4af34b855c843cee"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-production-02.log",
+          "bytes": 329227,
+          "sha256": "433ecb012651d776bc39eef694907a31e36b1289fc7a386d0d366cfc8ba872e1"
+        }
+      },
+      {
+        "label": "foundation-mixed-foundation-01",
+        "tests": 301,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.foundation.territory.ChunkTerritoryCapacityTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.ChunkTerritoryCapacityTest.xml",
+              "bytes": 25581,
+              "sha256": "1b3eb2e369194e70cadfd9a45eca9acc20c9a05871d7a7c3c2b00911f516e076"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.ChunkTerritoryReservationTest",
+            "tests": 28,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.ChunkTerritoryReservationTest.xml",
+              "bytes": 28619,
+              "sha256": "fa17d6bb4743b2cc196be7d5e7c9bc4bf835bc76f8c4944ab85c24dbd344de8d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.ChunkTerritoryTreatyCapacityTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.ChunkTerritoryTreatyCapacityTest.xml",
+              "bytes": 25032,
+              "sha256": "6ff4df2a7e5f487edbc849eab3403b88570167a11fdcd576869be0ed9e5e827f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.ChunkTerritoryTreatyTest",
+            "tests": 44,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.ChunkTerritoryTreatyTest.xml",
+              "bytes": 32112,
+              "sha256": "30d52aea3c8580fc72123130c6f86e274cc17a9831f942b593a51094061e4b98"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.ChunkTreatyAuthoritiesTest",
+            "tests": 27,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.ChunkTreatyAuthoritiesTest.xml",
+              "bytes": 56112,
+              "sha256": "33f943e527fc01316169a3bfad23e630263f975d3de38df32e84559ec1b59f9a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.DatabaseAwareTerritoryServiceTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.DatabaseAwareTerritoryServiceTest.xml",
+              "bytes": 23786,
+              "sha256": "2ddc58a61023dd6154e80ad31ab5c9d6e9f1a12b93db3529fed884dcb78b8d05"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.InMemoryTerritoryServiceTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.InMemoryTerritoryServiceTest.xml",
+              "bytes": 24299,
+              "sha256": "cd6b6f1d647db94892d6f95fd5a6b727434ef33160a6fbffb2f27cd125bf5291"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.SqlTerritoryServiceTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.SqlTerritoryServiceTest.xml",
+              "bytes": 24628,
+              "sha256": "0a0990ce17c15d0c658cbea4d1347238429c17d504af66f8dc5f49e9b5f62083"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryBatchRecoveryTest",
+            "tests": 27,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryBatchRecoveryTest.xml",
+              "bytes": 28462,
+              "sha256": "ae90a53fd4ff609a9b868fd2beeb9c9b2950b454034c0d6d3833ded0c33076fd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryRetirementTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryRetirementTest.xml",
+              "bytes": 26120,
+              "sha256": "c4e724425671147252b902c66611c9f8c8816a31b079107394777237619bac91"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryServiceTest.xml",
+              "bytes": 23340,
+              "sha256": "298c7e020ee20b895b45761bf6c807c659cc3b80448c50b99732cad5d8f50be9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$BoundaryTests",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryServiceTest$BoundaryTests.xml",
+              "bytes": 23521,
+              "sha256": "a06bbe1e7ef773dcacc9cf5386c7bd148829c13f917dbc925c1bb734664b0106"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$ClaimTests",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryServiceTest$ClaimTests.xml",
+              "bytes": 24103,
+              "sha256": "219fadb695ce30a82c1008b522d86cfe84220990740aa6072f7e19b86a0ff064"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$NationTerritoriesTests",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryServiceTest$NationTerritoriesTests.xml",
+              "bytes": 23693,
+              "sha256": "e6dedf53f96256972105ad9b19e65ee9ec641aa24fe353dad76e6777b5a993a9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$OwnershipTests",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryServiceTest$OwnershipTests.xml",
+              "bytes": 23663,
+              "sha256": "dd2f190296a52cc66a0283967c0e3c6f32857a2f189b225119e269f42101c889"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$SecurityTests",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryServiceTest$SecurityTests.xml",
+              "bytes": 23838,
+              "sha256": "9d5f3b3c3a0443eb589deec2c1da11d22cceefffebf169b2320d9098b673d140"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryServiceTest$UnclaimTests",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryServiceTest$UnclaimTests.xml",
+              "bytes": 23801,
+              "sha256": "1bb5cb349cddfbf9387b964565f98b71f450c7b7a762a734d587baf26b40cd66"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest.xml",
+              "bytes": 23343,
+              "sha256": "1d437d78628a95f5e3d72540676ef5c1294bf71e39307a9524caabf32b8fde8a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest$FromPropertiesTests",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest$FromPropertiesTests.xml",
+              "bytes": 25253,
+              "sha256": "69cd61db2326d01f6cd4c4c40bf744f3abc624ea204d0abdd0bcb673a04208b2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest$ToPropertiesTests",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryStateCodecTest$ToPropertiesTests.xml",
+              "bytes": 24092,
+              "sha256": "b3c9f2d7374ffbdb6c7342b91e3203558bd629368fd536fd1057a3c09c6aa283"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.TerritoryTransferRecoveryTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.TerritoryTransferRecoveryTest.xml",
+              "bytes": 26177,
+              "sha256": "835fdfedfd56959a56bb268d4d5f722f98fc989e79a8b5f60706a518febd8385"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest.xml",
+              "bytes": 23349,
+              "sha256": "3f71ada378671b12ad891789531e2679dc999b56c278efba1bb4afc50ca8616e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest$BlockBounds",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest$BlockBounds.xml",
+              "bytes": 24244,
+              "sha256": "e8321e3bc67423a019ac0263986e382be34092e8ddc842f125009cf1ff66fa7b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest$ChunkCountTests",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest$ChunkCountTests.xml",
+              "bytes": 23985,
+              "sha256": "deaafc5293332391aa4923363b2604892493e72bab75ec01cbf2d7202608ce6e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest$ConstructorValidation",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest$ConstructorValidation.xml",
+              "bytes": 24659,
+              "sha256": "bae21de953ecaf3c80c4dbbea3776a7b4921b1582af04487debac7e21b5f5ed8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest$CoordinatesTests",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest$CoordinatesTests.xml",
+              "bytes": 24609,
+              "sha256": "a884144a25f8c003b7cd1a1e7187cd5c78be5991017612c8cad4a078fa17a492"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest$FromBlockBounds",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkClaimSelectionTest$FromBlockBounds.xml",
+              "bytes": 24130,
+              "sha256": "3698c50e6bf583b12364bd984946c81924a4508e4fc5b197cfb92d2aab8a1741"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkCoordinateTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkCoordinateTest.xml",
+              "bytes": 23345,
+              "sha256": "bacdfed5ba54f477784cc40048b8fc9054cfeea2d1cca389040d5dd1fbec9c35"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkCoordinateTest$ConstructorTests",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkCoordinateTest$ConstructorTests.xml",
+              "bytes": 24253,
+              "sha256": "efc6c1604d3a487d62ddea512579f972c2afb77caad9ac230bc4739a769b82de"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkCoordinateTest$EqualsHashCode",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkCoordinateTest$EqualsHashCode.xml",
+              "bytes": 24397,
+              "sha256": "144fb0ad3140ba0430c443feeb34a95971880c90b8921803b2b75ebecc207419"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkCoordinateTest$HashCodeConsistency",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkCoordinateTest$HashCodeConsistency.xml",
+              "bytes": 23529,
+              "sha256": "23e6118b8d6383bbe469d65294bd09135c5a75c18da988635d15f43f172859fb"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.ChunkCoordinateTest$ToStringTests",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.ChunkCoordinateTest$ToStringTests.xml",
+              "bytes": 23786,
+              "sha256": "7d81ec3fe64fb293ae1f7a7f6037664a19b9c954b63bb2f42ba29959a39e5bc6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.TerritoryClaimTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.TerritoryClaimTest.xml",
+              "bytes": 23344,
+              "sha256": "d5383b769cb41711b8f91d7c77e60613cdcf49cd74b975da2193f3152a040b8e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.TerritoryClaimTest$ConstructorTests",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.TerritoryClaimTest$ConstructorTests.xml",
+              "bytes": 24110,
+              "sha256": "539f759b0e810a6545e0d730a32a92a44d137dfef80dd5b24edc930d52949b9c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.TerritoryClaimTest$EqualityTests",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.TerritoryClaimTest$EqualityTests.xml",
+              "bytes": 24350,
+              "sha256": "713a1d0f5341c55a9a7e0ec4054122c4f232a22aa0ec707da32e569dcf7b7ade"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.TerritoryTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.TerritoryTest.xml",
+              "bytes": 23339,
+              "sha256": "a6ee119c84a4848a22374c3efca074fb5af4763c0dce99e3a6af58209bd7869b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.TerritoryTest$ConstructorTests",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.TerritoryTest$ConstructorTests.xml",
+              "bytes": 23924,
+              "sha256": "4c99c0d4892b4e2792d7b5c4b152f0303a084e2f52f4415bb339bec2e8063ae6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.TerritoryTest$EqualityTests",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.TerritoryTest$EqualityTests.xml",
+              "bytes": 24172,
+              "sha256": "b3c7464a23eb5641fb7c61a599164a5dda4d738d94c6506618956219c83ed01f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.foundation.territory.model.TerritoryTest$FromClaimTests",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-foundation-01\\TEST-dev.starcore.starcore.foundation.territory.model.TerritoryTest$FromClaimTests.xml",
+              "bytes": 23772,
+              "sha256": "62cea8b79874bc368a6187eb40142e915ee0cd0e685bb1bdba719866a2aa40ce"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-foundation-01.log",
+          "bytes": 37006,
+          "sha256": "597d93087685fcb9ebe56c37b95778a32ad30b3325157cc3647e05ddf5dc3853"
+        }
+      },
+      {
+        "label": "foundation-mixed-protocol-01",
+        "tests": 483,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.module.war.WarDeclarationModuleRecoveryTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.module.war.WarDeclarationModuleRecoveryTest.xml",
+              "bytes": 57678,
+              "sha256": "947fc6d8ce2e3d81149a5e7fcf95ccfca0f0b6786cc29bf777bdd2bd4310998e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.war.WarModuleAuthorityTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.module.war.WarModuleAuthorityTest.xml",
+              "bytes": 26603,
+              "sha256": "2a583cb2c191aa33c5a1f540bc673767f7f334c52a230804c18f48d6aaa50515"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.war.command.WarCommandPeaceTreatyTest",
+            "tests": 72,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.module.war.command.WarCommandPeaceTreatyTest.xml",
+              "bytes": 35590,
+              "sha256": "b74be09f15ce1a4ab68511689dc7f63f6a7401fc7ddf65a561260f6022c0b40e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.war.command.WarCommandTreatyRecoveryTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.module.war.command.WarCommandTreatyRecoveryTest.xml",
+              "bytes": 26729,
+              "sha256": "fe33469d8598acb68a2cb132acadb1f4552d4f4fafb68a3b7cd4cb03f37caeed"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.treaty.TreatyEffectManifestTest",
+            "tests": 28,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.treaty.TreatyEffectManifestTest.xml",
+              "bytes": 27585,
+              "sha256": "54a19b3adf26728a0191fb8691959bd0beb06757d04718e3fb0eeaa1f7366f75"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.MilitaryTreatyAuthoritiesTest",
+            "tests": 27,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.MilitaryTreatyAuthoritiesTest.xml",
+              "bytes": 58316,
+              "sha256": "c19439fcdd28e4628a74b37ba56768980675eed4298c93e5a05ba67fd0b45497"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.MilitaryTreatyProductionTest",
+            "tests": 64,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.MilitaryTreatyProductionTest.xml",
+              "bytes": 215769,
+              "sha256": "ced66020b2ba6ca5a358baff5da6e5e4db9605baf27086f92884aad17a1998a4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyBatchTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatyBatchTest.xml",
+              "bytes": 26760,
+              "sha256": "e035fde4a5d9e2d4672ca8a3110ac9b3a23b10abdda95ff3cf6f9e79f2be3563"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyPersistenceContractTest",
+            "tests": 17,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatyPersistenceContractTest.xml",
+              "bytes": 27032,
+              "sha256": "96d782a07af4572d8d4a2a0dca846d998da6eba15d24cba52bfc578492daaa2c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyRetirementIntegrationTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatyRetirementIntegrationTest.xml",
+              "bytes": 58663,
+              "sha256": "e2ea43189b60645f4485eafa88f4da984b49975f7d9655b134c5fdc66c10015d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyServiceContractTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatyServiceContractTest.xml",
+              "bytes": 51413,
+              "sha256": "74fa5310d388b68d12150cc783619e50ac0031ede116d194b66a652ee70ed486"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatySettlementDurabilityTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatySettlementDurabilityTest.xml",
+              "bytes": 24367,
+              "sha256": "47170d99ba0ff38a4e9c7af5debaa81e180d87b53496c972bbf88ed08a329bb3"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyStateCodecTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatyStateCodecTest.xml",
+              "bytes": 25308,
+              "sha256": "bbc2466f9751c4301299bd4141a63956657f14aeed9107a78c0989fc360061d1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.TreatyOperationEndToEndTest",
+            "tests": 62,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.TreatyOperationEndToEndTest.xml",
+              "bytes": 247256,
+              "sha256": "b316ef65ff26eea836014640fe51faea68d7709d37b78ebd87a3bc2f3cea5bfb"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementAdmissionTest",
+            "tests": 30,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.WarSettlementAdmissionTest.xml",
+              "bytes": 35243,
+              "sha256": "5ef35a99563baa687709a0e76d675f0614e84837aec7d95be2905cfc16b52487"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementCancellationTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.WarSettlementCancellationTest.xml",
+              "bytes": 28681,
+              "sha256": "9e2b4f606c94552b4d369ea1e9e8dff2f70c7f66772b8f913080e7f2108fbc7f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementFileCapacityTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.WarSettlementFileCapacityTest.xml",
+              "bytes": 25574,
+              "sha256": "91439e0673136e200a17c0d795076aeb1aa9e83b110d0040b072b3c028c93eb0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementManifestTest",
+            "tests": 29,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-protocol-01\\TEST-dev.starcore.starcore.war.WarSettlementManifestTest.xml",
+              "bytes": 37018,
+              "sha256": "8c22404e749c02ec930ba29694f9a31110cf881e827fd83c9bd4dd15872b985a"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-protocol-01.log",
+          "bytes": 509321,
+          "sha256": "242717f11ed997d16825b621a62107b2013980121dffc2342f680cd1c882b5ab"
+        }
+      },
+      {
+        "label": "foundation-mixed-army-01",
+        "tests": 60,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyMilitaryRuntimeTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-army-01\\TEST-dev.starcore.starcore.module.army.ArmyMilitaryRuntimeTest.xml",
+              "bytes": 26311,
+              "sha256": "3539bfe9829cbd5a4c389c1885014c78e9c64f5dee963f08ae7751aaa2f084df"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyAbandonmentTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-army-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyAbandonmentTest.xml",
+              "bytes": 25450,
+              "sha256": "8e2de477794acde39cae51f6c6c042441c5980d9b182ca06b22deda5fc387e02"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyServiceTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-army-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyServiceTest.xml",
+              "bytes": 26693,
+              "sha256": "70fbc1f6e31787203d2c6b9741f296fa075d548417f5d1d1f87ba82afe1689c2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.authority.ArmyMilitaryOperationTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-army-01\\TEST-dev.starcore.starcore.module.army.model.authority.ArmyMilitaryOperationTest.xml",
+              "bytes": 22527,
+              "sha256": "740fbd2be1ac29fe14807999412e3722d5e9c2a54c2d9e577a0a9a3ee0ffd4e5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyMilitaryStateTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyMilitaryStateTest.xml",
+              "bytes": 23541,
+              "sha256": "92453b24d2aa13818366757da7cd68bece32351512290772e9ba9f38c2c41fea"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyMilitaryTreatyStorageTest",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyMilitaryTreatyStorageTest.xml",
+              "bytes": 26371,
+              "sha256": "3d759264c605ccda897ca749840ea78d457712b41c2b5058c148aca0378e7ff6"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-army-01.log",
+          "bytes": 10262,
+          "sha256": "75cad92d177295cdb6ad2e3835bf6fc6f8607ff09451752baa00bd72200d6249"
+        }
+      },
+      {
+        "label": "foundation-mixed-territory-01",
+        "tests": 692,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.territory.CuboidGameplayTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidGameplayTest.xml",
+              "bytes": 29163,
+              "sha256": "86dcd9463d9104aa731fe8a539660cff08b4a371768a0ae756dead31f9db0729"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidIndirectProtectionTest",
+            "tests": 11,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidIndirectProtectionTest.xml",
+              "bytes": 27255,
+              "sha256": "03999effa3e20f3da0f8b710f8c629b6471ed11f8c13641a83eda04a228911a1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidPermissionSnapshotTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidPermissionSnapshotTest.xml",
+              "bytes": 26888,
+              "sha256": "f69b115da37ee587c0ca63b30c82bb72f6e891f9b2e55017e855325aef2c9ac2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidRegionIntegrationTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidRegionIntegrationTest.xml",
+              "bytes": 26213,
+              "sha256": "6d8b0a6d626536c5eb1352b0df620abde084dd50568dd1a13df2f4170ebcf387"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTemplateAndLeaseBoundaryTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTemplateAndLeaseBoundaryTest.xml",
+              "bytes": 37567,
+              "sha256": "c974e1ab10c36bab13a89fb09b9a80a5ac4ba7c21f3b795f5451c9654c1a672a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryBootstrapTest",
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryBootstrapTest.xml",
+              "bytes": 28471,
+              "sha256": "34b101b42353af4cf69ce05607906d3adcc6bdbc0a923c95636479bdb2096a31"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryCodecTest",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryCodecTest.xml",
+              "bytes": 27361,
+              "sha256": "41ab72335a38dc7feb95f1970ff79e033943bdbd942e66ad474a95d3a56e016e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryHostTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryHostTest.xml",
+              "bytes": 35101,
+              "sha256": "f4e2d079f8945de77594367ed1359d6037788dc569a2c02aa247df11a57f9831"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryInstallationTest",
+            "tests": 19,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryInstallationTest.xml",
+              "bytes": 31884,
+              "sha256": "cb127f5492647811df3bfd1d10deef90d9d09aabf66114a204489f7c77b7381f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryLegacyImportTest",
+            "tests": 28,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryLegacyImportTest.xml",
+              "bytes": 29934,
+              "sha256": "857df1ca616b528fc2ff19d0173e5b9ff7f02c0f1129c37c8cec1f5013c964f3"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryOwnerTest",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryOwnerTest.xml",
+              "bytes": 27500,
+              "sha256": "cc5a20b5ab58bcf6f284920c88f216b302877a5d353ceaba1c686eef5c1c5c39"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryRuntimeTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryRuntimeTest.xml",
+              "bytes": 29562,
+              "sha256": "6b4cc9345361a7b1598ae2eb9974885be7129898ac0aeb1ba7ef3e77209edbfa"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryServiceTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryServiceTest.xml",
+              "bytes": 27434,
+              "sha256": "cc01db2230b035d1930d77ced1e28b76fb003d2d777c4fe4e723f85e08e1799d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritorySqlImportTest",
+            "tests": 25,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritorySqlImportTest.xml",
+              "bytes": 38797,
+              "sha256": "dcb2ef09f1d2772882658cbae7622a8ef70293e753f8a55f7a9bf2da33c8286b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryStateTest",
+            "tests": 17,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryStateTest.xml",
+              "bytes": 27821,
+              "sha256": "03d471d8bf7de6b39e1dbc329bc58b31c886c9c4780a4a9938daf1db81fa92e4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryStorageTest",
+            "tests": 29,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryStorageTest.xml",
+              "bytes": 30143,
+              "sha256": "ba1e2294862ee9d47c6d34b54e7663295f514b051a805d019b4ffe10a78f1c22"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryTransferTest",
+            "tests": 17,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryTransferTest.xml",
+              "bytes": 28434,
+              "sha256": "65291435216b677a116409366fea9e738449ca2afe5b1a902a92c6ba9305dda4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryTreatyTest",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryTreatyTest.xml",
+              "bytes": 27665,
+              "sha256": "db1e945cde2b5ee19948e5765d1b8f5f3ba228fe475cd808cd8492539f0ffb57"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTerritoryViewsTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTerritoryViewsTest.xml",
+              "bytes": 26136,
+              "sha256": "f6f42273ec1e1c06a02680cff92b21be21de75f8248d32ecff9794036b4491ae"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.CuboidTreatyAuthoritiesTest",
+            "tests": 27,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.CuboidTreatyAuthoritiesTest.xml",
+              "bytes": 57887,
+              "sha256": "49fc6047cc74cb02d97be83e34c87f55b38eade841933c806ee95f723b2c73b9"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.EnumTest",
+            "tests": 27,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.EnumTest.xml",
+              "bytes": 28445,
+              "sha256": "46d22927e1984a3b0dbdfdef2630a0fe027951ebe861c3762e741988ca878d30"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.LeaseStatusTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.LeaseStatusTest.xml",
+              "bytes": 26064,
+              "sha256": "3679694964e89e1de7bf9e1cb29dd9f80849c38df6d7f8187049ee1e8cf18ca2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest.xml",
+              "bytes": 25400,
+              "sha256": "f9abbda8d63d5683f1e062073c8316fac32de858bd2a42f48a57842cf5cf8d5e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest$ChunkCoordTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest$ChunkCoordTest.xml",
+              "bytes": 25792,
+              "sha256": "b270bf72187e0f54b920a08fbb42c204a69755eb099fc028e264d19fa64ee808"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest$Connectivity",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest$Connectivity.xml",
+              "bytes": 26064,
+              "sha256": "c4793c871dfd9cad489dac283160fd08441647590e0f4c80e1b70add2d192412"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest$Construction",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest$Construction.xml",
+              "bytes": 25784,
+              "sha256": "0265623b49907180bc823a92dc52e2e1382153927822d559a165df12b7514df2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest$Expansion",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest$Expansion.xml",
+              "bytes": 25786,
+              "sha256": "5ed5befabbd05516e6287f3ec83f467553b5440ba711123a5d5b481dba458287"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.MultiChunkTerritoryTest$MaintenanceAndLevel",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.MultiChunkTerritoryTest$MaintenanceAndLevel.xml",
+              "bytes": 25817,
+              "sha256": "4d1e72f4c485617f9005f7639de23fd2552177359cf680a458a743445c4936dd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerBoundaryTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.PermissionCheckerBoundaryTest.xml",
+              "bytes": 29148,
+              "sha256": "933e82dc6cf40d21aa86e48241cf39438aaec3f6d8841b2222b3b2433357c046"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest.xml",
+              "bytes": 25398,
+              "sha256": "3edb0830f17e6dd1819083be1fa6f064ae053a0d6eff6f582ca55567e5492d47"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest$EffectiveLevelTests",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest$EffectiveLevelTests.xml",
+              "bytes": 26010,
+              "sha256": "4c073d084783961cd616b58ae4ca07750664458fa1337778f84691823bbba464"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest$LeasePermissionTests",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest$LeasePermissionTests.xml",
+              "bytes": 25860,
+              "sha256": "03db599fb48766f230adf0e674719526ef0f86082df02f0140caa095c48bbb23"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest$MainPermissionCheckTests",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest$MainPermissionCheckTests.xml",
+              "bytes": 26302,
+              "sha256": "f9670b412db901ba87105cfdb07b496af3ae4c99775a469d4bb33abf1806d841"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest$ManagementPermissionTests",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest$ManagementPermissionTests.xml",
+              "bytes": 26167,
+              "sha256": "38e9f1668ddb3e69dd71c53296708a5dd0946111c0182ac3ff8c1e0303f57b7b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionCheckerTest$SpecialPermissionTests",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.PermissionCheckerTest$SpecialPermissionTests.xml",
+              "bytes": 25843,
+              "sha256": "606f92b0a7331fa11ce3e815a399ed8360f9de642cd052c99df86644079929d1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionLevelTest",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.PermissionLevelTest.xml",
+              "bytes": 26912,
+              "sha256": "605ae0c18e92747c6381af4eab98fd34f6fa5c5f99d25b7717bc21689d84d2cc"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.PermissionTemplateTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.PermissionTemplateTest.xml",
+              "bytes": 28132,
+              "sha256": "7ed62ac71251101b075a28498f79f52b67c80379af9de92e87889042ebabf377"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.RentPeriodTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.RentPeriodTest.xml",
+              "bytes": 25922,
+              "sha256": "2f66f0baf5f6b11ccd573a2c0849c0197d0fb48e0d56faabe06b3836b5f9014d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.SubRegionTest",
+            "tests": 27,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.SubRegionTest.xml",
+              "bytes": 28796,
+              "sha256": "e11a70cc804af893ee9a04c2e77de54170cbf93d0307e26c097244997d6b521c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemplatePresetTest",
+            "tests": 45,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TemplatePresetTest.xml",
+              "bytes": 31774,
+              "sha256": "00ddd16233938dbf08221f6a462f163dc1d6fbce7ad3ff86d0120e03d5be1ed2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest.xml",
+              "bytes": 25407,
+              "sha256": "f58e8e23cc8658ebcc5e25d6f83f1522f5fef9293b4fedff1c537eff51789324"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest$ExpiryTests",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest$ExpiryTests.xml",
+              "bytes": 26617,
+              "sha256": "9f82e77b63b8c4ebddfb23024d87ded9f2af46da3ca448b51f986c5e41b5ab81"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest$GrantRevokeTests",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest$GrantRevokeTests.xml",
+              "bytes": 29666,
+              "sha256": "fb76fbff5e9b6f307b3c3bdd4ab206595b772290ececeaa99a1aa08a0b07048b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest$QueryTests",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest$QueryTests.xml",
+              "bytes": 30024,
+              "sha256": "15d282a039dfd8704d43be04540644a21dcc096d785fc1e07f1ed3312323c1c5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest$StartStopTests",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest$StartStopTests.xml",
+              "bytes": 27331,
+              "sha256": "1c581e23d5fda9a47cd32492d3d64fb72860823ff2bc6f29f92692d7857e86a0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TemporaryPermissionServiceTest$StatisticsTests",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TemporaryPermissionServiceTest$StatisticsTests.xml",
+              "bytes": 28587,
+              "sha256": "16e8ca948569d6f11bd3851edff4d301cc0415bed982a6771a0a5e153c647aba"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryLeaseServiceSchedulingTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryLeaseServiceSchedulingTest.xml",
+              "bytes": 26572,
+              "sha256": "b869570e62df94bd436c4df0d580e11688f4392e33fca0bdc9f6681d1c7bd394"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryPermissionTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryPermissionTest.xml",
+              "bytes": 26530,
+              "sha256": "720831ed15e8e41c266714c83f0691ee96a10fa5ac68355a61ac3d5a5bf53672"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritorySelectionServiceTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritorySelectionServiceTest.xml",
+              "bytes": 25722,
+              "sha256": "9c38d504e0e8b580a7ee728590c141c5865c7b3b642b45e94d7b037f0a548f1b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest.xml",
+              "bytes": 25397,
+              "sha256": "2a2296cfc4913df57cf22325d9c025b4a30faeb3f9cb953e73a83dd51726c618"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$CreateDeleteTests",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$CreateDeleteTests.xml",
+              "bytes": 29165,
+              "sha256": "7d335ae7f6ddd5a614b9689ec40f539ad0885c4cfa6133fd430fd22cb8e17622"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$LoadSaveTests",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$LoadSaveTests.xml",
+              "bytes": 26737,
+              "sha256": "fbfc2eb2622248a26d73237bca203cb170ddc2b794ad10e39f486fca5c8c80c4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$LocationQueryTests",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$LocationQueryTests.xml",
+              "bytes": 27285,
+              "sha256": "55253585aab2e73f57cd6443212e87c71182e58521ddbc7b76e67814860fcc75"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$OverlapTests",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$OverlapTests.xml",
+              "bytes": 27042,
+              "sha256": "4f3f245975319afb8902cd16d8030f30c5d9e3cbfdb2903b31a8a8ce348f508a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$QueryTests",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$QueryTests.xml",
+              "bytes": 28827,
+              "sha256": "3336fe99f50e7cfcf6539c8ab0b74c5a887f5d53883ee63c674d44df385ed481"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryServiceTest$StatisticsTests",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryServiceTest$StatisticsTests.xml",
+              "bytes": 29058,
+              "sha256": "857b809779a296732eb94b52e896c8698c069804083f6944c2f8fcdde5ebaebc"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryStorageLifecycleTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryStorageLifecycleTest.xml",
+              "bytes": 26324,
+              "sha256": "6a1d77ffce588a7449cbbb77f52c2fcbd42825b76a8edabec87c35a90be7a31f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryTest",
+            "tests": 34,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryTest.xml",
+              "bytes": 29558,
+              "sha256": "29a1bfa50e817b6e52c2719a97dd915c2b8f3681821e19ddcebc286dd7fed1e0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.TerritoryTypeTest",
+            "tests": 46,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.TerritoryTypeTest.xml",
+              "bytes": 31631,
+              "sha256": "31b69b4b48e895d8c9b7d49c2b6f7c72d81b1ef24cea008b6e64b53ca5f74f99"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.territory.gui.TerritoryGuiActionsTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-territory-01\\TEST-dev.starcore.starcore.territory.gui.TerritoryGuiActionsTest.xml",
+              "bytes": 29722,
+              "sha256": "8534fa85d9d94b59d554a168901cb7d1b567d3cbc78802fa0ab15ca82285ef62"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-territory-01.log",
+          "bytes": 88094,
+          "sha256": "753255ec57e145141b42ed8d4db139f39883753e689d6a979c61953b03d55f6c"
+        }
+      },
+      {
+        "label": "foundation-mixed-persistence-01",
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-persistence-01\\TEST-dev.starcore.starcore.api.PublicApiCompatibilityTest.xml",
+              "bytes": 21692,
+              "sha256": "830afac62aca9c3cc2c8a5f19f28d9a5eecf8e4a8ff244b24e34556b39c1ad88"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AsyncPersistenceFailureTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-persistence-01\\TEST-dev.starcore.starcore.core.persistence.AsyncPersistenceFailureTest.xml",
+              "bytes": 23632,
+              "sha256": "f11374828b164e834f93c390bfd648cedbf5e64eb5d5619c252ee2c2e4ae7400"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-persistence-01\\TEST-dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest.xml",
+              "bytes": 24701,
+              "sha256": "25d47f9d1c212004c6cec886016124658533558db13e26b2b7e5d86c5c09529c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-persistence-01\\TEST-dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest.xml",
+              "bytes": 22389,
+              "sha256": "1ed62069a8fe10bbefae329eff07820c820dfa257818dd0bcee42e7e5c9c4d84"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.PersistenceServiceAtomicRecoveryTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-persistence-01\\TEST-dev.starcore.starcore.core.persistence.PersistenceServiceAtomicRecoveryTest.xml",
+              "bytes": 21937,
+              "sha256": "8b36772fe69e81b55541c4eea56e13177f1c1838390c94abcdae7ded4fe19df4"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-persistence-01.log",
+          "bytes": 4217,
+          "sha256": "9e7e820f7fd13ae28a15e350c73de98c71650761586d085a4c5ebc7ea178f3c8"
+        }
+      },
+      {
+        "label": "foundation-mixed-mixed-01",
+        "tests": 80,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.war.MixedTerritoryTreatyProductionTest",
+            "tests": 80,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-mixed-01\\TEST-dev.starcore.starcore.war.MixedTerritoryTreatyProductionTest.xml",
+              "bytes": 250054,
+              "sha256": "eb8b1fad8ef54119bc4ddcb77ed1d365c0ce8f84f7e3e2c9e60565173185b329"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-mixed-01.log",
+          "bytes": 205598,
+          "sha256": "01d9d5654d801217913f97b9d6a974acce28aaca3da577f9ed0e0893af157635"
+        }
+      },
+      {
+        "label": "foundation-mixed-cuboid-01",
+        "tests": 69,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.war.CuboidTreatyProductionTest",
+            "tests": 69,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-cuboid-01\\TEST-dev.starcore.starcore.war.CuboidTreatyProductionTest.xml",
+              "bytes": 216055,
+              "sha256": "bbe56b10f7330ddd98613c109788b6a3e63c73c0a2295bfb987bd3077e6b4483"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-cuboid-01.log",
+          "bytes": 175054,
+          "sha256": "d3bc0f8a79506004d91c84a7c978a88b88a50bca573a6292d53afd37ed564dec"
+        }
+      },
+      {
+        "label": "foundation-mixed-legacy-01",
+        "tests": 77,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.war.FoundationTreatyProductionTest",
+            "tests": 77,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-legacy-01\\TEST-dev.starcore.starcore.war.FoundationTreatyProductionTest.xml",
+              "bytes": 233990,
+              "sha256": "173a6f804172ffa273858f4c86ef145f66535b3f41e0b31c6763cf2e0e8f73e7"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-legacy-01.log",
+          "bytes": 190417,
+          "sha256": "80561d4cf11775977248c5620822a6f35bb3bd7b7665c31e9ada40816112d660"
+        }
+      },
+      {
+        "label": "foundation-mixed-capacity-01",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.war.MixedTerritoryCapacityTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-final-reports\\foundation-mixed-capacity-01\\TEST-dev.starcore.starcore.war.MixedTerritoryCapacityTest.xml",
+              "bytes": 23286,
+              "sha256": "4c67cb548d1faf4515ce9953236e5bf6992d61784a0c2f29572557a3fcf793c6"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-capacity-01.log",
+          "bytes": 3419,
+          "sha256": "20b3e67a6ba53fd0d0047e2ffb5ef97aa1767d9a0894d75c17ac1f3db3e42b29"
+        }
+      }
+    ],
+    "compilation": {
+      "main": {
+        "label": "foundation-mixed-main-01",
+        "kind": "main",
+        "baseline": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-production-capture-01.json",
+        "source_count": 9,
+        "class_count": 31,
+        "sources": [
+          "src/main/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryTreaty.java",
+          "src/main/java/dev/starcore/starcore/module/army/model/authority/ArmyMilitaryTreaty.java",
+          "src/main/java/dev/starcore/starcore/module/war/command/WarCommand.java",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryTreaty.java",
+          "src/main/java/dev/starcore/starcore/treaty/TreatyEffectManifest.java",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyBatch.java",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyProtocolJson.java",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyService.java",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyStateCodec.java"
+        ],
+        "source_sha256": {
+          "src/main/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryTreaty.java": "bc85fd8338bf86ff05911c6d66796bccbe2259a94e5a7863df5f2049cb2a7cec",
+          "src/main/java/dev/starcore/starcore/module/army/model/authority/ArmyMilitaryTreaty.java": "0d79b38890e25097c49bd4eee44f65a031dd073861547fa215b24d74f725ad62",
+          "src/main/java/dev/starcore/starcore/module/war/command/WarCommand.java": "4e6504bad69918022e2fe03b60a6e886c7c72dbeb8f19b632f1b73da331e505c",
+          "src/main/java/dev/starcore/starcore/territory/CuboidTerritoryTreaty.java": "da55d8b8dbd3b664582c17944731d5183c6211a70ef718da681b90e17ee6e336",
+          "src/main/java/dev/starcore/starcore/treaty/TreatyEffectManifest.java": "4d8ae05a91c8edd060db14e917f5c2ed59d0bf1a1f67a6b7f1992ca305a2334d",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyBatch.java": "38abe882283aa12bbacdf63762e19abebdfab97824c107837a8c7e817a204c03",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyProtocolJson.java": "b767fd45f27e95e84bbd4d0db511e6af3b3634cc2683955f31fb3fc360dd5e66",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyService.java": "47e019c6cf55b655f8d401b02994a0dbc27b02103cd399b76d8f4c31c58d7fac",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyStateCodec.java": "bf4b4180b286fbbed9897d0a66f4d3590b4ac8615f4bc05845af6d2a3fe58c7e"
+        },
+        "arguments": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-main-01.args",
+          "bytes": 15488,
+          "sha256": "8fcd69f6de76e72d62dbddb3a63c5600e40d21c68d65fc2cfb3a094e46853fb1"
+        },
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-main-01.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTerritoryTreaty$1.class",
+            "sha256": "c21828f8265bdcb863eab903a22dc602a870f4da0975ed17a8e5467a88e76864"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTerritoryTreaty.class",
+            "sha256": "9d6fe83a04ac9b82c5fd04288d3b10b9a0ce48ff54fdcc5ce2ee15de3cc6ba9f"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/model/authority/ArmyMilitaryTreaty$1.class",
+            "sha256": "9cc9325842dd97c2d837564f6a380e8b0c9b3108e94085fc3c61dc51aac84666"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/model/authority/ArmyMilitaryTreaty.class",
+            "sha256": "439d365433cef15a293b6edff69fe02f6959cb61b78a04c3607d36445736b88b"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/command/WarCommand.class",
+            "sha256": "5eb8d706f950041693bdd05d9efb8697dcdf5d658c018cb709b40fdcb4e9670f"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryTreaty$1.class",
+            "sha256": "330cebdfe2f876094ea57b9f7ce06d5d84afe19504d0deaea9a8922a43f15d51"
+          },
+          {
+            "path": "dev/starcore/starcore/territory/CuboidTerritoryTreaty.class",
+            "sha256": "4f3c053226b1dc16a519c41225496718e4e22427fb954cca96e5a5f85579f171"
+          },
+          {
+            "path": "dev/starcore/starcore/treaty/TreatyEffectManifest$Entry.class",
+            "sha256": "815179b0f8f1ed88c1ce2e0f0122139e94a4d3686b29a708c5530f1fc8203665"
+          },
+          {
+            "path": "dev/starcore/starcore/treaty/TreatyEffectManifest$Envelope.class",
+            "sha256": "df936338a67fd32dc39e0c5a3373c29e6806ce135fac1cccf41fb69f2df375f8"
+          },
+          {
+            "path": "dev/starcore/starcore/treaty/TreatyEffectManifest$Manifest.class",
+            "sha256": "327173a28f3c336ed6cda2d12b8fb07642838fcf305367f9e9e6dcc771c4fe45"
+          },
+          {
+            "path": "dev/starcore/starcore/treaty/TreatyEffectManifest$OriginalTerm.class",
+            "sha256": "81c0cbd611e1c8b6711896e4c58cf05b0fe842788af89e6017027214449d3492"
+          },
+          {
+            "path": "dev/starcore/starcore/treaty/TreatyEffectManifest$Writer.class",
+            "sha256": "2a6a251a35b3251609aee3c0bfecdbd179658aa2188d8023dffc33b44e49786d"
+          },
+          {
+            "path": "dev/starcore/starcore/treaty/TreatyEffectManifest.class",
+            "sha256": "99c895fb2560bfeec76cc6dd3df35557ae6ef3c1de48480c0c8be74cbb817163"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyBatch$Stage.class",
+            "sha256": "2210d40640a8cdeae7493f265629be363402e5c2b021d214bd410eb9d7aa2798"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyBatch.class",
+            "sha256": "d15c71a89ad7295a85802c371faa2ad9d1c17bf0d012cca8a30646b6d37b2537"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyProtocolJson.class",
+            "sha256": "5f482f9a31de2f09e021bb70273529a2bfef92d9032e1d30dedfd318371c6057"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$MilitaryRestriction.class",
+            "sha256": "8c899b88bfa4d8bdc78c371882b5296cccece85c6421ab32af17533d6b506251"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$PeaceTreatyConfig.class",
+            "sha256": "c652f179fe782ddc771a564f7664ff1791f8817b6d7bd1990d3328dc471d6133"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$PoliticalRestriction.class",
+            "sha256": "10ce5ce6c078f0306004e0d857cc59efd4fea67756424fb9b8738ca82d3d5806"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$ResourceTributeRecord.class",
+            "sha256": "5477bd23c132a2557886bf3777ea8d111f769547244bf64f5d07d81dd677e463"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$TreatyOperation.class",
+            "sha256": "fd7a600ab32e9e2f79e6af71f68fde81db0492bcee64dfb488cb8f2e98c08204"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService.class",
+            "sha256": "7d4f9ea314246bb1e1b05471d1a853ceb857285c4c7df4187928b794eb84f1d6"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$BatchDto.class",
+            "sha256": "d216a2505d7314c7a9ec92937cdd72834c47c4e68ab9aff1fd39e34c979ee518"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$Decoded.class",
+            "sha256": "79e29079e9c227809d20792ae8f42d3e612989eaf5cbd2728ce06b1973aef454"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$ExecutionDto.class",
+            "sha256": "8a008d0cf6b0becf00eebf2944f7b377d4d062461a74f8fed07efe854a9b681c"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$PaymentDto.class",
+            "sha256": "4184fa84dc38815c82fc3634730cdd23979602b74525c82f83df36bc86b1b9d1"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$SnapshotDto.class",
+            "sha256": "eae4f85426932cb6df7f7ec16dff6fc93aee57e6febd48ecefea09766145c974"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$StepDto.class",
+            "sha256": "e5314e1bf768a06c500ea0b339d247775dbe05c3320e72a6ca482aa231bb8530"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$TermDto.class",
+            "sha256": "513b485ecd6ea140717efe947e4e054bf60633755599424b9a9ac40cb2791ef1"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec$TreatyDto.class",
+            "sha256": "a24075814caf5d4ec4c38c5596de29c5db9ab767173b3d800255eb2ad420bfc5"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodec.class",
+            "sha256": "6e9a38971a28e7f90f8a153862dce5ba087f27241e3e4c47c0604d0884f133b7"
+          }
+        ],
+        "all_changed_sources_compiled": true,
+        "fresh_class_bytes_equal_final_test_classpath": true
+      },
+      "test": {
+        "label": "foundation-mixed-test-03",
+        "kind": "test",
+        "baseline": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-production-capture-01.json",
+        "source_count": 40,
+        "class_count": 99,
+        "sources": [
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryCapacityTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryReservationTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryTreatyCapacityTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryTreatyTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTreatyAuthoritiesTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTreatyTestFixture.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryServiceTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/InMemoryTerritoryServiceTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/SqlTerritoryServiceTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryBatchRecoveryTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryPersistenceStub.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryRetirementTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryServiceTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryStateCodecTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryTransferRecoveryTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/model/ChunkClaimSelectionTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/model/ChunkCoordinateTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/model/TerritoryClaimTest.java",
+          "src/test/java/dev/starcore/starcore/foundation/territory/model/TerritoryTest.java",
+          "src/test/java/dev/starcore/starcore/module/war/command/WarCommandPeaceTreatyTest.java",
+          "src/test/java/dev/starcore/starcore/module/war/command/WarCommandTreatyRecoveryTest.java",
+          "src/test/java/dev/starcore/starcore/treaty/TreatyEffectManifestTest.java",
+          "src/test/java/dev/starcore/starcore/war/CuboidTreatyProductionTest.java",
+          "src/test/java/dev/starcore/starcore/war/FoundationTreatyProductionTest.java",
+          "src/test/java/dev/starcore/starcore/war/MilitaryTreatyAuthoritiesTest.java",
+          "src/test/java/dev/starcore/starcore/war/MilitaryTreatyProductionTest.java",
+          "src/test/java/dev/starcore/starcore/war/MixedFoundationTreatyProductionTest.java",
+          "src/test/java/dev/starcore/starcore/war/MixedTerritoryCapacityTest.java",
+          "src/test/java/dev/starcore/starcore/war/MixedTerritoryTreatyProductionTest.java",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyBatchTest.java",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyPersistenceContractTest.java",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyRetirementIntegrationTest.java",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyServiceContractTest.java",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatySettlementDurabilityTest.java",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyStateCodecTest.java",
+          "src/test/java/dev/starcore/starcore/war/TreatyOperationEndToEndTest.java",
+          "src/test/java/dev/starcore/starcore/war/WarSettlementAdmissionTest.java",
+          "src/test/java/dev/starcore/starcore/war/WarSettlementCancellationTest.java",
+          "src/test/java/dev/starcore/starcore/war/WarSettlementFileCapacityTest.java",
+          "src/test/java/dev/starcore/starcore/war/WarSettlementManifestTest.java"
+        ],
+        "source_sha256": {
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryCapacityTest.java": "4a6b203529d433f245893984f553db017ae76dc565fe3901ecf0847f174c079b",
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryReservationTest.java": "88dbbd6278b9102f0307385e1f0fba30ea47cb85c0d8c1912624f52fcccea831",
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryTreatyCapacityTest.java": "c5b3b9d98392ef533100b6d8b41560bc70ca559518c7578cfe31bfd993b3fabe",
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTerritoryTreatyTest.java": "5030162a15c5d98e9a37fff3b31ad6aab6d34e1a12927c07a9a0c4325bd978c9",
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTreatyAuthoritiesTest.java": "f618b40c5b0f821c9612bb8c8c68b5f59a7cbd4f2b0817246d8a1cff48fa8755",
+          "src/test/java/dev/starcore/starcore/foundation/territory/ChunkTreatyTestFixture.java": "3102642da6e881411379515e7bd4249786aabad67864a28ae3560157c00c3c6a",
+          "src/test/java/dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryServiceTest.java": "bfa16e368803a800ed99c9bb20815e87ca6571262658679d81feda720b849dde",
+          "src/test/java/dev/starcore/starcore/foundation/territory/InMemoryTerritoryServiceTest.java": "130f7d4b2101e8c4db5236bcd60e1e2986500217a05570ee52b6e2c11aa5d619",
+          "src/test/java/dev/starcore/starcore/foundation/territory/SqlTerritoryServiceTest.java": "3ee64a72422986868cf9a8413b0f19dc3cbe9a9ae06128dfdfa4be0bd9874980",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryBatchRecoveryTest.java": "d8199a2fd52e25f697515458e07e78526915aa9f990e6e93934c02c0b8df56c3",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryPersistenceStub.java": "2b5073dcedb051e13da93bd6d10f065e09fd6c0f8378b5b49af3a5951bc47708",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryRetirementTest.java": "4a082d206516692308faefded0bcbf800c9306e529203cb0d4a82f84bc031012",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryServiceTest.java": "d32245d7fb95ffa15f083d548429772b7c936d9b382f35baa114e3814db2620f",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryStateCodecTest.java": "4d373e39728467c2fd770455603a93f2043e188e6e3f54106add3bc9aeaa0298",
+          "src/test/java/dev/starcore/starcore/foundation/territory/TerritoryTransferRecoveryTest.java": "aed53c2a2a8dd553d10c6c10f5a9bc724e77bd508036db2b32b1bf68942bc882",
+          "src/test/java/dev/starcore/starcore/foundation/territory/model/ChunkClaimSelectionTest.java": "3ced9d08561d07f85c6012a59000e7b5d079eff77d6b029132fdceb4732b9192",
+          "src/test/java/dev/starcore/starcore/foundation/territory/model/ChunkCoordinateTest.java": "5bd51e71a74d3f9a8dc7ce8030c7ad7f77894200bedd287d9440b7e585973e0d",
+          "src/test/java/dev/starcore/starcore/foundation/territory/model/TerritoryClaimTest.java": "32f53012bf97079e02c741bd2584527010365b0cddae7a9517546d4b3134cd19",
+          "src/test/java/dev/starcore/starcore/foundation/territory/model/TerritoryTest.java": "4774cda7fb9a38faa2060e503c312c3a61bce53ecac6a5d7488b21fab9d2969f",
+          "src/test/java/dev/starcore/starcore/module/war/command/WarCommandPeaceTreatyTest.java": "f7b3256d122efedafcb2c324cf50ab47d5f7269af25dbed8fa4cbd7215f5d983",
+          "src/test/java/dev/starcore/starcore/module/war/command/WarCommandTreatyRecoveryTest.java": "9a9fb6d84c5e0bd4684e9418c87febc8d1b74e523599c9eb63f36997506928ec",
+          "src/test/java/dev/starcore/starcore/treaty/TreatyEffectManifestTest.java": "3861a3dc4ee7a609ce11f2d8e7f0e456860c89455353d0c7f1523aabe27dcb2d",
+          "src/test/java/dev/starcore/starcore/war/CuboidTreatyProductionTest.java": "1c510fc50a0bd095d1aab1f8e545f709dc2e1c8e7803119088cd0df97abae9aa",
+          "src/test/java/dev/starcore/starcore/war/FoundationTreatyProductionTest.java": "8a868814ea276584283e2b6c4b522cd4609c9a429a5e2972b9a062c175530550",
+          "src/test/java/dev/starcore/starcore/war/MilitaryTreatyAuthoritiesTest.java": "64c8954f8860320c4f779d831612fcb8340ded8f2f7d4ce844fd623f7daa6534",
+          "src/test/java/dev/starcore/starcore/war/MilitaryTreatyProductionTest.java": "522f25a0e37009e02f9138a6d9f549bef9576a2a460bfae51cf950fc95e84e9a",
+          "src/test/java/dev/starcore/starcore/war/MixedFoundationTreatyProductionTest.java": "18c367cc7dcf3be5fbb91e83c93207597e26bf87a857464c9438c97c63c759cb",
+          "src/test/java/dev/starcore/starcore/war/MixedTerritoryCapacityTest.java": "1986e032905a5e488d8a88380ccd0a105f9e5649d6f6bbeb94c28f4795bb64fd",
+          "src/test/java/dev/starcore/starcore/war/MixedTerritoryTreatyProductionTest.java": "b2694456481bf7ed204251f55aa04f05fd61779718b865dd7619d3bef54a2446",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyBatchTest.java": "77c4d91572b92ea0ace49fc6b3ffa9a539b32a6ebaab4df2a8549339d8810730",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyPersistenceContractTest.java": "c6b7c278f6a0a56ee4f050206e81c264208baf5118031c077a944274ac435e7d",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyRetirementIntegrationTest.java": "40ce4b6784884ca0f1c07866c2e43610bc0819923027ef86f4463db2664a0500",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyServiceContractTest.java": "2bcb3ea3156df25fb994cb1b97a3b04c50322a0c276a8e8db031aa1c2a788535",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatySettlementDurabilityTest.java": "16b916f44f6c74401744a794db4c55617a3c29d61061f16e2d97b8e52630e527",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyStateCodecTest.java": "b1a7e8ceb5380fd7976e7e28fdff6be0eef8894e008d6fe3a91c4d52f985c2d8",
+          "src/test/java/dev/starcore/starcore/war/TreatyOperationEndToEndTest.java": "e3f071548023b7b2c61fbd90074e6833ca7fa03153838ab33443e5949cce740d",
+          "src/test/java/dev/starcore/starcore/war/WarSettlementAdmissionTest.java": "e946d3593fa1b5b4cc451c4e18b65f7f6cc7fda32346cc0d9ca1bbd94e15d9d4",
+          "src/test/java/dev/starcore/starcore/war/WarSettlementCancellationTest.java": "afef0554f64b39967d739fbbd467721d45a02345fe492f24db3828087fd00f89",
+          "src/test/java/dev/starcore/starcore/war/WarSettlementFileCapacityTest.java": "abea414cf643fb206c0325e8f0f469a9b51db0715de1611d4bc5bed2e1eef932",
+          "src/test/java/dev/starcore/starcore/war/WarSettlementManifestTest.java": "4b01873eb3bcdfa16150aa212d9cdb992434ea6f28556aebe0f6dd4931e60efe"
+        },
+        "arguments": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-test-03.args",
+          "bytes": 20285,
+          "sha256": "a9c7ee73ba63d812a78ff16902e05ad48d894e972de5465425824f436d423252"
+        },
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-test-03.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTerritoryCapacityTest.class",
+            "sha256": "e9fa1d4e806f98354825fcaee8bf403fe33220cbf6daa539e81cb7b4a192abd4"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTerritoryReservationTest.class",
+            "sha256": "ebe23b28ed6c5f7fc1ccbfbc87f035e49ab3a996998ee10c0997c5f0273c1160"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTerritoryTreatyCapacityTest$1.class",
+            "sha256": "3d24776a66c8ba38b232dc392907d6f41512001ca03bd1c696a968fc9662be33"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTerritoryTreatyCapacityTest.class",
+            "sha256": "5608ccdee87fe1ceff8fcc2adfbc7984006b5e8b48c77f5ade961d959a132145"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTerritoryTreatyTest$Fixture.class",
+            "sha256": "b10b787d8c51d432177bd5d1dfa47f2785def50021308ac2ba4ce3e5cff0f25f"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTerritoryTreatyTest$Sources.class",
+            "sha256": "47b878df0b7765a994cf55ff6ee79233dfbb6d8de82f18c2383bb0851592c3cd"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTerritoryTreatyTest.class",
+            "sha256": "97cc4758cd5662ac988adf1d1d6ecf2159e510f28a7bd238f8f2bdb9d5aa59d9"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTreatyAuthoritiesTest$Boundary.class",
+            "sha256": "11226e0cd6c3eaf31882e9d9096c1ce488cdf761b924c7b5ac2c6afee3f5cd41"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTreatyAuthoritiesTest$Fixture.class",
+            "sha256": "7b09011c080cbb66a6d1b62d8d6bf1b5d90c6a3837722b148b8048303dda0185"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTreatyAuthoritiesTest.class",
+            "sha256": "90bce503aad0b5435e80808007cd2e3d728719b7c1635510230b2730c6d4320c"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/ChunkTreatyTestFixture.class",
+            "sha256": "25df89c1cf612e4824be7dc88ce9a7cea1ec284f6ca0b42aa4cc8108fc4cff30"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/DatabaseAwareTerritoryServiceTest.class",
+            "sha256": "30455d69973667bcc45446785400658254008b465bc5f56c92283783f4af33e1"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/InMemoryTerritoryServiceTest$FaultLedger.class",
+            "sha256": "61bcd3fd8947b027cb446381a00961f6df0bedaeec8b319f840d8ba05387e050"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/InMemoryTerritoryServiceTest.class",
+            "sha256": "7f6243971c4e24600b5bc9a093de2f60851f971c0e2014676184a68c14b315bc"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkClaimSelectionTest$BlockBounds.class",
+            "sha256": "fd2078f0570cabe8db28eeaf5c273c3039e99a33dfe64699622953f8aca11c82"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkClaimSelectionTest$ChunkCountTests.class",
+            "sha256": "71362c3ec2f3f50a7f82e826f3f5b99889c20027deb4dfe5b19c13588fb79f9d"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkClaimSelectionTest$ConstructorValidation.class",
+            "sha256": "2437d825655bd0991a19ee87cb4ae4a75982edc84d60de69d012f2e41f7d11c3"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkClaimSelectionTest$CoordinatesTests.class",
+            "sha256": "a6e9b125ee25c8cbcdc9eae6d217b0b7bf4aca030bda639e96d37dd1b63eeb87"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkClaimSelectionTest$FromBlockBounds.class",
+            "sha256": "db76289b5401fa5eadec08041726498df290ab084f9b91a9db097e0be6d9c810"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkClaimSelectionTest.class",
+            "sha256": "861567a3299537002aeb0865378ad1de29ba661d5b62162c844a29209197c615"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkCoordinateTest$ConstructorTests.class",
+            "sha256": "197597390052ed1f7d8d425ef75e515a77c2b7f42ebcf8b0c9e093bca292fd47"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkCoordinateTest$EqualsHashCode.class",
+            "sha256": "d7eb5bf91d79838c7c2b08868f3d8c4fdbe6bfcfa92b9172f825bbbbe58f328f"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkCoordinateTest$HashCodeConsistency.class",
+            "sha256": "694dc787b978e7bd1e709817269bb1b502c366ec6a715364803fa97043b8aec1"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkCoordinateTest$ToStringTests.class",
+            "sha256": "6e1cfcb898a2335d2dbf133039db45eba152c464221536463b58eab866f51382"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/ChunkCoordinateTest.class",
+            "sha256": "491a9291ba63b6414a63414eb6c7a9a18dc04f283f407e73b6659a4ce3598c5c"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/TerritoryClaimTest$ConstructorTests.class",
+            "sha256": "5ee29d2ad3db363633e7191fe2ed06f07fcddfc0dbc734a11b3d2339538f4ad3"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/TerritoryClaimTest$EqualityTests.class",
+            "sha256": "87e1b153d14b7d7f650977b26c1b6874dc9708fcd718bfce9c27047a1d8ec09e"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/TerritoryClaimTest.class",
+            "sha256": "28bb6a63ed6f3ecdca532328993cf45ae4692ad3de01656fa17d88fcc4b30d71"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/TerritoryTest$ConstructorTests.class",
+            "sha256": "c6496b4c1ea55e6179375b13e27959d6354bf75dc058df872a57ceac8843d14d"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/TerritoryTest$EqualityTests.class",
+            "sha256": "66442fc2c5d87aef309d890d0c3d47248bcca9054d50cdcec05e1ec8f10ea750"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/TerritoryTest$FromClaimTests.class",
+            "sha256": "99166a549f3b39962884ae9a146e0e164d0e15c439d3c2ed817303f890082ebf"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/model/TerritoryTest.class",
+            "sha256": "a2f62a203602239fc982d4f105b08efdc947387f4d3d976162c9d79074cef6a7"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/SqlTerritoryServiceTest.class",
+            "sha256": "d58122f787803f12e6850ff8e6a231b2e4023c168cec5680e83849d1872f0129"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryBatchRecoveryTest$BarrierStore.class",
+            "sha256": "9d086fd836f1386d9ef7688fa470b07d98935dc0a117bdb07fdc1d251e8c5fbf"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryBatchRecoveryTest$FaultStore.class",
+            "sha256": "556924c3bc7a72280495fa1a1cf5987d613bb011090ef9e046b2fbf527d74475"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryBatchRecoveryTest.class",
+            "sha256": "7abaa20876e43111d91c0ddd0f561701db0417b8626aea9df9717817e5595062"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryPersistenceStub.class",
+            "sha256": "ace42a605abbe223b645015de2721f796a3658f1edb8df25d43a0ecd2a008eba"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryRetirementTest.class",
+            "sha256": "b8b6b0af80f3621abe65e0eec4f42223704d4e0e84594d43850ca92d1793ce67"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryServiceTest$BoundaryTests.class",
+            "sha256": "824dc6794bd4506eab461aec42a04259716e5a58e717f658edcb19a6f55fb7f6"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryServiceTest$ClaimTests.class",
+            "sha256": "25f27222e4280724bcdb0a4006308e0eaa4c70c4847b252a1c0c48ae62f70303"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryServiceTest$NationTerritoriesTests.class",
+            "sha256": "008626179443d2ec602804f9a0ab6ac847a231a054c2f90a39ff7530458b2558"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryServiceTest$OwnershipTests.class",
+            "sha256": "bbfd4b054cda2bcb1bdbea0d7db812c94979544533a922229d357eb9ad5fff05"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryServiceTest$SecurityTests.class",
+            "sha256": "3a17ec77326755594d906278485397974781d521e61bff57ccaf9b8f895fbcbb"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryServiceTest$TestableTerritoryService.class",
+            "sha256": "a316cae72bba437e55381f46dfe1283effeaa0987d97bf329efe139e13f83661"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryServiceTest$UnclaimTests.class",
+            "sha256": "910504aac1f304dbce45032362925475fd98f0f1306fa55219b19e38c9cf4c53"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryServiceTest.class",
+            "sha256": "28dc9dc9e3b9eb09695bdb9fdef028863afee29650b0dcbfa626e91b164d4d2f"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryStateCodecTest$FromPropertiesTests.class",
+            "sha256": "316ada11b5c87481ac7bf5dcf499fcced8d751f5682cbd8e9ff096a9f662677f"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryStateCodecTest$ToPropertiesTests.class",
+            "sha256": "3b8997ada72b92e9202562d39c81880bd8c235bde6b56b169025a2e229704aa9"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryStateCodecTest.class",
+            "sha256": "a80ec6134c929ca6dcdcf9623a28e4f0276b48c99d13705515fd311b7582d98a"
+          },
+          {
+            "path": "dev/starcore/starcore/foundation/territory/TerritoryTransferRecoveryTest.class",
+            "sha256": "eba3a9ddefa27ac90f6bfbaa208c159748839ca78815d79fe397438e2a1cbfba"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/command/WarCommandPeaceTreatyTest.class",
+            "sha256": "fcafa901ebfb1823501d563cf2472a80d09f34b0527f3a24c37ef6299b07f058"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/command/WarCommandTreatyRecoveryTest.class",
+            "sha256": "8b5a8366668495690a42beb2803528e38a97f7ce5ba3c0cb447a577b9b400457"
+          },
+          {
+            "path": "dev/starcore/starcore/treaty/TreatyEffectManifestTest$BinaryWriter.class",
+            "sha256": "0719e90379fbca88a272670bff9d4b904316a8ff90348e03c73ae30ef2df1e5d"
+          },
+          {
+            "path": "dev/starcore/starcore/treaty/TreatyEffectManifestTest$WireOrder.class",
+            "sha256": "46558d834a7adb32fde214fab211c82e4f2d86b0b51ba77f2c9a4f731ffa42f5"
+          },
+          {
+            "path": "dev/starcore/starcore/treaty/TreatyEffectManifestTest.class",
+            "sha256": "4dc1ca5c7e5b05a1d775b72c12c551aa7b5612b5ddef09fbefbdc10c5d5db272"
+          },
+          {
+            "path": "dev/starcore/starcore/war/CuboidTreatyProductionTest$1.class",
+            "sha256": "7fa76c0c41751c823fe2d14eb77adeb408869f1c2355ae4ff916a27a5f468e0f"
+          },
+          {
+            "path": "dev/starcore/starcore/war/CuboidTreatyProductionTest$Boundary.class",
+            "sha256": "8c42a202f3d495e04da71838b475c305469c6853284b0f2b58230cfa0c858fab"
+          },
+          {
+            "path": "dev/starcore/starcore/war/CuboidTreatyProductionTest$Fixture$1.class",
+            "sha256": "397a386d90e0a4e0cd2954938a22f44e1c3ec6fb89f262e54f0e26b2a92f8fcd"
+          },
+          {
+            "path": "dev/starcore/starcore/war/CuboidTreatyProductionTest$Fixture.class",
+            "sha256": "86013e435df8cc819ad382bbe7573084e9c27cfb9ba73609862e1463e258f21b"
+          },
+          {
+            "path": "dev/starcore/starcore/war/CuboidTreatyProductionTest.class",
+            "sha256": "d8629ac07c5220d55d34c1b70cdee175c4545f9b367e9411ee8927b00531015c"
+          },
+          {
+            "path": "dev/starcore/starcore/war/FoundationTreatyProductionTest$1.class",
+            "sha256": "8b6bd1df7b4ac29f2f74c33da850df4aea6647a0a0b2f5d2a6d60cca23b81c66"
+          },
+          {
+            "path": "dev/starcore/starcore/war/FoundationTreatyProductionTest$Boundary.class",
+            "sha256": "642c9ad094e6cd5d0dac63362d00282f5dd208663a0aee15903fb46bb1bf519d"
+          },
+          {
+            "path": "dev/starcore/starcore/war/FoundationTreatyProductionTest$Fixture$1.class",
+            "sha256": "c437df560f84e2c0ed85e25b0db48ee355204c10e80a627976b203ef0270458c"
+          },
+          {
+            "path": "dev/starcore/starcore/war/FoundationTreatyProductionTest$Fixture.class",
+            "sha256": "20409384498469817cedd94193c08deef8368dc6f64b74c17bccdf2665be2b6d"
+          },
+          {
+            "path": "dev/starcore/starcore/war/FoundationTreatyProductionTest.class",
+            "sha256": "4136462d38be6c5cf084cc2e30be1897fc0631ae06e92e5469696f060a0fb825"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyAuthoritiesTest$Boundary.class",
+            "sha256": "20a28241e0f068dfba8a7741f9ac74b66bbc3b06f3ece3d12dc629727af1e499"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyAuthoritiesTest$Fixture.class",
+            "sha256": "d6b2e74f4561000c2b0018c21a3074e8d0667ec4eacf42b67348156291b0871d"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyAuthoritiesTest.class",
+            "sha256": "07cbdd44de396e04b6fb1b79367ea9c4e2e4b22b12e33705f09eb5147ba9cdb1"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyProductionTest$1.class",
+            "sha256": "98fdd4cea3262a580adf404a50ed5177bc3f251fa1cc6d9309efbd728974d7a0"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyProductionTest$Boundary.class",
+            "sha256": "c8046aa5384d2499ae3335d26df71f1a26ee321c46b500c6b1b11197216602ff"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyProductionTest$Fixture$1.class",
+            "sha256": "4c8f5a6ecfec54eb6b7d36f40db9441a0fe532d6d05d6b592d7d3529ccd9bf79"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyProductionTest$Fixture.class",
+            "sha256": "e6267921cee9085ebf4de912d68755d6a08b405c1dbe3dc9b968a71608e8d01d"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyProductionTest.class",
+            "sha256": "9822a52e453be27cf582c111c1a9fae96bbb37c1f6a06a2eba5cd22eda6b71be"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MixedFoundationTreatyProductionTest.class",
+            "sha256": "7a5b3b704d3164c402aafc8146aa7f4ac201ec10c0e7de51cdd15729aa46616a"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MixedTerritoryCapacityTest.class",
+            "sha256": "1dbdc60ff73ed41470a66cfc96fde53292a603e631d0afe19203473de5d41f6d"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MixedTerritoryTreatyProductionTest.class",
+            "sha256": "d99d8dadc449ddd1afdd40f307f5352eef5cd0777ede65c6fca79917430c4341"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyBatchTest$1PoliticalTerm.class",
+            "sha256": "2cf181c9efa705ef569d19750f734e1e27da09a3657211ccba7e80d444036fb6"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyBatchTest$Fixture.class",
+            "sha256": "7c4eddd3ae4e3884204908a8baba57147f72d99b384d6d667e101cb72209e0d0"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyBatchTest.class",
+            "sha256": "829a31d09406c27a90a8a33632cbab4e4e9cea80373f407cdd83f62f4a474a26"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyPersistenceContractTest.class",
+            "sha256": "ed74da83f7d2327e29bc42f9955a66526de1534dd5b921233821999970f753c8"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyRetirementIntegrationTest$1.class",
+            "sha256": "366287b523dc9af20b226218be74c0ad1f62ea6eb03270516773430e3dff993b"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyRetirementIntegrationTest$Fixture.class",
+            "sha256": "8298ae777d7a5dd0a9edad0b4d115547ce5d1242e42ee90a5ad6a2e2bc5fc152"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyRetirementIntegrationTest.class",
+            "sha256": "6ea591fe0b9245f0a1431bc1ab5c4a560c1c1b7ab899f6f81b2d761f99846e8a"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyServiceContractTest$Protocol.class",
+            "sha256": "e0e12a2f1771cdb464de8bb3db6ab1a82f8a3d1785d654a37a21e5e9425bad7d"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyServiceContractTest.class",
+            "sha256": "e78d69dc74342428ea9546e9b64b3f59bcb9f1b2b3b1ff88872c94271e2d8b50"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatySettlementDurabilityTest.class",
+            "sha256": "9a0edd9bdf275ad2a19b26efb0646437c95b305b55cd1eb79f468073b9d05ef5"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodecTest$BatchFixture.class",
+            "sha256": "65dd4d64e6ce23cea4043c5bbd83de9f57f9ec4d1929e24fc417285bf769011a"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyStateCodecTest.class",
+            "sha256": "5d66f6965a200024cf59b511f932f3e9976d01e5ddf10a5e9e788ae216901233"
+          },
+          {
+            "path": "dev/starcore/starcore/war/TreatyOperationEndToEndTest$1.class",
+            "sha256": "bdd01566840a7b0faa7185ce0efabab0c1232145a68bba0217ab9ffe958efdae"
+          },
+          {
+            "path": "dev/starcore/starcore/war/TreatyOperationEndToEndTest$Boundary.class",
+            "sha256": "2d70053f929e3e46f3ca677208506d5723504fc2bff1cded87dbb1097a634d11"
+          },
+          {
+            "path": "dev/starcore/starcore/war/TreatyOperationEndToEndTest$Fixture$1.class",
+            "sha256": "5764d82f24f14b82e1b2b4e5f1b763e811ece594517ab0c39edb337bf51580fd"
+          },
+          {
+            "path": "dev/starcore/starcore/war/TreatyOperationEndToEndTest$Fixture.class",
+            "sha256": "74ba3fe173f1e1494224974e8a4ce936ca4b905a6bbeeff861d1414d07703d15"
+          },
+          {
+            "path": "dev/starcore/starcore/war/TreatyOperationEndToEndTest$Session.class",
+            "sha256": "5010e2c72c302500b74554c3e52633c21fc6d88086e32bdebdf2f7ded2163898"
+          },
+          {
+            "path": "dev/starcore/starcore/war/TreatyOperationEndToEndTest.class",
+            "sha256": "05aa26018167337c944064606c8364090ce93ad3795e00bcc4e4424beb76beea"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarSettlementAdmissionTest.class",
+            "sha256": "c4b2ca4d873668b23713281a46444123311a3c2d9db9ff7cb39610da552a8c87"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarSettlementCancellationTest.class",
+            "sha256": "b4bd382687a5a53ab28d9ccab3430b21be112e18b47a619d763861af87026959"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarSettlementFileCapacityTest.class",
+            "sha256": "7ff4709cee3d09f75cc44d494cbb96eeb374c7466e8f3fd6c1929a2dc77c5749"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarSettlementManifestTest$1.class",
+            "sha256": "c6622ca43425570eda4a07b454a8a88b5c2137c766c3c3d7285fcaca68a98e5b"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarSettlementManifestTest.class",
+            "sha256": "e0278071fcaad63e2c9a92c85fe2bac92c368a7e4420731515f65839c38f68fc"
+          }
+        ],
+        "all_changed_sources_compiled": true,
+        "fresh_class_bytes_equal_final_test_classpath": true
+      }
+    },
+    "formatting": {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-format-03.log",
+      "bytes": 1077,
+      "sha256": "fdfef0800aca1ab23bfaea73124e2fffd330ff17a072c743f617f880765fad11"
+    },
+    "api": {
+      "baseline_update_used": false,
+      "source_baseline": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\docs\\api\\starcore-api-v1.txt",
+        "bytes": 339441,
+        "sha256": "d758cfabc32cc27b6fb18bd1be835131eb4bd1bd8b1a32e09099b20525b8d1df"
+      }
+    }
+  },
+  "replay": {
+    "method": "independent Git indexes, all replayed blobs verified; reverse replay equals base tree",
+    "directory": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-replay-02.index",
+    "forward_check": true,
+    "reverse_check": true,
+    "diff_check": true,
+    "forward_tree": "0de3521fef61d7ac1124e712a4e491aa487ae3a8",
+    "reverse_tree": "fcc78ac4704a2432b2c24c305d504fa6d5077c8b",
+    "all_src_file_count": 3902,
+    "src_api_pom_aggregate_sha256": "8d72e53d4d570ad951a2196f971de04bf38f2d4a60b9605aac9beb73f227a866",
+    "all_source_bytes_equal_after_lf_normalization": true
+  },
+  "capture_evidence": {
+    "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-capture-02.json",
+    "bytes": 850098,
+    "sha256": "6f7fc7acb981650f74dece346046f7c326d8e32aa29e2b0bbcb12dfacbe4b923"
+  },
+  "scope": {
+    "all_foundation_army_cuboid_combinations_with_optional_politics": true,
+    "central_exact_receiver_assignment_and_complete_scope_validation": true,
+    "original_chunk_coordinates_and_cuboid_uuid_identities_remain_independent": true,
+    "all_frozen_plans_and_common_binding_persist_before_any_receiver_bind": true,
+    "complete_terminal_vector_required_before_source_ack_and_war_release": true,
+    "missing_frozen_plan_is_not_recreated": true,
+    "unbound_cancellation_seals_all_four_receivers": true,
+    "schema_nine_rejects_mixed_downgrade_including_unexecuted_proposals": true,
+    "all_receiver_future_proof_capacity_checked_before_common_decision": true,
+    "maximum_256_coordinate_file_sqlite_joint_acceptance_and_source_capacity": true,
+    "player_command_combines_original_chunk_cuboid_and_military_terms": true,
+    "persistent_foundation_installation_binding": false,
+    "siege_receiver_enabled": false,
+    "new_release_jars_or_review_zip": false,
+    "full_clean_build": false,
+    "server_started": false,
+    "world_or_player_saves_modified": false,
+    "all_stages_complete": false
+  },
+  "runtime": {
+    "jdk": "21.0.13.1+2",
+    "maven": "3.9.16",
+    "test_batches_serial": true,
+    "javac_heap_mib": 96,
+    "surefire_in_process_heap_mib": 96,
+    "processors": 1,
+    "gc": "SerialGC",
+    "mockito_explicit_agent": true
+  },
+  "excluded_attempts": [
+    {
+      "label": "foundation-mixed-smoke-01",
+      "tests": 126,
+      "failures": 2,
+      "log": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-smoke-01.log",
+        "bytes": 80417,
+        "sha256": "790e3b31d2bae5bdd5f4638f6b504ced5b17fc08f27dc508e2d9ee26f9f0ba2b"
+      },
+      "reason": "Two legacy assertions depended on old rejection messages. Invalid inputs remained rejected. Assertions now check exception type; all smoke suites are covered by final regression.",
+      "included_in_final_pass_total": false
+    },
+    {
+      "label": "foundation-mixed-production-01",
+      "tests": 128,
+      "failures": 23,
+      "log": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-production-01.log",
+        "bytes": 489948,
+        "sha256": "f7191509f3e731e24bca0fefa6f28618b34be0d19910a7d54bc015f8672a1da1"
+      },
+      "report": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-mixed-failed-production-01\\TEST-dev.starcore.starcore.war.MixedFoundationTreatyProductionTest.xml",
+        "bytes": 544376,
+        "sha256": "2c8feaaf61e92ef862ab7b34eadd8f841faa4f41351b11c101b6e1fd8d87b41c"
+      },
+      "reason": "The shared cancellation assertion incorrectly expected CANCELLED for unbound diplomacy abandonment. The production contract requires SUPERSEDED without an effect proof; corrected tests preserve all ownership, military and War invariants. The complete final production rerun replaces this failed attempt.",
+      "included_in_final_pass_total": false
+    },
+    {
+      "label": "foundation-mixed-cancellation-01",
+      "tests": 37,
+      "log": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-cancellation-01.log",
+        "bytes": 90161,
+        "sha256": "beb221ab03c95893d81f50eec62dbdd13eb9e8e24bb2d28c59e3b7fc4f8a52e4"
+      },
+      "reason": "Focused rerun of all affected cancellation methods; final production group covers the same cases.",
+      "included_in_final_pass_total": false
+    },
+    {
+      "label": "foundation-mixed-corrected-01",
+      "tests": 2,
+      "log": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-foundation-mixed-corrected-01.log",
+        "bytes": 1293,
+        "sha256": "741624306034660fddcc421f37e5b5dd85d46b101bdf2d8de7a48b88df2c497d"
+      },
+      "reason": "Corrected assertions passed; included again in final protocol group.",
+      "included_in_final_pass_total": false
+    }
+  ],
+  "known_open": [
+    "The joint authorities recover by original operation; this is not an instantaneous cross-database transaction.",
+    "Command syntax preserves chunk world/x/z/minimum and Cuboid UUIDs; existing treaty term limits apply.",
+    "Persistent foundation installation binding and detection of externally restored whole authorities across restarts remain open.",
+    "Tests use real file/SQLite War, Diplomacy, Army, Cuboid and Foundation owners with Bukkit/scheduler doubles. Lost reply injection does not represent actual game-server process termination.",
+    "Siege, legacy military restriction migration/permissioned lifting, lease/reparation/tribute/loan money remain open.",
+    "Navy transport/ports, wounded return, doctrine, budget rollover/cancel, other module authorization/thread/lifecycle and archival remain open.",
+    "Full clean Core build, new artifacts, final Core plus Supply regression, SQL multiprocess/MySQL and user-deferred Paper/Folia acceptance remain open."
+  ]
+}
