@@ -1,0 +1,2040 @@
+{
+  "checkpoint": "military-treaty-lifting-development-20261129",
+  "date": "2026-11-29",
+  "timezone": "Asia/Shanghai",
+  "base": "9e380d62fd94cdc54f6f703ea09e14f575660f18",
+  "previous_checkpoint": "foundation-chunk-installation-development-20261129",
+  "patch": {
+    "path": "docs/upstream/development/military-treaty-lifting-20261129.patch",
+    "bytes": 5199199,
+    "sha256": "3a18dac340907a8a8c9b9f4367bda743c49e668278c1b9741608e6851f9bdb8d",
+    "file_diffs": 444
+  },
+  "source_changes_since_previous_checkpoint": [
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwner.java",
+      "bytes": 38081,
+      "sha256": "6b6c40fa021113bc2b2f67c98373aa46fb965d8e2dc9d53faae4ce8619040132",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/army/authority/ArmyMilitaryTreatyService.java",
+      "bytes": 14030,
+      "sha256": "ba94df1ead8e0ab1a8b4711332fad55c30bdfa03ae261c8a80321312d0318b2f",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/WarModule.java",
+      "bytes": 39701,
+      "sha256": "daa887cc95cb33ab4446651e100be20a49592435e364a2106aaef70fd6ef1d38",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/WarSettlementAdmissionService.java",
+      "bytes": 7965,
+      "sha256": "91b82ab1bb455a4d531b2ec34c361614d5bd8012caccd49291e3420215ee207c",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/module/war/command/WarCommand.java",
+      "bytes": 50791,
+      "sha256": "32d729a9d065a80a33715bf97a47ff957b59ad959f0f7c2076a7db99c881b2c8",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/PeaceTreatyService.java",
+      "bytes": 98869,
+      "sha256": "c946d126d9e664a74aa842b73108ff7cba0921f2607ea1b0b795bd382665a431",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/main/java/dev/starcore/starcore/war/WarServiceImpl.java",
+      "bytes": 39964,
+      "sha256": "d010f15229fb412dd1d482f19ec31a685c91139e2061bfe35d05f5b7b59b7462",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/module/war/command/WarCommandTreatyRecoveryTest.java",
+      "bytes": 14187,
+      "sha256": "c1a5e6a9bf06e263bab316aa7f8ceca148775e5fffa9bd68ea59edb35f44d8e3",
+      "exists_in_previous_checkpoint": true
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/MilitaryTreatyLiftProductionTest.java",
+      "bytes": 16271,
+      "sha256": "4e17df0540c0d46d21290fd3e1c5a7b9f0ec332d35c5f0fcdac10f8ef9796b71",
+      "exists_in_previous_checkpoint": false
+    },
+    {
+      "path": "src/test/java/dev/starcore/starcore/war/PeaceTreatyServiceContractTest.java",
+      "bytes": 37372,
+      "sha256": "4390b356e02b8a1d697675d71d026eafbee94561089c7767b83ff0437db20bb9",
+      "exists_in_previous_checkpoint": true
+    }
+  ],
+  "validation": {
+    "tests": 1969,
+    "suites": 133,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "deduplicated_by_class_and_case_name": true,
+    "batch_totals_match_xml_and_logs": true,
+    "batches": [
+      {
+        "name": "lifting",
+        "label": "military-lift-lifting-01",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.war.MilitaryTreatyLiftProductionTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-lifting-01\\TEST-dev.starcore.starcore.war.MilitaryTreatyLiftProductionTest.xml",
+              "bytes": 87610,
+              "sha256": "42a2f5ff7540564203170b283c47ae6d70b1290e3e16160cab601f6941a59712"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-military-lift-lifting-01.log",
+          "bytes": 60566,
+          "sha256": "4a72cee48b105013e4483eb13167ecace3cccf7f6748b0163dc0cb4ebbe4f4b4"
+        }
+      },
+      {
+        "name": "contracts",
+        "label": "military-lift-contracts-01",
+        "tests": 54,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.module.war.command.WarCommandTreatyRecoveryTest",
+            "tests": 33,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-contracts-01\\TEST-dev.starcore.starcore.module.war.command.WarCommandTreatyRecoveryTest.xml",
+              "bytes": 26875,
+              "sha256": "adf53e542289a41c23a644ca4ea1fa1e4126aa08dd5a4bb346e90d9761fc44f4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyServiceContractTest",
+            "tests": 21,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-contracts-01\\TEST-dev.starcore.starcore.war.PeaceTreatyServiceContractTest.xml",
+              "bytes": 50157,
+              "sha256": "42d7055e3e0d0ae73cc0a4c0e68468ed7b93813a928ff6676ed68a1694f60739"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-military-lift-contracts-01.log",
+          "bytes": 25481,
+          "sha256": "fffcf9f8e0f6262e2002fd76a93de1a1a6ead55710441924c12cacac08ba78d0"
+        }
+      },
+      {
+        "name": "army",
+        "label": "military-lift-army-01",
+        "tests": 1401,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyCommanderRuntimeTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyCommanderRuntimeTest.xml",
+              "bytes": 39583,
+              "sha256": "44c82d48909759611e99783d578bf8d36cad67b8c964a68b0900d5b8f634a819"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyCreationOverflowGuardTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyCreationOverflowGuardTest.xml",
+              "bytes": 35248,
+              "sha256": "841731dd3536a3ce701d530c45ca675ffb5f5ccce669b0e61a881438182aa7fa"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyExtensionLifecycleTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyExtensionLifecycleTest.xml",
+              "bytes": 36379,
+              "sha256": "280a95395d07d6feb6af55da5161618a921a29bd5320a5ebfb347f8885ca3a68"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyLogisticsSupplyTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyLogisticsSupplyTest.xml",
+              "bytes": 38333,
+              "sha256": "46d33c02bb9fe505e020ac82a775d9579ae082e1293e69fc0dc3f66c5291ef16"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyMilitaryRuntimeTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyMilitaryRuntimeTest.xml",
+              "bytes": 39279,
+              "sha256": "7800ef5938833c2a91d72faeb968150be886b68b64b4d6eadba5216bcc134c15"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyModuleLifecycleTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyModuleLifecycleTest.xml",
+              "bytes": 35906,
+              "sha256": "581f7555cde83dc8f06f6efd98ba807db31a0b7acf62549445dc223e817236fd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyRemainingModuleLifecycleTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyRemainingModuleLifecycleTest.xml",
+              "bytes": 35253,
+              "sha256": "7f1dc63f529860da8148ca6afca097dfb9f943782d2839d9cef5936f79788a23"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyRuntimeAuthorizationTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyRuntimeAuthorizationTest.xml",
+              "bytes": 35606,
+              "sha256": "d76d3dcc621f341f908174460480b9c1e13808ab8a2901ab298287aeb2c8e5b4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyRuntimeBootstrapTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyRuntimeBootstrapTest.xml",
+              "bytes": 37335,
+              "sha256": "94c7d39f89512fa19f12c15cab2e79d081b6bb57f17e8517679e4a4950d9a540"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyServiceBudgetSpendingTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyServiceBudgetSpendingTest.xml",
+              "bytes": 41490,
+              "sha256": "71cf4299c3e5a8834df3f9342a851771ab097f2ce0f35d54dd9503f80e441a29"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyServiceStatePersistenceTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyServiceStatePersistenceTest.xml",
+              "bytes": 40806,
+              "sha256": "941d9de37ad7d172d57b63bfc42d11ca32932b0a3dc3b35e14a4be35d01bc11c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmySoldierCapacityRuntimeTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmySoldierCapacityRuntimeTest.xml",
+              "bytes": 39392,
+              "sha256": "7b5e8408534246b60ae307bab183407f22973838048f869e1a6e4632813971ed"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest",
+            "tests": 0,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyTest.xml",
+              "bytes": 34741,
+              "sha256": "83314009b853e3aa8ac3f1c9c072639bbb96aa125d7d26b0c513c6f8d40c9cef"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$CommanderLevelEnum",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyTest$CommanderLevelEnum.xml",
+              "bytes": 35239,
+              "sha256": "a05c9fbd489591f6931c8b75f84a56c0f9a7c4ca694f6dc55c6eaf1ae0e12054"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$CommanderSkillRecord",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyTest$CommanderSkillRecord.xml",
+              "bytes": 35109,
+              "sha256": "3baeec8f84565cc85e0e29924e787b715153784f0774204c9d9c4395d949c777"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$DoctrineTypeEnum",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyTest$DoctrineTypeEnum.xml",
+              "bytes": 35102,
+              "sha256": "c6bacd6246eed6f798a6120ba6a0cb1e7521604b7cae6e1b40db45ab100fc059"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$OperationStatusEnum",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyTest$OperationStatusEnum.xml",
+              "bytes": 34879,
+              "sha256": "77ec84149d535c772763b3a29484c78e9b980d5a22bc73551c0145c96362a7d4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$OperationTypeEnum",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyTest$OperationTypeEnum.xml",
+              "bytes": 34876,
+              "sha256": "67021683d9e8d89b85343a470e1bab1c0f4f2220a62e8acdac48b98a2811264c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$SkillCategoryEnum",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyTest$SkillCategoryEnum.xml",
+              "bytes": 34876,
+              "sha256": "b56c652e23847e07184cac6c7add6639edee84bf0d94e45d3c83f7503ef328f3"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.ArmyTest$SkillTypeEnum",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.ArmyTest$SkillTypeEnum.xml",
+              "bytes": 34868,
+              "sha256": "a676ba13e1af3ee3e5d4945fb7baced1150b88d800d6b3d4c8d8360ad67ad942"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.CommanderLevelTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.CommanderLevelTest.xml",
+              "bytes": 35743,
+              "sha256": "32e21f6fc623b1b0577b5b27db57e06ad053092b55f50164b657b10dbf625807"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.CommanderServicePersistenceTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.CommanderServicePersistenceTest.xml",
+              "bytes": 60085,
+              "sha256": "415c0a3c7999dab004e7e47fee18680d8a4d1d28fb759d26c2333e81e6cde79c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.CommanderSkillTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.CommanderSkillTest.xml",
+              "bytes": 35556,
+              "sha256": "69dcb5cadc75ac110a31307a57422131de63ad0f2f6b6d5fc70cb9196a738f08"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.FatigueTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.FatigueTest.xml",
+              "bytes": 35275,
+              "sha256": "46a8d58c9afa7a82794d582afe5c6d4a9e43b50de595a33de8aa30ae54f3692e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.FatigueTunnelLifecycleTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.FatigueTunnelLifecycleTest.xml",
+              "bytes": 35540,
+              "sha256": "c5f04f7ac43a47ba056764b8081a946cc10c789499a61d86aef56ed3cdd30293"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.WarArmyIntegrationAuthorityTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.WarArmyIntegrationAuthorityTest.xml",
+              "bytes": 35393,
+              "sha256": "a2d4e02e87aa9e35cd3d8215871352de11d5e5c0fcabe46eeb5761a454dc5d91"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.WarArmyIntegrationBattleCompensationTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.WarArmyIntegrationBattleCompensationTest.xml",
+              "bytes": 35412,
+              "sha256": "3fcb61873e1f57cc6517a93e1df63b0b97f860ffd5e4a33a4e59cd6db2d9bc57"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyAuthorityOwnerStorageTest",
+            "tests": 10,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyAuthorityOwnerStorageTest.xml",
+              "bytes": 36746,
+              "sha256": "ce96b28eeef1377152803df4f54a6bbbd02d0cdfabee56bb0213099b78da4e27"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyAuthorityOwnerTest",
+            "tests": 42,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyAuthorityOwnerTest.xml",
+              "bytes": 42152,
+              "sha256": "106382467a5401ebe5d63440f395324188a371201fc2e2bc7c7b0d4acf50bf2b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyBattleOwnerStorageTest",
+            "tests": 26,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyBattleOwnerStorageTest.xml",
+              "bytes": 40041,
+              "sha256": "fbe16ac4dead0dd6237facb5e80dda5453167cf147167641d152eb383365a6c5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyAbandonmentTest",
+            "tests": 7,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyAbandonmentTest.xml",
+              "bytes": 38416,
+              "sha256": "bab3bbd9f28db465e2b1f63656a01112f71f273b7b94ae4a88162cc0051db8f4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyServiceTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyMilitaryTreatyServiceTest.xml",
+              "bytes": 39659,
+              "sha256": "9832a5c3841aef3fdc22bac25ea6ef97781c3b2d6ab487f34d94cb0c174acb39"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyNationClosureOwnerStorageTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyNationClosureOwnerStorageTest.xml",
+              "bytes": 39655,
+              "sha256": "aeee35cc681464fcbe25d2f7daffd92623417f02e6be08812527b1b4db59da7a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmyPaidCoordinatorTest",
+            "tests": 20,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.authority.ArmyPaidCoordinatorTest.xml",
+              "bytes": 48571,
+              "sha256": "2921c89680a86b8f144c86fb09a79a3fc5c17f55adae68f797741ec702c9eee4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.authority.ArmySkillOwnerStorageTest",
+            "tests": 26,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.authority.ArmySkillOwnerStorageTest.xml",
+              "bytes": 39961,
+              "sha256": "875d30704fbdb64100d765752147f5f000f4d08c7ce92c0c5ec429eff423ea2c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.battle.ArmyUnitCombatHealthTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.battle.ArmyUnitCombatHealthTest.xml",
+              "bytes": 35267,
+              "sha256": "f038d2673ee4bca0d4059977602ad23bd31c6e17ecc1a78bbbfe6ce24852556c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.battle.BattleTemporaryMoraleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.battle.BattleTemporaryMoraleTest.xml",
+              "bytes": 35140,
+              "sha256": "3146c2c58eabc35ee2ab436030240ad1183d57415990e1c9467e3643de6297f2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.battle.TemporaryArmyMoraleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.battle.TemporaryArmyMoraleTest.xml",
+              "bytes": 35124,
+              "sha256": "b1b63df439a49d6b8a65d9b1f45dde10be505ab28d4586c8c97dfc393bc0aa18"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.commander.CommanderListenerPersistenceTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.commander.CommanderListenerPersistenceTest.xml",
+              "bytes": 57172,
+              "sha256": "961289aecb858b7a08093352f94911e35538dfcef439dfde10c80545de002801"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.commander.CommanderServiceAsyncDefaultContractTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.commander.CommanderServiceAsyncDefaultContractTest.xml",
+              "bytes": 35159,
+              "sha256": "f1357dbfae57d391475414e9abd694d75beb336cc5f253a98826c41d53329890"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.commander.command.CommanderCommandPersistenceErrorTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.commander.command.CommanderCommandPersistenceErrorTest.xml",
+              "bytes": 35168,
+              "sha256": "39909714f99d4362c9d808fe1c39a76ce5d92348064a9716bd6f972f540462b8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.espionage.EspionagePersistenceRecoveryTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.espionage.EspionagePersistenceRecoveryTest.xml",
+              "bytes": 35784,
+              "sha256": "f614f3e5216b8c24dc93e668b2f6f7ea9b6e391c61f539e3811ce83873adf710"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.espionage.EspionageServiceBudgetSpendingTest",
+            "tests": 9,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.espionage.EspionageServiceBudgetSpendingTest.xml",
+              "bytes": 41103,
+              "sha256": "13b029a6104cee7aa199a7d057c14098fbc35bee0160ff813afa245504178ef2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.espionage.EspionageServiceInputValidationTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.espionage.EspionageServiceInputValidationTest.xml",
+              "bytes": 36016,
+              "sha256": "e60e55f911194cf7db1251503e75e550e1721d15918e4cfab7922b4f8c8802ba"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.exercise.ExerciseCommandTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.exercise.ExerciseCommandTest.xml",
+              "bytes": 37171,
+              "sha256": "fda65ab28eeee916b89d064d28f894396f81c2872986135978d8211ebbe63bf2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.exercise.ExerciseListenerTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.exercise.ExerciseListenerTest.xml",
+              "bytes": 35707,
+              "sha256": "188004e68dae6e8f314a2e0cd3475cbcfed65c925fdd396426218dde51dd0ab0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.exercise.ExerciseModuleLifecycleTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.exercise.ExerciseModuleLifecycleTest.xml",
+              "bytes": 35594,
+              "sha256": "da2ac4e26d6e78b11218119981bafabb031e74e7999508d6a551dfa70387f70c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.exercise.ExerciseRecoveryTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.exercise.ExerciseRecoveryTest.xml",
+              "bytes": 64178,
+              "sha256": "c8fc1c95491dc785d90010c4505ca5c8bc314a632d592a99abb36a0cd0d0532c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.exercise.ExerciseStateCodecTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.exercise.ExerciseStateCodecTest.xml",
+              "bytes": 37347,
+              "sha256": "c61869cd36f78ecffd2943c51205feeaf55f469f3b002b045a851ae9eac9428c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.fatigue.FatigueServicePersistenceTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.fatigue.FatigueServicePersistenceTest.xml",
+              "bytes": 37260,
+              "sha256": "3f7ab78d883fc86698d922495b7a5b720da12874d9294965098bb27470b71b9c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.fatigue.storage.FatigueStateCodecTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.fatigue.storage.FatigueStateCodecTest.xml",
+              "bytes": 35196,
+              "sha256": "a6685e03e6cbdf7670c3c2564bc31e43eab209077b28ce363542f72a989d6ec1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyCreationMenuRoutingTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.gui.ArmyCreationMenuRoutingTest.xml",
+              "bytes": 35265,
+              "sha256": "9fa549cebf83fdebb001a09ccb15250bdb42e2edd3614706a089b21e28ab2873"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyManagementMenuMembershipRevalidationTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.gui.ArmyManagementMenuMembershipRevalidationTest.xml",
+              "bytes": 34952,
+              "sha256": "e1cf110543356b9bb355bacaeb52484a33436fe1249755ec159ce9b69d376246"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyManagementMenuRoutingTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.gui.ArmyManagementMenuRoutingTest.xml",
+              "bytes": 34923,
+              "sha256": "99ee5045d15d241cce85cb531c8854fd80ed25845d043fbea39e29395f395909"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyManagementMenuStaleArmyRevalidationTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.gui.ArmyManagementMenuStaleArmyRevalidationTest.xml",
+              "bytes": 35154,
+              "sha256": "b8aea6eb95fd50b46f42182e24a47c81e9eaa9d9f633495382db4aac2b04b796"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyManagementMenuTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.gui.ArmyManagementMenuTest.xml",
+              "bytes": 35946,
+              "sha256": "6b42aad940462ddaf3d89743a21aa9e9af109b90e8e71d3aec3c09dce1a05a52"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyMenuActionsCurrentArmyTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.gui.ArmyMenuActionsCurrentArmyTest.xml",
+              "bytes": 35634,
+              "sha256": "6454488c62b90f3bc7b50ed7a223aabe72ae7ee273d89843ec87fcaa5005bab4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyMenuChatInputThreadTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.gui.ArmyMenuChatInputThreadTest.xml",
+              "bytes": 35126,
+              "sha256": "5b02535d0e41cacabd0ce35af9eaa4f82c473ad252b0e37c3142d4f6d6a1c01d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmyMenuListenerLifecycleTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.gui.ArmyMenuListenerLifecycleTest.xml",
+              "bytes": 34934,
+              "sha256": "27bc934e4521c81d6d72ead64120c897058535db62f45780a23945beadc04e01"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.ArmySelectorPermissionRevalidationTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.gui.ArmySelectorPermissionRevalidationTest.xml",
+              "bytes": 35296,
+              "sha256": "44c5b5daffdd643c2340fbf214b24077e5d87674aaf580308c5c1e58c1801335"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.gui.TargetSelectorMenuSnapshotTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.gui.TargetSelectorMenuSnapshotTest.xml",
+              "bytes": 35449,
+              "sha256": "f112ad58b67fb4ebeff1815e56cad5a19bf3139d0f66c76920215eae9433d4d8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.mercenary.MercenaryContractCodecTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.mercenary.MercenaryContractCodecTest.xml",
+              "bytes": 46043,
+              "sha256": "82e2ca36620fe33ce6fa9d0b421a6659dfecdd5b7a22b1ded57fbf74e39d4714"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.mercenary.MercenaryModuleLifecycleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.mercenary.MercenaryModuleLifecycleTest.xml",
+              "bytes": 35832,
+              "sha256": "1ed7a5484f8b0c83b69a1cd2293454040aae04cafc6d417055b5e1f9a273ab89"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.mercenary.MercenaryServiceBudgetSpendingTest",
+            "tests": 29,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.mercenary.MercenaryServiceBudgetSpendingTest.xml",
+              "bytes": 235963,
+              "sha256": "f60efbd581d514a94a4686c47d52143759b3651769f1f263e7286183fc75caaf"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.mercenary.command.MercenaryCommandTest",
+            "tests": 51,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.mercenary.command.MercenaryCommandTest.xml",
+              "bytes": 43611,
+              "sha256": "af57cfe691ec84dd6b6c7a73c9d813d63c1aeb6d4d6cf2e760ef9b9513191385"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.mercenary.command.MercenaryRenewalRequestJournalTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.mercenary.command.MercenaryRenewalRequestJournalTest.xml",
+              "bytes": 35849,
+              "sha256": "5cff6d0b6eeaa0d4a3488178360c38d537dcdf635eb753843461dd457733d65e"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.ArmyUnitSupplyConsumptionTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.model.ArmyUnitSupplyConsumptionTest.xml",
+              "bytes": 35459,
+              "sha256": "d10491de485dc342dddbc426b117686d18a110ed8eea1d744f631f3b0de02b71"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.authority.ArmyBattleInterventionTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.model.authority.ArmyBattleInterventionTest.xml",
+              "bytes": 39577,
+              "sha256": "591547b1147a261242944ef12c48a6ae91aa9b09a96585c6e438ececc5d4a865"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.authority.ArmyBattleSessionTest",
+            "tests": 66,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.model.authority.ArmyBattleSessionTest.xml",
+              "bytes": 46642,
+              "sha256": "4417c698667be298407d4de45fc3a41355d3cb1f4bd8cda21ce96142b8d9efd6"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.authority.ArmyMigrationEvidenceTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.model.authority.ArmyMigrationEvidenceTest.xml",
+              "bytes": 35161,
+              "sha256": "fc4675de9eaf741385ce8383744f77bcb1ba35019792824a329423541bd8568d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.authority.ArmyMilitaryOperationTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.model.authority.ArmyMilitaryOperationTest.xml",
+              "bytes": 35505,
+              "sha256": "bfa842af01be7d27049981d3c9b565690a72f2e2c8e64f72b0c94405e8147e0f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.authority.ArmyNationClosureTest",
+            "tests": 38,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.model.authority.ArmyNationClosureTest.xml",
+              "bytes": 41341,
+              "sha256": "2bca7495dd6ec70809d0c49eea59217e641d89b1299ca2443ce62b674f164db1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.authority.ArmyPaidRequestTest",
+            "tests": 102,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.model.authority.ArmyPaidRequestTest.xml",
+              "bytes": 52890,
+              "sha256": "45828de7eb1d56bfd94852add79abf77e10bac4ab4a2e23f3af22c8b219ab633"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.authority.ArmySkillRequestTest",
+            "tests": 134,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.model.authority.ArmySkillRequestTest.xml",
+              "bytes": 59049,
+              "sha256": "1e7d12bb0dd4ba068d28bbec4f18b8ea6481b25537ec49e522a105f61ccf04a8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.model.authority.ArmySkillUseTest",
+            "tests": 30,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.model.authority.ArmySkillUseTest.xml",
+              "bytes": 39615,
+              "sha256": "e5cc22817352ff2cfeba853e9abe6453879ae6bbfe02817a37df28890bd8f7f1"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.navy.NavyBattleListenerTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.navy.NavyBattleListenerTest.xml",
+              "bytes": 35571,
+              "sha256": "d252f9931b644eb7c9560cfdff02688a2292b2a908c41dfb9bb65ccb41c80138"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.navy.NavyCommandTest",
+            "tests": 25,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.navy.NavyCommandTest.xml",
+              "bytes": 38609,
+              "sha256": "0d5eb1e8a38e985988e5f0fc4a573570ba9763bb940cc0632c2c40e8aae8570a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.navy.NavyModelStorageTest",
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.navy.NavyModelStorageTest.xml",
+              "bytes": 37708,
+              "sha256": "222e7d3f7c5f3336a5d5a388b63eecd17dd347232b2677fb2ab4d30a9a5f9c92"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.navy.NavyModuleLifecycleTest",
+            "tests": 6,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.navy.NavyModuleLifecycleTest.xml",
+              "bytes": 35763,
+              "sha256": "7abf69dd392b3a253b673dfb45d65a7ebe91bd08898ab38dcd2d72659f2194a7"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.navy.NavyServiceBudgetSpendingTest",
+            "tests": 32,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.navy.NavyServiceBudgetSpendingTest.xml",
+              "bytes": 51130,
+              "sha256": "adacc8b62eb65bfdbb9eebbb05551a5b3b12446b2d0f6d5d43585c9e5fa6179f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.runtime.ArmySnapshotViewsTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.runtime.ArmySnapshotViewsTest.xml",
+              "bytes": 37191,
+              "sha256": "64e07ec8ca82733b4056a35ac535738d0e86b58bae08a7fef38f6edad62cc2ac"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.siege.SiegeCommandAuthorizationTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.siege.SiegeCommandAuthorizationTest.xml",
+              "bytes": 37688,
+              "sha256": "f16201c8ffca8836470884192c850132713385b35b52c1a388a34343e98c310c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.siege.SiegeDeploymentLifecycleTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.siege.SiegeDeploymentLifecycleTest.xml",
+              "bytes": 36126,
+              "sha256": "cd05b13241d9c55e855b1c883032d93b2ef067e1e4226337728c47cca52ef126"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.siege.SiegeModuleTreasuryLifecycleTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.siege.SiegeModuleTreasuryLifecycleTest.xml",
+              "bytes": 47876,
+              "sha256": "48bf4eb09f2238b41aec249b3440d8b854b6f520ce55dcda1c787bccc7f4a02b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.siege.SiegeServiceBudgetSpendingTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.siege.SiegeServiceBudgetSpendingTest.xml",
+              "bytes": 36539,
+              "sha256": "2755d2c44b0a983f69b6b23a65e18d2aea5638fdda36331c6d86e81692a4e59f"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.siege.listener.SiegeListenerNotificationTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.siege.listener.SiegeListenerNotificationTest.xml",
+              "bytes": 34974,
+              "sha256": "f255f827ce1a56479dd60b297ebe115c3575787129d281607126f5a4155ef376"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.ArmyStateCodecTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.ArmyStateCodecTest.xml",
+              "bytes": 35189,
+              "sha256": "08dded2d7880c5b5fcf2406fc92ae756e63903405b360c18c63ab30ca19718b0"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityBootstrapTest",
+            "tests": 34,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityBootstrapTest.xml",
+              "bytes": 41454,
+              "sha256": "fca7e6bbb006b913d16ad6163910197b3606f9254b82e20e16cf1355d3b01da2"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityCodecTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityCodecTest.xml",
+              "bytes": 36960,
+              "sha256": "7296be4ab7a5b0333cd6a0f918dcdc1b51404bf4f46a7cbc9a7d59a2c175935a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityStateTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityStateTest.xml",
+              "bytes": 37701,
+              "sha256": "71e1ad1843993b92c82e1e0f46c7d7ecaa56b0c7f95c1f9a8a19c3f63a23180b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityStorageTest",
+            "tests": 32,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyAuthorityStorageTest.xml",
+              "bytes": 41072,
+              "sha256": "b34a620bf75fc027cc631703953698b5618c5fa5473e57515f827919d00da6d8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyBattleInterventionStorageTest",
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyBattleInterventionStorageTest.xml",
+              "bytes": 38670,
+              "sha256": "b332644281bd8ce032a1f5383b6fb51b5b166c810b528150aaf860d98dfb24fe"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyBattleStateTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyBattleStateTest.xml",
+              "bytes": 39047,
+              "sha256": "2188a47fd4eaad844e06fbb4d033159f68cbb39e401dd54dd12739ef2dfe4448"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyLegacyImporterTest",
+            "tests": 19,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyLegacyImporterTest.xml",
+              "bytes": 38507,
+              "sha256": "04b8dce350619e0599f7aa2019e2d518f78323b5dadebf189c64f20b0629e33a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyMilitaryStateTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyMilitaryStateTest.xml",
+              "bytes": 36518,
+              "sha256": "2d1b2f46d5f4df339c1964ed42c00bc547a27facdc43fdd928d8a36345f1d827"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyMilitaryTreatyStorageTest",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyMilitaryTreatyStorageTest.xml",
+              "bytes": 39337,
+              "sha256": "e3032498be34ca56bf1e228d47142a37bc0dc74de0cae8b93b7402d0ac65dd36"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyNationClosureCapacityTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyNationClosureCapacityTest.xml",
+              "bytes": 35612,
+              "sha256": "ff1ab79b69792b53baed2b8185ddd9246a0266b348cbd4ebb6e5fff42c8c9953"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyNationClosureCodecTest",
+            "tests": 13,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyNationClosureCodecTest.xml",
+              "bytes": 37147,
+              "sha256": "7ecc80d0b1cfaee7f7379803d56da1009f068435f7ab2913a5b54b6bd959f3ca"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyNationClosureStateTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyNationClosureStateTest.xml",
+              "bytes": 37557,
+              "sha256": "67af4ba04ae48101c4547b95d64f3f909a098ac0f872b71de8bce8b5277a6991"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmyPaidStateTest",
+            "tests": 31,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmyPaidStateTest.xml",
+              "bytes": 40420,
+              "sha256": "31fe57d770b81b5c0965f067bc9f27eff6e6bb9f6613c2f362288c5ad9378412"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmySkillCodecTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmySkillCodecTest.xml",
+              "bytes": 36908,
+              "sha256": "449148ed6e8d8f772d5a2e2df676e455ce67457bfb0609404a0c4b8b3631ae5b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmySkillStateTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmySkillStateTest.xml",
+              "bytes": 37421,
+              "sha256": "9be337103266109508de89a007f1499b4ca399bc2544886b3ce5c00f3c7765ff"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.storage.authority.ArmySoldierCapacityStorageTest",
+            "tests": 11,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.storage.authority.ArmySoldierCapacityStorageTest.xml",
+              "bytes": 38039,
+              "sha256": "ba8224e2cea926fe4ce68d133b944ae5f11253c6c3c78107dea14199ff6ed82c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.tunnel.TunnelServiceBudgetSpendingTest",
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.tunnel.TunnelServiceBudgetSpendingTest.xml",
+              "bytes": 36119,
+              "sha256": "2082fc03cf36673b4c549b646ff4e8969087c9d3afed64d806637df2554d8b3d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.army.wounded.WoundedModuleLifecycleTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-army-01\\TEST-dev.starcore.starcore.module.army.wounded.WoundedModuleLifecycleTest.xml",
+              "bytes": 35275,
+              "sha256": "955f164b676d82205682355d1fd22604dd23a602f32e33196f45f4b25e096b00"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-military-lift-army-01.log",
+          "bytes": 359762,
+          "sha256": "3624a2656c90f3ebb583d333f9110c1e6f0cb464812097c8b31758d40fde533d"
+        }
+      },
+      {
+        "name": "protocol",
+        "label": "military-lift-protocol-01",
+        "tests": 441,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.module.war.WarDeclarationModuleRecoveryTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.module.war.WarDeclarationModuleRecoveryTest.xml",
+              "bytes": 57219,
+              "sha256": "c7f81fc18038262d76113504c821334ff15f7e5ecfe5200abc97a2c61156e595"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.war.WarModuleAuthorityTest",
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.module.war.WarModuleAuthorityTest.xml",
+              "bytes": 26328,
+              "sha256": "770b4f4a1a58ca9e48d3a439c29ed5aef1d779b87e8c2aebbce5678a0410c5ab"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.module.war.command.WarCommandPeaceTreatyTest",
+            "tests": 72,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.module.war.command.WarCommandPeaceTreatyTest.xml",
+              "bytes": 35337,
+              "sha256": "d6797e592c82416be66eca37a046ee3b429f7abc8599574a57db60832379a076"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.treaty.TreatyEffectManifestTest",
+            "tests": 28,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.treaty.TreatyEffectManifestTest.xml",
+              "bytes": 27332,
+              "sha256": "e438c24e267a9536984cfdd6fe84e27a04b56abb236a0787b369ef5f3c558975"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.MilitaryTreatyAuthoritiesTest",
+            "tests": 27,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.MilitaryTreatyAuthoritiesTest.xml",
+              "bytes": 57882,
+              "sha256": "7da600925607b129310b75933857177c7e76e907164bef7a01dc748798ff3cfd"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.MilitaryTreatyProductionTest",
+            "tests": 64,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.MilitaryTreatyProductionTest.xml",
+              "bytes": 214471,
+              "sha256": "2f8df70976ac4ae58907a44372282eb2c3ff870f58de01b0b9ce1fcd47601856"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyBatchTest",
+            "tests": 24,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatyBatchTest.xml",
+              "bytes": 26508,
+              "sha256": "7d0aa76535b1ec6a3de90bb9c3f847bb34c21f9a5c567ddaaf77112d47e87ae4"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyPersistenceContractTest",
+            "tests": 17,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatyPersistenceContractTest.xml",
+              "bytes": 26772,
+              "sha256": "16c66e42742328a24222201f9d51e29b5acf3928f67bd6428d45fdda35240648"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyRetirementIntegrationTest",
+            "tests": 16,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatyRetirementIntegrationTest.xml",
+              "bytes": 58214,
+              "sha256": "900bf09a689246cd83f1dbe843f8e7bf342b956026060c73d0c9ab26ea1258c8"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatySettlementDurabilityTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatySettlementDurabilityTest.xml",
+              "bytes": 24110,
+              "sha256": "76d812194dddc2dc6a28ad532aead9a80512d8f0f7b8da04bc31c683b5994378"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.PeaceTreatyStateCodecTest",
+            "tests": 14,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.PeaceTreatyStateCodecTest.xml",
+              "bytes": 25050,
+              "sha256": "fdd312bf20deee0e9191b1ee34cacb01d44dfae84613f070c40eb6e035a72a15"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.TreatyOperationEndToEndTest",
+            "tests": 62,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.TreatyOperationEndToEndTest.xml",
+              "bytes": 245756,
+              "sha256": "13c234ed0af1b6e55f3e2491e73b1f9d226594e2d5ce890e2a031f49a18de07b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementAdmissionTest",
+            "tests": 30,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.WarSettlementAdmissionTest.xml",
+              "bytes": 34944,
+              "sha256": "0af1ebd4f12aa381a038e23cbf4fc18ca3ded7ce7284e5c8927d73de87a694eb"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementCancellationTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.WarSettlementCancellationTest.xml",
+              "bytes": 28402,
+              "sha256": "270589942fb63638af8a757532e821d7469f0b1f34c79a25677fd71edd0b5348"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementFileCapacityTest",
+            "tests": 15,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.WarSettlementFileCapacityTest.xml",
+              "bytes": 25321,
+              "sha256": "dadec84d4bf8010456cc446977cd48d81762edaf9a199a1d45940884afc3e0d5"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.WarSettlementManifestTest",
+            "tests": 29,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-protocol-01\\TEST-dev.starcore.starcore.war.WarSettlementManifestTest.xml",
+              "bytes": 36703,
+              "sha256": "7cfaff4fbd37ea1812899d2622454642a1c966b1cab5241c95d898503a907152"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-military-lift-protocol-01.log",
+          "bytes": 482402,
+          "sha256": "dc946f0b082ede89140157441a1a013a28ea4a86e86e19871a0ae04039a2186e"
+        }
+      },
+      {
+        "name": "composition",
+        "label": "military-lift-composition-01",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.war.CuboidTreatyProductionTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-composition-01\\TEST-dev.starcore.starcore.war.CuboidTreatyProductionTest.xml",
+              "bytes": 32626,
+              "sha256": "a0edda0da25293f37eea516c1a5c022e023488fe46b95f8f04a1757deba67106"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.FoundationTreatyProductionTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-composition-01\\TEST-dev.starcore.starcore.war.FoundationTreatyProductionTest.xml",
+              "bytes": 32646,
+              "sha256": "a72351f3908fbbc5649d19c56752736769fcb86e28a783a1152286e4f983fd2b"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.MixedFoundationTreatyProductionTest",
+            "tests": 12,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-composition-01\\TEST-dev.starcore.starcore.war.MixedFoundationTreatyProductionTest.xml",
+              "bytes": 56400,
+              "sha256": "33a6c2ebad39df3bd90e730d9ad9cc30246fe7c05ce99544949de71dfd7b3f7d"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.war.MixedTerritoryTreatyProductionTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-composition-01\\TEST-dev.starcore.starcore.war.MixedTerritoryTreatyProductionTest.xml",
+              "bytes": 27777,
+              "sha256": "d6b052b25c1aa639546573f960d532fd5ac65865e6838c816db54abec018affc"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-military-lift-composition-01.log",
+          "bytes": 57104,
+          "sha256": "8a7470fa813a6ce28768db33a13e1a51763e269c7f9976f850435bfc55d61124"
+        }
+      },
+      {
+        "name": "persistence",
+        "label": "military-lift-persistence-01",
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "suites": [
+          {
+            "name": "dev.starcore.starcore.api.PublicApiCompatibilityTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-persistence-01\\TEST-dev.starcore.starcore.api.PublicApiCompatibilityTest.xml",
+              "bytes": 21690,
+              "sha256": "5811a34bd6ede44ed436b15166b08b55f31e8ef83f488f5b2ffadd6e6123d10a"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AsyncPersistenceFailureTest",
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-persistence-01\\TEST-dev.starcore.starcore.core.persistence.AsyncPersistenceFailureTest.xml",
+              "bytes": 23630,
+              "sha256": "c9d5b0d70be43220a766a37b6bf16897a354f7011c122e31f900475c01d66d30"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest",
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-persistence-01\\TEST-dev.starcore.starcore.core.persistence.AtomicFilePersistenceCoverageTest.xml",
+              "bytes": 24700,
+              "sha256": "9e70b2133cb230f10185b9f632db9cd165f4b8bed44c0c8b6e6bda60e56bb879"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest",
+            "tests": 5,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-persistence-01\\TEST-dev.starcore.starcore.core.persistence.AtomicFilePersistenceTest.xml",
+              "bytes": 22389,
+              "sha256": "e966ce970a7199e7d85cdc6ba62b7ff38b3b45677eda51b74da2def6a7157c9c"
+            }
+          },
+          {
+            "name": "dev.starcore.starcore.core.persistence.PersistenceServiceAtomicRecoveryTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "report": {
+              "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-final-reports\\military-lift-persistence-01\\TEST-dev.starcore.starcore.core.persistence.PersistenceServiceAtomicRecoveryTest.xml",
+              "bytes": 21937,
+              "sha256": "906fa6d3a1efff8f3a803f453aaa1672257b160184feb87a3907dcc4e6466c1b"
+            }
+          }
+        ],
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-military-lift-persistence-01.log",
+          "bytes": 4215,
+          "sha256": "986297ff96ded0852ded6add25b041f148c7e3d064a668d51ee8abe512438cab"
+        }
+      }
+    ],
+    "compilation": {
+      "main": {
+        "label": "military-lift-main-01",
+        "kind": "main",
+        "baseline": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-installation-capture-02.json",
+        "source_count": 7,
+        "class_count": 26,
+        "sources": [
+          "src/main/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwner.java",
+          "src/main/java/dev/starcore/starcore/module/army/authority/ArmyMilitaryTreatyService.java",
+          "src/main/java/dev/starcore/starcore/module/war/command/WarCommand.java",
+          "src/main/java/dev/starcore/starcore/module/war/WarModule.java",
+          "src/main/java/dev/starcore/starcore/module/war/WarSettlementAdmissionService.java",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyService.java",
+          "src/main/java/dev/starcore/starcore/war/WarServiceImpl.java"
+        ],
+        "source_sha256": {
+          "src/main/java/dev/starcore/starcore/module/army/authority/ArmyAuthorityOwner.java": "6b6c40fa021113bc2b2f67c98373aa46fb965d8e2dc9d53faae4ce8619040132",
+          "src/main/java/dev/starcore/starcore/module/army/authority/ArmyMilitaryTreatyService.java": "ba94df1ead8e0ab1a8b4711332fad55c30bdfa03ae261c8a80321312d0318b2f",
+          "src/main/java/dev/starcore/starcore/module/war/command/WarCommand.java": "32d729a9d065a80a33715bf97a47ff957b59ad959f0f7c2076a7db99c881b2c8",
+          "src/main/java/dev/starcore/starcore/module/war/WarModule.java": "daa887cc95cb33ab4446651e100be20a49592435e364a2106aaef70fd6ef1d38",
+          "src/main/java/dev/starcore/starcore/module/war/WarSettlementAdmissionService.java": "91b82ab1bb455a4d531b2ec34c361614d5bd8012caccd49291e3420215ee207c",
+          "src/main/java/dev/starcore/starcore/war/PeaceTreatyService.java": "c946d126d9e664a74aa842b73108ff7cba0921f2607ea1b0b795bd382665a431",
+          "src/main/java/dev/starcore/starcore/war/WarServiceImpl.java": "d010f15229fb412dd1d482f19ec31a685c91139e2061bfe35d05f5b7b59b7462"
+        },
+        "arguments": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-main-01.args",
+          "bytes": 15215,
+          "sha256": "5add897a71544628634a232fa2ffdb7f5a03e39b563ac4ed74ef8628dc171510"
+        },
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-main-01.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/module/army/authority/ArmyAuthorityOwner$Retirement.class",
+            "sha256": "1a3293fd33829b63b6e82cb47a8df5edf76f6e40f864c86a9987ae6ddee9548d"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/authority/ArmyAuthorityOwner.class",
+            "sha256": "0879a46df10b968c2e43a9896d45dfbf811225fff34c59bd4e336a12d80379cb"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/authority/ArmyMilitaryTreatyService$1.class",
+            "sha256": "0aa6b2825c53f114fa85d464c9542294b05e2e4af1f867256ddd15e16630547d"
+          },
+          {
+            "path": "dev/starcore/starcore/module/army/authority/ArmyMilitaryTreatyService.class",
+            "sha256": "498c40c1b78079bdb180661de31cd4f8e9c9e6844a25268a5699d837d55f8d79"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/command/WarCommand.class",
+            "sha256": "77fc094fe2d260bb3256d7906b20a296fe4c23498d08cd9df9ff15e6d19bdd0a"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarModule.class",
+            "sha256": "1e3fc8ea238f5d86b9cd72563a53b779aff0ee74e408555defc2043f13e22c53"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarSettlementAdmissionService$Admission.class",
+            "sha256": "0ec4270aabec781ab06c8dfd749a600095a6d0b5df38f8ccaee2ed274cfee541"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarSettlementAdmissionService$CancellationReceipt.class",
+            "sha256": "382dd37671aaeb73d71728178909326ce5e9dd14e62e9bfbd062b2f9bdfd1635"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarSettlementAdmissionService$Decision.class",
+            "sha256": "bd1eafe13491bdd2baf2034375ea70fb24ae71daf2238d9ed5d78a8d0edfcfdf"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarSettlementAdmissionService$EndReceipt.class",
+            "sha256": "be868c0ccac0f7e3f9d24682adbc820c1d4c1b1a2fb136182790acbee52cc8f9"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarSettlementAdmissionService$ReleaseReceipt.class",
+            "sha256": "9f8e9f5f7e7a6d4fb78192415f9393a4a431f9e291b0dc434d9c3e9eecab1bed"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarSettlementAdmissionService$ReleaseRequest.class",
+            "sha256": "e0afd07f95ba47b5d2577ca5719180ae42e8ece88e8cb34b84267cecd965941a"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarSettlementAdmissionService$Request.class",
+            "sha256": "b559a62e8f8dddf30c13509698884679508fc271e71b3b593dbb85ab652aae12"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarSettlementAdmissionService$TerminalStatus.class",
+            "sha256": "58dee1a84e3595cfd4eb607e0ab2603a82970c852324253bbd6eab2602be227b"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarSettlementAdmissionService$WarSnapshot.class",
+            "sha256": "fa926497d8ff0b76a7a76427cf2ba4ac12a3dbe51904d4565b67bce01f18161f"
+          },
+          {
+            "path": "dev/starcore/starcore/module/war/WarSettlementAdmissionService.class",
+            "sha256": "f77d9c1d74e9e300fa229344740928057e74897186fc6f8ec4ad891ab3681f11"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$MilitaryRestriction.class",
+            "sha256": "f46b170b8b1430f85663d4be0a513d51fe033b99fe0f8435079d1d2c34dae042"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$PeaceTreatyConfig.class",
+            "sha256": "c8890c81e9d4b58806b575c2ed5a70b64489a5a85ef470f43ccc921b73c11022"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$PoliticalRestriction.class",
+            "sha256": "5da1fa0a11c1d83872aaaf7c2e04f43f3dd8112ab66b5f087c3d35138fbd6189"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$ResourceTributeRecord.class",
+            "sha256": "85a959d98ba56bb346b8462dcd4c7cac56054ae9c77b5fe0a86b28c724d96304"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService$TreatyOperation.class",
+            "sha256": "0fdbf6c49521f940894f07aecc7ae28ca0653a7f65614559add84b2d31d37d0d"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyService.class",
+            "sha256": "12643b25ccedb8b586131682d611d3a3a8942580367f7adce6c0168fe27ccdd1"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarServiceImpl$1.class",
+            "sha256": "7ac2c62927d7bad3546c6a793e11d68d45378575f3651e9a82a19f6160885f82"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarServiceImpl$SettlementReceivers.class",
+            "sha256": "6c6e3d27ec3544a067fe258f66e8efa42b87458a520d6360f6573bffe8efdaa7"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarServiceImpl$WarConfig.class",
+            "sha256": "63a37e919767e611d9f057e0aa8baabe2ae349d5576a5842651283a6ea501cea"
+          },
+          {
+            "path": "dev/starcore/starcore/war/WarServiceImpl.class",
+            "sha256": "a1d812f854b48a8cdbdf46c0b8e19a4e79da26266d12d9644a4b875da60895a8"
+          }
+        ],
+        "all_changed_sources_compiled": true,
+        "fresh_class_bytes_equal_final_test_classpath": true
+      },
+      "test": {
+        "label": "military-lift-test-01",
+        "kind": "test",
+        "baseline": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\foundation-installation-capture-02.json",
+        "source_count": 3,
+        "class_count": 5,
+        "sources": [
+          "src/test/java/dev/starcore/starcore/module/war/command/WarCommandTreatyRecoveryTest.java",
+          "src/test/java/dev/starcore/starcore/war/MilitaryTreatyLiftProductionTest.java",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyServiceContractTest.java"
+        ],
+        "source_sha256": {
+          "src/test/java/dev/starcore/starcore/module/war/command/WarCommandTreatyRecoveryTest.java": "c1a5e6a9bf06e263bab316aa7f8ceca148775e5fffa9bd68ea59edb35f44d8e3",
+          "src/test/java/dev/starcore/starcore/war/MilitaryTreatyLiftProductionTest.java": "4e17df0540c0d46d21290fd3e1c5a7b9f0ec332d35c5f0fcdac10f8ef9796b71",
+          "src/test/java/dev/starcore/starcore/war/PeaceTreatyServiceContractTest.java": "4390b356e02b8a1d697675d71d026eafbee94561089c7767b83ff0437db20bb9"
+        },
+        "arguments": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-test-01.args",
+          "bytes": 14764,
+          "sha256": "db478b637fe31a87be0c53b1026fddc55507d4118639ea355cd335e4421bf1a6"
+        },
+        "log": {
+          "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-test-01.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "class_manifest": [
+          {
+            "path": "dev/starcore/starcore/module/war/command/WarCommandTreatyRecoveryTest.class",
+            "sha256": "942024d1e2f55999e81e5c3edcffabf44ff9378cfd6a15243085ba8d9cfb182c"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyLiftProductionTest$1.class",
+            "sha256": "c89013b71fd58e7d6d00480902e36e5b5e963cd6d77603849575ab1e4411a23e"
+          },
+          {
+            "path": "dev/starcore/starcore/war/MilitaryTreatyLiftProductionTest.class",
+            "sha256": "e0085787e248cb217fdf24c62d4806b44fa69a4973f5e03a7fc4f64bc4675e12"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyServiceContractTest$Protocol.class",
+            "sha256": "49f40f4b4a5228f45f3af869743982e0d9b68d3a03e0605fc2bc5391941fd640"
+          },
+          {
+            "path": "dev/starcore/starcore/war/PeaceTreatyServiceContractTest.class",
+            "sha256": "4abf2e7e7be0725ac28c98dc589aeb0d55bd67ec9f989e3e45dd96e60e0eb3bd"
+          }
+        ],
+        "all_changed_sources_compiled": true,
+        "fresh_class_bytes_equal_final_test_classpath": true
+      }
+    },
+    "formatting": {
+      "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target-military-lift-format-01.log",
+      "bytes": 2670,
+      "sha256": "e654e383cef853a0e74d59eafe7aa8b3830c1b38ece1e739b4e902b5643fef26"
+    },
+    "api": {
+      "baseline_update_used": false,
+      "source_baseline": {
+        "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\docs\\api\\starcore-api-v1.txt",
+        "bytes": 339441,
+        "sha256": "d758cfabc32cc27b6fb18bd1be835131eb4bd1bd8b1a32e09099b20525b8d1df"
+      }
+    }
+  },
+  "replay": {
+    "method": "independent Git indexes, all replayed blobs verified; reverse replay equals base tree",
+    "directory": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-replay-01.index",
+    "forward_check": true,
+    "reverse_check": true,
+    "diff_check": true,
+    "forward_tree": "4739de1c3303438eade7eea5144d35a43eea95d3",
+    "reverse_tree": "fcc78ac4704a2432b2c24c305d504fa6d5077c8b",
+    "all_src_file_count": 3909,
+    "src_api_pom_aggregate_sha256": "1938d7e87bbe1f4870d32dbbaa2da700fda15d873bb98fc1fbe0c9e9c27c23c5",
+    "all_source_bytes_equal_after_lf_normalization": true
+  },
+  "capture_evidence": {
+    "path": "C:\\Users\\Administrator\\Documents\\starsupply-deps\\starcore-folia\\target\\military-lift-capture-01.json",
+    "bytes": 850434,
+    "sha256": "499bda32df3a137cdf9a101c314a3333f6e2b02068229961ec502c8b00572ce1"
+  },
+  "scope": {
+    "read_only_original_war_release_query": true,
+    "admin_command_requires_full_treaty_uuid_and_current_permission": true,
+    "completion_rechecks_permission_and_source_before_disclosure": true,
+    "exact_source_released_and_complete_applied_vector_required": true,
+    "receiver_rechecks_war_end_cancellation_release_and_diplomacy_sources": true,
+    "stable_original_lift_id_and_permanent_receiver_receipt": true,
+    "source_effect_proofs_and_demobilization_tombstones_preserved": true,
+    "other_active_military_restrictions_remain_effective": true,
+    "lift_time_includes_later_national_army_history": true,
+    "legacy_military_views_detached": true,
+    "legacy_restriction_migration": false,
+    "new_release_jars_or_review_zip": false,
+    "full_clean_build": false,
+    "actual_mysql_server_tested": false,
+    "sql_multiprocess_tested": false,
+    "server_started": false,
+    "world_or_player_saves_modified": false,
+    "all_stages_complete": false
+  },
+  "runtime": {
+    "jdk": "21.0.13.1+2",
+    "maven": "3.9.16",
+    "test_batches_serial": true,
+    "javac_heap_mib": 96,
+    "surefire_in_process_heap_mib": 96,
+    "processors": 1,
+    "gc": "SerialGC",
+    "mockito_explicit_agent": true
+  },
+  "excluded_attempts": [],
+  "known_open": [
+    "The permissioned lift applies only to complete protocol-v2 military treaties with an exact durable applied release. Legacy restrictions require a separate migration protocol and remain unsupported by this action.",
+    "Command callers require starcore.war.admin; low-level plugin APIs remain trusted extension points and do not authenticate a player.",
+    "Tests use real file/SQLite Army, War and Diplomacy authorities with Bukkit/scheduler doubles. Fault injection is not actual game-server process termination.",
+    "Composition validation reruns selected complete-acceptance methods for all supported receiver combinations; it does not claim a full rerun of the existing composition failure matrices.",
+    "The pre-existing DoctrineServiceBudgetSpendingTest is an empty disabled class and provides no executable doctrine-budget coverage.",
+    "Siege sources and receivers, legacy military restriction migration, lease/reparation/tribute/loan money remain open.",
+    "Navy transport/ports, wounded return, doctrine, budget rollover/cancel, other module authorization/thread/lifecycle and archival remain open.",
+    "Foundation witness is not a write-ahead pending candidate and cannot detect restoration of authority plus all witness files together.",
+    "Full clean Core build, new artifacts, final Core plus Supply regression, SQL multiprocess/MySQL and user-deferred Paper/Folia acceptance remain open."
+  ]
+}

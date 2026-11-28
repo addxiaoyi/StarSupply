@@ -2,6 +2,10 @@
 
 更新日期：2026-11-29。接续分支：`codex/strategic-logistics`；仓库：<https://github.com/addxiaoyi/StarSupply>。
 
+2026-11-29 最新开发检查点为 [军事和约权限化解除 T20](upstream/development/MILITARY-TREATY-LIFTING.md)：管理员完整UUID查询/解除入口接通，来源完整APPLIED/RELEASED向量及接收器复读后保存稳定解除回执，重试保留原编号/时间、原效果与裁军墓碑，其他军限继续生效；旧军限查询返回独立副本。最终六批1969项/133个suite通过，7个生产源和3个测试源空目录编译；444文件累计补丁正反应用后3,909个src及API/pom一致，见[证据](verification/workspace-military-treaty-lifting-development-20261129.json)。**全部阶段尚未完成。** 下一步旧军限迁移、攻城及其余资金/玩法/模块/归档。未构建新JAR或启动服务器；累计补丁替代旧补丁，不能叠加。
+
+以下 T19 及更早记录为历史检查点，已包含在 T20 累计补丁中。
+
 2026-11-29 最新开发检查点为 [Foundation 持久安装绑定 T19](upstream/development/FOUNDATION-CHUNK-INSTALLATION.md)：原目录/后端/实际数据库/权威UUID与最后确认版本摘要持久保存，生产host和公开持久化构造器接通；保留见证时拒绝旧库恢复、替换和同版改写，已绑定缺失不重建。最终六批945项/71个suite通过，8个生产源和22个测试源空目录编译；443文件累计补丁正反应用后3,908个src及API/pom一致，见[证据](verification/workspace-foundation-chunk-installation-development-20261129.json)。底层提交至见证确认之间无write-ahead保证，同时恢复全部见证无法检测。**全部阶段尚未完成。** 下一步权限化军限解除、攻城及其余资金/玩法/模块/归档。未构建新JAR或启动服务器；累计补丁替代旧补丁，不能叠加。
 
 以下 T18 及更早记录为历史检查点，已包含在 T19 累计补丁中。
